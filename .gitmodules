@@ -1,0 +1,3 @@
+[submodule "guidelines"]
+	path = guidelines
+	url = git@gitlab.toavalon.com:omnisynapse/guidelines.git
