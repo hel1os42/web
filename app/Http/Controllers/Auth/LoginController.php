@@ -54,7 +54,8 @@ class LoginController extends Controller
             session()->flash('message', trans('auth.failed'));
             return redirect()->route('getLogin');
         }
-        return redirect('/');
+
+        return redirect(request()->get('redirect_to', '/'));
     }
 
     /**
