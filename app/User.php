@@ -5,9 +5,18 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Class User
+ * @package App
+ *
+ * @property string name
+ * @property string email
+ * @property string password
+ */
 class User extends Authenticatable
 {
     use Notifiable;
+    use Uuids;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +35,13 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 
 
     /**
@@ -73,40 +89,39 @@ class User extends Authenticatable
     /**
      * Set user name
      *
-     * @param string $name
+     * @param $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
      * Set user mail
      *
      * @param string $email
+     *
+     * @return $this
      */
     public function setEmail($email)
     {
         $this->email = $email;
+        return $this;
     }
 
     /**
      * Set user password
      *
      * @param string $password
+     *
+     * @return $this
      */
     public function setPassword($password)
     {
         $this->password = $password;
     }
 
-    /**
-     *
-     *
-     * @param int $referrer
-     */
-    public function setReferrer($referrer)
-    {
-        $this->referrer = $referrer;
-    }
 }
