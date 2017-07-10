@@ -13,12 +13,5 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@login');
-    Route::post('logout', '\App\Http\Controllers\Auth\LoginController@logout');
-});
 
-Route::group(['middleware' => 'jwt.auth'], function () {
-
-});
 
