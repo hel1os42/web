@@ -11,6 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'auth'], function () {
+    Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('getLogin');
+    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin');
+    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+});
+
+Route::group(['middleware' => 'jwt.auth'], function () {
+
 });
