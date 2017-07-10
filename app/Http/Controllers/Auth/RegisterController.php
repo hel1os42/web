@@ -11,29 +11,33 @@ use Illuminate\Support\Facades\Hash;
 class RegisterController extends Controller
 {
 
+    public function getRegister()
+    {
+        return response()->render('auth.register');
+    }
+
     /**
      * User registration
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function register(Request $request)
+    public function postRegister(Request $request)
     {
-        if($request->isMethod('post')){
-
-            $user = new User();
-            $user->setName($request->name)
+        $user = new User();
+        $user->setName($request->name)
             ->setEmail($request->email)
-            ->setPassword(Hash::make($request->password))
-            ->save();
+            ->setPassword(Hash::make($request->password));
+        $user->save();
 
 
-            if ($request->wantsJson()) {
-
-                return response()->json(['result' => true], 201);
-            }
+        if ($request->wantsJson()) {
+            return response()->render(null, ['result' => true], 201);
         }
-        return redirect()->route('auth/sign_in');
+
+        return redirect()->route('profile');
+
+
     }
 
 }

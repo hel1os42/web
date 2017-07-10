@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class User
@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string email
  * @property string password
  */
-class User extends Authenticatable
+class User extends Model
 {
     use Notifiable;
     use Uuids;

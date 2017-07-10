@@ -17,6 +17,13 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });
 
+Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister')->name('getLogin');
+Route::post('register', '\App\Http\Controllers\Auth\RegisterController@postRegister');
+
+Route::group(['prefix' => 'user'], function () {
+    Route::get('profile', '\App\Http\Controllers\User\ProfileController@show')->name('profile');
+});
+
 Route::group(['middleware' => 'jwt.auth'], function () {
 
 });
