@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Users;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,12 +20,13 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         if($request->isMethod('post')){
-            User::create([
-                'name' => $request->name,
-                'password' => Hash::make($request->password),
-                'email' => $request->email,
-                'referrer_id' => $request->referrer_id
-            ]);
+
+            $user = new User();
+            $user->setName($request->name)
+            ->setEmail($request->email)
+            ->setPassword(Hash::make($request->password))
+            ->save();
+
 
             if ($request->wantsJson()) {
 
