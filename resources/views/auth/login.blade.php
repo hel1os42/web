@@ -3,6 +3,8 @@
 <form action="/auth/login" method="post" target="_top">
     {{ csrf_field() }}
 
+    <input type="hidden" name="redirect_to" value="/auth/login">
+
     <input type="email" name="email" placeholder="email">
     <input type="password" name="password" placeholder="password">
     <input type="submit">
