@@ -14,13 +14,13 @@ class ProfileController extends Controller
     /**
      * User profile show
      *
+     * @param int $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show()
+    public function show($id)
     {
-        dd('test');
-
-
+        return response()->render('user.profile',['user' => User::find($id)],201);
     }
 
 }

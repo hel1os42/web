@@ -24,6 +24,8 @@ class RegisterController extends Controller
      */
     public function postRegister(Request $request)
     {
+        // todo @mobixon Auth token + Core request
+
         $user = new User();
         $user->setName($request->name)
             ->setEmail($request->email)
@@ -32,7 +34,7 @@ class RegisterController extends Controller
 
 
         if ($request->wantsJson()) {
-            return response()->render(null, ['result' => true], 201);
+            return response()->render(null, ['user' => User::find($user->id)], 201);
         }
 
         return redirect()->route('profile');
