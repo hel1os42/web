@@ -13,17 +13,15 @@
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('getLogin');
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin');
+    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });
-
-Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister')->name('getLogin');
+Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister');
 Route::post('register', '\App\Http\Controllers\Auth\RegisterController@postRegister');
 
 
-Route::get('user/{id}', '\App\Http\Controllers\User\ProfileController@show')->name('profile');
 
 
-Route::group(['middleware' => 'jwt.auth'], function () {
-
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('user/{id}', '\App\Http\Controllers\User\ProfileController@show')->name('profile');
 });

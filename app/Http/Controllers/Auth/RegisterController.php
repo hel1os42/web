@@ -34,10 +34,12 @@ class RegisterController extends Controller
 
 
         if ($request->wantsJson()) {
-            return response()->render(null, ['user' => User::find($user->id)], 201);
+            return; redirect()->action(
+                'ProfileController@profile', ['id' => $user->id]
+            );
         }
 
-        return redirect()->route('profile');
+        return redirect()->route('profile', ['id' => $user->id]);
 
 
     }

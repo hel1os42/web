@@ -3,20 +3,39 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
-class VerifyJWTToken
+class Authenticate
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
+     * @param  string|null $guard
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $guard = null)
+    {
+        if ($request->wantsJson()) {
+            return $this->jwtAuth();
+        }
+
+        if (Auth::guard($guard)->guest()) {
+            if ($request->ajax()) {
+                return response('Не авторизован.', 401);
+            }
+            return redirect()->route('login');
+        }
+
+        return $next($request);
+    }
+
+
+    private function jwtAuth()
     {
         try {
             \JWTAuth::parseToken()->authenticate();
@@ -39,7 +58,6 @@ class VerifyJWTToken
                 ]
             ], $e->getStatusCode());
         }
-
-        return $next($request);
     }
-}
+
+} 
