@@ -2,31 +2,9 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use OmniSynapse\CoreService\Job;
 
-class SendNau implements ShouldQueue
+class SendNau extends Job
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    /**
-     * UserCreated constructor.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        //
-    }
+    // TODO: waiting for documentation
 }

@@ -2,33 +2,65 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Traits\OfferTrait;
 
-class OfferCreated implements ShouldQueue
+/**
+ * Class OfferCreated
+ * @package OmniSynapse\CoreService\Job
+ */
+class OfferCreated extends Job
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use OfferTrait;
 
+    /** @var string  */
+    private $path = '/offer';
 
-
-    /**
-     * UserCreated constructor.
-     */
-    public function __construct()
-    {
-        //
-    }
+    /** @var string */
+    private $method = Client::METHOD_POST;
 
     /**
      * Execute the job.
      *
-     * @return void
+     * @return object
      */
     public function handle()
     {
-        //
+        return $this->client->request($this->method, $this->path, $this->getArrayParams())->getContent();
+    }
+
+    /**
+     * @return array
+     */
+    private function getArrayParams()
+    {
+        return [
+            'owner'         => $this->getOwnerId(), // TODO: in OfferUpdated we have owner_id
+            'name'          => $this->getName(),
+            'description'   => $this->getDescription(),
+            'category'      => $this->getCategoryId(), // TODO: in OfferUpdated we have category_id
+            'geo' => [
+                'type'      => $this->getGeoType(),
+                'point'     => [
+                    'lat'   => $this->getGeoPointLat(),
+                    'long'  => $this->getGeoPointLong(),
+                ],
+                'radius'    => $this->getGeoRadius(),
+                'city'      => $this->getGeoCity(),
+                'country'   => $this->getGeoCountry(),
+            ],
+            'limits' => [
+                'offers'    => $this->getLimitsOffers(),
+                'per_day'   => $this->getLimitsPerDay(),
+                'per_user'  => $this->getLimitsPerUser(),
+                'min_level' => $this->getLimitsMinLevel(),
+            ],
+            'reward'        => $this->getReward(),
+            'start_date'    => $this->getStartDate(),
+            'end_date'      => $this->getEndDate(),
+            'start_time'    => $this->getStartTime(),
+            'end_time'      => $this->getEndTime(),
+        ];
     }
 }

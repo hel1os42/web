@@ -2,31 +2,88 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\Job;
 
-class OfferRedemption implements ShouldQueue
+/**
+ * Class OfferRedemption
+ * @package OmniSynapse\CoreService\Job
+ *
+ * @property string id
+ * @property string user_id
+ */
+class OfferRedemption extends Job
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    /** @var string */
+    private $method = Client::METHOD_POST;
 
-    /**
-     * UserCreated constructor.
-     */
-    public function __construct()
-    {
-        //
-    }
+    /** @var string */
+    private $id = null;
+
+    /** @var string */
+    private $user_id = null;
 
     /**
      * Execute the job.
      *
-     * @return void
+     * @return object
      */
     public function handle()
     {
-        //
+        return $this->client->request($this->method, $this->getPath(), $this->getArrayParams())->getContent();
+    }
+
+    /**
+     * @return string
+     */
+    private function getPath()
+    {
+        return '/offers/'.$this->getId().'/redemption';
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param string $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param string $user_id
+     * @return $this
+     */
+    public function setUserId($user_id)
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    private function getArrayParams()
+    {
+        return [
+            'user_id' => $this->getUserId(),
+        ];
     }
 }

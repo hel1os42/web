@@ -2,58 +2,26 @@
 
 namespace OmniSynapse\CoreService;
 
-abstract class Job
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
+abstract class Job implements ShouldQueue
 {
-    /**
-     * @var string
-     */
-    private $path = '/user';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var string
+     * @var Client
      */
-    private $method = 'PUT';
-
-    /**
-     * User UUID
-     *
-     * @var string
-     */
-    private $id;
-
-    /**
-     * User name
-     *
-     * @var string
-     */
-    private $username;
-
-    /**
-     * User referrer id
-     *
-     * @var string
-     */
-    private $referrerId;
+    protected $client;
 
     /**
      * Job constructor.
-     *
-     * @param string $id
-     * @param string $username
-     * @param string $referrerId
      */
-    public function __construct($id, $username, $referrerId)
+    public function __construct()
     {
-        $this->id = $id;
-        $this->username = $username;
-        $this->referrerId = $referrerId;
-    }
-
-    /**
-     * @return void
-     */
-    public function handle()
-    {
-        // ...
+        $this->client = new Client();
     }
 }

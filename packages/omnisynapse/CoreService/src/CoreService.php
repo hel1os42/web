@@ -2,66 +2,38 @@
 
 namespace OmniSynapse\CoreService;
 
-use GuzzleHttp\Psr7\Response;
+use OmniSynapse\CoreService\Job\OfferCreated;
+use OmniSynapse\CoreService\Job\OfferRedemption;
+use OmniSynapse\CoreService\Job\OfferUpdated;
+use OmniSynapse\CoreService\Job\SendNau;
+use OmniSynapse\CoreService\Job\UserCreated;
 
 class CoreService
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    /** @var OfferCreated */
+    public $offerCreated;
 
-    /**
-     * @var Response
-     */
-    protected $response;
+    /** @var OfferRedemption */
+    public $offerRedemption;
 
-    /**
-     * @var string
-     */
-    protected $baseUrl = '';
+    /** @var OfferUpdated */
+    public $offerUpdated;
+
+    /** @var SendNau */
+    public $sendNau;
+
+    /** @var UserCreated */
+    public $userCreated;
 
     /**
      * CoreService constructor.
      */
     public function __construct()
     {
-        $verify = true;
-
-        if (app()->environment() === 'dev') {
-            $verify = false;
-        }
-
-        $config = [
-            'base_uri'    => $this->baseUrl,
-            'verify'      => $verify,
-            'http_errors' => false,
-        ];
-
-        $this->client = new Client($config);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getContent()
-    {
-        return json_decode($this->response->getBody()->getContents());
-    }
-
-    /**
-     * @return Response
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return Client
-     */
-    public function getClient()
-    {
-        return $this->client;
+        $this->offerCreated = new OfferCreated();
+        $this->offerRedemption = new OfferRedemption();
+        $this->offerUpdated = new OfferUpdated();
+        $this->sendNau = new SendNau();
+        $this->userCreated = new UserCreated();
     }
 }
