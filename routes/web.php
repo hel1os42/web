@@ -11,6 +11,10 @@
 |
 */
 
+// Unauthorized users
+
+Route::get('/', '\App\Http\Controllers\User\ProfileController@index')->name('home');
+
 Route::group(['prefix' => 'auth'], function () {
     Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('login');
     Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin');
@@ -20,14 +24,17 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'users'], function () {
     Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister');
     Route::post('register', '\App\Http\Controllers\Auth\RegisterController@postRegister');
-
-    Route::group(['middleware' => 'auth'], function () {
-        Route::get('/', '\App\Http\Controllers\User\ProfileController@index');
-        Route::get('{id}', '\App\Http\Controllers\User\ProfileController@show')->name('profile');
-    });
 });
 
+//---- Unauthorized users
+
+
+// Authorized users
 
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('users/{id}', '\App\Http\Controllers\User\ProfileController@show')->where('id', '[a-z0-9-]+')->name('profile');
+
 });
+
+//---- Authorized users

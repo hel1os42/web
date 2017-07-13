@@ -12,7 +12,7 @@ class ProfileController extends Controller
 
     public function index()
     {
-        return redirect()->route('profile', Auth::id());
+        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home');
     }
 
     /**
@@ -24,7 +24,11 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        return response()->render('user.profile', ['user' => User::find($id)], 201);
+        $userId = Auth::id();
+        if ($id !== $userId) {
+            abort(404);
+        }
+        return response()->render('user.profile', User::find($userId)->fresh(), 201);
     }
 
 }
