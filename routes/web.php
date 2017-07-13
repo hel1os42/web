@@ -13,7 +13,7 @@
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('getLogin');
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
+    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin');
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 });
 
@@ -21,7 +21,6 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister');
     Route::post('register', '\App\Http\Controllers\Auth\RegisterController@postRegister');
 });
-
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('profile/{id}', '\App\Http\Controllers\User\ProfileController@show')->name('profile');

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -19,28 +18,27 @@ class RegisterController extends Controller
     /**
      * User registration
      *
-     * @param Request $request
+     * @param \App\Http\Requests\Creating\RegisterRequest $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function postRegister(Request $request)
+    public function postRegister(\App\Http\Requests\Creating\RegisterRequest $request)
     {
-        // todo @mobixon Auth token + Core request
-
         $user = new User();
         $user->setName($request->name)
             ->setEmail($request->email)
             ->setPassword(Hash::make($request->password));
         $user->save();
 
-
         if ($request->wantsJson()) {
-            return; redirect()->action(
-                'ProfileController@profile', ['id' => $user->id]
-            );
+            return response()->render(null, [
+                'data' => [
+                    'name' => $user->name,
+                    'email' => $user->email
+                ]
+            ], 201);
         }
 
-        return redirect()->route('profile', ['id' => $user->id]);
-
+        return redirect()->route('getLogin');
 
     }
 
