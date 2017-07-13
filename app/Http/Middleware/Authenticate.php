@@ -21,7 +21,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($request->wantsJson()) {
-            return $this->jwtAuth();
+            return $this->jwtAuth($request, $next);
         }
 
         if (Auth::guard($guard)->guest()) {
@@ -35,7 +35,7 @@ class Authenticate
     }
 
 
-    private function jwtAuth()
+    private function jwtAuth($request, Closure $next)
     {
         try {
             \JWTAuth::parseToken()->authenticate();
@@ -58,6 +58,8 @@ class Authenticate
                 ]
             ], $e->getStatusCode());
         }
+
+        return $next($request);
     }
 
 } 
