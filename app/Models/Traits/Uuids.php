@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Webpatser\Uuid\Uuid;
 
