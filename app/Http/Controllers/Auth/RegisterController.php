@@ -18,10 +18,10 @@ class RegisterController extends Controller
     /**
      * User registration
      *
-     * @param \App\Http\Requests\Creating\RegisterRequest $request
+     * @param \App\Http\Requests\Auth\RegisterRequest $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function postRegister(\App\Http\Requests\Creating\RegisterRequest $request)
+    public function postRegister(\App\Http\Requests\Auth\RegisterRequest $request)
     {
         $user = new User();
         $user->setName($request->name)
@@ -31,13 +31,8 @@ class RegisterController extends Controller
 
         if ($request->wantsJson()) {
             return response()
-                ->render(null, [
-                'data' => [
-                    'name' => $user->name,
-                    'email' => $user->email
-                ]
-            ], 201)
-                ->header('Location', '/users/' . $user->id);
+                ->render(null, $user->fresh(), 201)
+                ->header('Location', sprintf('/users/%s', $user->id));
         }
 
         return redirect()->route('login');
