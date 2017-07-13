@@ -30,12 +30,14 @@ class RegisterController extends Controller
         $user->save();
 
         if ($request->wantsJson()) {
-            return response()->render(null, [
+            return response()
+                ->render(null, [
                 'data' => [
                     'name' => $user->name,
                     'email' => $user->email
                 ]
-            ], 201);
+            ], 201)
+                ->header('Location', '/users/' . $user->id);
         }
 
         return redirect()->route('login');
