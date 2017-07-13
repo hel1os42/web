@@ -10,7 +10,7 @@
 </div>
 @endif
 
-<form action="/user/register" method="post" target="_top">
+<form action="/users/register" method="post" target="_top">
     {{ csrf_field() }}
     <input type="name" name="name" placeholder="name"> <br>
     <input type="email" name="email" placeholder="email"><br>

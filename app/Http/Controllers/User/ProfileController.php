@@ -5,11 +5,17 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 
 class ProfileController extends Controller
 {
+
+    public function index()
+    {
+        return redirect()->route('profile', Auth::id());
+    }
 
     /**
      * User profile show
@@ -20,7 +26,7 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        return response()->render('user.profile',['user' => User::find($id)],201);
+        return response()->render('user.profile', ['user' => User::find($id)], 201);
     }
 
 }

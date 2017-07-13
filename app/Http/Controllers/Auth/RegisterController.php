@@ -38,7 +38,7 @@ class RegisterController extends Controller
             ], 201);
         }
 
-        return redirect()->route('getLogin');
+        return redirect()->route('login');
 
     }
 
