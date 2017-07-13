@@ -1,10 +1,10 @@
 <?php
 
-namespace OmniSynapse\CoreService\Traits;
+namespace OmniSynapse\CoreService\Request;
 
 /**
- * Class OfferTrait
- * @package OmniSynapse\CoreService\Traits
+ * Class OfferRequest
+ * @package OmniSynapse\CoreService\Request
  *
  * @property string id
  * @property string owner_id
@@ -30,8 +30,7 @@ namespace OmniSynapse\CoreService\Traits;
  * @property string start_time
  * @property string end_time
  */
-trait OfferTrait
-{
+class OfferRequest {
     /** @var string */
     private $owner_id = null;
 

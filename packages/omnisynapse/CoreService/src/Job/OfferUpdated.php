@@ -4,7 +4,6 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Traits\OfferTrait;
 
 /**
  * Class OfferUpdated
@@ -14,30 +13,21 @@ use OmniSynapse\CoreService\Traits\OfferTrait;
  */
 class OfferUpdated extends Job
 {
-    use OfferTrait;
-
-    /** @var string */
-    private $method = Client::METHOD_PUT;
-
     /** @var string */
     private $id = '';
 
     /**
-     * Execute the job.
-     *
-     * @return object
+     * @return string
      */
-    public function handle()
+    public function getHttpMethod()
     {
-        return $this->client->request($this->method, $this->getPath(), $this->getArrayParams())->getContent();
+        return Client::METHOD_PUT;
     }
 
     /**
-     * Get modified path, with UUID.
-     *
      * @return string
      */
-    public function getPath()
+    public function getHttpPath()
     {
         return '/offer/'.$this->getId();
     }
@@ -67,10 +57,10 @@ class OfferUpdated extends Job
     {
         return [
             'id'            => $this->getId(),
-            'owner_id'      => $this->getOwnerId(), // TODO: in OfferUpdated we have owner
+            'owner_id'      => $this->getOwnerId(),
             'name'          => $this->getName(),
             'description'   => $this->getDescription(),
-            'category_id'   => $this->getCategoryId(), // TODO: in OfferUpdated we have category
+            'category_id'   => $this->getCategoryId(),
             'geo' => [
                 'type'      => $this->getGeoType(),
                 'point'     => [

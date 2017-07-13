@@ -15,12 +15,6 @@ use OmniSynapse\CoreService\Job;
  */
 class UserCreated extends Job
 {
-    /** @var string  */
-    private $path = '/user';
-
-    /** @var string */
-    private $method = Client::METHOD_PUT;
-
     /** @var string */
     private $id = null;
 
@@ -31,13 +25,19 @@ class UserCreated extends Job
     private $referrer_id = null;
 
     /**
-     * Execute the job.
-     *
-     * @return object
+     * @return string
      */
-    public function handle()
+    public function getHttpMethod()
     {
-        return $this->client->request($this->method, $this->path, $this->getArrayParams())->getContent();
+        return Client::METHOD_PUT;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHttpPath()
+    {
+        return '/user';
     }
 
     /**

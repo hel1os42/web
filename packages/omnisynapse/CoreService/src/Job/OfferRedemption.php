@@ -15,28 +15,23 @@ use OmniSynapse\CoreService\Job;
 class OfferRedemption extends Job
 {
     /** @var string */
-    private $method = Client::METHOD_POST;
-
-    /** @var string */
     private $id = null;
 
     /** @var string */
     private $user_id = null;
 
     /**
-     * Execute the job.
-     *
-     * @return object
+     * @return string
      */
-    public function handle()
+    public function getHttpMethod()
     {
-        return $this->client->request($this->method, $this->getPath(), $this->getArrayParams())->getContent();
+        return Client::METHOD_POST;
     }
 
     /**
      * @return string
      */
-    private function getPath()
+    public function getHttpPath()
     {
         return '/offers/'.$this->getId().'/redemption';
     }

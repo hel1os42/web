@@ -24,4 +24,24 @@ abstract class Job implements ShouldQueue
     {
         $this->client = new Client();
     }
+
+    /**
+     * Execute the job.
+     *
+     * @return object
+     */
+    public function handle()
+    {
+        return $this->client->request($this->getHttpMethod(), $this->getHttpPath(), $this->getArrayParams())->getContent();
+    }
+
+    /**
+     * @return string
+     */
+    abstract public function getHttpMethod();
+
+    /**
+     * @return string
+     */
+    abstract protected function getHttpPath();
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
+use OmniSynapse\CoreService\CoreService;
 use \Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller
@@ -15,6 +16,8 @@ class LoginController extends Controller
      */
     public function getLogin()
     {
+        $test = (new CoreService())->userCreated()->handle();
+
         return response()->render('auth.login');
     }
 

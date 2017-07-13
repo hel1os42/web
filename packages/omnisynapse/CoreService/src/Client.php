@@ -2,7 +2,6 @@
 
 namespace OmniSynapse\CoreService;
 
-use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response;
 
 class Client
@@ -23,29 +22,14 @@ class Client
     protected $response;
 
     /**
-     * @var string
-     */
-    protected $baseUrl = '';
-
-    /**
-     * @var bool
-     */
-    private $verify = true;
-
-    /**
-     * @var bool
-     */
-    private $httpErrors = false;
-
-    /**
      * CoreService constructor.
      */
     public function __construct()
     {
         $config = [
-            'base_uri'    => $this->baseUrl,
-            'verify'      => 'dev' === app()->environment() ? false : $this->verify,
-            'http_errors' => $this->httpErrors,
+            'base_uri'    => config('core-config.base_uri'),
+            'verify'      => config('core-config.verify'),
+            'http_errors' => config('core-config.http_errors'),
         ];
 
         $this->client = new \GuzzleHttp\Client($config);
@@ -56,7 +40,7 @@ class Client
      */
     public function getBaseUrl()
     {
-        return $this->baseUrl;
+        return config('core-config.base_uri');
     }
 
     /**

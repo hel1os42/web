@@ -10,30 +10,43 @@ use OmniSynapse\CoreService\Job\UserCreated;
 
 class CoreService
 {
-    /** @var OfferCreated */
-    public $offerCreated;
-
-    /** @var OfferRedemption */
-    public $offerRedemption;
-
-    /** @var OfferUpdated */
-    public $offerUpdated;
-
-    /** @var SendNau */
-    public $sendNau;
-
-    /** @var UserCreated */
-    public $userCreated;
+    /**
+     * @return OfferCreated
+     */
+    public function offerCreated()
+    {
+        return new OfferCreated();
+    }
 
     /**
-     * CoreService constructor.
+     * @return OfferRedemption
      */
-    public function __construct()
+    public function offerRedemption()
     {
-        $this->offerCreated = new OfferCreated();
-        $this->offerRedemption = new OfferRedemption();
-        $this->offerUpdated = new OfferUpdated();
-        $this->sendNau = new SendNau();
-        $this->userCreated = new UserCreated();
+        return new OfferRedemption();
+    }
+
+    /**
+     * @return OfferUpdated
+     */
+    public function offerUpdated()
+    {
+        return new OfferUpdated();
+    }
+
+    /**
+     * @return SendNau
+     */
+    public function sendNau()
+    {
+        return new SendNau();
+    }
+
+    /**
+     * @return UserCreated
+     */
+    public function userCreated()
+    {
+        return new UserCreated();
     }
 }

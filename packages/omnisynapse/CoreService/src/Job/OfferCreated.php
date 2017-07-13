@@ -4,7 +4,6 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Traits\OfferTrait;
 
 /**
  * Class OfferCreated
@@ -12,22 +11,20 @@ use OmniSynapse\CoreService\Traits\OfferTrait;
  */
 class OfferCreated extends Job
 {
-    use OfferTrait;
-
-    /** @var string  */
-    private $path = '/offer';
-
-    /** @var string */
-    private $method = Client::METHOD_POST;
+    /**
+     * @return string
+     */
+    public function getHttpMethod()
+    {
+        return Client::METHOD_POST;
+    }
 
     /**
-     * Execute the job.
-     *
-     * @return object
+     * @return string
      */
-    public function handle()
+    public function getHttpPath()
     {
-        return $this->client->request($this->method, $this->path, $this->getArrayParams())->getContent();
+        return '/offer';
     }
 
     /**
@@ -36,10 +33,10 @@ class OfferCreated extends Job
     private function getArrayParams()
     {
         return [
-            'owner'         => $this->getOwnerId(), // TODO: in OfferUpdated we have owner_id
+            'owner_id'         => $this->getOwnerId(),
             'name'          => $this->getName(),
             'description'   => $this->getDescription(),
-            'category'      => $this->getCategoryId(), // TODO: in OfferUpdated we have category_id
+            'category_id'      => $this->getCategoryId(),
             'geo' => [
                 'type'      => $this->getGeoType(),
                 'point'     => [
