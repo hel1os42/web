@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 
 class RegisterController extends Controller
 {
 
+    /**
+     * Return user register form
+     *
+     * @return mixed
+     */
     public function getRegister()
     {
-        return response()->render('auth.register');
+        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('auth.register');
     }
 
     /**

@@ -22,8 +22,8 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'users'], function () {
-    Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegister');
-    Route::post('register', '\App\Http\Controllers\Auth\RegisterController@postRegister');
+    Route::get('/', '\App\Http\Controllers\Auth\RegisterController@getRegister');
+    Route::post('/', '\App\Http\Controllers\Auth\RegisterController@postRegister');
 });
 
 //---- Unauthorized users

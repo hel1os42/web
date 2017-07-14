@@ -14,7 +14,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return !\Auth::check() ? : false;
+        return !\Auth::check();
     }
 
     /**
