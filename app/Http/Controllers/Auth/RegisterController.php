@@ -14,9 +14,9 @@ class RegisterController extends Controller
     /**
      * Return user register form
      *
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function getRegister()
+    public function getRegisterForm()
     {
         return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('auth.register');
     }
@@ -27,7 +27,7 @@ class RegisterController extends Controller
      * @param \App\Http\Requests\Auth\RegisterRequest $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function postRegister(\App\Http\Requests\Auth\RegisterRequest $request)
+    public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
         $user = new User();
         $user->setName($request->name)
@@ -41,7 +41,7 @@ class RegisterController extends Controller
                 ->header('Location', sprintf('/users/%s', $user->id));
         }
 
-        return redirect()->route('login');
+        return redirect()->route('loginForm');
 
     }
 

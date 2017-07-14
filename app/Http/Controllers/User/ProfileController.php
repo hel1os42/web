@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class ProfileController extends Controller
@@ -18,17 +19,17 @@ class ProfileController extends Controller
     /**
      * User profile show
      *
-     * @param int $id
+     * @param string $id
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(string $id)
     {
         $userId = Auth::id();
         if ($id !== $userId) {
-            abort(404);
+            return response()->error(Response::HTTP_FORBIDDEN);
         }
-        return response()->render('user.profile', User::find($userId)->fresh(), 201);
+        return response()->render('user.profile', User::find($userId)->fresh(), Response::HTTP_CREATED);
     }
 
 }

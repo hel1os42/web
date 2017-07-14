@@ -3,4 +3,4 @@
 {{$name}}<br>
 {{$email}}<br>
 <br>
-<a href="/auth/logout">Logout</a>
+<a href="{{route('logout')}}">Logout</a>

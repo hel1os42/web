@@ -16,15 +16,14 @@
 Route::get('/', '\App\Http\Controllers\User\ProfileController@index')->name('home');
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('login');
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin');
-    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+    Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('loginForm');
+    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
+    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+    Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegisterForm')->name('registerForm');
 });
 
-Route::group(['prefix' => 'users'], function () {
-    Route::get('/', '\App\Http\Controllers\Auth\RegisterController@getRegister');
-    Route::post('/', '\App\Http\Controllers\Auth\RegisterController@postRegister');
-});
+Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
+
 
 //---- Unauthorized users
 
