@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,7 +38,7 @@ class RegisterController extends Controller
 
         if ($request->wantsJson()) {
             return response()
-                ->render(null, $user->fresh(), 201)
+                ->render('', $user->fresh(), Response::HTTP_CREATED)
                 ->header('Location', sprintf('/users/%s', $user->id));
         }
 
