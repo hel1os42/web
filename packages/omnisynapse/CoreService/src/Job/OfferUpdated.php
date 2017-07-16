@@ -4,6 +4,8 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
+use OmniSynapse\CoreService\Response\OfferUpdatedResponse;
 
 /**
  * Class OfferUpdated
@@ -13,13 +15,10 @@ use OmniSynapse\CoreService\Job;
  */
 class OfferUpdated extends Job
 {
-    /** @var string */
-    private $id = '';
-
     /**
      * @return string
      */
-    public function getHttpMethod()
+    public function getHttpMethod() : string
     {
         return Client::METHOD_PUT;
     }
@@ -27,61 +26,24 @@ class OfferUpdated extends Job
     /**
      * @return string
      */
-    public function getHttpPath()
+    public function getHttpPath() : string
     {
         return '/offer/'.$this->getId();
     }
 
     /**
-     * @return string
+     * @return \JsonSerializable
      */
-    public function getId()
+    protected function getRequestObject() : \JsonSerializable
     {
-        return $this->id;
+        return new OfferUpdatedRequest();
     }
 
     /**
-     * @param string $id
-     * @return $this
+     * @return OfferUpdatedResponse
      */
-    public function setId($id)
+    protected function getResponseClass()
     {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getArrayParams()
-    {
-        return [
-            'id'            => $this->getId(),
-            'owner_id'      => $this->getOwnerId(),
-            'name'          => $this->getName(),
-            'description'   => $this->getDescription(),
-            'category_id'   => $this->getCategoryId(),
-            'geo' => [
-                'type'      => $this->getGeoType(),
-                'point'     => [
-                    'lat'   => $this->getGeoPointLat(),
-                    'long'  => $this->getGeoPointLong(),
-                ],
-                'radius'    => $this->getGeoRadius(),
-                'city'      => $this->getGeoCity(),
-                'country'   => $this->getGeoCountry(),
-            ],
-            'limits' => [
-                'offers'    => $this->getLimitsOffers(),
-                'per_day'   => $this->getLimitsPerDay(),
-                'per_user'  => $this->getLimitsPerUser(),
-                'min_level' => $this->getLimitsMinLevel(),
-            ],
-            'reward'        => $this->getReward(),
-            'start_date'    => $this->getStartDate(),
-            'end_date'      => $this->getEndDate(),
-            'start_time'    => $this->getStartTime(),
-            'end_time'      => $this->getEndTime(),
-        ];
+        return new OfferUpdatedResponse();
     }
 }

@@ -4,6 +4,8 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Request\OfferCreatedRequest;
+use OmniSynapse\CoreService\Response\OfferCreatedResponse;
 
 /**
  * Class OfferCreated
@@ -14,7 +16,7 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    public function getHttpMethod()
+    public function getHttpMethod() : string
     {
         return Client::METHOD_POST;
     }
@@ -22,42 +24,24 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    public function getHttpPath()
+    public function getHttpPath() : string
     {
         return '/offer';
     }
 
     /**
-     * @return array
+     * @return \JsonSerializable
      */
-    private function getArrayParams()
+    protected function getRequestObject() : \JsonSerializable
     {
-        return [
-            'owner_id'         => $this->getOwnerId(),
-            'name'          => $this->getName(),
-            'description'   => $this->getDescription(),
-            'category_id'      => $this->getCategoryId(),
-            'geo' => [
-                'type'      => $this->getGeoType(),
-                'point'     => [
-                    'lat'   => $this->getGeoPointLat(),
-                    'long'  => $this->getGeoPointLong(),
-                ],
-                'radius'    => $this->getGeoRadius(),
-                'city'      => $this->getGeoCity(),
-                'country'   => $this->getGeoCountry(),
-            ],
-            'limits' => [
-                'offers'    => $this->getLimitsOffers(),
-                'per_day'   => $this->getLimitsPerDay(),
-                'per_user'  => $this->getLimitsPerUser(),
-                'min_level' => $this->getLimitsMinLevel(),
-            ],
-            'reward'        => $this->getReward(),
-            'start_date'    => $this->getStartDate(),
-            'end_date'      => $this->getEndDate(),
-            'start_time'    => $this->getStartTime(),
-            'end_time'      => $this->getEndTime(),
-        ];
+        return new OfferCreatedRequest();
+    }
+
+    /**
+     * @return OfferCreatedResponse
+     */
+    protected function getResponseClass()
+    {
+        return new OfferCreatedResponse();
     }
 }

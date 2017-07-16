@@ -16,8 +16,6 @@ class LoginController extends Controller
      */
     public function getLogin()
     {
-        $test = (new CoreService())->userCreated()->handle();
-
         return response()->render('auth.login');
     }
 

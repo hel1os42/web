@@ -27,7 +27,7 @@ class Client
     public function __construct()
     {
         $config = [
-            'base_uri'    => config('core-config.base_uri'),
+            'base_uri'    => $this->getBaseUrl(),
             'verify'      => config('core-config.verify'),
             'http_errors' => config('core-config.http_errors'),
         ];
@@ -38,15 +38,15 @@ class Client
     /**
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl() : string
     {
         return config('core-config.base_uri');
     }
 
     /**
-     * @return Client
+     * @return \GuzzleHttp\Client
      */
-    public function getClient()
+    public function getClient() : \GuzzleHttp\Client
     {
         return $this->client;
     }
@@ -54,7 +54,7 @@ class Client
     /**
      * @return Response
      */
-    public function getResponse()
+    public function getResponse() : Response
     {
         return $this->response;
     }
@@ -62,7 +62,7 @@ class Client
     /**
      * @return object
      */
-    public function getContent()
+    public function getContent() : object
     {
         return json_decode($this->response->getBody()->getContents());
     }
@@ -70,19 +70,19 @@ class Client
     /**
      * @return integer
      */
-    public function getStatusCode()
+    public function getStatusCode() : integer
     {
-        return $this->getClient()->getStatusCode();
+        return $this->getResponse()->getStatusCode();
     }
 
     /**
      * @param string $method
      * @param string $path
      * @param array $params
-     * @return $this
+     * @return Client
      * @throws
      */
-    public function request($method, $path, $params=[])
+    public function request($method, $path, $params=[]) : Client
     {
         /** @var \GuzzleHttp\Client $client */
         $client = $this->getClient();

@@ -4,26 +4,19 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
+use OmniSynapse\CoreService\Response\OfferRedemptionResponse;
 
 /**
  * Class OfferRedemption
  * @package OmniSynapse\CoreService\Job
- *
- * @property string id
- * @property string user_id
  */
 class OfferRedemption extends Job
 {
-    /** @var string */
-    private $id = null;
-
-    /** @var string */
-    private $user_id = null;
-
     /**
      * @return string
      */
-    public function getHttpMethod()
+    public function getHttpMethod() : string
     {
         return Client::METHOD_POST;
     }
@@ -31,54 +24,24 @@ class OfferRedemption extends Job
     /**
      * @return string
      */
-    public function getHttpPath()
+    public function getHttpPath() : string
     {
         return '/offers/'.$this->getId().'/redemption';
     }
 
     /**
-     * @return string
+     * @return \JsonSerializable
      */
-    public function getId()
+    protected function getRequestObject() : \JsonSerializable
     {
-        return $this->id;
+        return new OfferRedemptionRequest();
     }
 
     /**
-     * @return string
+     * @return OfferRedemptionResponse
      */
-    public function getUserId()
+    protected function getResponseClass()
     {
-        return $this->user_id;
-    }
-
-    /**
-     * @param string $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @param string $user_id
-     * @return $this
-     */
-    public function setUserId($user_id)
-    {
-        $this->user_id = $user_id;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getArrayParams()
-    {
-        return [
-            'user_id' => $this->getUserId(),
-        ];
+        return new OfferRedemptionResponse();
     }
 }

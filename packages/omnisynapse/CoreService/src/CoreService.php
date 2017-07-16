@@ -7,13 +7,14 @@ use OmniSynapse\CoreService\Job\OfferRedemption;
 use OmniSynapse\CoreService\Job\OfferUpdated;
 use OmniSynapse\CoreService\Job\SendNau;
 use OmniSynapse\CoreService\Job\UserCreated;
+use OmniSynapse\CoreService\Request\UserCreatedRequest;
 
 class CoreService
 {
     /**
      * @return OfferCreated
      */
-    public function offerCreated()
+    public function offerCreated() : OfferCreated
     {
         return new OfferCreated();
     }
@@ -21,7 +22,7 @@ class CoreService
     /**
      * @return OfferRedemption
      */
-    public function offerRedemption()
+    public function offerRedemption() : OfferRedemption
     {
         return new OfferRedemption();
     }
@@ -29,7 +30,7 @@ class CoreService
     /**
      * @return OfferUpdated
      */
-    public function offerUpdated()
+    public function offerUpdated() : OfferUpdated
     {
         return new OfferUpdated();
     }
@@ -37,16 +38,18 @@ class CoreService
     /**
      * @return SendNau
      */
-    public function sendNau()
+    public function sendNau() : SendNau
     {
         return new SendNau();
     }
 
     /**
+     * @param UserCreatedRequest $user
+     * @param UserCreatedRequest|null $referrer
      * @return UserCreated
      */
-    public function userCreated()
+    public function userCreated(UserCreatedRequest $user, UserCreatedRequest $referrer = null) : UserCreated
     {
-        return new UserCreated();
+        return new UserCreated($user, $referrer);
     }
 }

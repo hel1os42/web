@@ -4,30 +4,35 @@ namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Request\UserCreatedRequest;
+use \OmniSynapse\CoreService\Response\UserCreatedResponse;
 
 /**
  * Class UserCreated
  * @package OmniSynapse\CoreService\Job
- *
- * @property string id
- * @property string username
- * @property string referrer_id
  */
 class UserCreated extends Job
 {
-    /** @var string */
-    private $id = null;
+    /**
+     * UserCreated constructor.
+     *
+     * @param UserCreatedRequest $user
+     * @param UserCreatedRequest|null $referrer
+     */
+    public function __construct(UserCreatedRequest $user, UserCreatedRequest $referrer = null)
+    {
+        parent::__construct();
 
-    /** @var string */
-    private $username = null;
-
-    /** @var string */
-    private $referrer_id = null;
+        $this->requestObject = (new UserCreatedRequest) // TODO: requestObject ???
+            ->setId($user->id)
+            ->setUsername($user->username)
+            ->setReferrerId(null !== $referrer ? $referrer->id : null);
+    }
 
     /**
      * @return string
      */
-    public function getHttpMethod()
+    public function getHttpMethod() : string
     {
         return Client::METHOD_PUT;
     }
@@ -35,74 +40,24 @@ class UserCreated extends Job
     /**
      * @return string
      */
-    public function getHttpPath()
+    public function getHttpPath() : string
     {
         return '/user';
     }
 
     /**
-     * @return string
+     * @return \JsonSerializable
      */
-    public function getId()
+    protected function getRequestObject() : \JsonSerializable
     {
-        return $this->id;
+        return new UserCreatedRequest();
     }
 
     /**
-     * @return string
+     * @return UserCreatedResponse
      */
-    public function getUsername()
+    protected function getResponseClass()
     {
-        return $this->username;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReferrerId()
-    {
-        return $this->referrer_id;
-    }
-
-    /**
-     * @param string $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @param string $username
-     * @return $this
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-        return $this;
-    }
-
-    /**
-     * @param string $referrer_id
-     * @return $this
-     */
-    public function setReferrerId($referrer_id)
-    {
-        $this->referrer_id = $referrer_id;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getArrayParams()
-    {
-        return [
-            'id'            => $this->getId(),
-            'username'      => $this->getUsername(),
-            'referrer_id'   => $this->getReferrerId(),
-        ];
+        return new UserCreatedResponse();
     }
 }
