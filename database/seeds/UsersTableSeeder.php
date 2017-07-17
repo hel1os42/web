@@ -18,7 +18,5 @@ class UsersTableSeeder extends Seeder
             ->setEmail(ENV('DEF_USER_MAIL'))
             ->setPassword(Hash::make(ENV('DEF_USER_PASSWORD')));
         $user->save();
-        $user->setReferrerId($user->id);
-        $user->update();
     }
 }

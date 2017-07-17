@@ -50,6 +50,14 @@ class User extends Authenticatable
 
 
     /**
+     * Get the referrer record associated with the user.
+     */
+    public function referrer()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    /**
      * Get user name
      *
      * @return mixed

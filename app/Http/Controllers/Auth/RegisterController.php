@@ -15,11 +15,11 @@ class RegisterController extends Controller
     /**
      * Return user register form
      *
-     * @param $referrerId
+     * @param string $referrerId
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function getRegisterForm($referrerId)
+    public function getRegisterForm(string $referrerId)
     {
         if (!User::find($referrerId) instanceof User) {
             return response()->error(Response::HTTP_NOT_FOUND);
@@ -50,7 +50,7 @@ class RegisterController extends Controller
         $user->setName($request->name)
             ->setEmail($request->email)
             ->setPassword(Hash::make($request->password));
-        $user->setReferrerId($request->referrer_id);
+        $user->referrer()->associate($request->referrer_id);
         $user->save();
 
         if ($request->wantsJson()) {
