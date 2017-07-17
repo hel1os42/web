@@ -2,9 +2,9 @@
 
 namespace OmniSynapse\CoreService\Response;
 
-use OmniSynapse\CoreService\Entity\Nau;
+use OmniSynapse\CoreService\Entity\Wallet;
 
-class SendNauResponse extends Nau
+class SendNauResponse extends Wallet
 {
 
 }

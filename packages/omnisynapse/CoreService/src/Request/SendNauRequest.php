@@ -2,9 +2,9 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use OmniSynapse\CoreService\Entity\Nau;
+use OmniSynapse\CoreService\Entity\Wallet;
 
-class SendNauRequest extends Nau implements \JsonSerializable
+class SendNauRequest extends Wallet implements \JsonSerializable
 {
     public function jsonSerialize()
     {

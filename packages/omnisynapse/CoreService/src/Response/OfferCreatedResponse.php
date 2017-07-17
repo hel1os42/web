@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Response;
 
+use Carbon\Carbon;
 use OmniSynapse\CoreService\Entity\Offer;
 
 class OfferCreatedResponse extends Offer
@@ -127,33 +128,33 @@ class OfferCreatedResponse extends Offer
     }
 
     /**
-     * @return string
+     * @return Carbon
      */
-    public function getStartDate() : string
+    public function getStartDate() : Carbon
     {
         return $this->start_date;
     }
 
     /**
-     * @return string
+     * @return Carbon
      */
-    public function getEndDate() : string
+    public function getEndDate() : Carbon
     {
         return $this->end_date;
     }
 
     /**
-     * @return string
+     * @return Carbon
      */
-    public function getStartTime() : string
+    public function getStartTime() : Carbon
     {
         return $this->start_time;
     }
 
     /**
-     * @return string
+     * @return Carbon
      */
-    public function getEndTime() : string
+    public function getEndTime() : Carbon
     {
         return $this->end_time;
     }

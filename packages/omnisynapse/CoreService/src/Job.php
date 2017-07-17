@@ -15,6 +15,9 @@ abstract class Job implements ShouldQueue
     /** @var Client */
     private $client;
 
+    /** @var object */
+    protected $requestObject = null;
+
     /**
      * Job constructor.
      */
@@ -30,28 +33,30 @@ abstract class Job implements ShouldQueue
      */
     public function handle() : object
     {
-        $requestObject = $this->getRequestObject();
         $this->client->request(
             $this->getHttpMethod(),
             $this->getHttpPath(),
             [
-                'json' => null !== $requestObject ? $requestObject->jsonSerialize() : null
+                'json' => null !== $this->requestObject
+                    ? $this->requestObject->jsonSerialize()
+                    : null
             ]
         );
         $mapper = new \JsonMapper();
-        $responseObject = $mapper->map($this->client->getResponse(), $this->getResponseClass()); // TODO: must to be an object, instead string.
+        $responseClassName = dirname(__FILE__).'/Response/'.$this->getResponseClass();
+        $responseObject = $mapper->map($this->client->getResponse(), new $responseClassName);
         event($responseObject); // TODO: or $requestObject? how I can use this event? who can explain me?)
     }
 
     /** @return string */
-    abstract public function getHttpMethod() : string;
+    abstract protected function getHttpMethod() : string;
 
     /** @reutnr string */
     abstract protected function getHttpPath() : string;
 
     /** @return \JsonSerializable */
-    abstract protected function getRequestObject() : ?\JsonSerializable;
+    abstract protected function getRequestObject() : \JsonSerializable;
 
-    /** @return object */
-    abstract protected function getResponseClass(); // TODO: typehint for return
+    /** @return string */
+    abstract protected function getResponseClass() : string;
 }

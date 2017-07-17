@@ -3,12 +3,25 @@
 namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\Entity\Nau;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\SendNauRequest;
 use OmniSynapse\CoreService\Response\SendNauResponse;
 
 class SendNau extends Job
 {
+    /**
+     * SendNau constructor.
+     * @param Nau $nau
+     */
+    public function __construct(Nau $nau)
+    {
+        parent::__construct();
+
+        /** @var SendNauRequest requestObject */
+        $this->requestObject = (new SendNauRequest);
+    }
+
     /**
      * @return string
      */
@@ -34,10 +47,10 @@ class SendNau extends Job
     }
 
     /**
-     * @return SendNauResponse
+     * @return string
      */
-    protected function getResponseClass()
+    protected function getResponseClass() : string
     {
-        return new SendNauResponse();
+        return SendNauResponse::class;
     }
 }

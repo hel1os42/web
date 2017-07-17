@@ -2,6 +2,8 @@
 
 namespace OmniSynapse\CoreService\Entity;
 
+use Carbon\Carbon;
+
 /**
  * Class Offer
  * @package OmniSynapse\CoreService\Entity
@@ -25,67 +27,72 @@ namespace OmniSynapse\CoreService\Entity;
  * @property integer limitsMinLevel
  *
  * @property float reward
- * @property string start_date
- * @property string end_date
- * @property string start_time
- * @property string end_time
+ * @property Carbon start_date
+ * @property Carbon end_date
+ * @property Carbon start_time
+ * @property Carbon end_time
+ *
+ * @property string user_id
  */
 class Offer
 {
     /** @var string */
-    protected $owner_id = null;
+    public $owner_id;
 
     /** @var string */
-    protected $name = null;
+    public $name;
 
     /** @var string */
-    protected $description = null;
+    public $description;
 
     /** @var string */
-    protected $category_id = null;
+    public $category_id;
 
     /** @var string */
-    protected $geoType = null;
+    public $geoType;
 
     /** @var float */
-    protected $geoPointLat = 0.0;
+    public $geoPointLat;
 
     /** @var float */
-    protected $geoPointLong = 0.0;
+    public $geoPointLong;
 
     /** @var integer */
-    protected $geoRadius = 0;
+    public $geoRadius;
 
     /** @var string */
-    protected $geoCity = null;
+    public $geoCity;
 
     /** @var string */
-    protected $geoCountry = null;
+    public $geoCountry;
 
     /** @var integer */
-    protected $limitsOffers = 0;
+    public $limitsOffers;
 
     /** @var integer */
-    protected $limitsPerDay = 0;
+    public $limitsPerDay;
 
     /** @var integer */
-    protected $limitsPerUser = 0;
+    public $limitsPerUser;
 
     /** @var integer */
-    protected $limitsMinLevel = 0;
+    public $limitsMinLevel;
 
     /** @var float */
-    protected $reward = 0.0;
+    public $reward;
+
+    /** @var Carbon */
+    public $start_date;
+
+    /** @var Carbon */
+    public $end_date;
+
+    /** @var Carbon */
+    public $start_time;
+
+    /** @var Carbon */
+    public $end_time;
 
     /** @var string */
-    protected $start_date = null;
-
-    /** @var string */
-    protected $end_date = null;
-
-    /** @var string */
-    protected $start_time = null;
-
-    /** @var string */
-    protected $end_time = null;
+    public $user_id;
 }

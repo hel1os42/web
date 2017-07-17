@@ -12,5 +12,9 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'core-config');
+
+        $this->app->singleton(CoreServiceInterface::class, function ($app) {
+            return new CoreService(config('core-config'));
+        });
     }
 }

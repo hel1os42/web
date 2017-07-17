@@ -2,6 +2,8 @@
 
 namespace OmniSynapse\CoreService\Entity;
 
+use Carbon\Carbon;
+
 /**
  * Class User
  * @package OmniSynapse\CoreService\Entity
@@ -9,15 +11,31 @@ namespace OmniSynapse\CoreService\Entity;
  * @property string id
  * @property string username
  * @property string referrer_id
+ * @property array wallets
+ * @property integer level
+ * @property integer points
+ * @property Carbon created_at
  */
 class User
 {
     /** @var string */
-    protected $id = null;
+    public $id;
 
     /** @var string */
-    protected $username = null;
+    public $username;
 
     /** @var string */
-    protected $referrer_id = null;
+    public $referrer_id;
+
+    /** @var array */
+    public $wallets;
+
+    /** @var integer */
+    public $level;
+
+    /** @var integer */
+    public $points;
+
+    /** @var Carbon */
+    public $created_at;
 }
