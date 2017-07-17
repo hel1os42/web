@@ -38,7 +38,7 @@ class Client
     /**
      * @return string
      */
-    public function getBaseUrl() : string
+    private function getBaseUrl() : string
     {
         return config('core-config.base_uri');
     }

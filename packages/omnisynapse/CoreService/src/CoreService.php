@@ -2,15 +2,16 @@
 
 namespace OmniSynapse\CoreService;
 
-use OmniSynapse\CoreService\Entity\Nau;
-use OmniSynapse\CoreService\Entity\Offer;
-use OmniSynapse\CoreService\Entity\Redemption;
-use OmniSynapse\CoreService\Entity\User;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferRedemption;
 use OmniSynapse\CoreService\Job\OfferUpdated;
 use OmniSynapse\CoreService\Job\SendNau;
 use OmniSynapse\CoreService\Job\UserCreated;
+use OmniSynapse\CoreService\Request\OfferCreatedRequest;
+use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
+use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
+use OmniSynapse\CoreService\Request\SendNauRequest;
+use OmniSynapse\CoreService\Request\UserCreatedRequest;
 
 class CoreService implements CoreServiceInterface
 {
@@ -27,48 +28,47 @@ class CoreService implements CoreServiceInterface
     }
 
     /**
-     * @param Offer $offer
+     * @param OfferCreatedRequest $offer
      * @return OfferCreated
      */
-    public function offerCreated(Offer $offer) : OfferCreated
+    public function offerCreated(OfferCreatedRequest $offer) : OfferCreated
     {
         return new OfferCreated($offer);
     }
 
     /**
-     * @param Redemption $redemption
+     * @param OfferRedemptionRequest $redemption
      * @return OfferRedemption
      */
-    public function offerRedemption(Redemption $redemption) : OfferRedemption
+    public function offerRedemption(OfferRedemptionRequest $redemption) : OfferRedemption
     {
         return new OfferRedemption($redemption);
     }
 
     /**
-     * @param Offer $offer
+     * @param OfferUpdatedRequest $offer
      * @return OfferUpdated
      */
-    public function offerUpdated(Offer $offer) : OfferUpdated
+    public function offerUpdated(OfferUpdatedRequest $offer) : OfferUpdated
     {
         return new OfferUpdated($offer);
     }
 
     /**
-     * @param Nau $nau
+     * @param SendNauRequest $nau
      * @return SendNau
      */
-    public function sendNau(Nau $nau) : SendNau
+    public function sendNau(SendNauRequest $nau) : SendNau
     {
         return new SendNau($nau);
     }
 
     /**
-     * @param User $user
-     * @param User|null $referrer
+     * @param UserCreatedRequest $user
      * @return UserCreated
      */
-    public function userCreated(User $user, User $referrer = null) : UserCreated
+    public function userCreated(UserCreatedRequest $user) : UserCreated
     {
-        return new UserCreated($user, $referrer);
+        return new UserCreated($user);
     }
 }

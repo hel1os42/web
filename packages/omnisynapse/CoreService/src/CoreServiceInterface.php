@@ -2,36 +2,36 @@
 
 namespace OmniSynapse\CoreService;
 
-use OmniSynapse\CoreService\Entity\Nau;
-use OmniSynapse\CoreService\Entity\Offer;
-use OmniSynapse\CoreService\Entity\Redemption;
-use OmniSynapse\CoreService\Entity\User;
+use OmniSynapse\CoreService\Request\OfferCreatedRequest;
+use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
+use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
+use OmniSynapse\CoreService\Request\SendNauRequest;
+use OmniSynapse\CoreService\Request\UserCreatedRequest;
 
 interface CoreServiceInterface
 {
     /**
-     * @param Offer $offer
+     * @param OfferCreatedRequest $offer
      */
-    public function offerCreated(Offer $offer);
+    public function offerCreated(OfferCreatedRequest $offer);
 
     /**
-     * @param Redemption $redemption
+     * @param OfferRedemptionRequest $redemption
      */
-    public function offerRedemption(Redemption $redemption);
+    public function offerRedemption(OfferRedemptionRequest $redemption);
 
     /**
-     * @param Offer $offer
+     * @param OfferUpdatedRequest $offer
      */
-    public function offerUpdated(Offer $offer);
+    public function offerUpdated(OfferUpdatedRequest $offer);
 
     /**
-     * @param Nau $nau
+     * @param SendNauRequest $nau
      */
-    public function sendNau(Nau $nau);
+    public function sendNau(SendNauRequest $nau);
 
     /**
-     * @param User $user
-     * @param User|null $referrer
+     * @param UserCreatedRequest $user
      */
-    public function userCreated(User $user, User $referrer = null);
+    public function userCreated(UserCreatedRequest $user);
 }

@@ -3,9 +3,21 @@
 namespace OmniSynapse\CoreService\Response;
 
 use Carbon\Carbon;
-use OmniSynapse\CoreService\Entity\Redemption;
 
-class OfferRedemptionResponse extends Redemption
+/**
+ * Class OfferRedemptionResponse
+ * @package OmniSynapse\CoreService\Response
+ *
+ * @property string id
+ * @property string offer_id
+ * @property string user_id
+ * @property integer points
+ * @property string rewarded_id
+ * @property float amount
+ * @property float fee
+ * @property Carbon created_at
+ */
+class OfferRedemptionResponse
 {
     /**
      * @return string

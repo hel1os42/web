@@ -3,7 +3,6 @@
 namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
-use OmniSynapse\CoreService\Entity\Offer;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
 use OmniSynapse\CoreService\Response\OfferUpdatedResponse;
@@ -14,40 +13,16 @@ use OmniSynapse\CoreService\Response\OfferUpdatedResponse;
  */
 class OfferUpdated extends Job
 {
-    protected $offer;
-
     /**
      * OfferUpdated constructor.
-     * @param Offer $offer
+     * @param OfferUpdatedRequest $offer
      */
-    public function __construct(Offer $offer)
+    public function __construct(OfferUpdatedRequest $offer)
     {
         parent::__construct();
 
-        /** @var Offer offer */
-        $this->offer = $offer;
-
         /** @var OfferUpdatedRequest requestObject */
-        $this->requestObject = (new OfferUpdatedRequest)
-            ->setOwnerId($offer->owner_id)
-            ->setName($offer->name)
-            ->setDescription($offer->description)
-            ->setCategoryId($offer->category_id)
-            ->setGeoType($offer->geoType)
-            ->setGeoPointLat($offer->geoPointLat)
-            ->setGeoPointLong($offer->geoPointLong)
-            ->setGeoRadius($offer->geoRadius)
-            ->setGeoCity($offer->geoCity)
-            ->setGeoCountry($offer->geoCountry)
-            ->setLimitsOffers($offer->limitsOffers)
-            ->setLimitsPerDay($offer->limitsPerDay)
-            ->setLimitsPerUser($offer->limitsPerUser)
-            ->setLimitsMinLevel($offer->limitsMinLevel)
-            ->setReward($offer->reward)
-            ->setStartDate($offer->start_date)
-            ->setEndDate($offer->end_date)
-            ->setStartTime($offer->start_time)
-            ->setEndTime($offer->end_time);
+        $this->requestObject = $offer;
     }
 
     /**
@@ -63,7 +38,7 @@ class OfferUpdated extends Job
      */
     public function getHttpPath() : string
     {
-        return '/offer/'.$this->offer->id;
+        return '/offer/'.$this->requestObject->id;
     }
 
     /**

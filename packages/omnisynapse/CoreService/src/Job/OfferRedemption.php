@@ -3,7 +3,6 @@
 namespace OmniSynapse\CoreService\Job;
 
 use OmniSynapse\CoreService\Client;
-use OmniSynapse\CoreService\Entity\Redemption;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferRedemptionResponse;
@@ -14,18 +13,12 @@ use OmniSynapse\CoreService\Response\OfferRedemptionResponse;
  */
 class OfferRedemption extends Job
 {
-    private $redemption;
-
-    public function __construct(Redemption $redemption)
+    public function __construct(OfferRedemptionRequest $redemption)
     {
         parent::__construct();
 
-        /** @var Redemption redemption */
-        $this->redemption = $redemption;
-
         /** @var OfferRedemptionRequest requestObject */
-        $this->requestObject = (new OfferRedemptionRequest())
-            ->setUserId($redemption->user_id);
+        $this->requestObject = $redemption;
     }
 
     /**
@@ -41,7 +34,7 @@ class OfferRedemption extends Job
      */
     public function getHttpPath() : string
     {
-        return '/offers/'.$this->redemption->id.'/redemption';
+        return '/offers/'.$this->requestObject->id.'/redemption';
     }
 
     /**

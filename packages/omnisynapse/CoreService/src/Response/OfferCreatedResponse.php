@@ -3,10 +3,45 @@
 namespace OmniSynapse\CoreService\Response;
 
 use Carbon\Carbon;
-use OmniSynapse\CoreService\Entity\Offer;
 
-class OfferCreatedResponse extends Offer
+/**
+ * Class OfferCreatedResponse
+ * @package OmniSynapse\CoreService\Response
+ *
+ * @property string id
+ * @property string owner_id
+ * @property string name
+ * @property string description
+ * @property string category_id
+ *
+ * @property string geoType
+ * @property float geoPointLat
+ * @property float geoPointLong
+ * @property integer geoRadius
+ * @property string geoCity
+ * @property string geoCountry
+ *
+ * @property integer limitsOffers
+ * @property integer limitsPerDay
+ * @property integer limitsPerUser
+ * @property integer limitsMinLevel
+ *
+ * @property float reward
+ * @property Carbon start_date
+ * @property Carbon end_date
+ * @property Carbon start_time
+ * @property Carbon end_time
+ */
+class OfferCreatedResponse
 {
+    /**
+     * @return string
+     */
+    public function getId() : string
+    {
+        return $this->id;
+    }
+
     /**
      * @return string
      */

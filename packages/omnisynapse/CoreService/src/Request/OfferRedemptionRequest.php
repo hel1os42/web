@@ -2,15 +2,39 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use OmniSynapse\CoreService\Entity\Offer;
-
-class OfferRedemptionRequest extends Offer implements \JsonSerializable
+/**
+ * Class OfferRedemptionRequest
+ * @package OmniSynapse\CoreService\Request
+ *
+ * @property string id
+ * @property string user_id
+ */
+class OfferRedemptionRequest implements \JsonSerializable
 {
+    /** @var string */
+    public $id;
+
+    /** @var string */
+    public $user_id;
+
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         return [
             'user_id' => $this->user_id,
         ];
+    }
+
+    /**
+     * @param string $id
+     * @return OfferRedemptionRequest
+     */
+    public function setId(string $id) : OfferRedemptionRequest
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**

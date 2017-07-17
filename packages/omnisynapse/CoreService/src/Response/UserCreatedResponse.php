@@ -3,10 +3,42 @@
 namespace OmniSynapse\CoreService\Response;
 
 use Carbon\Carbon;
-use OmniSynapse\CoreService\Entity\User;
 
-class UserCreatedResponse extends User
+/**
+ * Class UserCreatedResponse
+ * @package OmniSynapse\CoreService\Response
+ *
+ * @property string id
+ * @property string username
+ * @property string referrer_id
+ * @property integer level
+ * @property integer points
+ * @property array wallets
+ * @property Carbon created_at
+ */
+class UserCreatedResponse
 {
+    /** @var string */
+    public $id;
+
+    /** @var string */
+    public $username;
+
+    /** @var string */
+    public $referrer_id;
+
+    /** @var integer */
+    public $level;
+
+    /** @var integer */
+    public $points;
+
+    /** @var array */
+    public $wallets;
+
+    /** @var Carbon */
+    public $created_at;
+
     /**
      * @return string
      */
