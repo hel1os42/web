@@ -25,7 +25,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -34,7 +36,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
+        'referrer_id'
     ];
 
     /**
@@ -81,9 +85,9 @@ class User extends Authenticatable
      *
      * @return mixed
      */
-    public function getReferrer()
+    public function getReferrerId()
     {
-        return $this->referrer;
+        return $this->referrer_id;
     }
 
 
@@ -123,6 +127,18 @@ class User extends Authenticatable
     public function setPassword($password)
     {
         $this->password = $password;
+    }
+
+    /**
+     * Set user referrer id
+     *
+     * @param string $referrerId
+     *
+     * @return $this
+     */
+    public function setReferrerId($referrerId)
+    {
+        $this->referrer_id = $referrerId;
     }
 
 }

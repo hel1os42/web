@@ -15,11 +15,23 @@ class RegisterController extends Controller
     /**
      * Return user register form
      *
+     * @param $referrerId
+     *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function getRegisterForm()
+    public function getRegisterForm($referrerId)
     {
-        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('auth.register');
+        if (!User::find($referrerId) instanceof User) {
+            return response()->error(Response::HTTP_NOT_FOUND);
+        }
+        return Auth::check() ?
+            redirect()->route('profile', Auth::id()) :
+            response()->render('auth.register', [
+                'referrer_id' => $referrerId,
+                'login' => null,
+                'password' => null,
+                'password_confirm' => null
+            ]);
     }
 
     /**
@@ -30,10 +42,15 @@ class RegisterController extends Controller
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
+
+        if (!User::find($request->referrer_id) instanceof User) {
+            return response()->error(Response::HTTP_UNAUTHORIZED, trans('error.bad_referrer'));
+        }
         $user = new User();
         $user->setName($request->name)
             ->setEmail($request->email)
             ->setPassword(Hash::make($request->password));
+        $user->setReferrerId($request->referrer_id);
         $user->save();
 
         if ($request->wantsJson()) {
