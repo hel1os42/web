@@ -19,11 +19,11 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('loginForm');
     Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
     Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
-    Route::get('register', '\App\Http\Controllers\Auth\RegisterController@getRegisterForm')->name('registerForm');
+    Route::get('register/{id}', '\App\Http\Controllers\Auth\RegisterController@getRegisterForm')->where('id', '[a-z0-9-]+')->name('registerForm');
 });
 
-Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
 
+Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
 
 //---- Unauthorized users
 

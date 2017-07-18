@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string name
  * @property string email
  * @property string password
+ * @property User referrer
  */
 class User extends Authenticatable
 {
@@ -25,7 +26,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -34,7 +37,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
+        'referrer_id'
     ];
 
     /**
@@ -44,6 +49,16 @@ class User extends Authenticatable
      */
     public $incrementing = false;
 
+
+    /**
+     * Get the referrer record associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function referrer()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
 
     /**
      * Get user name
@@ -81,9 +96,9 @@ class User extends Authenticatable
      *
      * @return mixed
      */
-    public function getReferrer()
+    public function getReferrerId()
     {
-        return $this->referrer;
+        return $this->referrer_id;
     }
 
 
