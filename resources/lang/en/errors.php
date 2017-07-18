@@ -9,7 +9,6 @@ return [
     'invalid_email_or_password' => 'Invalid email or password.',
     'jwt_exception' => 'Failed to create token. Error:',
     'token_expired' => 'Token expired. Error:',
-    'token_invalid' => 'Token invalid. Error:',
-    'bad_referrer' => 'You incorrectly specified referrer user'
+    'token_invalid' => 'Token invalid. Error:'
 
 ];

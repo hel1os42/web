@@ -42,10 +42,6 @@ class RegisterController extends Controller
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
-
-        if (!User::find($request->referrer_id) instanceof User) {
-            return response()->error(Response::HTTP_UNAUTHORIZED, trans('error.bad_referrer'));
-        }
         $user = new User();
         $user->setName($request->name)
             ->setEmail($request->email)
