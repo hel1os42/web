@@ -1,6 +1,6 @@
 {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
 
-<form action="/auth/login" method="post" target="_top">
+<form action="{{route('login')}}" method="post" target="_top">
     {{ csrf_field() }}
     
     <input type="email" name="email" placeholder="email">

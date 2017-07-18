@@ -32,18 +32,16 @@ class LoginController extends Controller
 
             try {
                 if (false === $token = \JWTAuth::attempt($credentials)) {
-                    return response()->render(null, [
-                        'errors' => [
-                            'invalid_email_or_password' => null,
-                        ]
-                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    return response()->error(
+                        Response::HTTP_UNPROCESSABLE_ENTITY,
+                        trans('errors.invalid_email_or_password')
+                    );
                 }
             } catch (JWTException $e) {
-                return response()->render(null, [
-                    'errors' => [
-                        'failed_to_create_token' => $e->getMessage(),
-                    ]
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->error(
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    trans('errors.jwt_exception') . $e->getMessage()
+                );
             }
 
             return response()->render(null, compact('token'));
@@ -53,7 +51,7 @@ class LoginController extends Controller
 
         if (false === $attempt) {
             session()->flash('message', trans('auth.failed'));
-            return redirect()->route('getLogin');
+            return redirect()->route('loginForm');
         }
 
         return redirect(request()->get('redirect_to', '/'));
@@ -69,16 +67,15 @@ class LoginController extends Controller
             try {
                 $logout = \JWTAuth::parseToken()->invalidate();
             } catch (JWTException $e) {
-                return response()->render(null, [
-                    'errors' => [
-                        'jwt_exception' => $e->getMessage(),
-                    ]
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->error(
+                    Response::HTTP_INTERNAL_SERVER_ERROR,
+                    trans('errors.jwt_exception') . $e->getMessage()
+                );
             }
             return response()->render(null, compact('logout'));
         }
 
         auth()->logout();
-        return redirect('/');
+        return redirect()->route('home');
     }
 }
