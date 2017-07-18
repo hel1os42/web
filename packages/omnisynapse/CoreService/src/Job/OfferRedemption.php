@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Offer;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
@@ -13,12 +14,18 @@ use OmniSynapse\CoreService\Response\OfferRedemptionResponse;
  */
 class OfferRedemption extends Job
 {
-    public function __construct(OfferRedemptionRequest $redemption)
+    /**
+     * OfferRedemption constructor.
+     * @param Offer $offer
+     */
+    public function __construct(Offer $offer)
     {
         parent::__construct();
 
         /** @var OfferRedemptionRequest requestObject */
-        $this->requestObject = $redemption;
+        $this->requestObject = $this->getRequestObject()
+            ->setId($offer->id)
+            ->setUserId($offer->user_id);
     }
 
     /**

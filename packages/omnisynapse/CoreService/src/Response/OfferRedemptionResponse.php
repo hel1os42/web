@@ -11,7 +11,7 @@ use Carbon\Carbon;
  * @property string id
  * @property string offer_id
  * @property string user_id
- * @property integer points
+ * @property int points
  * @property string rewarded_id
  * @property float amount
  * @property float fee
@@ -80,6 +80,6 @@ class OfferRedemptionResponse
      */
     public function getCreatedAt() : Carbon
     {
-        return $this->created_at;
+        return Carbon::parse($this->created_at);
     }
 }

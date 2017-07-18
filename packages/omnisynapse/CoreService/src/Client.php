@@ -68,9 +68,9 @@ class Client
     }
 
     /**
-     * @return integer
+     * @return int
      */
-    public function getStatusCode() : integer
+    public function getStatusCode() : int
     {
         return $this->getResponse()->getStatusCode();
     }
@@ -87,9 +87,7 @@ class Client
         /** @var \GuzzleHttp\Client $client */
         $client = $this->getClient();
         $this->response = $client->request($method, $path, [
-            'json' => [
-                'foo' => $params,
-            ],
+            'json' => $params,
         ]);
 
         return $this;

@@ -2,6 +2,8 @@
 
 namespace OmniSynapse\CoreService\Response;
 
+use App\Models\Offer\Limits;
+use App\Models\Offer\Geo;
 use Carbon\Carbon;
 
 /**
@@ -14,18 +16,6 @@ use Carbon\Carbon;
  * @property string description
  * @property string category_id
  *
- * @property string geoType
- * @property float geoPointLat
- * @property float geoPointLong
- * @property integer geoRadius
- * @property string geoCity
- * @property string geoCountry
- *
- * @property integer limitsOffers
- * @property integer limitsPerDay
- * @property integer limitsPerUser
- * @property integer limitsMinLevel
- *
  * @property float reward
  * @property Carbon start_date
  * @property Carbon end_date
@@ -34,6 +24,42 @@ use Carbon\Carbon;
  */
 class OfferCreatedResponse
 {
+    /** @var string */
+    public $id;
+
+    /** @var string */
+    public $owner_id;
+
+    /** @var string */
+    public $name;
+
+    /** @var string */
+    public $description;
+
+    /** @var string */
+    public $category_id;
+
+    /** @var Geo */
+    public $geo;
+
+    /** @var Limits */
+    public $limits;
+
+    /** @var float */
+    public $reward;
+
+    /** @var Carbon */
+    public $start_date;
+
+    /** @var Carbon */
+    public $end_date;
+
+    /** @var Carbon */
+    public $start_time;
+
+    /** @var Carbon */
+    public $end_time;
+
     /**
      * @return string
      */
@@ -75,83 +101,19 @@ class OfferCreatedResponse
     }
 
     /**
-     * @return string
+     * @return Geo
      */
-    public function getGeoType() : string
+    public function geoGeo() : Geo
     {
-        return $this->geoType;
+        return $this->geo;
     }
 
     /**
-     * @return float
+     * @return Limits
      */
-    public function getGeoPointLat() : float
+    public function getLimits() : Limits
     {
-        return $this->geoPointLat;
-    }
-
-    /**
-     * @return float
-     */
-    public function getGeoPointLong() : float
-    {
-        return $this->geoPointLong;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getGeoRadius() : integer
-    {
-        return $this->geoRadius;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGeoCity() : string
-    {
-        return $this->geoCity;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGeoCountry() : string
-    {
-        return $this->geoCountry;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getLimitsOffers() : integer
-    {
-        return $this->limitsOffers;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getLimitsPerDay() : integer
-    {
-        return $this->limitsPerDay;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getLimitsPerUser() : integer
-    {
-        return $this->limitsPerUser;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getLimitsMinLevel() : integer
-    {
-        return $this->limitsMinLevel;
+        return $this->limits;
     }
 
     /**
@@ -167,7 +129,7 @@ class OfferCreatedResponse
      */
     public function getStartDate() : Carbon
     {
-        return $this->start_date;
+        return Carbon::parse($this->start_date);
     }
 
     /**
@@ -175,7 +137,7 @@ class OfferCreatedResponse
      */
     public function getEndDate() : Carbon
     {
-        return $this->end_date;
+        return Carbon::parse($this->end_date);
     }
 
     /**
@@ -183,7 +145,7 @@ class OfferCreatedResponse
      */
     public function getStartTime() : Carbon
     {
-        return $this->start_time;
+        return Carbon::parse($this->start_time);
     }
 
     /**
@@ -191,6 +153,6 @@ class OfferCreatedResponse
      */
     public function getEndTime() : Carbon
     {
-        return $this->end_time;
+        return Carbon::parse($this->end_time);
     }
 }

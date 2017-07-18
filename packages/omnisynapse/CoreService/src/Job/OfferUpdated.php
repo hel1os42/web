@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Offer;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
@@ -15,14 +16,25 @@ class OfferUpdated extends Job
 {
     /**
      * OfferUpdated constructor.
-     * @param OfferUpdatedRequest $offer
+     * @param Offer $offer
      */
-    public function __construct(OfferUpdatedRequest $offer)
+    public function __construct(Offer $offer)
     {
         parent::__construct();
 
         /** @var OfferUpdatedRequest requestObject */
-        $this->requestObject = $offer;
+        $this->requestObject = $this->getRequestObject()
+            ->setOwnerId($offer->getOwnerId())
+            ->setName($offer->getName())
+            ->setDescription($offer->getDescription())
+            ->setCategoryId($offer->getCategoryId())
+            ->setGeo($offer->geo)
+            ->setLimits($offer->limits)
+            ->setReward($offer->getReward())
+            ->setStartDate($offer->getStartDate())
+            ->setEndDate($offer->getEndDate())
+            ->setStartTime($offer->getStartTime())
+            ->setEndTime($offer->getEndTime());
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
+use App\Models\Offer\Limits;
+use App\Models\Offer\Geo;
 use Carbon\Carbon;
 
 /**
@@ -13,18 +15,6 @@ use Carbon\Carbon;
  * @property string name
  * @property string description
  * @property string category_id
- *
- * @property string geoType
- * @property float geoPointLat
- * @property float geoPointLong
- * @property integer geoRadius
- * @property string geoCity
- * @property string geoCountry
- *
- * @property integer limitsOffers
- * @property integer limitsPerDay
- * @property integer limitsPerUser
- * @property integer limitsMinLevel
  *
  * @property float reward
  * @property Carbon start_date
@@ -49,35 +39,11 @@ class OfferUpdatedRequest implements \JsonSerializable
     /** @var string */
     public $category_id;
 
-    /** @var string */
-    public $geoType;
+    /** @var Geo */
+    public $geo;
 
-    /** @var float */
-    public $geoPointLat;
-
-    /** @var float */
-    public $geoPointLong;
-
-    /** @var integer */
-    public $geoRadius;
-
-    /** @var string */
-    public $geoCity;
-
-    /** @var string */
-    public $geoCountry;
-
-    /** @var integer */
-    public $limitsOffers;
-
-    /** @var integer */
-    public $limitsPerDay;
-
-    /** @var integer */
-    public $limitsPerUser;
-
-    /** @var integer */
-    public $limitsMinLevel;
+    /** @var Limits */
+    public $limits;
 
     /** @var float */
     public $reward;
@@ -105,20 +71,20 @@ class OfferUpdatedRequest implements \JsonSerializable
             'description'       => $this->description,
             'category_id'       => $this->category_id,
             'geo'               => [
-                'type'          => $this->geoType,
+                'type'          => $this->geo->getType(),
                 'point'         => [
-                    'lat'       => $this->geoPointLat,
-                    'long'      => $this->geoPointLong,
+                    'lat'       => $this->geo->getPoint()->getLat(),
+                    'long'      => $this->geo->getPoint()->getLong(),
                 ],
-                'radius'        => $this->geoRadius,
-                'city'          => $this->geoCity,
-                'country'       => $this->geoCountry,
+                'radius'        => $this->geo->getRadius(),
+                'city'          => $this->geo->getCity(),
+                'country'       => $this->geo->getCountry(),
             ],
             'limits'            => [
-                'offers'        => $this->limitsOffers,
-                'per_day'       => $this->limitsPerDay,
-                'per_user'      => $this->limitsPerUser,
-                'min_level'     => $this->limitsMinLevel,
+                'offers'        => $this->limits->getOffers(),
+                'per_day'       => $this->limits->getPerDay(),
+                'per_user'      => $this->limits->getPerUser(),
+                'min_level'     => $this->limits->getMinLevel(),
             ],
             'reward'            => $this->reward,
             'start_date'        => $this->start_date,
@@ -179,102 +145,22 @@ class OfferUpdatedRequest implements \JsonSerializable
     }
 
     /**
-     * @param string $geoType
+     * @param Geo $geo
      * @return OfferUpdatedRequest
      */
-    public function setGeoType(string $geoType) : OfferUpdatedRequest
+    public function setGeo(Geo $geo) : OfferUpdatedRequest
     {
-        $this->geoType = $geoType;
+        $this->geo = $geo;
         return $this;
     }
 
     /**
-     * @param float $geoPointLat
+     * @param Limits $limits
      * @return OfferUpdatedRequest
      */
-    public function setGeoPointLat(float $geoPointLat) : OfferUpdatedRequest
+    public function setLimits(Limits $limits) : OfferUpdatedRequest
     {
-        $this->geoPointLat = $geoPointLat;
-        return $this;
-    }
-
-    /**
-     * @param float $geoPointLong
-     * @return OfferUpdatedRequest
-     */
-    public function setGeoPointLong(float $geoPointLong) : OfferUpdatedRequest
-    {
-        $this->geoPointLong = $geoPointLong;
-        return $this;
-    }
-
-    /**
-     * @param integer $geoRadius
-     * @return OfferUpdatedRequest
-     */
-    public function setGeoRadius(integer $geoRadius) : OfferUpdatedRequest
-    {
-        $this->geoRadius = $geoRadius;
-        return $this;
-    }
-
-    /**
-     * @param string $geoCity
-     * @return OfferUpdatedRequest
-     */
-    public function setGeoCity(string $geoCity) : OfferUpdatedRequest
-    {
-        $this->geoCity = $geoCity;
-        return $this;
-    }
-
-    /**
-     * @param string $geoCountry
-     * @return OfferUpdatedRequest
-     */
-    public function setGeoCountry(string $geoCountry) : OfferUpdatedRequest
-    {
-        $this->geoCountry = $geoCountry;
-        return $this;
-    }
-
-    /**
-     * @param integer $limitsOffers
-     * @return OfferUpdatedRequest
-     */
-    public function setLimitsOffers(integer $limitsOffers) : OfferUpdatedRequest
-    {
-        $this->limitsOffers = $limitsOffers;
-        return $this;
-    }
-
-    /**
-     * @param integer $limitsPerDay
-     * @return OfferUpdatedRequest
-     */
-    public function setLimitsPerDay(integer $limitsPerDay) : OfferUpdatedRequest
-    {
-        $this->limitsPerDay = $limitsPerDay;
-        return $this;
-    }
-
-    /**
-     * @param integer $limitsPerUser
-     * @return OfferUpdatedRequest
-     */
-    public function setLimitsPerUser(integer $limitsPerUser) : OfferUpdatedRequest
-    {
-        $this->limitsPerUser = $limitsPerUser;
-        return $this;
-    }
-
-    /**
-     * @param integer $limitsMinLevel
-     * @return OfferUpdatedRequest
-     */
-    public function setLimitsMinLevel(integer $limitsMinLevel) : OfferUpdatedRequest
-    {
-        $this->limitsMinLevel = $limitsMinLevel;
+        $this->limits = $limits;
         return $this;
     }
 

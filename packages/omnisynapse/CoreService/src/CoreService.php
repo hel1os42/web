@@ -2,16 +2,14 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Models\Nau;
+use App\Models\Offer;
+use App\Models\User;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferRedemption;
 use OmniSynapse\CoreService\Job\OfferUpdated;
 use OmniSynapse\CoreService\Job\SendNau;
 use OmniSynapse\CoreService\Job\UserCreated;
-use OmniSynapse\CoreService\Request\OfferCreatedRequest;
-use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
-use OmniSynapse\CoreService\Request\OfferUpdatedRequest;
-use OmniSynapse\CoreService\Request\SendNauRequest;
-use OmniSynapse\CoreService\Request\UserCreatedRequest;
 
 class CoreService implements CoreServiceInterface
 {
@@ -28,46 +26,46 @@ class CoreService implements CoreServiceInterface
     }
 
     /**
-     * @param OfferCreatedRequest $offer
+     * @param Offer $offer
      * @return OfferCreated
      */
-    public function offerCreated(OfferCreatedRequest $offer) : OfferCreated
+    public function offerCreated(Offer $offer) : OfferCreated
     {
         return new OfferCreated($offer);
     }
 
     /**
-     * @param OfferRedemptionRequest $redemption
+     * @param Offer $redemption
      * @return OfferRedemption
      */
-    public function offerRedemption(OfferRedemptionRequest $redemption) : OfferRedemption
+    public function offerRedemption(Offer $redemption) : OfferRedemption
     {
         return new OfferRedemption($redemption);
     }
 
     /**
-     * @param OfferUpdatedRequest $offer
+     * @param Offer $offer
      * @return OfferUpdated
      */
-    public function offerUpdated(OfferUpdatedRequest $offer) : OfferUpdated
+    public function offerUpdated(Offer $offer) : OfferUpdated
     {
         return new OfferUpdated($offer);
     }
 
     /**
-     * @param SendNauRequest $nau
+     * @param Nau $nau
      * @return SendNau
      */
-    public function sendNau(SendNauRequest $nau) : SendNau
+    public function sendNau(Nau $nau) : SendNau
     {
         return new SendNau($nau);
     }
 
     /**
-     * @param UserCreatedRequest $user
+     * @param User $user
      * @return UserCreated
      */
-    public function userCreated(UserCreatedRequest $user) : UserCreated
+    public function userCreated(User $user) : UserCreated
     {
         return new UserCreated($user);
     }

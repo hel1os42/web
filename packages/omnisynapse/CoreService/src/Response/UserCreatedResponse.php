@@ -11,8 +11,8 @@ use Carbon\Carbon;
  * @property string id
  * @property string username
  * @property string referrer_id
- * @property integer level
- * @property integer points
+ * @property int level
+ * @property int points
  * @property array wallets
  * @property Carbon created_at
  */
@@ -27,10 +27,10 @@ class UserCreatedResponse
     /** @var string */
     public $referrer_id;
 
-    /** @var integer */
+    /** @var int */
     public $level;
 
-    /** @var integer */
+    /** @var int */
     public $points;
 
     /** @var array */
@@ -72,17 +72,17 @@ class UserCreatedResponse
     }
 
     /**
-     * @return integer
+     * @return int
      */
-    public function getLevel() : integer
+    public function getLevel() : int
     {
         return $this->level;
     }
 
     /**
-     * @return integer
+     * @return int
      */
-    public function getPoints() : integer
+    public function getPoints() : int
     {
         return $this->points;
     }
@@ -92,6 +92,6 @@ class UserCreatedResponse
      */
     public function getCreatedAt() : Carbon
     {
-        return $this->created_at;
+        return Carbon::parse($this->created_at);
     }
 }
