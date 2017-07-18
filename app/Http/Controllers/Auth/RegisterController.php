@@ -21,14 +21,15 @@ class RegisterController extends Controller
     public function getRegisterForm(string $invite)
     {
         $referrerUser = new User();
-        if(!$referrerUser->findByInvite($invite) instanceof User){
+        $referrerUser = $referrerUser->findByInvite($invite);
+        if(!$referrerUser instanceof User){
             return response()->error(Response::HTTP_NOT_FOUND);
         }
 
         return Auth::check() ?
             redirect()->route('profile', Auth::id()) :
             response()->render('auth.register', [
-                'invite' => $invite,
+                'referrer_id' => $referrerUser->getId(),
                 'login' => null,
                 'password' => null,
                 'password_confirm' => null
@@ -48,7 +49,7 @@ class RegisterController extends Controller
             ->setEmail($request->email)
             ->setPassword($request->password);
         $user->setInvite($user->generateInvite());
-        $user->referrer()->associate($user->findByInvite($request->invite)->getReferrerId());
+        $user->referrer()->associate($request->referrer_id);
         $user->save();
 
         if ($request->wantsJson()) {

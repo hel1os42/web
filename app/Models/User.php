@@ -62,6 +62,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Get user name
      *
      * @return mixed
@@ -161,7 +169,7 @@ class User extends Authenticatable
      */
     public function generateInvite()
     {
-        $new_invite = substr(uniqid(), 0, rand(3,8));
+        $new_invite = substr(uniqid(), 0, rand(3, 8));
 
         return $this->findByInvite($new_invite) instanceof $this ? $this->generateInvite() : $new_invite;
     }
