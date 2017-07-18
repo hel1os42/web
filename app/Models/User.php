@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class User
@@ -81,17 +82,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get password
-     *
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-
-    /**
      * Get user referrer id
      *
      * @return mixed
@@ -137,7 +127,43 @@ class User extends Authenticatable
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = Hash::make($password);
+    }
+
+    /**
+     * Set invite code
+     *
+     * @param $invite
+     */
+    public function setInvite($invite)
+    {
+        $this->invite_code = $invite;
+    }
+
+
+    /**
+     * Find User by invite code
+     *
+     * @param string $invite
+     *
+     * @return $this
+     */
+    public function findByInvite(string $invite)
+    {
+        return $this->where('invite_code', $invite)->first();
+    }
+
+
+    /**
+     * Generate invite when user register
+     *
+     * @return string
+     */
+    public function generateInvite()
+    {
+        $new_invite = substr(uniqid(), 0, rand(3,8));
+
+        return $this->findByInvite($new_invite) instanceof $this ? $this->generateInvite() : $new_invite;
     }
 
 }
