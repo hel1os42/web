@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
@@ -16,7 +15,8 @@ class UsersTableSeeder extends Seeder
         $user = new User();
         $user->setName(ENV('DEF_USER_NAME'))
             ->setEmail(ENV('DEF_USER_MAIL'))
-            ->setPassword(Hash::make(ENV('DEF_USER_PASSWORD')));
+            ->setPassword(ENV('DEF_USER_PASSWORD'));
+        $user->setInvite($user->generateInvite());
         $user->save();
     }
 }
