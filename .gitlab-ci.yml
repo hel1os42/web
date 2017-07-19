@@ -18,7 +18,8 @@ build:
     - curl -sS https://getcomposer.org/installer | php > /dev/null
     - php composer.phar install --no-plugins --dev --no-progress
   artifacts:
-    paths: ./*
+    paths:
+      - ./*
 
 PHP_CodeSniffer:
   stage: test
@@ -37,11 +38,3 @@ PHPMD:
   artifacts:
     paths:
       - report.txt
-
-#"PHP Mess Detector":
-#  stage: test
-#  script:
-#    - curl -sS https://getcomposer.org/installer | php > /dev/null
-#    - php composer.phar install --no-plugins
-#    - wget -c http://static.phpmd.org/php/latest/phpmd.phar --no-check-certificate
-#    - php phpmd.phar ./ text ./rulesets/cleancode.xml,./rulesets/controversial.xml,./rulesets/naming.xml,design --suffixes php --exclude vendor,cache,compiled,public,_ide_helper
