@@ -27,7 +27,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
             return response()->view($view, $params, $statusCode);
         });
 
-        Response::macro('error', function (int $statusCode, string $message = '') {
+        Response::macro('error', function (int $statusCode, string $message = null) {
 
             if (empty($message)) {
                 switch ($statusCode) {
