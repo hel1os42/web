@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -48,33 +48,9 @@ class Offer extends Model
     private $primaryKey = 'id';
 
     /** @var array */
-    protected $fillable = [
-        'acc_id',
-        'name',
-        'descr',
-        'reward',
-        'status',
-        'dt_start',
-        'dt_finish',
-        'tm_start',
-        'tm_finish',
-        'country',
-        'city',
-        'categ',
-        'max_count',
-        'max_for_user',
-        'max_per_day',
-        'max_for_user_per_day',
-        'min_level',
-        'lat',
-        'lng',
-        'radius',
-    ];
-
-    /** @var array */
     protected $casts = [
         'id'                    => 'string',
-        'acc_id'                => 'int',
+        'acc_id'                => 'integer',
         'name'                  => 'string',
         'descr'                 => 'string',
         'reward'                => 'float',
@@ -86,14 +62,14 @@ class Offer extends Model
         'country'               => 'string',
         'city'                  => 'string',
         'categ'                 => 'string',
-        'max_count'             => 'int',
-        'max_for_user'          => 'int',
-        'max_per_day'           => 'int',
-        'max_for_user_per_day'  => 'int',
-        'min_level'             => 'int',
+        'max_count'             => 'integer',
+        'max_for_user'          => 'integer',
+        'max_per_day'           => 'integer',
+        'max_for_user_per_day'  => 'integer',
+        'min_level'             => 'integer',
         'lat'                   => 'double',
         'lng'                   => 'double',
-        'radius'                => 'int',
+        'radius'                => 'integer',
     ];
 
     /** @return string */
