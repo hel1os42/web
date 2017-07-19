@@ -7,6 +7,11 @@ stages:
   - test
   - deploy
 
+test_job:
+  stage: test
+  script:
+   - echo 'test'
+
 #"PHP Mess Detector":
 #  stage: test
 #  script:
