@@ -5,7 +5,7 @@ namespace OmniSynapse\CoreService\Response;
 use Carbon\Carbon;
 
 /**
- * Class OfferRedemptionResponse
+ * Class OfferForRedemption.
  * @package OmniSynapse\CoreService\Response
  *
  * @property string id
@@ -17,7 +17,7 @@ use Carbon\Carbon;
  * @property float fee
  * @property Carbon created_at
  */
-class OfferRedemptionResponse
+class OfferForRedemption
 {
     /**
      * @return string

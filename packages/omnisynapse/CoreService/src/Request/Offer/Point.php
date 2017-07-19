@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\Offer;
+namespace OmniSynapse\CoreService\Request\Offer;
 
 /**
  * Class Point
  * @package OmniSynapse\CoreService\Point
  *
  * @property float lat
- * @property float long
+ * @property float lon
  */
 class Point implements \JsonSerializable
 {
@@ -15,17 +15,17 @@ class Point implements \JsonSerializable
     private $lat;
 
     /** @var float */
-    private $long;
+    private $lon;
 
     /**
      * Point constructor.
      * @param float $lat
-     * @param float $long
+     * @param float $lon
      */
-    public function __construct(float $lat, float $long)
+    public function __construct(float $lat, float $lon)
     {
         $this->setLat($lat)
-            ->setLong($long);
+            ->setLon($lon);
     }
 
     /**
@@ -35,7 +35,7 @@ class Point implements \JsonSerializable
     {
         return [
             'lat'   => $this->getLat(),
-            'long'  => $this->getLong(),
+            'lon'   => $this->getLon(),
         ];
     }
 
@@ -50,9 +50,9 @@ class Point implements \JsonSerializable
     /**
      * @return float
      */
-    public function getLong() : float
+    public function getLon() : float
     {
-        return $this->long;
+        return $this->lon;
     }
 
     /**
@@ -66,12 +66,12 @@ class Point implements \JsonSerializable
     }
 
     /**
-     * @param float $long
+     * @param float $lon
      * @return Point
      */
-    public function setLong(float $long) : Point
+    public function setLon(float $lon) : Point
     {
-        $this->long = $long;
+        $this->lon = $lon;
         return $this;
     }
 }

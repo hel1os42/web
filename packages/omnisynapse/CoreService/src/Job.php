@@ -38,14 +38,16 @@ abstract class Job implements ShouldQueue
             $this->getHttpPath(),
             [
                 'json' => null !== $this->requestObject
-                    ? $this->requestObject->jsonSerialize()
+                    ? $this->getRequestObject()->jsonSerialize()
                     : null
             ]
         );
         $mapper = new \JsonMapper();
         $responseClassName = dirname(__FILE__).'/Response/'.$this->getResponseClass();
         $responseObject = $mapper->map($this->client->getResponse(), new $responseClassName);
+
         event($responseObject); // TODO: or $requestObject? how I can use this event? who can explain me?)
+        return $responseObject;
     }
 
     /** @return string */

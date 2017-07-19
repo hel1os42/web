@@ -2,23 +2,24 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Nau;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Request\SendNauRequest;
-use OmniSynapse\CoreService\Response\SendNauResponse;
+use OmniSynapse\CoreService\Response\SendNau as SendNauResponse;
+use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
+
+// TODO: project models
 
 class SendNau extends Job
 {
     /**
      * SendNau constructor.
-     * @param Nau $nau
+     * @param XXX $nau
      */
-    public function __construct(Nau $nau)
+    public function __construct(XXX $nau)
     {
         parent::__construct();
 
-        /** @var SendNauRequest requestObject */
-        $this->requestObject = $this->getRequestObject();
+        /** @var SendNau requestObject */
+        $this->requestObject = (new SendNauRequest());
     }
 
     /**
@@ -42,7 +43,7 @@ class SendNau extends Job
      */
     protected function getRequestObject() : \JsonSerializable
     {
-        return new SendNauRequest();
+        return $this->requestObject;
     }
 
     /**

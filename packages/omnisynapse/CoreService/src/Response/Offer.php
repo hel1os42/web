@@ -2,12 +2,12 @@
 
 namespace OmniSynapse\CoreService\Response;
 
-use App\Models\Offer\Limits;
-use App\Models\Offer\Geo;
 use Carbon\Carbon;
+use OmniSynapse\CoreService\Request\Offer\Geo;
+use OmniSynapse\CoreService\Request\Offer\Limits;
 
 /**
- * Class OfferUpdatedResponse
+ * Class OfferCreatedResponse
  * @package OmniSynapse\CoreService\Response
  *
  * @property string id
@@ -22,7 +22,7 @@ use Carbon\Carbon;
  * @property Carbon start_time
  * @property Carbon end_time
  */
-class OfferUpdatedResponse
+class Offer
 {
     /** @var string */
     public $id;
@@ -103,7 +103,7 @@ class OfferUpdatedResponse
     /**
      * @return Geo
      */
-    public function getGeo() : Geo
+    public function geoGeo() : Geo
     {
         return $this->geo;
     }

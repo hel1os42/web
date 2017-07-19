@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-class SendNauRequest implements \JsonSerializable
+class SendNau implements \JsonSerializable
 {
     public function jsonSerialize()
     {

@@ -2,11 +2,11 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Offer;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Request\OfferCreatedRequest;
-use OmniSynapse\CoreService\Response\OfferCreatedResponse;
+use OmniSynapse\CoreService\Request\Offer;
+
+// TODO: project models
 
 /**
  * Class OfferCreated
@@ -16,14 +16,14 @@ class OfferCreated extends Job
 {
     /**
      * OfferCreated constructor.
-     * @param Offer $offer
+     * @param XXX $offer
      */
-    public function __construct(Offer $offer)
+    public function __construct(XXX $offer)
     {
         parent::__construct();
 
-        /** @var OfferCreatedRequest requestObject */
-        $this->requestObject = $this->getRequestObject()
+        /** @var Offer requestObject */
+        $this->requestObject = (new Offer())
             ->setOwnerId($offer->getOwnerId())
             ->setName($offer->getName())
             ->setDescription($offer->getDescription())
@@ -58,7 +58,7 @@ class OfferCreated extends Job
      */
     protected function getRequestObject() : \JsonSerializable
     {
-        return new OfferCreatedRequest();
+        return $this->requestObject;
     }
 
     /**
@@ -66,6 +66,6 @@ class OfferCreated extends Job
      */
     protected function getResponseClass() : string
     {
-        return OfferCreatedResponse::class;
+        return Offer::class;
     }
 }

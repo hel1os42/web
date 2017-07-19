@@ -2,11 +2,12 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Offer;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Request\OfferRedemptionRequest;
-use OmniSynapse\CoreService\Response\OfferRedemptionResponse;
+use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
+use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
+
+// TODO: project models
 
 /**
  * Class OfferRedemption
@@ -16,16 +17,16 @@ class OfferRedemption extends Job
 {
     /**
      * OfferRedemption constructor.
-     * @param Offer $offer
+     * @param XXX $offer
      */
-    public function __construct(Offer $offer)
+    public function __construct(XXX $offer)
     {
         parent::__construct();
 
-        /** @var OfferRedemptionRequest requestObject */
-        $this->requestObject = $this->getRequestObject()
-            ->setId($offer->id)
-            ->setUserId($offer->user_id);
+        /** @var OfferForRedemptionRequest requestObject */
+        $this->requestObject = (new OfferForRedemptionRequest())
+            ->setId($offer->getId())
+            ->setUserId($offer->getUserId());
     }
 
     /**
@@ -49,7 +50,7 @@ class OfferRedemption extends Job
      */
     protected function getRequestObject() : \JsonSerializable
     {
-        return new OfferRedemptionRequest();
+        return $this->requestObject;
     }
 
     /**
@@ -57,6 +58,6 @@ class OfferRedemption extends Job
      */
     protected function getResponseClass() : string
     {
-        return OfferRedemptionResponse::class;
+        return OfferForRedemptionResponse::class;
     }
 }

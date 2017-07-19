@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService;
 
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response;
 
 class Client
@@ -86,9 +87,14 @@ class Client
     {
         /** @var \GuzzleHttp\Client $client */
         $client = $this->getClient();
-        $this->response = $client->request($method, $path, [
-            'json' => $params,
-        ]);
+
+        try {
+            $this->response = $client->request($method, $path, [
+                'json' => $params,
+            ]);
+        } catch (BadResponseException $e) {
+            // TODO: finish error handler
+        }
 
         return $this;
     }

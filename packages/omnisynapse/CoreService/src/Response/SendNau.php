@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Response;
 
-class SendNauResponse
+class SendNau
 {
 
 }

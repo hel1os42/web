@@ -2,15 +2,14 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Offer\Limits;
-use App\Models\Offer\Geo;
 use Carbon\Carbon;
+use OmniSynapse\CoreService\Request\Offer\Geo;
+use OmniSynapse\CoreService\Request\Offer\Limits;
 
 /**
- * Class OfferUpdatedRequest
+ * Class Offer
  * @package OmniSynapse\CoreService\Request
  *
- * @property string id
  * @property string owner_id
  * @property string name
  * @property string description
@@ -22,11 +21,8 @@ use Carbon\Carbon;
  * @property Carbon start_time
  * @property Carbon end_time
  */
-class OfferUpdatedRequest implements \JsonSerializable
+class Offer implements \JsonSerializable
 {
-    /** @var string */
-    public $id;
-
     /** @var string */
     public $owner_id;
 
@@ -95,20 +91,10 @@ class OfferUpdatedRequest implements \JsonSerializable
     }
 
     /**
-     * @param string $id
-     * @return OfferUpdatedRequest
-     */
-    public function setId(string $id) : OfferUpdatedRequest
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
      * @param string $owner_id
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setOwnerId(string $owner_id) : OfferUpdatedRequest
+    public function setOwnerId(string $owner_id) : Offer
     {
         $this->owner_id = $owner_id;
         return $this;
@@ -116,9 +102,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param string $name
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setName(string $name) : OfferUpdatedRequest
+    public function setName(string $name) : Offer
     {
         $this->name = $name;
         return $this;
@@ -126,9 +112,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param string $description
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setDescription(string $description) : OfferUpdatedRequest
+    public function setDescription(string $description) : Offer
     {
         $this->description = $description;
         return $this;
@@ -136,9 +122,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param string $category_id
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setCategoryId(string $category_id) : OfferUpdatedRequest
+    public function setCategoryId(string $category_id) : Offer
     {
         $this->category_id = $category_id;
         return $this;
@@ -146,9 +132,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Geo $geo
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setGeo(Geo $geo) : OfferUpdatedRequest
+    public function setGeo(Geo $geo) : Offer
     {
         $this->geo = $geo;
         return $this;
@@ -156,9 +142,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Limits $limits
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setLimits(Limits $limits) : OfferUpdatedRequest
+    public function setLimits(Limits $limits) : Offer
     {
         $this->limits = $limits;
         return $this;
@@ -166,9 +152,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param float $reward
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setReward(float $reward) : OfferUpdatedRequest
+    public function setReward(float $reward) : Offer
     {
         $this->reward = $reward;
         return $this;
@@ -176,9 +162,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Carbon $start_date
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setStartDate(Carbon $start_date) : OfferUpdatedRequest
+    public function setStartDate(Carbon $start_date) : Offer
     {
         $this->start_date = $start_date->toDateString();
         return $this;
@@ -186,9 +172,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Carbon $end_date
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setEndDate(Carbon $end_date) : OfferUpdatedRequest
+    public function setEndDate(Carbon $end_date) : Offer
     {
         $this->end_date = $end_date->toDateString();
         return $this;
@@ -196,9 +182,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Carbon $start_time
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setStartTime(Carbon $start_time) : OfferUpdatedRequest
+    public function setStartTime(Carbon $start_time) : Offer
     {
         $this->start_time = $start_time->toTimeString();
         return $this;
@@ -206,9 +192,9 @@ class OfferUpdatedRequest implements \JsonSerializable
 
     /**
      * @param Carbon $end_time
-     * @return OfferUpdatedRequest
+     * @return Offer
      */
-    public function setEndTime(Carbon $end_time) : OfferUpdatedRequest
+    public function setEndTime(Carbon $end_time) : Offer
     {
         $this->end_time = $end_time->toTimeString();
         return $this;

@@ -2,31 +2,31 @@
 
 namespace OmniSynapse\CoreService;
 
-use App\Models\Nau;
-use App\Models\Offer;
+// TODO: project models
+
 use App\Models\User;
 
 interface CoreServiceInterface
 {
     /**
-     * @param Offer $offer
+     * @param XXX $offer
      */
-    public function offerCreated(Offer $offer);
+    public function offerCreated(XXX $offer);
 
     /**
-     * @param Offer $redemption
+     * @param XXX $redemption
      */
-    public function offerRedemption(Offer $redemption);
+    public function offerRedemption(XXX $redemption);
 
     /**
-     * @param Offer $offer
+     * @param XXX $offer
      */
-    public function offerUpdated(Offer $offer);
+    public function offerUpdated(XXX $offer);
 
     /**
-     * @param Nau $nau
+     * @param XXX $nau
      */
-    public function sendNau(Nau $nau);
+    public function sendNau(XXX $nau);
 
     /**
      * @param User $user

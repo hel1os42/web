@@ -10,7 +10,7 @@ namespace OmniSynapse\CoreService\Request;
  * @property string username
  * @property string referrer_id
  */
-class UserCreatedRequest implements \JsonSerializable
+class User implements \JsonSerializable
 {
     /** @var string */
     public $id;
@@ -35,9 +35,9 @@ class UserCreatedRequest implements \JsonSerializable
 
     /**
      * @param string $id
-     * @return UserCreatedRequest
+     * @return User
      */
-    public function setId(string $id) : UserCreatedRequest
+    public function setId(string $id) : User
     {
         $this->id = $id;
         return $this;
@@ -45,19 +45,19 @@ class UserCreatedRequest implements \JsonSerializable
 
     /**
      * @param string $username
-     * @return UserCreatedRequest
+     * @return User
      */
-    public function setUsername(string $username) : UserCreatedRequest
+    public function setUsername(string $username) : User
     {
         $this->username = $username;
         return $this;
     }
 
     /**
-     * @param UserCreatedRequest $referrer
-     * @return UserCreatedRequest
+     * @param User $referrer
+     * @return User
      */
-    public function setReferrerId(UserCreatedRequest $referrer=null) : UserCreatedRequest
+    public function setReferrerId(User $referrer=null) : User
     {
         $this->referrer_id = null !== $referrer
             ? $referrer->id

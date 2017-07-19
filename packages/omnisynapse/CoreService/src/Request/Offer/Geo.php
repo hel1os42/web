@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Offer;
+namespace OmniSynapse\CoreService\Request\Offer;
 
 /**
  * Class Geo

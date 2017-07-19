@@ -5,7 +5,7 @@ namespace OmniSynapse\CoreService\Response;
 use Carbon\Carbon;
 
 /**
- * Class UserCreatedResponse
+ * Class User
  * @package OmniSynapse\CoreService\Response
  *
  * @property string id
@@ -16,7 +16,7 @@ use Carbon\Carbon;
  * @property array wallets
  * @property Carbon created_at
  */
-class UserCreatedResponse
+class User
 {
     /** @var string */
     public $id;

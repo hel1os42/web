@@ -5,8 +5,8 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\User;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Request\UserCreatedRequest;
-use \OmniSynapse\CoreService\Response\UserCreatedResponse;
+use OmniSynapse\CoreService\Request\User as UserRequest;
+use OmniSynapse\CoreService\Response\User as UserResponse;
 
 /**
  * Class UserCreated
@@ -23,11 +23,11 @@ class UserCreated extends Job
     {
         parent::__construct();
 
-        /** @var UserCreatedRequest requestObject */
-        $this->requestObject = $this->getRequestObject()
-            ->setId($user->id)
-            ->setUsername($user->username)
-            ->setReferrerId($user->referrer_id);
+        /** @var UserRequest requestObject */
+        $this->requestObject = (new UserRequest())
+            ->setId($user->getId())
+            ->setUsername($user->getName())
+            ->setReferrerId($user->getReferrer());
     }
 
     /**
@@ -51,7 +51,7 @@ class UserCreated extends Job
      */
     protected function getRequestObject() : \JsonSerializable
     {
-        return new UserCreatedRequest();
+        return $this->requestObject;
     }
 
     /**
@@ -59,6 +59,6 @@ class UserCreated extends Job
      */
     protected function getResponseClass() : string
     {
-        return UserCreatedResponse::class;
+        return UserResponse::class;
     }
 }
