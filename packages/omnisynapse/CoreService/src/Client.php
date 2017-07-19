@@ -61,9 +61,9 @@ class Client
     }
 
     /**
-     * @return object
+     * @return \stdClass
      */
-    public function getContent() : object
+    public function getContent() : \stdClass
     {
         return json_decode($this->response->getBody()->getContents());
     }

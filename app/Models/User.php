@@ -136,16 +136,19 @@ class User extends Authenticatable
     public function setPassword($password)
     {
         $this->password = Hash::make($password);
+        return $this;
     }
 
     /**
      * Set invite code
      *
      * @param $invite
+     * @return $this
      */
     public function setInvite($invite)
     {
         $this->invite_code = $invite;
+        return $this;
     }
 
 

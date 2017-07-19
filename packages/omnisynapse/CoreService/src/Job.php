@@ -3,10 +3,13 @@
 namespace OmniSynapse\CoreService;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Http\Response;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\Request\User;
 
 abstract class Job implements ShouldQueue
 {
@@ -30,8 +33,9 @@ abstract class Job implements ShouldQueue
      * Execute the job.
      *
      * @return object
+     * @throws
      */
-    public function handle() : object
+    public function handle()
     {
         $this->client->request(
             $this->getHttpMethod(),
@@ -42,9 +46,16 @@ abstract class Job implements ShouldQueue
                     : null
             ]
         );
-        $mapper = new \JsonMapper();
-        $responseClassName = dirname(__FILE__).'/Response/'.$this->getResponseClass();
-        $responseObject = $mapper->map($this->client->getResponse(), new $responseClassName);
+        $responseClassName = $this->getResponseClass();
+        $content = $this->client->getContent();
+
+        if (isset($content->status) && Response::HTTP_OK !== $content->status) {
+            $error = isset($content->error)
+                ? $content->error
+                : 'Undefined error';
+            throw new RequestException($error);
+        }
+        $responseObject = (new \JsonMapper())->map($content, new $responseClassName);
 
         event($responseObject); // TODO: or $requestObject? how I can use this event? who can explain me?)
         return $responseObject;

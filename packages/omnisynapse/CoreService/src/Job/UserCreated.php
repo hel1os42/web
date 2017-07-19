@@ -27,7 +27,7 @@ class UserCreated extends Job
         $this->requestObject = (new UserRequest())
             ->setId($user->getId())
             ->setUsername($user->getName())
-            ->setReferrerId($user->getReferrer());
+            ->setReferrerId($user->getReferrerId());
     }
 
     /**
