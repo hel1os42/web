@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class ProfileController extends Controller
 {
 
@@ -31,5 +30,4 @@ class ProfileController extends Controller
         }
         return response()->render('user.profile', User::find($userId)->fresh(), Response::HTTP_CREATED);
     }
-
 }

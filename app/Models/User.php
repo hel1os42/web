@@ -173,5 +173,4 @@ class User extends Authenticatable
 
         return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
     }
-
 }

@@ -15,36 +15,20 @@ class ResponseMacroServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Response::macro('render', function (string $view, $params = [], int $statusCode = null) {
-            if (null === $statusCode) {
-                $statusCode = HTTPResponse::HTTP_OK;
-            }
-
-            if (request()->wantsJson()) {
-                return response()->json($params, $statusCode);
-            }
-
-            return response()->view($view, $params, $statusCode);
+        Response::macro('render', function (string $view, $params = [], int $statusCode = HTTPResponse::HTTP_OK) {
+            return request()->wantsJson() ?
+                response()->json($params, $statusCode) :
+                response()->view($view, $params, $statusCode);
         });
 
         Response::macro('error', function (int $statusCode, string $message = null) {
 
             if (empty($message)) {
-                switch ($statusCode) {
-                    case HTTPResponse::HTTP_UNAUTHORIZED:
-                        $message = trans('errors.401');
-                        break;
-                    case HTTPResponse::HTTP_FORBIDDEN:
-                        $message = trans('errors.403');
-                        break;
-                    case HTTPResponse::HTTP_NOT_FOUND:
-                        $message = trans('errors.404');
-                        break;
-                }
+                $message = trans('errors.' . (string)$statusCode);
             }
 
             if (!request()->wantsJson()) {
-                session()->flash('error',$message);
+                session()->flash('error', $message);
                 abort($statusCode);
             }
 
