@@ -7,16 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-
 class RegisterController extends Controller
 {
 
     /**
      * Return user register form
      *
-     * @param string $invite
-     *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse|Response|\Illuminate\Http\RedirectResponse
      */
     public function getRegisterForm(string $invite)
     {
@@ -40,7 +37,7 @@ class RegisterController extends Controller
      * User registration
      *
      * @param \App\Http\Requests\Auth\RegisterRequest $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse|Response
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
