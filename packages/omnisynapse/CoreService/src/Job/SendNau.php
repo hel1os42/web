@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Response\SendNau as SendNauResponse;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
@@ -52,5 +53,13 @@ class SendNau extends Job
     protected function getResponseClass() : string
     {
         return SendNauResponse::class;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function handleError(Response $response)
+    {
+        // TODO: handler errors
     }
 }

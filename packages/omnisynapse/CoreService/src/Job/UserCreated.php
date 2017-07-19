@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\User;
+use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\User as UserRequest;
@@ -60,5 +61,13 @@ class UserCreated extends Job
     protected function getResponseClass() : string
     {
         return UserResponse::class;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function handleError(Response $response)
+    {
+        // TODO: handler errors
     }
 }

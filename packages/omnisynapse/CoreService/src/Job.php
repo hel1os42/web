@@ -2,14 +2,12 @@
 
 namespace OmniSynapse\CoreService;
 
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
-use Illuminate\Http\Response;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use OmniSynapse\CoreService\Exception\RequestException;
-use OmniSynapse\CoreService\Request\User;
 
 abstract class Job implements ShouldQueue
 {
@@ -32,12 +30,12 @@ abstract class Job implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @return object
-     * @throws
+     * @return void
+     * @throws \JsonMapper_Exception
      */
     public function handle()
     {
-        $this->client->request(
+        $response = $this->client->request(
             $this->getHttpMethod(),
             $this->getHttpPath(),
             [
@@ -45,20 +43,23 @@ abstract class Job implements ShouldQueue
                     ? $this->getRequestObject()->jsonSerialize()
                     : null
             ]
-        );
-        $responseClassName = $this->getResponseClass();
-        $content = $this->client->getContent();
+        )->getResponse();
 
-        if (isset($content->status) && Response::HTTP_OK !== $content->status) {
-            $error = isset($content->error)
-                ? $content->error
-                : 'Undefined error';
-            throw new RequestException($error);
+        if ($response->getStatusCode() % 200 > 100) { // TODO: What if status is 404 ? Result will be 4, and <= 100 (no error).
+            $this->handleError($response);
+            return;
         }
-        $responseObject = (new \JsonMapper())->map($content, new $responseClassName);
 
-        event($responseObject); // TODO: or $requestObject? how I can use this event? who can explain me?)
-        return $responseObject;
+        $responseClassName = $this->getResponseClass();
+
+        try {
+            (new \JsonMapper)->map($this->client->getContent(), $responseObject = new $responseClassName);
+        } catch (\JsonMapper_Exception $e) {
+            $this->handleError($response);
+            return;
+        }
+
+        event($responseObject);
     }
 
     /** @return string */
@@ -72,4 +73,6 @@ abstract class Job implements ShouldQueue
 
     /** @return string */
     abstract protected function getResponseClass() : string;
+
+    abstract protected function handleError(Response $response);
 }

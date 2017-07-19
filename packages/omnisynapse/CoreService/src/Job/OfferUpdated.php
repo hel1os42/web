@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
@@ -69,5 +70,13 @@ class OfferUpdated extends Job
     protected function getResponseClass() : string
     {
         return OfferResponse::class;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function handleError(Response $response)
+    {
+        // TODO: handler errors
     }
 }

@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
@@ -59,5 +60,13 @@ class OfferRedemption extends Job
     protected function getResponseClass() : string
     {
         return OfferForRedemptionResponse::class;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function handleError(Response $response)
+    {
+        // TODO: handler errors
     }
 }
