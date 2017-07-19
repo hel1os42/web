@@ -19,14 +19,14 @@ class ProfileController extends Controller
     /**
      * User profile show
      *
-     * @param string $id
+     * @param string $uuid
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function show(string $id)
+    public function show(string $uuid)
     {
         $userId = Auth::id();
-        if ($id !== $userId) {
+        if ($uuid !== $userId) {
             return response()->error(Response::HTTP_FORBIDDEN);
         }
         return response()->render('user.profile', User::find($userId)->fresh(), Response::HTTP_CREATED);

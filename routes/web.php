@@ -33,6 +33,7 @@ Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('users/{id}', '\App\Http\Controllers\User\ProfileController@show')->where('id', '[a-z0-9-]+')->name('profile');
+    Route::resource('offers', '\App\Http\Controllers\OfferController');
 
 });
 
