@@ -8,14 +8,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-
 class RegisterController extends Controller
 {
 
     /**
      * Return user register form
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse|Response|\Illuminate\Http\RedirectResponse
      */
     public function getRegisterForm()
     {
@@ -26,7 +25,7 @@ class RegisterController extends Controller
      * User registration
      *
      * @param \App\Http\Requests\Auth\RegisterRequest $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse|Response
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
