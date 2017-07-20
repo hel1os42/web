@@ -2,9 +2,6 @@
 
 namespace OmniSynapse\CoreService;
 
-use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Psr7\Response;
-
 class Client
 {
     const METHOD_DELETE = 'DELETE';
@@ -15,12 +12,7 @@ class Client
     /**
      * @var Client
      */
-    private $client;
-
-    /**
-     * @var Response
-     */
-    protected $response;
+    public $client;
 
     /**
      * CoreService constructor.
@@ -34,61 +26,5 @@ class Client
         ];
 
         $this->client = new \GuzzleHttp\Client($config);
-    }
-
-    /**
-     * @return \GuzzleHttp\Client
-     */
-    public function getClient() : \GuzzleHttp\Client
-    {
-        return $this->client;
-    }
-
-    /**
-     * @return Response
-     */
-    public function getResponse() : Response
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return \stdClass
-     */
-    public function getContent() : \stdClass
-    {
-        return json_decode($this->response->getBody()->getContents());
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatusCode() : int
-    {
-        return $this->getResponse()->getStatusCode();
-    }
-
-    /**
-     * @param string $method
-     * @param string $path
-     * @param array $params
-     * @return Client
-     * @throws
-     */
-    // TODO: remove the method and use that code in Job class
-    public function request($method, $path, $params=[]) : Client
-    {
-        /** @var \GuzzleHttp\Client $client */
-        $client = $this->getClient();
-
-        try {
-            $this->response = $client->request($method, $path, [
-                'json' => $params,
-            ]);
-        } catch (BadResponseException $e) {
-            // TODO: finish error handler
-        }
-
-        return $this;
     }
 }

@@ -80,6 +80,11 @@ return [
     'locale' => 'en',
 
     /*
+     * Maximum files of daily logs
+     */
+    'log_max_files' => env('LOG_MAX_FILES', 5),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------

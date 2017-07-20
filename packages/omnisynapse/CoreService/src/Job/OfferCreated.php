@@ -4,8 +4,10 @@ namespace OmniSynapse\CoreService\Job;
 
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Job;
-use OmniSynapse\CoreService\Request\Offer;
+use OmniSynapse\CoreService\Request\Offer as OfferRequest;
+use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 
 // TODO: project models
 
@@ -21,10 +23,8 @@ class OfferCreated extends Job
      */
     public function __construct(XXX $offer)
     {
-        parent::__construct();
-
-        /** @var Offer requestObject */
-        $this->requestObject = (new Offer())
+        /** @var OfferRequest requestObject */
+        $this->requestObject = (new OfferRequest())
             ->setOwnerId($offer->getOwnerId())
             ->setName($offer->getName())
             ->setDescription($offer->getDescription())
@@ -51,7 +51,7 @@ class OfferCreated extends Job
      */
     public function getHttpPath() : string
     {
-        return '/offer';
+        return '/offers';
     }
 
     /**
@@ -67,14 +67,24 @@ class OfferCreated extends Job
      */
     protected function getResponseClass() : string
     {
-        return Offer::class;
+        return OfferResponse::class;
     }
 
     /**
      * @param Response $response
+     * @throws RequestException
      */
     public function handleError(Response $response)
     {
-        // TODO: handler errors
+        $errorMessage = isset($this->responseContent->error)
+            ? $this->responseContent->error
+            : 'undefined exception reason';
+        $requestParams = serialize($this->requestObject->jsonSerialize());
+        $logMessage = 'Exception while executing '.self::class.'. Response message: `'.$errorMessage.'`, status: `'.$response->getStatusCode().'.`, Request: '.$requestParams.'.';
+
+        $this->changeLoggerPath('OfferCreated');
+        logger()->error($logMessage);
+
+        throw new RequestException($logMessage);
     }
 }

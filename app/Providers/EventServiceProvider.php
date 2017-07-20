@@ -16,5 +16,8 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Event' => [
             'App\Listeners\EventListener',
         ],
+        'OmniSynapse\CoreService\CoreService' => [
+            'App\Listeners\CoreServiceListener',
+        ],
     ];
 }

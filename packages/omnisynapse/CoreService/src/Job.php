@@ -13,19 +13,11 @@ abstract class Job implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var Client */
-    private $client;
-
     /** @var object */
     protected $requestObject = null;
 
-    /**
-     * Job constructor.
-     */
-    public function __construct()
-    {
-        $this->client = new Client();
-    }
+    /** @var object */
+    protected $responseContent = null;
 
     /**
      * Execute the job.
@@ -35,15 +27,14 @@ abstract class Job implements ShouldQueue
      */
     public function handle()
     {
-        $response = $this->client->request(
-            $this->getHttpMethod(),
-            $this->getHttpPath(),
+        /** @var Response $response */
+        $response = (new Client())->client->request($this->getHttpMethod(), $this->getHttpPath(),
             [
                 'json' => null !== $this->requestObject
                     ? $this->getRequestObject()->jsonSerialize()
                     : null
             ]
-        )->getResponse();
+        );
 
         if (floor($response->getStatusCode() * 0.01) > 2) {
             $this->handleError($response);
@@ -51,15 +42,38 @@ abstract class Job implements ShouldQueue
         }
 
         $responseClassName = $this->getResponseClass();
+        $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
 
         try {
-            (new \JsonMapper)->map($this->client->getContent(), $responseObject = new $responseClassName);
+            (new \JsonMapper)->map($this->responseContent, $responseObject = new $responseClassName);
         } catch (\JsonMapper_Exception $e) {
             $this->handleError($response);
             return;
         }
 
         event($responseObject);
+    }
+
+    /**
+     * @param string $fileName
+     * @return void
+     */
+    protected function changeLoggerPath(string $fileName)
+    {
+        $maxFiles = config('app.log_max_files');
+        $monolog = logger()->getMonolog();
+
+        while (count($monolog->getHandlers()) > 0) {
+            $monolog->popHandler();
+        }
+
+        logger()->useDailyFiles(
+            sprintf('%s/logs/%s', storage_path(), $fileName),
+            is_null($maxFiles)
+                ? 5
+                : $maxFiles,
+            config('app.log_level', 'debug')
+        );
     }
 
     /** @return string */

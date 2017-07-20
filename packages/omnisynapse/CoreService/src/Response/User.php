@@ -14,7 +14,7 @@ use Carbon\Carbon;
  * @property int level
  * @property int points
  * @property array wallets
- * @property Carbon created_at
+ * @property string created_at
  */
 class User
 {
@@ -24,8 +24,8 @@ class User
     /** @var string */
     public $username;
 
-    /** @var string */
-    public $referrer_id;
+    /** @var string|null */
+    public $referrer_id = null;
 
     /** @var int */
     public $level;
@@ -36,7 +36,7 @@ class User
     /** @var array */
     public $wallets;
 
-    /** @var Carbon */
+    /** @var string */
     public $created_at;
 
     /**

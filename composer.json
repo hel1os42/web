@@ -10,6 +10,7 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "netresearch/jsonmapper": "^1.2",
+        "pda/pheanstalk": "^3.1",
         "tymon/jwt-auth": "0.5.*",
         "webpatser/laravel-uuid": "^2.0"
     },
