@@ -119,7 +119,7 @@ develop deploy:
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - ssh deploy@dev.toavalon.com -p 665 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY"
-    - ssh deploy@dev.toavalon.com -p 665 'WEB_PATH=/opt/nau/webbash -s' < deploy.sh -- $TEST_TAG
+    - ssh deploy@dev.toavalon.com -p 665 'WEB_PATH=/opt/nau/web bash -s' < deploy.sh -- $TEST_TAG
 
 pages:
   stage: deploy
