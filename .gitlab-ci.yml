@@ -17,9 +17,11 @@ stages:
   - deploy
 
 build:
-  image: php:7.1
+  image: php:7.1-apline
   stage: build
   script:
+    - apk update
+    - apk add git
     - git submodule sync --recursive
     - git submodule update --init --recursive
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
