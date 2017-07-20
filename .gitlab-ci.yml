@@ -4,19 +4,29 @@ cache:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  REPOSITORY: gitlab.toavalon.com:5000
+  IMAGE: codename-nau/web/laravel
+  TEST_TAG: $CI_COMMIT_REF_NAME
+  RELEASE_TAG: latest
 
 stages:
   - build
   - test
+  - build_image
+  - release
   - deploy
 
 build:
+  image: php:7.1-alpine
   stage: build
   script:
+    - apk update
+    - apk add git
     - git submodule sync --recursive
     - git submodule update --init --recursive
-    - curl -sS https://getcomposer.org/installer | php > /dev/null
-    - php composer.phar install --no-plugins --dev --no-progress
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
+    - ./composer config -g github-oauth.github.com $GITHUB_KEY
+    - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
   artifacts:
     paths:
       - ./*
@@ -28,9 +38,9 @@ PHP_CodeSniffer:
   artifacts:
     when: always
     paths:
-      - report.txt
-      - fix.diff
-      - gitblame.txt
+      - phpcs-report.txt
+      - phpcs-fix.diff
+      - phpcs-gitblame.txt
 
 PHPMD:
   stage: test
@@ -39,4 +49,81 @@ PHPMD:
   artifacts:
     when: always
     paths:
-      - report.txt
+      - phpmd-report.txt
+
+Integrational Tests:
+  image: php:7.1-alpine
+  stage: test
+  script:
+    - ./.gitlab-prepare-for-tests.sh
+    - echo "Run the tests"
+    - php vendor/bin/phpunit --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
+
+  artifacts:
+    when: always
+    paths:
+      - coverage
+      - testdox.html
+
+build image:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: build_image
+  tags:
+    - docker
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
+    - docker build --pull -t $REPOSITORY/$IMAGE:$TEST_TAG .
+    - docker push $REPOSITORY/$IMAGE:$TEST_TAG
+  only:
+    - develop
+    - master
+
+release image:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: release
+  tags:
+    - docker
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
+    - docker pull $REPOSITORY/$IMAGE:$TEST_TAG
+    - docker tag $CONTAINER_TEST_IMAGE $REPOSITORY/$IMAGE:$RELEASE_TAG
+    - docker push $REPOSITORY/$IMAGE:$RELEASE_TAG
+  only:
+    - master
+
+develop deploy:
+  stage: deploy
+  only:
+    - develop
+  tags:
+    - docker
+  variables:
+    WEB_PATH: /opt/nau/web
+  environment:
+    name: develop
+    url: nau.toavalon.com
+  script:
+    - which ssh-agent || ( apk update && apk add openssh-client )
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh deploy@dev.toavalon.com -p 665 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY"
+    - ssh deploy@dev.toavalon.com -p 665 'bash -s' < deploy.sh -- $TEST_TAG
+
+pages:
+  stage: deploy
+  dependencies:
+    - Integrational Tests
+  script:
+    - mv coverage/ public/
+    - cp testdox.html public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop
