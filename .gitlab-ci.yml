@@ -54,8 +54,15 @@ PHPMD:
 Integrational Tests:
   image: php:7.1-alpine
   stage: test
+  before_script:
+    - apk update --quiet
+    - apk add autoconf g++ gcc libc-dev make pkgconf --quiet --no-progress
+    - pecl install xdebug
+    - echo -e "zend_extension=$(find /usr -name xdebug.so)\n" >> /usr/local/etc/php/conf.d/xdebug.ini
+    - php --version
   script:
     - ./.gitlab-prepare-for-tests.sh
+    - mkdir coverage
     - echo "Run the tests"
     - php vendor/bin/phpunit --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
 
@@ -102,8 +109,6 @@ develop deploy:
     - develop
   tags:
     - docker
-  variables:
-    WEB_PATH: /opt/nau/web
   environment:
     name: develop
     url: nau.toavalon.com
@@ -114,13 +119,14 @@ develop deploy:
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - ssh deploy@dev.toavalon.com -p 665 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY"
-    - ssh deploy@dev.toavalon.com -p 665 'bash -s' < deploy.sh -- $TEST_TAG
+    - ssh deploy@dev.toavalon.com -p 665 'WEB_PATH=/opt/nau/webbash -s' < deploy.sh -- $TEST_TAG
 
 pages:
   stage: deploy
   dependencies:
     - Integrational Tests
   script:
+    - mv public web_public
     - mv coverage public
     - cp testdox.html public/
   artifacts:
