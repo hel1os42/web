@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -eo pipefail
+
+# Install php libraries.
+echo "Start the update and the install"
+composer config -g github-oauth.github.com $GITHUB_KEY
+composer install --no-interaction --optimize-autoloader
+
+# Copy over testing configuration.
+rm database.sqlite || true
+touch database.sqlite
+cp .env.testing .env
+
+# Generate an application key. Re-cache.
+echo "Run artisan"
+php artisan key:generate
+php artisan optimize
+php artisan config:cache
+
+# Run database migrations.
+echo "Run migration & Seeds"
+php artisan migrate --seed
