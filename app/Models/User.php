@@ -142,6 +142,7 @@ class User extends Authenticatable
     public function setPassword($password)
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -154,10 +155,10 @@ class User extends Authenticatable
     {
         parent::boot();
 
-        static::creating(function(User $model) {
+        static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-                $model->id = Uuid::generate(4)->__toString();
+                $model->id          = Uuid::generate(4)->__toString();
             }
         });
     }
