@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eo pipefail
+set -e
 
 # Install php libraries.
 echo "Start the update and the install"
