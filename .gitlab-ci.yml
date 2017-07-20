@@ -114,11 +114,12 @@ develop deploy:
 pages:
   stage: deploy
   dependencies:
-    - rspec
+    - Integrational Tests
   script:
     - mv coverage/ public/
     - cp testdox.html public/
   artifacts:
     paths:
       - public
-  only: develop
+  only:
+    - develop
