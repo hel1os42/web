@@ -97,6 +97,7 @@ release image:
 
 develop deploy:
   stage: deploy
+  image: gitlab/dind:latest
   only:
     - develop
   tags:
@@ -107,7 +108,7 @@ develop deploy:
     name: develop
     url: nau.toavalon.com
   script:
-    - which ssh-agent || ( apk update && apk add openssh-client )
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - mkdir -p ~/.ssh
@@ -120,7 +121,7 @@ pages:
   dependencies:
     - Integrational Tests
   script:
-    - mv coverage/ public/
+    - mv coverage public
     - cp testdox.html public/
   artifacts:
     paths:
