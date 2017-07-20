@@ -35,7 +35,7 @@ PHP_CodeSniffer:
 PHPMD:
   stage: test
   script:
-    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --report-file report.txt --colors || cat report.txt && false
+    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile report.txt --colors || (cat report.txt && false)
   artifacts:
     when: always
     paths:
