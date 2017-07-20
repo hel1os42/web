@@ -56,7 +56,7 @@
             font-weight: bold;
         }
 
-        .profile {
+        .offer {
             color: black;
             font-size: 25px;
             text-align: left;
@@ -71,9 +71,8 @@
         <div class="header">
             <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
         </div>
-        <div class="profile">
-        Your email: {{$email}}<br>
-        Your invite code: {{route('registerForm', $invite_code)}}<br>
+        <div class="offer">
+        Offer created!
         </div>
         <div class="title">NAU</div>
     </div>

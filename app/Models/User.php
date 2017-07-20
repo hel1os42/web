@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class User
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string name
  * @property string email
  * @property string password
+ * @property User referrer
  */
 class User extends Authenticatable
 {
@@ -25,7 +27,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -34,7 +38,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
+        'referrer_id'
     ];
 
     /**
@@ -44,6 +50,24 @@ class User extends Authenticatable
      */
     public $incrementing = false;
 
+
+    /**
+     * Get the referrer record associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function referrer()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Get user name
@@ -66,24 +90,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Get password
-     *
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-
-    /**
      * Get user referrer id
      *
      * @return mixed
      */
-    public function getReferrer()
+    public function getReferrerId()
     {
-        return $this->referrer;
+        return $this->referrer_id;
     }
 
 
@@ -122,7 +135,42 @@ class User extends Authenticatable
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = Hash::make($password);
     }
 
+    /**
+     * Set invite code
+     *
+     * @param $invite
+     */
+    public function setInvite($invite)
+    {
+        $this->invite_code = $invite;
+    }
+
+
+    /**
+     * Find User by invite code
+     *
+     * @param string $invite
+     *
+     * @return $this
+     */
+    public function findByInvite(string $invite)
+    {
+        return $this->where('invite_code', $invite)->first();
+    }
+
+
+    /**
+     * Generate invite when user register
+     *
+     * @return string
+     */
+    public function generateInvite()
+    {
+        $newInvite = substr(uniqid(), 0, rand(3, 8));
+
+        return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
+    }
 }

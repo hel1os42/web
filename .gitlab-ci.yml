@@ -2,15 +2,41 @@ cache:
   paths:
   - vendor/
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
   - build
   - test
   - deploy
 
-#"PHP Mess Detector":
-#  stage: test
-#  script:
-#    - curl -sS https://getcomposer.org/installer | php > /dev/null
-#    - php composer.phar install --no-plugins
-#    - wget -c http://static.phpmd.org/php/latest/phpmd.phar --no-check-certificate
-#    - php phpmd.phar ./ text ./rulesets/cleancode.xml,./rulesets/controversial.xml,./rulesets/naming.xml,design --suffixes php --exclude vendor,cache,compiled,public,_ide_helper
+build:
+  stage: build
+  script:
+    - git submodule sync --recursive
+    - git submodule update --init --recursive
+    - curl -sS https://getcomposer.org/installer | php > /dev/null
+    - php composer.phar install --no-plugins --dev --no-progress
+  artifacts:
+    paths:
+      - ./*
+
+PHP_CodeSniffer:
+  stage: test
+  script:
+    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=report.txt --report-diff=fix.diff --report-gitblame=gitblame.txt --report-summary .
+  artifacts:
+    when: always
+    paths:
+      - report.txt
+      - fix.diff
+      - gitblame.txt
+
+PHPMD:
+  stage: test
+  script:
+    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile report.txt --colors || (cat report.txt && false)
+  artifacts:
+    when: always
+    paths:
+      - report.txt
