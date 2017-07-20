@@ -23,7 +23,7 @@ class OfferController extends Controller
             'timeStart' => Carbon::createFromTime(),
             'datefinish' => null,
             'timefinish' => null,
-            'category' => 'Test', //todo @mobixon create category table+model
+            'category' => 'Test', // @mobixon create category table+model
             'max_count' => 10,
             'max_for_user' => 1,
             'max_per_day' => 10,
