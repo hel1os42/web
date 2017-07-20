@@ -17,6 +17,7 @@ stages:
   - deploy
 
 build:
+  image: php:7.1
   stage: build
   script:
     - git submodule sync --recursive
