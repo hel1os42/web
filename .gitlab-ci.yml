@@ -34,7 +34,7 @@ build:
 PHP_CodeSniffer:
   stage: test
   script:
-    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=report.txt --report-diff=fix.diff --report-gitblame=gitblame.txt --report-summary .
+    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
   artifacts:
     when: always
     paths:
@@ -45,7 +45,7 @@ PHP_CodeSniffer:
 PHPMD:
   stage: test
   script:
-    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile report.txt --colors || (cat report.txt && false)
+    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile phpmd-report.txt --colors || (cat report.txt && false)
   artifacts:
     when: always
     paths:
