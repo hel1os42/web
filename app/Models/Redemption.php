@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Redemption
@@ -23,6 +25,7 @@ use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 class Redemption extends Model
 {
     use ReadOnlyTrait;
+    use HasNau;
 
     /** @var string */
     private $table = "redemption";
@@ -69,23 +72,39 @@ class Redemption extends Model
     }
 
     /** @return string */
-    public function getRewardedId(): string
+    public function getRewardedId(): int
     {
         return $this->rewarded_id;
+    }
+
+    /**
+     * @param int $value
+     * @return float
+     */
+    public function getAmountAttribute(int $value): float
+    {
+        return $this->convertIntToFloat($value);
     }
 
     /** @return float */
     public function getAmount(): float
     {
-        $coinDivider = config('models_config.coin_divider');
-        return round($this->amount * pow(0.1, $coinDivider), $coinDivider);
+        return $this->amount;
+    }
+
+    /**
+     * @param int $value
+     * @return float
+     */
+    public function getFeeAttribute(int $value): float
+    {
+        return $this->convertIntToFloat($value);
     }
 
     /** @return float */
     public function getFee(): float
     {
-        $coinDivider = config('models_config.coin_divider');
-        return round($this->fee * pow(0.1, $coinDivider), $coinDivider);
+        return $this->fee;
     }
 
     /** @return Carbon */
@@ -98,5 +117,23 @@ class Redemption extends Model
     public function getUpdatedAt(): Carbon
     {
         return Carbon::parse($this->updated_at);
+    }
+
+    /** @return BelongsTo */
+    public function offer_id(): BelongsTo
+    {
+        return $this->belongsTo(Offer::class, 'offer_id', 'id');
+    }
+
+    /** @return BelongsTo */
+    public function user_id(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /** @return BelongsTo */
+    public function rewarded_id(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'rewarded_id', 'id');
     }
 }

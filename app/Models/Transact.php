@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Transact
@@ -21,6 +23,7 @@ use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 class Transact extends Model
 {
     use ReadOnlyTrait;
+    use HasNau;
 
     /** @var string */
     private $table = "transact";
@@ -58,11 +61,19 @@ class Transact extends Model
         return $this->dst_id;
     }
 
+    /**
+     * @param int $value
+     * @return float
+     */
+    public function getAmountAttribute(int $value): float
+    {
+        return $this->convertIntToFloat($value);
+    }
+
     /** @return float */
     public function getAmount(): float
     {
-        $coinDivider = config('models_config.coin_divider');
-        return round($this->amount * pow(0.1, $coinDivider), $coinDivider);
+        return $this->amount;
     }
 
     /** @return string */
@@ -81,5 +92,17 @@ class Transact extends Model
     public function getUpdatedAt(): Carbon
     {
         return Carbon::parse($this->updated_at);
+    }
+
+    /** @return BelongsTo */
+    public function src_id(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'src_id', 'id');
+    }
+
+    /** @return BelongsTo */
+    public function dst_id(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'dst_id', 'id');
     }
 }

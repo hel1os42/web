@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Offer
@@ -14,7 +16,7 @@ use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
  * @property int acc_id
  * @property string name
  * @property string descr
- * @property float reward
+ * @property integer reward
  * @property string status
  * @property Carbon dt_start
  * @property Carbon dt_finish
@@ -37,6 +39,7 @@ use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 class Offer extends Model
 {
     use ReadOnlyTrait;
+    use HasNau;
 
     /** @var string */
     private $table = "offer";
@@ -53,7 +56,7 @@ class Offer extends Model
         'acc_id'                => 'integer',
         'name'                  => 'string',
         'descr'                 => 'string',
-        'reward'                => 'float',
+        'reward'                => 'integer',
         'status'                => 'string',
         'dt_start'              => 'date',
         'dt_finish'             => 'date',
@@ -81,7 +84,13 @@ class Offer extends Model
     /** @return int */
     public function getAccId(): int
     {
-        return $this->acc_id;
+        return $this->acc_Id;
+    }
+
+    /** BelongsTo */
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'acc_id', 'id');
     }
 
     /** @return string */
@@ -94,6 +103,15 @@ class Offer extends Model
     public function getDescr(): string
     {
         return $this->descr;
+    }
+
+    /**
+     * @param int $value
+     * @return float
+     */
+    public function getRewardAttribute(int $value): float
+    {
+        return $this->convertIntToFloat($value);
     }
 
     /** @return float */
@@ -197,6 +215,4 @@ class Offer extends Model
     {
         return $this->radius;
     }
-
-    // TODO: relation with account
 }
