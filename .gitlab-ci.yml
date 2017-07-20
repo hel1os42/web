@@ -17,7 +17,7 @@ stages:
   - deploy
 
 build:
-  image: php:7.1-apline
+  image: php:7.1-alpine
   stage: build
   script:
     - apk update
