@@ -4,6 +4,16 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class RegisterRequest
+ * @package App\Http\Requests\Auth
+ *
+ * @property string name
+ * @property string email
+ * @property string password
+ * @property string password_confirm
+ * @property string referrer_id
+ */
 class RegisterRequest extends FormRequest
 {
 
