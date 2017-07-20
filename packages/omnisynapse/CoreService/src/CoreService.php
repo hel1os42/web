@@ -27,45 +27,45 @@ class CoreService implements CoreServiceInterface
 
     /**
      * @param XXX $offer
-     * @return OfferCreated
+     * @return Job
      */
-    public function offerCreated(XXX $offer) : OfferCreated
+    public function offerCreated(XXX $offer) : Job
     {
         return new OfferCreated($offer);
     }
 
     /**
      * @param XXX $redemption
-     * @return OfferRedemption
+     * @return Job
      */
-    public function offerRedemption(XXX $redemption) : OfferRedemption
+    public function offerRedemption(XXX $redemption) : Job
     {
         return new OfferRedemption($redemption);
     }
 
     /**
      * @param XXX $offer
-     * @return OfferUpdated
+     * @return Job
      */
-    public function offerUpdated(XXX $offer) : OfferUpdated
+    public function offerUpdated(XXX $offer) : Job
     {
         return new OfferUpdated($offer);
     }
 
     /**
      * @param XXX $nau
-     * @return SendNau
+     * @return Job
      */
-    public function sendNau(XXX $nau) : SendNau
+    public function sendNau(XXX $nau) : Job
     {
         return new SendNau($nau);
     }
 
     /**
      * @param User $user
-     * @return UserCreated
+     * @return Job
      */
-    public function userCreated(User $user) : UserCreated
+    public function userCreated(User $user) : Job
     {
         return new UserCreated($user);
     }

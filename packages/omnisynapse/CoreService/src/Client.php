@@ -28,20 +28,12 @@ class Client
     public function __construct()
     {
         $config = [
-            'base_uri'    => $this->getBaseUrl(),
+            'base_uri'    => config('core-config.base_uri'),
             'verify'      => config('core-config.verify'),
             'http_errors' => config('core-config.http_errors'),
         ];
 
         $this->client = new \GuzzleHttp\Client($config);
-    }
-
-    /**
-     * @return string
-     */
-    private function getBaseUrl() : string
-    {
-        return config('core-config.base_uri');
     }
 
     /**
@@ -83,6 +75,7 @@ class Client
      * @return Client
      * @throws
      */
+    // TODO: remove the method and use that code in Job class
     public function request($method, $path, $params=[]) : Client
     {
         /** @var \GuzzleHttp\Client $client */

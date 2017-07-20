@@ -45,7 +45,7 @@ abstract class Job implements ShouldQueue
             ]
         )->getResponse();
 
-        if ($response->getStatusCode() % 200 > 100) { // TODO: What if status is 404 ? Result will be 4, and <= 100 (no error).
+        if (floor($response->getStatusCode() * 0.01) > 2) {
             $this->handleError($response);
             return;
         }
