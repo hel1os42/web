@@ -21,9 +21,9 @@ build:
   script:
     - git submodule sync --recursive
     - git submodule update --init --recursive
-    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-    - composer config -g github-oauth.github.com $GITHUB_KEY
-    - composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
+    - ./composer config -g github-oauth.github.com $GITHUB_KEY
+    - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
   artifacts:
     paths:
       - ./*
