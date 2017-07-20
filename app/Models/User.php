@@ -169,9 +169,8 @@ class User extends Authenticatable
      */
     public function generateInvite()
     {
-        $new_invite = substr(uniqid(), 0, rand(3, 8));
+        $newInvite = substr(uniqid(), 0, rand(3, 8));
 
-        return $this->findByInvite($new_invite) instanceof $this ? $this->generateInvite() : $new_invite;
+        return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
     }
-
 }
