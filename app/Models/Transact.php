@@ -26,13 +26,13 @@ class Transact extends Model
     use HasNau;
 
     /** @var string */
-    private $table = "transact";
+    protected $table = "transact";
 
     /** @var array */
-    private $timestamps = ['created_at', 'updated_at'];
+    protected $timestamps = ['created_at', 'updated_at'];
 
     /** @var string */
-    private $primaryKey = 'txid';
+    protected $primaryKey = 'txid';
 
     /** @var array */
     protected $maps = [
@@ -92,13 +92,13 @@ class Transact extends Model
     /** @return Carbon */
     public function getCreatedAt(): Carbon
     {
-        return Carbon::parse($this->created_at);
+        return $this->created_at;
     }
 
     /** @return Carbon */
     public function getUpdatedAt(): Carbon
     {
-        return Carbon::parse($this->updated_at);
+        return $this->updated_at;
     }
 
     /** @return BelongsTo */

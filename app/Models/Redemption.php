@@ -28,13 +28,13 @@ class Redemption extends Model
     use HasNau;
 
     /** @var string */
-    private $table = "redemption";
+    protected $table = "redemption";
 
     /** @var array */
-    private $timestamps = ['created_at', 'updated_at'];
+    protected $timestamps = ['created_at', 'updated_at'];
 
     /** @var string */
-    private $primaryKey = 'id';
+    protected $primaryKey = 'id';
 
     /** @var array */
     protected $casts = [
@@ -110,13 +110,13 @@ class Redemption extends Model
     /** @return Carbon */
     public function getCreatedAt(): Carbon
     {
-        return Carbon::parse($this->created_at);
+        return $this->created_at;
     }
 
     /** @return Carbon */
     public function getUpdatedAt(): Carbon
     {
-        return Carbon::parse($this->updated_at);
+        return $this->updated_at;
     }
 
     /** @return BelongsTo */

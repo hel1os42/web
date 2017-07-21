@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @package App
  *
  * @property string id
- * @property int balance
+ * @property int account_id
  * @property string label
  * @property string description
  * @property Float reward
@@ -42,17 +42,17 @@ class Offer extends Model
     use HasNau;
 
     /** @var string */
-    private $table = "offer";
+    protected $table = "offer";
 
     /** @var array */
-    private $timestamps = ['created_at', 'updated_at'];
+    protected $timestamps = ['created_at', 'updated_at'];
 
     /** @var string */
-    private $primaryKey = 'id';
+    protected $primaryKey = 'id';
 
     /** @var array */
     protected $maps = [
-        'acc_id'    => 'balance',
+        'acc_id'    => 'account_id',
         'name'      => 'label',
         'descr'     => 'description',
         'dt_start'  => 'start_date',
@@ -68,7 +68,7 @@ class Offer extends Model
     /** @var array */
     protected $casts = [
         'id'                    => 'string',
-        'balance'               => 'integer',
+        'account_id'            => 'integer',
         'label'                 => 'string',
         'description'           => 'string',
         'reward'                => 'integer',
@@ -99,13 +99,13 @@ class Offer extends Model
     /** @return int */
     public function getAccountId(): int
     {
-        return $this->balance;
+        return $this->account_id;
     }
 
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'balance', 'id');
+        return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
     /** @return string */
@@ -144,25 +144,25 @@ class Offer extends Model
     /** @return Carbon */
     public function getStartDate(): Carbon
     {
-        return Carbon::parse($this->start_date);
+        return $this->start_date;
     }
 
     /** @return Carbon */
     public function getFinishDate(): Carbon
     {
-        return Carbon::parse($this->finish_date);
+        return $this->finish_date;
     }
 
     /** @return Carbon */
     public function getStartTime(): Carbon
     {
-        return Carbon::parse($this->start_time);
+        return $this->start_time;
     }
 
     /** @return Carbon */
     public function getFinishTime(): Carbon
     {
-        return Carbon::parse($this->finish_time);
+        return $this->finish_time;
     }
 
     /** @return string */

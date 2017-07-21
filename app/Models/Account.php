@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 
@@ -26,13 +26,13 @@ class Account extends Model
     use HasNau;
 
     /** @var string */
-    private $table = "account";
+    protected $table = "account";
 
     /** @var array */
-    private $timestamps = ['created_at', 'updated_at'];
+    protected $timestamps = ['created_at', 'updated_at'];
 
     /** @var string */
-    private $primaryKey = 'id';
+    protected $primaryKey = 'id';
 
     /** @var array */
     protected $maps = [
@@ -87,9 +87,9 @@ class Account extends Model
         return $this->balance;
     }
 
-    /** @return HasOne */
-    public function offers(): HasOne
+    /** @return HasMany */
+    public function offers(): HasMany
     {
-        return $this->hasOne(Offer::class, 'acc_id', 'id');
+        return $this->hasMany(Offer::class, 'acc_id', 'id');
     }
 }
