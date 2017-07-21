@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Collection|Account[] offer
+ * @property User owner
  */
 class Account extends Model
 {

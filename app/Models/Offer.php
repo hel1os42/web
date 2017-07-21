@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
+ *
  */
 class Offer extends Model
 {

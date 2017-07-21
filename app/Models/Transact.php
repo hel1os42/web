@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string status
  * @property Carbon created_at
  * @property Carbon updated_at
+ * @property Account sourse
+ * @property Account destination
  */
 class Transact extends Model
 {
@@ -87,18 +89,6 @@ class Transact extends Model
     public function getStatus(): string
     {
         return $this->status;
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
     }
 
     /** @return BelongsTo */

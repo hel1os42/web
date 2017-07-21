@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int fee
  * @property Carbon created_at
  * @property Carbon updated_at
+ * @property Offer offer
+ * @property User rewarded
  */
 class Redemption extends Model
 {
