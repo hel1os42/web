@@ -2,24 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Webpatser\Uuid\Uuid;
 
 /**
  * Class User
  * @package App
  *
+ * @property string id
  * @property string name
  * @property string email
  * @property string password
- * @property User referrer
+ * @property string invite_code
+ * @property mixed  referrer_id
+ *
+ * @property User   referrer
  */
 class User extends Authenticatable
 {
 
     use Notifiable;
-    use \App\Traits\Uuids;
 
     /**
      * The attributes that are mass assignable.
@@ -58,7 +62,7 @@ class User extends Authenticatable
      */
     public function referrer()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -110,6 +114,7 @@ class User extends Authenticatable
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -123,6 +128,7 @@ class User extends Authenticatable
     public function setEmail($email)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -135,8 +141,26 @@ class User extends Authenticatable
      */
     public function setPassword($password)
     {
-        $this->password = Hash::make($password);
+        $this->password = $password;
+
         return $this;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (User $model) {
+            if (null === $model->invite_code) {
+                $model->invite_code = $model->generateInvite();
+                $model->id          = Uuid::generate(4)->__toString();
+            }
+        });
     }
 
     /**
@@ -151,24 +175,23 @@ class User extends Authenticatable
         return $this;
     }
 
-
     /**
      * Find User by invite code
      *
      * @param string $invite
      *
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function findByInvite(string $invite)
     {
         return $this->where('invite_code', $invite)->first();
     }
 
-
     /**
      * Generate invite when user register
-     *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function generateInvite()
     {

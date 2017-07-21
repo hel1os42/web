@@ -13,7 +13,11 @@ class RegisterController extends Controller
     /**
      * Return user register form
      *
-     * @return \Illuminate\Http\JsonResponse|Response|\Illuminate\Http\RedirectResponse
+     * @param string $invite
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function getRegisterForm(string $invite)
     {
@@ -37,17 +41,21 @@ class RegisterController extends Controller
      * User registration
      *
      * @param \App\Http\Requests\Auth\RegisterRequest $request
-     * @return \Illuminate\Http\JsonResponse|Response
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
-        $user = new User();
-        $user->setName($request->name)
-            ->setEmail($request->email)
-            ->setPassword($request->password);
-        $user->setInvite($user->generateInvite());
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => $request->password,
+        ]);
+
         $user->referrer()->associate($request->referrer_id);
-        $user->save();
 
         if ($request->wantsJson()) {
             return response()
