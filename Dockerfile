@@ -1,11 +1,5 @@
-FROM php:7.1-alpine
+FROM gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
 MAINTAINER iLyK Necromancer <necromancer@toavalon.com>
-
-RUN set -ex \
-  && apk --no-cache add \
-    postgresql-dev
-
-RUN docker-php-ext-install pdo pdo_pgsql pdo_mysql
 
 WORKDIR /app
 COPY . /app
