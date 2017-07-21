@@ -17,7 +17,7 @@ stages:
   - deploy
 
 build:
-  image: php:7.1-alpine
+  image: gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
   stage: build
   script:
     - apk update
@@ -45,7 +45,7 @@ PHP_CodeSniffer:
 PHPMD:
   stage: test
   script:
-    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile phpmd-report.txt --colors || (cat report.txt && false)
+    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile phpmd-report.txt --colors || (cat phpmd-report.txt && false)
   artifacts:
     when: always
     paths:
