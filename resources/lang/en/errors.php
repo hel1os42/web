@@ -10,5 +10,4 @@ return [
     'jwt_exception' => 'Failed to create token. Error:',
     'token_expired' => 'Token expired. Error:',
     'token_invalid' => 'Token invalid. Error:'
-
 ];

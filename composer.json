@@ -5,7 +5,10 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": ">=7.1.7",
+        "ext-pdo_pgsql": "*",
+        "ext-mbstring": "*",
+        "doctrine/dbal": "^2.5",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "michaelachrisco/readonly": "^0.20.1",
@@ -15,7 +18,9 @@
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.7"
+        "phpunit/phpunit": "~5.7",
+        "phpmd/phpmd": "~2.6.0",
+        "squizlabs/php_codesniffer": "~3.0.2"
     },
     "autoload": {
         "classmap": [

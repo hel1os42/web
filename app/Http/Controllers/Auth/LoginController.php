@@ -43,7 +43,7 @@ class LoginController extends Controller
                 );
             }
 
-            return response()->render(null, compact('token'));
+            return response()->render('', compact('token'));
         }
 
         $attempt = \Auth::attempt($credentials, false);
@@ -71,7 +71,7 @@ class LoginController extends Controller
                     trans('errors.jwt_exception') . $e->getMessage()
                 );
             }
-            return response()->render(null, compact('logout'));
+            return response()->render('', compact('logout'));
         }
 
         auth()->logout();
