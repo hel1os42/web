@@ -4,16 +4,16 @@ namespace App\Models\Traits;
 
 trait HasNau
 {
-    /** @var int $multiplierNau */
-    protected $multiplierNau;
+    /** @var int $multiplier */
+    protected $multiplier;
 
     /**
      * HasNau constructor.
      */
     public function __construct()
     {
-        /** @var int multiplierNau */
-        $this->multiplierNau = $this->getMultiplierNau();
+        /** @var int multiplier */
+        $this->multiplier = $this->getMultiplier();
     }
 
     /**
@@ -21,7 +21,7 @@ trait HasNau
      */
     private function getMultiplierNau(): integer
     {
-        return config('multiplier_nau_config.multiplier_nau');
+        return config('nau.multiplier');
     }
 
     /**
@@ -30,7 +30,7 @@ trait HasNau
      */
     protected function convertIntToFloat(integer $value) : float
     {
-        return round($value * pow(0.1, $this->multiplierNau), $this->multiplierNau);
+        return round($value * pow(0.1, $this->multiplier), $this->multiplier);
     }
 }
 

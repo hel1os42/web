@@ -13,25 +13,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @package App
  *
  * @property string id
- * @property int acc_id
- * @property string name
- * @property string descr
- * @property integer reward
+ * @property int balance
+ * @property string label
+ * @property string description
+ * @property Float reward
  * @property string status
- * @property Carbon dt_start
- * @property Carbon dt_finish
- * @property Carbon tm_start
- * @property Carbon tm_finish
+ * @property Carbon start_date
+ * @property Carbon finish_date
+ * @property Carbon start_time
+ * @property Carbon finish_time
  * @property string country
  * @property string city
- * @property string categ
+ * @property string category_id
  * @property int max_count
  * @property int max_for_user
  * @property int max_per_day
  * @property int max_for_user_per_day
- * @property int min_level
- * @property double lat
- * @property double lng
+ * @property int user_level_min
+ * @property double latitude
+ * @property double longitude
  * @property int radius
  * @property Carbon created_at
  * @property Carbon updated_at
@@ -51,27 +51,42 @@ class Offer extends Model
     private $primaryKey = 'id';
 
     /** @var array */
+    protected $maps = [
+        'acc_id'    => 'balance',
+        'name'      => 'label',
+        'descr'     => 'description',
+        'dt_start'  => 'start_date',
+        'dt_finish' => 'finish_date',
+        'tm_start'  => 'start_time',
+        'tm_finish' => 'finish_time',
+        'categ'     => 'category_id',
+        'min_level' => 'user_level_min',
+        'lat'       => 'latitude',
+        'lng'       => 'longitude',
+    ];
+
+    /** @var array */
     protected $casts = [
         'id'                    => 'string',
-        'acc_id'                => 'integer',
-        'name'                  => 'string',
-        'descr'                 => 'string',
+        'balance'               => 'integer',
+        'label'                 => 'string',
+        'description'           => 'string',
         'reward'                => 'integer',
         'status'                => 'string',
-        'dt_start'              => 'date',
-        'dt_finish'             => 'date',
-        'tm_start'              => 'datetime',
-        'tm_finish'             => 'datetime',
+        'start_date'            => 'date',
+        'finish_date'           => 'date',
+        'start_time'            => 'datetime',
+        'finish_time'           => 'datetime',
         'country'               => 'string',
         'city'                  => 'string',
-        'categ'                 => 'string',
+        'category_id'           => 'string',
         'max_count'             => 'integer',
         'max_for_user'          => 'integer',
         'max_per_day'           => 'integer',
         'max_for_user_per_day'  => 'integer',
-        'min_level'             => 'integer',
-        'lat'                   => 'double',
-        'lng'                   => 'double',
+        'user_level_min'        => 'integer',
+        'latitude'              => 'double',
+        'longitude'             => 'double',
         'radius'                => 'integer',
     ];
 
@@ -82,27 +97,27 @@ class Offer extends Model
     }
 
     /** @return int */
-    public function getAccId(): int
+    public function getAccountId(): int
     {
-        return $this->acc_Id;
+        return $this->balance;
     }
 
-    /** BelongsTo */
+    /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'acc_id', 'id');
+        return $this->belongsTo(Account::class, 'balance', 'id');
     }
 
     /** @return string */
-    public function getName(): string
+    public function getLabel(): string
     {
-        return $this->name;
+        return $this->label;
     }
 
     /** @return string */
-    public function getDescr(): string
+    public function getDescription(): string
     {
-        return $this->descr;
+        return $this->description;
     }
 
     /**
@@ -127,27 +142,27 @@ class Offer extends Model
     }
 
     /** @return Carbon */
-    public function getDtStart(): Carbon
+    public function getStartDate(): Carbon
     {
-        return Carbon::parse($this->dt_start);
+        return Carbon::parse($this->start_date);
     }
 
     /** @return Carbon */
-    public function getDtFinish(): Carbon
+    public function getFinishDate(): Carbon
     {
-        return Carbon::parse($this->dt_finish);
+        return Carbon::parse($this->finish_date);
     }
 
     /** @return Carbon */
-    public function getTmStart(): Carbon
+    public function getStartTime(): Carbon
     {
-        return Carbon::parse($this->tm_start);
+        return Carbon::parse($this->start_time);
     }
 
     /** @return Carbon */
-    public function getTmFinish(): Carbon
+    public function getFinishTime(): Carbon
     {
-        return Carbon::parse($this->tm_finish);
+        return Carbon::parse($this->finish_time);
     }
 
     /** @return string */
@@ -163,9 +178,9 @@ class Offer extends Model
     }
 
     /** @return string */
-    public function getCateg(): string
+    public function getCategoryId(): string
     {
-        return $this->categ;
+        return $this->category_id;
     }
 
     /** @return int */
@@ -193,21 +208,21 @@ class Offer extends Model
     }
 
     /** @return int */
-    public function getMinLevel(): int
+    public function getUserLevelMin(): int
     {
-        return $this->min_level;
+        return $this->user_level_min;
     }
 
     /** @return double */
-    public function getLat(): double
+    public function getLatitude(): double
     {
-        return $this->lat;
+        return $this->latitude;
     }
 
     /** @return double */
-    public function getLng(): double
+    public function getLongitude(): double
     {
-        return $this->lng;
+        return $this->longitude;
     }
 
     /** @return int */

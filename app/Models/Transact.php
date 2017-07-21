@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class Transact
  * @package App
  *
- * @property string txid
- * @property int src_id
- * @property int dst_id
+ * @property string id
+ * @property int source_account_id
+ * @property int destination_account_id
  * @property float amount
  * @property string status
  * @property Carbon created_at
@@ -35,30 +35,37 @@ class Transact extends Model
     private $primaryKey = 'txid';
 
     /** @var array */
+    protected $maps = [
+        'txid'     => 'id',
+        'src_id'   => 'source_account_id',
+        'dst_id'   => 'destination_account_id',
+    ];
+
+    /** @var array */
     protected $casts = [
-        'txid'   => 'string',
-        'src_id' => 'string',
-        'dst_id' => 'string',
-        'amount' => 'float',
-        'status' => 'string',
+        'id'                     => 'string',
+        'source_account_id'      => 'string',
+        'destination_account_id' => 'string',
+        'amount'                 => 'float',
+        'status'                 => 'string',
     ];
 
     /** @return string */
-    public function getTxId(): string
+    public function getId(): string
     {
-        return $this->txid;
+        return $this->id;
     }
 
     /** @return string */
-    public function getSrcId(): string
+    public function getSourceAccountId(): string
     {
-        return $this->src_id;
+        return $this->source_account_id;
     }
 
     /** @return string */
-    public function getDstId(): string
+    public function getDestinationAccountId(): string
     {
-        return $this->dst_id;
+        return $this->destination_account_id;
     }
 
     /**
@@ -95,14 +102,14 @@ class Transact extends Model
     }
 
     /** @return BelongsTo */
-    public function src_id(): BelongsTo
+    public function source(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'src_id', 'id');
+        return $this->belongsTo(Account::class, 'source_account_id', 'id');
     }
 
     /** @return BelongsTo */
-    public function dst_id(): BelongsTo
+    public function destination(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'dst_id', 'id');
+        return $this->belongsTo(Account::class, 'destination_account_id', 'id');
     }
 }

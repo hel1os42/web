@@ -72,7 +72,7 @@ class Redemption extends Model
     }
 
     /** @return string */
-    public function getRewardedId(): int
+    public function getRewardedId(): string
     {
         return $this->rewarded_id;
     }
@@ -120,19 +120,13 @@ class Redemption extends Model
     }
 
     /** @return BelongsTo */
-    public function offer_id(): BelongsTo
+    public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class, 'offer_id', 'id');
     }
 
     /** @return BelongsTo */
-    public function user_id(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /** @return BelongsTo */
-    public function rewarded_id(): BelongsTo
+    public function rewarded(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rewarded_id', 'id');
     }
