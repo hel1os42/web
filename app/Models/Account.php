@@ -45,10 +45,12 @@ class Account extends Model
 
     /** @var array */
     protected $casts = [
-        'id'       => 'integer',
-        'owner_id' => 'string',
-        'address'  => 'string',
-        'balance'  => 'integer',
+        'id'            => 'integer',
+        'owner_id'      => 'string',
+        'address'       => 'string',
+        'balance'       => 'integer',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
     ];
 
     /** @return string */
@@ -94,5 +96,17 @@ class Account extends Model
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class, 'acc_id', 'id');
+    }
+
+    /** @return Carbon */
+    public function getCreatedAt(): Carbon
+    {
+        return $this->created_at;
+    }
+
+    /** @return Carbon */
+    public function getUpdatedAt(): Carbon
+    {
+        return $this->updated_at;
     }
 }

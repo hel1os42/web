@@ -47,6 +47,8 @@ class Redemption extends Model
         'rewarded_id'   => 'string',
         'amount'        => 'integer',
         'fee'           => 'integer',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
     ];
 
     /** @return string */

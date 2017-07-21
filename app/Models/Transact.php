@@ -50,6 +50,8 @@ class Transact extends Model
         'destination_account_id' => 'string',
         'amount'                 => 'float',
         'status'                 => 'string',
+        'created_at'             => 'datetime',
+        'updated_at'             => 'datetime',
     ];
 
     /** @return string */
@@ -101,5 +103,17 @@ class Transact extends Model
     public function destination(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'destination_account_id', 'id');
+    }
+
+    /** @return Carbon */
+    public function getCreatedAt(): Carbon
+    {
+        return $this->created_at;
+    }
+
+    /** @return Carbon */
+    public function getUpdatedAt(): Carbon
+    {
+        return $this->updated_at;
     }
 }

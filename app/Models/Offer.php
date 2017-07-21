@@ -54,17 +54,19 @@ class Offer extends Model
 
     /** @var array */
     protected $maps = [
-        'acc_id'    => 'account_id',
-        'name'      => 'label',
-        'descr'     => 'description',
-        'dt_start'  => 'start_date',
-        'dt_finish' => 'finish_date',
-        'tm_start'  => 'start_time',
-        'tm_finish' => 'finish_time',
-        'categ'     => 'category_id',
-        'min_level' => 'user_level_min',
-        'lat'       => 'latitude',
-        'lng'       => 'longitude',
+        'acc_id'     => 'account_id',
+        'name'       => 'label',
+        'descr'      => 'description',
+        'dt_start'   => 'start_date',
+        'dt_finish'  => 'finish_date',
+        'tm_start'   => 'start_time',
+        'tm_finish'  => 'finish_time',
+        'categ'      => 'category_id',
+        'min_level'  => 'user_level_min',
+        'lat'        => 'latitude',
+        'lng'        => 'longitude',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /** @var array */
@@ -231,5 +233,17 @@ class Offer extends Model
     public function getRadius(): int
     {
         return $this->radius;
+    }
+
+    /** @return Carbon */
+    public function getCreatedAt(): Carbon
+    {
+        return $this->created_at;
+    }
+
+    /** @return Carbon */
+    public function getUpdatedAt(): Carbon
+    {
+        return $this->updated_at;
     }
 }
