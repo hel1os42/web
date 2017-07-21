@@ -56,6 +56,7 @@ class OfferController extends Controller
         //todo @mobixon core servise method
         response()->render('offer.show', [
             'name' => $request->name
+            //
             //            'description' => null,
             //            'reward' => 1,
             //            'date_start' => Carbon::createFromDate(),
