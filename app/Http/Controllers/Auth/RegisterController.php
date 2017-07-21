@@ -23,17 +23,18 @@ class RegisterController extends Controller
     {
         $referrerUser = new User();
         $referrerUser = $referrerUser->findByInvite($invite);
-        if(!$referrerUser instanceof User){
+        if (!$referrerUser instanceof User) {
             return response()->error(Response::HTTP_NOT_FOUND);
         }
 
         return Auth::check() ?
             redirect()->route('profile', Auth::id()) :
             response()->render('auth.register', [
-                'referrer_id' => $referrerUser->getId(),
-                'login' => null,
+                'name' => null,
+                'email' => null,
                 'password' => null,
-                'password_confirm' => null
+                'password_confirm' => null,
+                'referrer_id' => $referrerUser->getId()
             ]);
     }
 
@@ -50,8 +51,8 @@ class RegisterController extends Controller
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => $request->password,
         ]);
 
