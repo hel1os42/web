@@ -88,5 +88,7 @@ class OfferController extends Controller
         response()->render('offer.show', [
             'offer' => Offer::find($offerUuid)->fresh()
             ]);
+
     }
+
 }
