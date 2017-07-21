@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
+use Illuminate\Support\Collection;
 
 /**
  * Class Account
@@ -19,6 +20,7 @@ use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
  * @property int balance
  * @property Carbon created_at
  * @property Carbon updated_at
+ * @property Collection|Account[] offer
  */
 class Account extends Model
 {
