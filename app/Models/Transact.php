@@ -50,8 +50,6 @@ class Transact extends Model
         'destination_account_id' => 'string',
         'amount'                 => 'float',
         'status'                 => 'string',
-        'created_at'             => 'datetime',
-        'updated_at'             => 'datetime',
     ];
 
     /** @return string */

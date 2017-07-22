@@ -49,8 +49,6 @@ class Account extends Model
         'owner_id'      => 'string',
         'address'       => 'string',
         'balance'       => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
     ];
 
     /** @return string */
