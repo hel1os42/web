@@ -30,9 +30,6 @@ class Transact extends Model
     /** @var string */
     protected $table = "transact";
 
-    /** @var array */
-    protected $timestamps = ['created_at', 'updated_at'];
-
     /** @var string */
     protected $primaryKey = 'txid';
 
@@ -50,6 +47,8 @@ class Transact extends Model
         'destination_account_id' => 'string',
         'amount'                 => 'float',
         'status'                 => 'string',
+        'created_at'             => 'datetime',
+        'updated_at'             => 'datetime',
     ];
 
     /** @return string */

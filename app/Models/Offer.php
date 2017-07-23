@@ -46,9 +46,6 @@ class Offer extends Model
     /** @var string */
     protected $table = "offer";
 
-    /** @var array */
-    protected $timestamps = ['created_at', 'updated_at'];
-
     /** @var string */
     protected $primaryKey = 'id';
 
@@ -92,6 +89,8 @@ class Offer extends Model
         'latitude'              => 'double',
         'longitude'             => 'double',
         'radius'                => 'integer',
+        'created_at'            => 'datetime',
+        'updated_at'            => 'datetime',
     ];
 
     /** @return string */

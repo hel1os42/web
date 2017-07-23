@@ -31,9 +31,6 @@ class Account extends Model
     /** @var string */
     protected $table = "account";
 
-    /** @var array */
-    protected $timestamps = ['created_at', 'updated_at'];
-
     /** @var string */
     protected $primaryKey = 'id';
 
@@ -49,6 +46,9 @@ class Account extends Model
         'owner_id'      => 'string',
         'address'       => 'string',
         'balance'       => 'integer',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+
     ];
 
     /** @return string */

@@ -32,9 +32,6 @@ class Redemption extends Model
     /** @var string */
     protected $table = "redemption";
 
-    /** @var array */
-    protected $timestamps = ['created_at', 'updated_at'];
-
     /** @var string */
     protected $primaryKey = 'id';
 
@@ -47,6 +44,8 @@ class Redemption extends Model
         'rewarded_id'   => 'string',
         'amount'        => 'integer',
         'fee'           => 'integer',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
     ];
 
     /** @return string */
