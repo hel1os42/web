@@ -134,7 +134,7 @@ class Redemption extends Model
     }
 
     /** @return BelongsTo */
-    public function User(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
