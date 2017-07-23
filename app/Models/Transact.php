@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string status
  * @property Carbon created_at
  * @property Carbon updated_at
- * @property Account sourse
+ * @property Account source
  * @property Account destination
  */
 class Transact extends Model

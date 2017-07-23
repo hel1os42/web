@@ -22,7 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Offer offer
- * @property User rewarded
+ * @property User rewardedUser
+ * @property User user
  */
 class Redemption extends Model
 {
@@ -127,8 +128,14 @@ class Redemption extends Model
     }
 
     /** @return BelongsTo */
-    public function rewarded(): BelongsTo
+    public function rewardedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rewarded_id', 'id');
+    }
+
+    /** @return BelongsTo */
+    public function User(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
