@@ -16,11 +16,9 @@ trait HasNau
         $multiplier = $this->multiplier;
 
         if (null === $multiplier) {
-            $multiplier = $this->multiplier = (int) config('nau.multiplier');
+            $multiplier = $this->multiplier = (int)config('nau.multiplier');
         }
 
         return round($value * pow(0.1, $multiplier), $multiplier);
     }
 }
-
-
