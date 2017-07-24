@@ -4,6 +4,8 @@ namespace OmniSynapse\CoreService;
 
 // TODO: project models
 
+use App\Models\Offer;
+use App\Models\Redemption;
 use App\Models\User;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferRedemption;
@@ -26,39 +28,38 @@ class CoreService implements CoreServiceInterface
     }
 
     /**
-     * @param XXX $offer
+     * @param Offer $offer
      * @return Job
      */
-    public function offerCreated(XXX $offer) : Job
+    public function offerCreated(Offer $offer) : Job
     {
         return new OfferCreated($offer);
     }
 
     /**
-     * @param XXX $redemption
+     * @param Redemption $redemption
      * @return Job
      */
-    public function offerRedemption(XXX $redemption) : Job
+    public function offerRedemption(Redemption $redemption) : Job
     {
         return new OfferRedemption($redemption);
     }
 
     /**
-     * @param XXX $offer
+     * @param Offer $offer
      * @return Job
      */
-    public function offerUpdated(XXX $offer) : Job
+    public function offerUpdated(Offer $offer) : Job
     {
         return new OfferUpdated($offer);
     }
 
     /**
-     * @param XXX $nau
      * @return Job
      */
-    public function sendNau(XXX $nau) : Job
+    public function sendNau() : Job
     {
-        return new SendNau($nau);
+        return new SendNau();
     }
 
     /**

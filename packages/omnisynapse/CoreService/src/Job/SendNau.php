@@ -8,15 +8,12 @@ use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Response\SendNau as SendNauResponse;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
 
-// TODO: project models
-
 class SendNau extends Job
 {
     /**
      * SendNau constructor.
-     * @param XXX $nau
      */
-    public function __construct(XXX $nau)
+    public function __construct()
     {
         /** @var SendNau requestObject */
         $this->requestObject = (new SendNauRequest());

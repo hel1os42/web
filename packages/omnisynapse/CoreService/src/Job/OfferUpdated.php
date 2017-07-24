@@ -2,14 +2,16 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Offer;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\Request\Offer\Geo;
+use OmniSynapse\CoreService\Request\Offer\Limits;
+use OmniSynapse\CoreService\Request\Offer\Point;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
-
-// TODO: project models
 
 /**
  * Class OfferUpdated
@@ -19,24 +21,28 @@ class OfferUpdated extends Job
 {
     /**
      * OfferUpdated constructor.
-     * @param XXX $offer
+     * @param Offer $offer
      */
-    public function __construct(XXX $offer)
+    public function __construct(Offer $offer)
     {
+        $point = new Point($offer->getLatitude(), $offer->getLongitude());
+        $geo = new Geo(null, $point, $offer->getRadius(), $offer->getCity(), $offer->getCountry()); // TODO: null=>geo_type, where is GEO type?
+        $limits = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
+
         /** @var OfferForUpdate requestObject */
         $this->requestObject = (new OfferForUpdate())
             ->setId($offer->getId())
-            ->setOwnerId($offer->getOwnerId())
-            ->setName($offer->getName())
+            ->setOwnerId($offer->getAccountId())
+            ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
             ->setCategoryId($offer->getCategoryId())
-            ->setGeo($offer->geo)
-            ->setLimits($offer->limits)
+            ->setGeo($geo)
+            ->setLimits($limits)
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
-            ->setEndDate($offer->getEndDate())
+            ->setEndDate($offer->getFinishDate())
             ->setStartTime($offer->getStartTime())
-            ->setEndTime($offer->getEndTime());
+            ->setEndTime($offer->getFinishTime());
     }
 
     /**

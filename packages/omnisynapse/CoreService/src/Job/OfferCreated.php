@@ -2,14 +2,13 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Offer;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
-
-// TODO: project models
 
 /**
  * Class OfferCreated
@@ -19,23 +18,27 @@ class OfferCreated extends Job
 {
     /**
      * OfferCreated constructor.
-     * @param XXX $offer
+     * @param Offer $offer
      */
-    public function __construct(XXX $offer)
+    public function __construct(Offer $offer)
     {
+        $point = new OfferRequest\Point($offer->getLatitude(), $offer->getLongitude());
+        $geo = new OfferRequest\Geo(null, $point, $offer->getRadius(), $offer->getCity(), $offer->getCountry()); // TODO: null=>geo_type, where is GEO type?
+        $limits = new OfferRequest\Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
+
         /** @var OfferRequest requestObject */
         $this->requestObject = (new OfferRequest())
-            ->setOwnerId($offer->getOwnerId())
-            ->setName($offer->getName())
+            ->setOwnerId($offer->getAccountId())
+            ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
             ->setCategoryId($offer->getCategoryId())
-            ->setGeo($offer->geo)
-            ->setLimits($offer->limits)
+            ->setGeo($geo)
+            ->setLimits($limits)
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
-            ->setEndDate($offer->getEndDate())
+            ->setEndDate($offer->getFinishDate())
             ->setStartTime($offer->getStartTime())
-            ->setEndTime($offer->getEndTime());
+            ->setEndTime($offer->getFinishTime());
     }
 
     /**

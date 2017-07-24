@@ -2,14 +2,13 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Redemption;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\Client;
 use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
-
-// TODO: project models
 
 /**
  * Class OfferRedemption
@@ -19,9 +18,9 @@ class OfferRedemption extends Job
 {
     /**
      * OfferRedemption constructor.
-     * @param XXX $offer
+     * @param Redemption $offer
      */
-    public function __construct(XXX $offer)
+    public function __construct(Redemption $offer)
     {
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = (new OfferForRedemptionRequest())
