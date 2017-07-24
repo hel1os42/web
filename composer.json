@@ -11,6 +11,7 @@
         "doctrine/dbal": "^2.5",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
+        "michaelachrisco/readonly": "^0.20.1",
         "tymon/jwt-auth": "0.5.*",
         "webpatser/laravel-uuid": "^2.0"
     },

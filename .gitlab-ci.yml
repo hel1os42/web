@@ -17,15 +17,16 @@ stages:
   - deploy
 
 build:
-  image: php:7.1-alpine
+  image: gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
   stage: build
-  script:
+  before_script:
     - apk update
     - apk add git
     - git submodule sync --recursive
     - git submodule update --init --recursive
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
+  script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
   artifacts:
     paths:
@@ -45,7 +46,7 @@ PHP_CodeSniffer:
 PHPMD:
   stage: test
   script:
-    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile phpmd-report.txt --colors || (cat report.txt && false)
+    - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public --suffixes php --reportfile phpmd-report.txt --colors || (cat phpmd-report.txt && false)
   artifacts:
     when: always
     paths:
@@ -60,9 +61,9 @@ Integrational Tests:
     - pecl install xdebug
     - echo -e "zend_extension=$(find /usr -name xdebug.so)\n" >> /usr/local/etc/php/conf.d/xdebug.ini
     - php --version
-  script:
     - ./.gitlab-prepare-for-tests.sh
     - mkdir coverage
+  script:
     - echo "Run the tests"
     - php vendor/bin/phpunit --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
 
@@ -79,8 +80,11 @@ build image:
   stage: build_image
   tags:
     - docker
-  script:
+  before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
+  after_script:
+    - docker logout
+  script:
     - docker build --pull -t $REPOSITORY/$IMAGE:$TEST_TAG .
     - docker push $REPOSITORY/$IMAGE:$TEST_TAG
   only:
@@ -94,9 +98,12 @@ release image:
   stage: release
   tags:
     - docker
-  script:
+  before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
     - docker pull $REPOSITORY/$IMAGE:$TEST_TAG
+  before_script:
+    - docker logout
+  script:
     - docker tag $CONTAINER_TEST_IMAGE $REPOSITORY/$IMAGE:$RELEASE_TAG
     - docker push $REPOSITORY/$IMAGE:$RELEASE_TAG
   only:
@@ -111,14 +118,17 @@ develop deploy:
     - docker
   environment:
     name: develop
-    url: nau.toavalon.com
-  script:
+    url: https://nau.toavalon.com
+  before_script:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - ssh deploy@dev.toavalon.com -p 665 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY"
+  after_script:
+    - ssh deploy@dev.toavalon.com -p 665 "docker logout"
+  script:
     - ssh deploy@dev.toavalon.com -p 665 'WEB_PATH=/opt/nau/web bash -s' < deploy.sh -- $TEST_TAG
 
 pages:
