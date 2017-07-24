@@ -29,7 +29,7 @@ class OfferUpdated extends Job
 
         /** @var OfferForUpdate requestObject */
         $this->requestObject = (new OfferForUpdate())
-            ->setId($offer->getId())
+            ->setOfferId($offer->getId())
             ->setOwnerId($offer->getAccountId())
             ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
@@ -56,7 +56,7 @@ class OfferUpdated extends Job
      */
     public function getHttpPath() : string
     {
-        return '/offers/'.$this->requestObject->id;
+        return '/offers/'.$this->requestObject->offerId;
     }
 
     /**

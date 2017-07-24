@@ -10,21 +10,22 @@ use OmniSynapse\CoreService\Request\Offer\Limits;
  * Class Offer
  * @package OmniSynapse\CoreService\Request
  *
- * @property string owner_id
+ * @property string offerId
+ * @property string ownerId
  * @property string name
  * @property string description
- * @property string category_id
+ * @property string categoryId
  *
  * @property float reward
- * @property Carbon start_date
- * @property Carbon end_date
- * @property Carbon start_time
- * @property Carbon end_time
+ * @property Carbon startDate
+ * @property Carbon endDate
+ * @property Carbon startTime
+ * @property Carbon endTime
  */
 class Offer implements \JsonSerializable
 {
     /** @var string */
-    public $owner_id;
+    public $ownerId;
 
     /** @var string */
     public $name;
@@ -33,7 +34,7 @@ class Offer implements \JsonSerializable
     public $description;
 
     /** @var string */
-    public $category_id;
+    public $categoryId;
 
     /** @var Geo */
     public $geo;
@@ -45,16 +46,16 @@ class Offer implements \JsonSerializable
     public $reward;
 
     /** @var Carbon */
-    public $start_date;
+    public $startDate;
 
     /** @var Carbon */
-    public $end_date;
+    public $endDate;
 
     /** @var Carbon */
-    public $start_time;
+    public $startTime;
 
     /** @var Carbon */
-    public $end_time;
+    public $endTime;
 
     /**
      * @return array
@@ -62,27 +63,27 @@ class Offer implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'owner_id'          => $this->owner_id,
+            'owner_id'          => $this->ownerId,
             'name'              => $this->name,
             'description'       => $this->description,
-            'category_id'       => $this->category_id,
+            'category_id'       => $this->categoryId,
             'geo'               => $this->geo->jsonSerialize(),
             'limits'            => $this->limits->jsonSerialize(),
             'reward'            => $this->reward,
-            'start_date'        => $this->start_date,
-            'end_date'          => $this->end_date,
-            'start_time'        => $this->start_time,
-            'end_time'          => $this->end_time,
+            'start_date'        => $this->startDate,
+            'end_date'          => $this->endDate,
+            'start_time'        => $this->startTime,
+            'end_time'          => $this->endTime,
         ];
     }
 
     /**
-     * @param string $owner_id
+     * @param string $ownerId
      * @return Offer
      */
-    public function setOwnerId(string $owner_id) : Offer
+    public function setOwnerId(string $ownerId) : Offer
     {
-        $this->owner_id = $owner_id;
+        $this->ownerId = $ownerId;
         return $this;
     }
 
@@ -107,12 +108,12 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param string $category_id
+     * @param string $categoryId
      * @return Offer
      */
-    public function setCategoryId(string $category_id) : Offer
+    public function setCategoryId(string $categoryId) : Offer
     {
-        $this->category_id = $category_id;
+        $this->categoryId = $categoryId;
         return $this;
     }
 
@@ -147,42 +148,42 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param Carbon $start_date
+     * @param Carbon $startDate
      * @return Offer
      */
-    public function setStartDate(Carbon $start_date) : Offer
+    public function setStartDate(Carbon $startDate) : Offer
     {
-        $this->start_date = $start_date->toDateString();
+        $this->startDate = $startDate->toDateString();
         return $this;
     }
 
     /**
-     * @param Carbon $end_date
+     * @param Carbon $endDate
      * @return Offer
      */
-    public function setEndDate(Carbon $end_date) : Offer
+    public function setEndDate(Carbon $endDate) : Offer
     {
-        $this->end_date = $end_date->toDateString();
+        $this->endDate = $endDate->toDateString();
         return $this;
     }
 
     /**
-     * @param Carbon $start_time
+     * @param Carbon $startTime
      * @return Offer
      */
-    public function setStartTime(Carbon $start_time) : Offer
+    public function setStartTime(Carbon $startTime) : Offer
     {
-        $this->start_time = $start_time->toTimeString();
+        $this->startTime = $startTime->toTimeString();
         return $this;
     }
 
     /**
-     * @param Carbon $end_time
+     * @param Carbon $endTime
      * @return Offer
      */
-    public function setEndTime(Carbon $end_time) : Offer
+    public function setEndTime(Carbon $endTime) : Offer
     {
-        $this->end_time = $end_time->toTimeString();
+        $this->endTime = $endTime->toTimeString();
         return $this;
     }
 }

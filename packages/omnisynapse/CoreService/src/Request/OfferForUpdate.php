@@ -5,21 +5,19 @@ namespace OmniSynapse\CoreService\Request;
 /**
  * Class OfferForUpdate.
  * @package OmniSynapse\CoreService\Request
- *
- * @property string id
  */
 class OfferForUpdate extends Offer implements \JsonSerializable
 {
     /** @var string */
-    public $id;
+    public $offerId;
 
     /**
-     * @param string $id
+     * @param string $offerId
      * @return OfferForUpdate
      */
-    public function setId(string $id) : OfferForUpdate
+    public function setOfferId(string $offerId) : OfferForUpdate
     {
-        $this->id = $id;
+        $this->offerId = $offerId;
         return $this;
     }
 }

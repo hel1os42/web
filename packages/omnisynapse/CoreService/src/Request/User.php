@@ -6,20 +6,20 @@ namespace OmniSynapse\CoreService\Request;
  * Class UserCreatedRequest
  * @package OmniSynapse\CoreService\Request
  *
- * @property string id
+ * @property string userId
  * @property string username
- * @property string referrer_id
+ * @property string referrerId
  */
 class User implements \JsonSerializable
 {
     /** @var string */
-    public $id;
+    public $userId;
 
     /** @var string */
     public $username;
 
     /** @var string */
-    public $referrer_id;
+    public $referrerId;
 
     /**
      * @return array
@@ -27,19 +27,19 @@ class User implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id' => $this->id,
-            'username' => $this->username,
-            'referrer_id' => $this->referrer_id,
+            'id'            => $this->userId,
+            'username'      => $this->username,
+            'referrer_id'   => $this->referrerId,
         ];
     }
 
     /**
-     * @param string $id
+     * @param string $userId
      * @return User
      */
-    public function setId(string $id) : User
+    public function setUserId(string $userId) : User
     {
-        $this->id = $id;
+        $this->userId = $userId;
         return $this;
     }
 
@@ -54,13 +54,13 @@ class User implements \JsonSerializable
     }
 
     /**
-     * @param User $referrer
+     * @param \App\Models\User $referrer
      * @return User
      */
-    public function setReferrerId(User $referrer=null) : User
+    public function setReferrerId(\App\Models\User $referrer=null) : User
     {
-        $this->referrer_id = null !== $referrer
-            ? $referrer->id
+        $this->referrerId = null !== $referrer
+            ? $referrer->getId()
             : null;
         return $this;
     }

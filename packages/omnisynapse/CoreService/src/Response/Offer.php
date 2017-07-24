@@ -17,10 +17,14 @@ use OmniSynapse\CoreService\Request\Offer\Limits;
  * @property string category_id
  *
  * @property float reward
- * @property Carbon start_date
- * @property Carbon end_date
- * @property Carbon start_time
- * @property Carbon end_time
+ * @property string start_date
+ * @property string end_date
+ * @property string start_time
+ * @property string end_time
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Offer
 {
@@ -48,16 +52,16 @@ class Offer
     /** @var float */
     public $reward;
 
-    /** @var Carbon */
+    /** @var string */
     public $start_date;
 
-    /** @var Carbon */
+    /** @var string */
     public $end_date;
 
-    /** @var Carbon */
+    /** @var string */
     public $start_time;
 
-    /** @var Carbon */
+    /** @var string */
     public $end_time;
 
     /**
@@ -145,7 +149,7 @@ class Offer
      */
     public function getStartTime() : Carbon
     {
-        return Carbon::parse($this->start_time);
+        return $this->getStartDate()->setTimeFromTimeString($this->start_time);
     }
 
     /**
@@ -153,6 +157,6 @@ class Offer
      */
     public function getEndTime() : Carbon
     {
-        return Carbon::parse($this->end_time);
+        return $this->getEndDate()->setTimeFromTimeString($this->end_time);
     }
 }

@@ -7,9 +7,9 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * @package OmniSynapse\CoreService\Limits
  *
  * @property int offers
- * @property int per_day
- * @property int per_user
- * @property int min_level
+ * @property int perDay
+ * @property int perUser
+ * @property int minLevel
  */
 class Limits implements \JsonSerializable
 {
@@ -17,27 +17,27 @@ class Limits implements \JsonSerializable
     private $offers;
 
     /** @var int */
-    private $per_day;
+    private $perDay;
 
     /** @var int */
-    private $per_user;
+    private $perUser;
 
     /** @var int */
-    private $min_level;
+    private $minLevel;
 
     /**
      * Limits constructor.
      * @param int $offers
-     * @param int $per_day
-     * @param int $per_user
-     * @param int $min_level
+     * @param int $perDay
+     * @param int $perUser
+     * @param int $minLevel
      */
-    public function __construct(int $offers, int $per_day, int $per_user, int $min_level)
+    public function __construct(int $offers, int $perDay, int $perUser, int $minLevel)
     {
         $this->setOffers($offers)
-            ->setPerDay($per_day)
-            ->setPerUser($per_user)
-            ->setMinLevel($min_level);
+            ->setPerDay($perDay)
+            ->setPerUser($perUser)
+            ->setMinLevel($minLevel);
     }
 
     /**
@@ -66,7 +66,7 @@ class Limits implements \JsonSerializable
      */
     public function getPerDay() : int
     {
-        return $this->per_day;
+        return $this->perDay;
     }
 
     /**
@@ -74,7 +74,7 @@ class Limits implements \JsonSerializable
      */
     public function getPerUser() : int
     {
-        return $this->per_user;
+        return $this->perUser;
     }
 
     /**
@@ -82,7 +82,7 @@ class Limits implements \JsonSerializable
      */
     public function getMinLevel() : int
     {
-        return $this->min_level;
+        return $this->minLevel;
     }
 
     /**
@@ -96,32 +96,32 @@ class Limits implements \JsonSerializable
     }
 
     /**
-     * @param int $per_day
+     * @param int $perDay
      * @return Limits
      */
-    public function setPerDay(int $per_day) : Limits
+    public function setPerDay(int $perDay) : Limits
     {
-        $this->per_day = $per_day;
+        $this->perDay = $perDay;
         return $this;
     }
 
     /**
-     * @param int $per_user
+     * @param int $perUser
      * @return Limits
      */
-    public function setPerUser(int $per_user) : Limits
+    public function setPerUser(int $perUser) : Limits
     {
-        $this->per_user = $per_user;
+        $this->perUser = $perUser;
         return $this;
     }
 
     /**
-     * @param int $min_level
+     * @param int $minLevel
      * @return Limits
      */
-    public function setMinLevel(int $min_level) : Limits
+    public function setMinLevel(int $minLevel) : Limits
     {
-        $this->min_level = $min_level;
+        $this->minLevel = $minLevel;
         return $this;
     }
 }

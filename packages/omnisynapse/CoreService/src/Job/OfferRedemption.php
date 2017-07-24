@@ -22,7 +22,7 @@ class OfferRedemption extends Job
     {
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = (new OfferForRedemptionRequest())
-            ->setId($offer->getId())
+            ->setOfferId($offer->getId())
             ->setUserId($offer->getUserId());
     }
 
@@ -39,7 +39,7 @@ class OfferRedemption extends Job
      */
     public function getHttpPath() : string
     {
-        return '/offers/'.$this->requestObject->id.'/redemption';
+        return '/offers/'.$this->requestObject->offerId.'/redemption';
     }
 
     /**

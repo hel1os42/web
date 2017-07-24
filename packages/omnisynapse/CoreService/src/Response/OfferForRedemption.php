@@ -15,10 +15,38 @@ use Carbon\Carbon;
  * @property string rewarded_id
  * @property float amount
  * @property float fee
- * @property Carbon created_at
+ * @property string created_at
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class OfferForRedemption
 {
+    /** @var string */
+    public $id;
+
+    /** @var string */
+    public $offer_id;
+
+    /** @var string */
+    public $user_id;
+
+    /** @var int */
+    public $points;
+
+    /** @var string */
+    public $rewarded_id;
+
+    /** @var float */
+    public $amount;
+
+    /** @var float */
+    public $fee;
+
+    /** @var string */
+    public $created_at;
+
     /**
      * @return string
      */

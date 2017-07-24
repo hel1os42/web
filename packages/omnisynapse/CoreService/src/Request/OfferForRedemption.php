@@ -6,16 +6,16 @@ namespace OmniSynapse\CoreService\Request;
  * Class OfferForRedemption
  * @package OmniSynapse\CoreService\Request
  *
- * @property string id
- * @property string user_id
+ * @property string offerId
+ * @property string userId
  */
 class OfferForRedemption implements \JsonSerializable
 {
     /** @var string */
-    public $id;
+    public $offerId;
 
     /** @var string */
-    public $user_id;
+    public $userId;
 
     /**
      * @return array
@@ -23,27 +23,27 @@ class OfferForRedemption implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'user_id' => $this->user_id,
+            'user_id' => $this->userId,
         ];
     }
 
     /**
-     * @param string $id
+     * @param string $offerId
      * @return OfferForRedemption
      */
-    public function setId(string $id) : OfferForRedemption
+    public function setOfferId(string $offerId) : OfferForRedemption
     {
-        $this->id = $id;
+        $this->offerId = $offerId;
         return $this;
     }
 
     /**
-     * @param string $user_id
+     * @param string $userId
      * @return OfferForRedemption
      */
-    public function setUserId(string $user_id) : OfferForRedemption
+    public function setUserId(string $userId) : OfferForRedemption
     {
-        $this->user_id = $user_id;
+        $this->userId = $userId;
         return $this;
     }
 }

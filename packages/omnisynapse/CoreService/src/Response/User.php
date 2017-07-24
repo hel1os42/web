@@ -15,6 +15,10 @@ use Carbon\Carbon;
  * @property int points
  * @property array wallets
  * @property string created_at
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class User
 {
