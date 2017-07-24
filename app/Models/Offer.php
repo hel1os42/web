@@ -44,6 +44,9 @@ class Offer extends Model
     use HasNau;
 
     /** @var string */
+    protected $connection = 'pgsql_nau';
+
+    /** @var string */
     protected $table = "offer";
 
     /** @var string */
