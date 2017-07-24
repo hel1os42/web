@@ -28,6 +28,9 @@ class Transact extends Model
     use HasNau;
 
     /** @var string */
+    protected $connection = 'pgsql_nau';
+
+    /** @var string */
     protected $table = "transact";
 
     /** @var string */

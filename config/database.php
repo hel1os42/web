@@ -67,6 +67,19 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pgsql_nau' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_NAU_HOST', '127.0.0.1'),
+            'port' => env('DB_NAU_PORT', '5432'),
+            'database' => env('DB_NAU_DATABASE', 'forge'),
+            'username' => env('DB_NAU_USERNAME', 'forge'),
+            'password' => env('DB_NAU_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST', 'localhost'),
