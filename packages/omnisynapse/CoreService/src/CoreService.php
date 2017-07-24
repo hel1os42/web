@@ -2,8 +2,6 @@
 
 namespace OmniSynapse\CoreService;
 
-// TODO: project models
-
 use App\Models\Offer;
 use App\Models\Redemption;
 use App\Models\User;

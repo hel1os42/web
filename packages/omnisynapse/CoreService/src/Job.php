@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use OmniSynapse\CoreService\Exception\RequestException;
 
 abstract class Job implements ShouldQueue
 {
@@ -23,7 +24,7 @@ abstract class Job implements ShouldQueue
      * Execute the job.
      *
      * @return void
-     * @throws \JsonMapper_Exception
+     * @throws \InvalidArgumentException
      */
     public function handle()
     {
@@ -46,34 +47,12 @@ abstract class Job implements ShouldQueue
 
         try {
             (new \JsonMapper)->map($this->responseContent, $responseObject = new $responseClassName);
-        } catch (\JsonMapper_Exception $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->handleError($response);
             return;
         }
 
         event($responseObject);
-    }
-
-    /**
-     * @param string $fileName
-     * @return void
-     */
-    protected function changeLoggerPath(string $fileName)
-    {
-        $maxFiles = config('app.log_max_files');
-        $monolog = logger()->getMonolog();
-
-        while (count($monolog->getHandlers()) > 0) {
-            $monolog->popHandler();
-        }
-
-        logger()->useDailyFiles(
-            sprintf('%s/logs/%s', storage_path(), $fileName),
-            is_null($maxFiles)
-                ? 5
-                : $maxFiles,
-            config('app.log_level', 'debug')
-        );
     }
 
     /** @return string */
@@ -88,5 +67,25 @@ abstract class Job implements ShouldQueue
     /** @return string */
     abstract protected function getResponseClass() : string;
 
-    abstract protected function handleError(Response $response);
+    /**
+     * @param Response $response
+     * @throws RequestException
+     */
+    protected function handleError(Response $response)
+    {
+        $errorMessage = isset($this->responseContent->message)
+            ? $this->responseContent->message
+            : $response->getReasonPhrase();
+
+        logger()->error('Error while trying to send request to '.$this->getHttpMethod().' via method '.$this->getHttpMethod(), [
+            'statusCode' => $response->getStatusCode(),
+            'message' => $errorMessage
+        ]);
+        logger()->debug('Request and Response', [
+            'request' => $this->requestObject->jsonSerialize(),
+            'response' => $this->responseContent
+        ]);
+
+        throw new RequestException($errorMessage);
+    }
 }
