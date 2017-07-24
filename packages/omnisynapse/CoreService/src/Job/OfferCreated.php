@@ -20,8 +20,8 @@ class OfferCreated extends Job
      */
     public function __construct(Offer $offer)
     {
-        $point = new OfferRequest\Point($offer->getLatitude(), $offer->getLongitude());
-        $geo = new OfferRequest\Geo(null, $point, $offer->getRadius(), $offer->getCity(), $offer->getCountry()); // TODO: null=>geo_type, where is GEO type?
+        $point  = new OfferRequest\Point($offer->getLatitude(), $offer->getLongitude());
+        $geo    = new OfferRequest\Geo(null, $point, $offer->getRadius(), $offer->getCity(), $offer->getCountry()); // TODO: null=>geo_type, where is GEO type?
         $limits = new OfferRequest\Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
 
         /** @var OfferRequest requestObject */

@@ -42,7 +42,7 @@ abstract class Job implements ShouldQueue
             return;
         }
 
-        $responseClassName = $this->getResponseClass();
+        $responseClassName     = $this->getResponseClass();
         $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
 
         try {
