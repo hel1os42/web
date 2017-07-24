@@ -62,7 +62,7 @@ abstract class Job implements ShouldQueue
     /** @return string */
     abstract protected function getHttpMethod() : string;
 
-    /** @reutnr string */
+    /** @return string */
     abstract protected function getHttpPath() : string;
 
     /** @return \JsonSerializable */
