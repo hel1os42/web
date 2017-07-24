@@ -14,10 +14,10 @@ abstract class Job implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var object */
+    /** @var object $requestObject */
     protected $requestObject = null;
 
-    /** @var object */
+    /** @var object $responseContent */
     protected $responseContent = null;
 
     /**
@@ -51,6 +51,10 @@ abstract class Job implements ShouldQueue
             $this->handleError($response);
             return;
         }
+
+        logger()->info('Request to the Core', [
+            'response' => $this->responseContent
+        ]);
 
         event($responseObject);
     }
