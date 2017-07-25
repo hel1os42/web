@@ -6,8 +6,10 @@ use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\QueryException;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class Offer
@@ -276,6 +278,12 @@ class Offer extends Model
         return $this->updated_at;
     }
 
+    public function getOwner()
+    {
+        $account = $this->account;
+        return $account !== null ? $account->getOwnerId() : null;
+    }
+
     /**
      * @param Builder $builder
      * @param string $lat
@@ -283,15 +291,15 @@ class Offer extends Model
      * @param int $radius
      * @return Builder
      */
-    public function scopeFilterByPosition(Builder $bilder, string $lat, string $lng, int $radius) : Builder
+    public function scopeFilterByPosition(Builder $builder, string $lat, string $lng, int $radius): Builder
     {
+        return $builder->whereRaw(sprintf('(6371000 * 2 * ASIN(SQRT(POWER(SIN((`lat` - ABS(%1$s)) * PI()/180 / 2), 2) + COS(`lat` * PI()/180) * COS(ABS(%1$s) * PI()/180) * POWER(SIN((`lng` - %2$s) * PI()/180 / 2), 2)))) < (`radius` + %3$d)',
+            $lat, $lng, $radius));
+    }
 
-        return $bilder->whereRaw(sprintf('6371000 * 2 * ASIN(SQRT(
-            POWER(SIN((`lat` - ABS(%1$s)) * PI()/180 / 2), 2) +
-            COS(`lat` * PI()/180) *
-            COS(ABS(%1$s) * PI()/180) *
-            POWER(SIN((`lng` - %2$s) * PI()/180 / 2), 2)
-        )) < `radius` + %3$d', $lat, $lng, $radius));
+    public function redeem(User $user)
+    {
+        //return $this->redemptions()->create(['user_id' => $user->id]);
     }
 
 }

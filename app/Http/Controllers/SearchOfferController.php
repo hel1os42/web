@@ -13,12 +13,12 @@ class SearchOfferController extends Controller
      * Get default data for search request
      * @return Response
      */
-    public function index() : Response
+    public function index(): Response
     {
-        response()->render('empty', [
-            'latitude' => null,
+        response()->render('offer.search', [
+            'latitude'  => null,
             'longitude' => null,
-            'radius' => 1
+            'radius'    => 1
         ]);
     }
 
@@ -30,7 +30,7 @@ class SearchOfferController extends Controller
     public function search(SearchOfferRequest $request)
     {
         $offers = new Offer();
-        $offers->filterByPosition($request->latitude, $request->longitude, $request->radius);
+        $offers->filterByPosition($request->latitude, $request->longitude, $request->radius)->get();
 
     }
 

@@ -75,11 +75,12 @@ class OfferController extends Controller
     public function show(string $offerUuid): Response
     {
         $offer = new Offer();
-        $offer->find($offerUuid);
+        $offer->findOrFail($offerUuid);
+        $ownerId = $offer->getOwner();
 
-        if ($offer->account->owner === Auth::user()) {
+        if ($ownerId !== null && $ownerId === Auth::user()) {
             return \response()->render('offer.show', [
-                'data' => $offer->fresh()
+                'data' => $offer
             ]);
         }
         return \response()->error('404', trans('errors.offer_not_found'));
@@ -93,7 +94,7 @@ class OfferController extends Controller
     public function view(string $offerUuid) : Response
     {
         $offer = new Offer();
-        $offer->find($offerUuid);
+        $offer->findOrFail($offerUuid);
         return \response()->render('offer.view', [
             'data' => [
                 'label' => $offer->getLabel(),
@@ -108,15 +109,11 @@ class OfferController extends Controller
      */
     public function activate(string $offerUuid)
     {
-        $redemption = new Redemption();
-        $redemption->fill([
-            'offer_id' => $offerUuid,
-            'user_id' => Auth::user()->getId(),
-        ]);
+        $offer = new Offer();
+        $offer->findOrFail($offerUuid);
+        $offer->redeem(Auth::user());
 
-        //todo @coreservise call with redemption method
-
-        return \response()->render('empty',['msg' => trans('msg.offer.activating')]);
+        return \response()->render('empty', ['msg' => trans('msg.offer.activating')], Response::HTTP_CREATED);
     }
 
 }

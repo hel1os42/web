@@ -8,14 +8,9 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class OfferRequest
  * @package App\Http\Requests\Auth
  *
- * @property string name
- * @property string description
- * @property string category
  * @property string latitude
  * @property string longitude
  * @property int radius
- * @property string country
- * @property string city
  *
  */
 class SearchOfferRequest extends FormRequest
