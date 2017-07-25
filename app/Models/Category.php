@@ -29,7 +29,7 @@ class Category extends Model
     {
         parent::__construct($attributes);
 
-        $this->table = 'categories';
+        $this->table      = 'categories';
         $this->primaryKey = 'id';
 
         $this->casts = [
