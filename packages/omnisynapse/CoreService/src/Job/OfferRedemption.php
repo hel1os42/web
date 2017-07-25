@@ -16,14 +16,12 @@ class OfferRedemption extends Job
 {
     /**
      * OfferRedemption constructor.
-     * @param Redemption $offer
+     * @param Redemption $redemption
      */
-    public function __construct(Redemption $offer)
+    public function __construct(Redemption $redemption)
     {
         /** @var OfferForRedemptionRequest requestObject */
-        $this->requestObject = (new OfferForRedemptionRequest())
-            ->setOfferId($offer->getId())
-            ->setUserId($offer->getUserId());
+        $this->requestObject = new OfferForRedemptionRequest($redemption);
     }
 
     /**

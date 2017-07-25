@@ -12,6 +12,18 @@ class OfferForUpdate extends Offer implements \JsonSerializable
     public $offerId;
 
     /**
+     * Offer constructor.
+     *
+     * @param \App\Models\Offer $offer
+     */
+    public function __construct(\App\Models\Offer $offer)
+    {
+        parent::__construct($offer);
+        
+        $this->setOfferId($offer->getId());
+    }
+
+    /**
      * @param string $offerId
      * @return OfferForUpdate
      */

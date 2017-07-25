@@ -2,6 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
+use App\Models\Redemption;
+
 /**
  * Class OfferForRedemption
  * @package OmniSynapse\CoreService\Request
@@ -16,6 +18,17 @@ class OfferForRedemption implements \JsonSerializable
 
     /** @var string */
     public $userId;
+
+    /**
+     * OfferForRedemption constructor.
+     *
+     * @param Redemption $redemption
+     */
+    public function __construct(Redemption $redemption)
+    {
+        $this->setOfferId($redemption->getId())
+            ->setUserId($redemption->getUserId());
+    }
 
     /**
      * @return array

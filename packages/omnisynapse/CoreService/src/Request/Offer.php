@@ -5,6 +5,7 @@ namespace OmniSynapse\CoreService\Request;
 use Carbon\Carbon;
 use OmniSynapse\CoreService\Request\Offer\Geo;
 use OmniSynapse\CoreService\Request\Offer\Limits;
+use OmniSynapse\CoreService\Request\Offer\Point;
 
 /**
  * Class Offer
@@ -56,6 +57,31 @@ class Offer implements \JsonSerializable
 
     /** @var Carbon */
     public $endTime;
+
+    /**
+     * Offer constructor.
+     *
+     * @param \App\Models\Offer $offer
+     */
+    public function __construct(\App\Models\Offer $offer)
+    {
+        $point   = new Point($offer->getLatitude(), $offer->getLongitude());
+        $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
+        $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
+        $account = $offer->account;
+
+        $this->setOwnerId(null !== $account ? $account->getOwnerId() : null)
+            ->setName($offer->getLabel())
+            ->setDescription($offer->getDescription())
+            ->setCategoryId($offer->getCategoryId())
+            ->setGeo($geo)
+            ->setLimits($limits)
+            ->setReward($offer->getReward())
+            ->setStartDate($offer->getStartDate())
+            ->setEndDate($offer->getFinishDate())
+            ->setStartTime($offer->getStartTime())
+            ->setEndTime($offer->getFinishTime());
+    }
 
     /**
      * @return array

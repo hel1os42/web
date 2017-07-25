@@ -22,10 +22,7 @@ class UserCreated extends Job
     public function __construct(User $user)
     {
         /** @var UserRequest requestObject */
-        $this->requestObject = (new UserRequest())
-            ->setUserId($user->getId())
-            ->setUsername($user->getName())
-            ->setReferrerId($user->getReferrerId());
+        $this->requestObject = new UserRequest($user);
     }
 
     /**

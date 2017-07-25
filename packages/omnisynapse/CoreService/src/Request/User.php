@@ -22,6 +22,18 @@ class User implements \JsonSerializable
     public $referrerId;
 
     /**
+     * User constructor.
+     *
+     * @param \App\Models\User $user
+     */
+    public function __construct(\App\Models\User $user)
+    {
+        $this->setUserId($user->getId())
+            ->setUsername($user->getName())
+            ->setReferrerId($user->getReferrerId());
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()

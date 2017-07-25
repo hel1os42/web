@@ -32,19 +32,29 @@ class Geo implements \JsonSerializable
     /**
      * Geo constructor.
      *
-     * @param string $type
      * @param Point $point
      * @param int $radius
      * @param string $city
      * @param string $country
      */
-    public function __construct(string $type, Point $point, int $radius, string $city, string $country)
+    public function __construct(Point $point, int $radius, string $city, string $country)
     {
-        $this->setType($type)
-            ->setPoint($point)
+        $this->setPoint($point)
             ->setRadius($radius)
             ->setCity($city)
             ->setCountry($country);
+
+        $type = null;
+
+        if ($point->getLat() > 0 && $point->getLon() > 0) {
+            $type = 'point';
+        } elseif (null !== $city && null !== $country) {
+            $type = 'city';
+        } elseif (null !== $country) {
+            $type = 'country';
+        }
+
+        $this->setType($type);
     }
 
     /**
