@@ -21,8 +21,8 @@ class Client
     {
         $config = [
             'base_uri'    => config('core-config.base_uri'),
-            'verify'      => (bool) config('core-config.verify'),
-            'http_errors' => (bool) config('core-config.http_errors'),
+            'verify'      => (bool)config('core-config.verify'),
+            'http_errors' => (bool)config('core-config.http_errors'),
         ];
 
         $this->client = new \GuzzleHttp\Client($config);
