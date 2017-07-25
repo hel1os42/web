@@ -15,9 +15,9 @@ class UserCreatedTest extends TestCase
      */
     public function testUserCreated()
     {
-        $random      = str_random(30);
-        $referrer    = User::first();
-        $user        = User::create([
+        $random   = str_random(30);
+        $referrer = User::first();
+        $user     = User::create([
             'name'        => $random,
             'email'       => $random,
             'password'    => Hash::make($random),
