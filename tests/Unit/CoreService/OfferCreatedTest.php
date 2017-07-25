@@ -1,20 +1,21 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\CoreService;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ExampleTest extends TestCase
+class OfferCreatedTest extends TestCase
 {
     /**
      * A basic test example.
      *
      * @return void
      */
-    public function testBasicTest()
+    public function testOfferCreated()
     {
-        $this->assertTrue(true);
+
     }
 }

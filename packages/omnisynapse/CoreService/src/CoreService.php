@@ -13,18 +13,6 @@ use OmniSynapse\CoreService\Job\UserCreated;
 
 class CoreService implements CoreServiceInterface
 {
-    /** @var array */
-    protected $config;
-
-    /**
-     * CoreService constructor.
-     * @param array|null $config
-     */
-    public function __construct($config = null)
-    {
-        $this->config = $config;
-    }
-
     /**
      * @param Offer $offer
      * @return Job

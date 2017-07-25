@@ -16,6 +16,10 @@
         <testsuite name="Unit Tests">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
+
+        <testsuite name="Core Service">
+            <directory suffix="Test.php">./tests/Unit/CoreService</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
@@ -26,6 +30,10 @@
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
+        <env name="QUEUE_DRIVER" value="beanstalkd"/>
+
+        <env name="CORE_SERVICE_BASE_URL" value="https://core.nau.toavalon.com"/>
+        <env name="CORE_SERVICE_VERIFY" value="false"/>
+        <env name="CORE_SERVICE_HTTP_ERRORS" value="false"/>
     </php>
 </phpunit>

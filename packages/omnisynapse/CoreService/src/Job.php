@@ -37,13 +37,14 @@ abstract class Job implements ShouldQueue
             ]
         );
 
+        $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
+
         if (floor($response->getStatusCode() * 0.01) > 2) {
             $this->handleError($response);
             return;
         }
 
-        $responseClassName     = $this->getResponseClass();
-        $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
+        $responseClassName = $this->getResponseClass();
 
         try {
             (new \JsonMapper)->map($this->responseContent, $responseObject = new $responseClassName);

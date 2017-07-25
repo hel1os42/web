@@ -16,7 +16,7 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
- * @property mixed  referrer_id
+ * @property string referrer_id
  *
  * @property User   referrer
  */
@@ -34,6 +34,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'referrer_id',
     ];
 
     /**
@@ -44,7 +45,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'referrer_id'
     ];
 
     /**
