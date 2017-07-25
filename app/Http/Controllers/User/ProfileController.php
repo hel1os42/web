@@ -12,7 +12,6 @@ class ProfileController extends Controller
 
     public function index()
     {
-        var_dump(PHP_INT_MAX);
         return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home');
     }
 

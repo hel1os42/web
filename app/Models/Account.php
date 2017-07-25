@@ -54,6 +54,19 @@ class Account extends Model
 
     ];
 
+
+    /** @return BelongsTo */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /** @return HasMany */
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class, 'acc_id', 'id');
+    }
+
     /** @return string */
     public function getId(): string
     {
@@ -64,12 +77,6 @@ class Account extends Model
     public function getOwnerId(): string
     {
         return $this->owner_id;
-    }
-
-    /** @return BelongsTo */
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
     /** @return string */
@@ -91,12 +98,6 @@ class Account extends Model
     public function getBalance(): float
     {
         return $this->balance;
-    }
-
-    /** @return HasMany */
-    public function offers(): HasMany
-    {
-        return $this->hasMany(Offer::class, 'acc_id', 'id');
     }
 
     /** @return Carbon */

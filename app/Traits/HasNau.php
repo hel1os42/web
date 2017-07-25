@@ -11,7 +11,7 @@ trait HasNau
      * @param int $value
      * @return float
      */
-    protected function convertIntToFloat(integer $value) : float
+    protected function convertIntToFloat(int $value) : float
     {
         $multiplier = $this->multiplier;
 

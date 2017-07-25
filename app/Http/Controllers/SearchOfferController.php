@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Offer;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\SearchOfferRequest;
 
@@ -14,18 +15,10 @@ class SearchOfferController extends Controller
      */
     public function index() : Response
     {
-        response()->render('', [
+        response()->render('empty', [
             'latitude' => null,
             'longitude' => null,
-            'radius' => null,
-            'category' => null,
-            'city' => null,
-            'country' => null,
-            'name' => null,
-            'description' => null,
-            'data' => [
-                'categories' => [] //  get all categories from model
-            ]
+            'radius' => 1
         ]);
     }
 
@@ -36,17 +29,9 @@ class SearchOfferController extends Controller
      */
     public function search(SearchOfferRequest $request)
     {
-        //$offers =
+        $offers = new Offer();
+        $offers->filterByPosition($request->latitude, $request->longitude, $request->radius);
 
-        /*
-         * filter by distance
-            6371000 * 2 * ASIN(SQRT(
-                POWER(SIN((lat1 - ABS(lat2)) * PI()/180 / 2), 2) +
-                COS(lat1 * PI()/180) *
-                COS(ABS(lat2) * PI()/180) *
-                POWER(SIN((lon1 - lon2) * PI()/180 / 2), 2)
-            )) < r1 + r2
-        */
     }
 
 }

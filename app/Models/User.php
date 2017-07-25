@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use PDepend\Source\Parser\TokenException;
 use Webpatser\Uuid\Uuid;
 
 /**
@@ -58,17 +61,27 @@ class User extends Authenticatable
     /**
      * Get the referrer record associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function referrer()
+    public function referrer() : BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * @return mixed
+     * Get the referrer record associated with the user.
+     *
+     * @return HasMany
      */
-    public function getId()
+    public function account() : HasMany
+    {
+        return $this->hasMany(Account::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return string
+     */
+    public function getId() : string
     {
         return $this->id;
     }
@@ -76,9 +89,9 @@ class User extends Authenticatable
     /**
      * Get user name
      *
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
@@ -86,9 +99,9 @@ class User extends Authenticatable
     /**
      * Get user mail
      *
-     * @return mixed
+     * @return string
      */
-    public function getEmail()
+    public function getEmail() : string
     {
         return $this->email;
     }
@@ -96,9 +109,9 @@ class User extends Authenticatable
     /**
      * Get user referrer id
      *
-     * @return mixed
+     * @return string
      */
-    public function getReferrerId()
+    public function getReferrerId() : string
     {
         return $this->referrer_id;
     }
@@ -107,11 +120,11 @@ class User extends Authenticatable
     /**
      * Set user name
      *
-     * @param $name
+     * @param string $name
      *
-     * @return $this
+     * @return User
      */
-    public function setName($name)
+    public function setName(string $name) : User
     {
         $this->name = $name;
 
@@ -123,9 +136,9 @@ class User extends Authenticatable
      *
      * @param string $email
      *
-     * @return $this
+     * @return User
      */
-    public function setEmail($email)
+    public function setEmail(string $email) : User
     {
         $this->email = $email;
 
@@ -137,16 +150,19 @@ class User extends Authenticatable
      *
      * @param string $password
      *
-     * @return $this
+     * @return User
      */
-    public function setPassword($password)
+    public function setPassword(string $password) : User
     {
         $this->password = $password;
 
         return $this;
     }
 
-    public function setPasswordAttribute($value)
+    /**
+     * @param string $value
+     */
+    public function setPasswordAttribute(string $value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
@@ -166,11 +182,14 @@ class User extends Authenticatable
     /**
      * Set invite code
      *
-     * @param $invite
+     * @param string $invite
+     * @return User
      */
-    public function setInvite($invite)
+    public function setInvite(string $invite) : User
     {
         $this->invite_code = $invite;
+
+        return $this;
     }
 
     /**
@@ -178,10 +197,10 @@ class User extends Authenticatable
      *
      * @param string $invite
      *
-     * @return $this
+     * @return User
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite)
+    public function findByInvite(string $invite) : User
     {
         return $this->where('invite_code', $invite)->first();
     }
@@ -191,10 +210,22 @@ class User extends Authenticatable
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function generateInvite()
+    public function generateInvite() : string
     {
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
         return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
+    }
+
+    /**
+     * @param string $token
+     * @return Account
+     */
+    public function getAccountFor(string $token) : Account
+    {
+        switch ($token){
+            case 'NAU': return $this->account()->first();
+            default: throw new TokenException("unknown token " . $token);
+        };
     }
 }

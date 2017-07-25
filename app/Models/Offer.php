@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
+ * @method filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  *
  */
 class Offer extends Model
@@ -71,30 +73,61 @@ class Offer extends Model
 
     /** @var array */
     protected $casts = [
-        'id'                    => 'string',
-        'account_id'            => 'integer',
-        'label'                 => 'string',
-        'description'           => 'string',
-        'reward'                => 'integer',
-        'status'                => 'string',
-        'start_date'            => 'date',
-        'finish_date'           => 'date',
-        'start_time'            => 'datetime',
-        'finish_time'           => 'datetime',
-        'country'               => 'string',
-        'city'                  => 'string',
-        'category_id'           => 'string',
-        'max_count'             => 'integer',
-        'max_for_user'          => 'integer',
-        'max_per_day'           => 'integer',
-        'max_for_user_per_day'  => 'integer',
-        'user_level_min'        => 'integer',
-        'latitude'              => 'double',
-        'longitude'             => 'double',
-        'radius'                => 'integer',
-        'created_at'            => 'datetime',
-        'updated_at'            => 'datetime',
+        'id'                   => 'string',
+        'account_id'           => 'integer',
+        'label'                => 'string',
+        'description'          => 'string',
+        'reward'               => 'integer',
+        'status'               => 'string',
+        'start_date'           => 'date',
+        'finish_date'          => 'date',
+        'start_time'           => 'datetime',
+        'finish_time'          => 'datetime',
+        'country'              => 'string',
+        'city'                 => 'string',
+        'category_id'          => 'string',
+        'max_count'            => 'integer',
+        'max_for_user'         => 'integer',
+        'max_per_day'          => 'integer',
+        'max_for_user_per_day' => 'integer',
+        'user_level_min'       => 'integer',
+        'latitude'             => 'double',
+        'longitude'            => 'double',
+        'radius'               => 'integer',
+        'created_at'           => 'datetime',
+        'updated_at'           => 'datetime',
     ];
+
+    /** @var array */
+    protected $attributes = array(
+        'account_id'           => null,
+        'label'                => null,
+        'description'          => null,
+        'reward'               => '10000',
+        'status'               => null,
+        'start_date'           => null,
+        'finish_date'          => null,
+        'start_time'           => null,
+        'finish_time'          => null,
+        'country'              => null,
+        'city'                 => null,
+        'category_id'          => null,
+        'max_count'            => null,
+        'max_for_user'         => null,
+        'max_per_day'          => null,
+        'max_for_user_per_day' => null,
+        'user_level_min'       => null,
+        'latitude'             => null,
+        'longitude'            => null,
+        'radius'               => null
+    );
+
+    /** @return BelongsTo */
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'account_id', 'id');
+    }
+
 
     /** @return string */
     public function getId(): string
@@ -106,12 +139,6 @@ class Offer extends Model
     public function getAccountId(): int
     {
         return $this->account_id;
-    }
-
-    /** @return BelongsTo */
-    public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
     /** @return string */
@@ -248,4 +275,23 @@ class Offer extends Model
     {
         return $this->updated_at;
     }
+
+    /**
+     * @param Builder $builder
+     * @param string $lat
+     * @param string $lng
+     * @param int $radius
+     * @return Builder
+     */
+    public function scopeFilterByPosition(Builder $bilder, string $lat, string $lng, int $radius) : Builder
+    {
+
+        return $bilder->whereRaw(sprintf('6371000 * 2 * ASIN(SQRT(
+            POWER(SIN((`lat` - ABS(%1$s)) * PI()/180 / 2), 2) +
+            COS(`lat` * PI()/180) *
+            COS(ABS(%1$s) * PI()/180) *
+            POWER(SIN((`lng` - %2$s) * PI()/180 / 2), 2)
+        )) < `radius` + %3$d', $lat, $lng, $radius));
+    }
+
 }

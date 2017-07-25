@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NAU</title>
+    <title>Create offer</title>
 
     <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
@@ -62,6 +62,7 @@
             text-align: left;
             font-weight: bold;
             margin-bottom: 100px;
+            margin-top: 100px;
         }
     </style>
 </head>
@@ -74,24 +75,24 @@
         <div class="offer">
             <form action="{{route('offer')}}" method="post" target="_top">
                 {{ csrf_field() }}
-                <input type="name" name="name" placeholder="name" value="{{$name}}"> <br>
-                <input type="description" name="description" placeholder="description" value="{{$description}}"><br>
-                <input type="reward" name="reward" placeholder="reward" value="{{$reward}}"><br>
-                <input type="date_start" name="date_start" placeholder="date_start" value="{{$date_start}}">
-                <input type="time_start" name="time_start" placeholder="time_start" value="{{$time_start}}"><br>
-                <input type="date_finish" name="date_finish" placeholder="date_finish" value="{{$date_finish}}">
-                <input type="time_finish" name="time_finish" placeholder="time_finish" value="{{$time_finish}}"><br>
-                <input type="category" name="category" placeholder="category" value="{{$category}}"><br>
-                <input type="max_count" name="max_count" placeholder="max_count" value="{{$max_count}}"><br>
-                <input type="max_for_user" name="max_for_user" placeholder="max_for_user" value="{{$max_for_user}}"><br>
-                <input type="max_per_day" name="max_per_day" placeholder="max_per_day" value="{{$max_per_day}}"><br>
-                <input type="max_for_user_per_day" name="max_for_user_per_day" placeholder="max_for_user_per_day" value="{{$max_for_user_per_day}}"><br>
-                <input type="min_level" name="min_level" placeholder="min_level" value="{{$min_level}}"><br>
-                <input type="latitude" name="latitude" placeholder="latitude" value="{{$latitude}}"><br>
-                <input type="longitude" name="longitude" placeholder="longitude" value="{{$longitude}}"><br>
-                <input type="radius" name="radius" placeholder="radius" value="{{$radius}}"><br>
-                <input type="country" name="country" placeholder="country" value="{{$country}}"><br>
-                <input type="city" name="city" placeholder="city" value="{{$city}}"><br>
+                <input type="name" name="name" placeholder="name" value="{{$data->label}}"> <br>
+                <input type="description" name="description" placeholder="description" value="{{$data->description}}"><br>
+                <input type="reward" name="reward" placeholder="reward" value="{{$data->reward}}"><br>
+                <input type="date_start" name="date_start" placeholder="date_start" value="{{$data->date_start}}">
+                <input type="time_start" name="time_start" placeholder="time_start" value="{{$data->time_start}}"><br>
+                <input type="date_finish" name="date_finish" placeholder="date_finish" value="{{$data->date_finish}}">
+                <input type="time_finish" name="time_finish" placeholder="time_finish" value="{{$data->time_finish}}"><br>
+                <input type="category" name="category" placeholder="category" value="{{$data->category}}"><br>
+                <input type="max_count" name="max_count" placeholder="max_count" value="{{$data->max_count}}"><br>
+                <input type="max_for_user" name="max_for_user" placeholder="max_for_user" value="{{$data->max_for_user}}"><br>
+                <input type="max_per_day" name="max_per_day" placeholder="max_per_day" value="{{$data->max_per_day}}"><br>
+                <input type="max_for_user_per_day" name="max_for_user_per_day" placeholder="max_for_user_per_day" value="{{$data->max_for_user_per_day}}"><br>
+                <input type="min_level" name="min_level" placeholder="min_level" value="{{$data->min_level}}"><br>
+                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data->latitude}}"><br>
+                <input type="longitude" name="longitude" placeholder="longitude" value="{{$data->longitude}}"><br>
+                <input type="radius" name="radius" placeholder="radius" value="{{$data->radius}}"><br>
+                <input type="country" name="country" placeholder="country" value="{{$data->country}}"><br>
+                <input type="city" name="city" placeholder="city" value="{{$data->city}}"><br>
                 <input type="submit">
             </form>
         </div>
