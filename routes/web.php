@@ -33,8 +33,12 @@ Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('users/{id}', '\App\Http\Controllers\User\ProfileController@show')->where('id', '[a-z0-9-]+')->name('profile');
-    Route::get('offers/create', '\App\Http\Controllers\OfferController@create');
-    Route::post('offers', '\App\Http\Controllers\OfferController@store')->name('offer');
+    Route::resource('advert/offers', '\App\Http\Controllers\Advert\OfferController', ['names' => [
+        'create' => 'advert.offer.create',
+        'store' => 'advert.offer.save',
+        'show' => 'advert.offer.show',
+        'index' => 'advert.offer.list'
+    ]]);
 
 });
 

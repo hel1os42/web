@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NAU</title>
+    <title>Search offer</title>
 
     <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
@@ -62,17 +62,33 @@
             text-align: left;
             font-weight: bold;
             margin-bottom: 100px;
+            margin-top: 100px;
         }
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right"> <a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-        Offer created!
+            <form action="{{route('offer')}}" method="post" target="_top">
+                {{ csrf_field() }}
+                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data->latitude}}"><br>
+                <input type="longitude" name="longitude" placeholder="longitude" value="{{$data->longitude}}"><br>
+                <input type="radius" name="radius" placeholder="radius" value="{{$data->radius}}"><br>
+                <input type="submit">
+            </form>
         </div>
         <div class="title">NAU</div>
     </div>

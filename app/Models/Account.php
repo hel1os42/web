@@ -39,18 +39,18 @@ class Account extends Model
 
     /** @var array */
     protected $maps = [
-        'amount' => 'balance',
-        'addr'   => 'address',
+        'balance' => 'amount',
+        'address' => 'addr',
     ];
 
     /** @var array */
     protected $casts = [
-        'id'            => 'integer',
-        'owner_id'      => 'string',
-        'address'       => 'string',
-        'balance'       => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'id'         => 'integer',
+        'owner_id'   => 'string',
+        'address'    => 'string',
+        'balance'    => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
 
     ];
 

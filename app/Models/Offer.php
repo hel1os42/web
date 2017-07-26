@@ -6,10 +6,10 @@ use App\Models\Traits\HasNau;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\QueryException;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  * Class Offer
@@ -40,11 +40,12 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * @property Carbon updated_at
  * @property Account account
  * @method filterByPosition(string $latitude, string $longitude, int $radius) : Offer
+ * @method accountOffers(int $accountId) : Offer
  *
  */
 class Offer extends Model
 {
-    use ReadOnlyTrait;
+    //use ReadOnlyTrait;
     use HasNau;
 
     /** @var string */
@@ -58,19 +59,17 @@ class Offer extends Model
 
     /** @var array */
     protected $maps = [
-        'acc_id'     => 'account_id',
-        'name'       => 'label',
-        'descr'      => 'description',
-        'dt_start'   => 'start_date',
-        'dt_finish'  => 'finish_date',
-        'tm_start'   => 'start_time',
-        'tm_finish'  => 'finish_time',
-        'categ'      => 'category_id',
-        'min_level'  => 'user_level_min',
-        'lat'        => 'latitude',
-        'lng'        => 'longitude',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'account_id'     => 'acc_id',
+        'label'          => 'name',
+        'description'    => 'descr',
+        'start_date'     => 'dt_start',
+        'finish_date'    => 'dt_finish',
+        'start_time'     => 'tm_start',
+        'finish_time'    => 'tm_finish',
+        'category_id'    => 'categ',
+        'user_level_min' => 'min_level',
+        'latitude'       => 'lat',
+        'longitude'      => 'lng'
     ];
 
     /** @var array */
@@ -103,31 +102,59 @@ class Offer extends Model
     /** @var array */
     protected $attributes = array(
         'account_id'           => null,
-        'label'                => null,
-        'description'          => null,
+        'label'                 => null,
+        'descr'                => null,
         'reward'               => '10000',
         'status'               => null,
-        'start_date'           => null,
-        'finish_date'          => null,
-        'start_time'           => null,
-        'finish_time'          => null,
+        'dt_start'             => null,
+        'dt_finish'            => null,
+        'tm_start'             => null,
+        'tm_finish'            => null,
         'country'              => null,
         'city'                 => null,
-        'category_id'          => null,
+        'categ'                => null,
         'max_count'            => null,
         'max_for_user'         => null,
         'max_per_day'          => null,
         'max_for_user_per_day' => null,
-        'user_level_min'       => null,
-        'latitude'             => null,
-        'longitude'            => null,
+        'min_level'            => null,
+        'lat'                  => null,
+        'lng'                  => null,
         'radius'               => null
     );
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'account_id',
+        'label',
+        'descr',
+        'reward',
+        'status',
+        'dt_start',
+        'dt_finish',
+        'tm_start',
+        'tm_finish',
+        'country',
+        'city',
+        'categ',
+        'max_count',
+        'max_for_user',
+        'max_per_day',
+        'max_for_user_per_day',
+        'min_level',
+        'lat',
+        'lng',
+        'radius'
+    ];
 
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
+        return $this->belongsTo(Account::class, 'acc_id', 'id');
     }
 
 
@@ -278,10 +305,23 @@ class Offer extends Model
         return $this->updated_at;
     }
 
-    public function getOwner()
+    /**
+     * @return string
+     */
+    public function getOwner(): string
     {
         $account = $this->account;
-        return $account !== null ? $account->getOwnerId() : null;
+        return $account === null ?? $account->owner;
+    }
+
+    /**
+     * @param Builder $builder
+     * @param int $accountId
+     * @return Builder
+     */
+    public function scopeAccountOffers(Builder $builder, int $accountId): Builder
+    {
+        return $builder->where('acc_id', $accountId);
     }
 
     /**
@@ -293,8 +333,15 @@ class Offer extends Model
      */
     public function scopeFilterByPosition(Builder $builder, string $lat, string $lng, int $radius): Builder
     {
-        return $builder->whereRaw(sprintf('(6371000 * 2 * ASIN(SQRT(POWER(SIN((`lat` - ABS(%1$s)) * PI()/180 / 2), 2) + COS(`lat` * PI()/180) * COS(ABS(%1$s) * PI()/180) * POWER(SIN((`lng` - %2$s) * PI()/180 / 2), 2)))) < (`radius` + %3$d)',
-            $lat, $lng, $radius));
+        return $builder->whereRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((\'lat\' - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(\'lat\' * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((\'lng\' - %2$s) * 
+        PI()/180 / 2), 2)))) < (\'radius\' + %3$d)',
+            DB::connection()->getPdo()->quote($lat),
+            DB::connection()->getPdo()->quote($lng),
+            $radius));
     }
 
     public function redeem(User $user)

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Advert;
 
-use App\Models\Redemption;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Offer;
@@ -16,10 +17,13 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
+        $offers = new Offer();
+        $offers->accountOffers(Auth::user()->getAccountFor('NAU')->getId());
         //get offer list
-        return \response()->error('404');
+        return \response()->render('advert.offer.list', [
+            'data' => $offers
+        ]);
     }
-
 
     /**
      * Get the form/json data for creating a new offer.
@@ -27,7 +31,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('offer.create', [
+        return \response()->render('advert.offer.create', [
             'data' => new Offer()
         ]);
     }
@@ -41,14 +45,15 @@ class OfferController extends Controller
     {
         $newOffer = new Offer();
         $newOffer->fill([
-            'account_id'           => Auth::user()->getAccountFor('NAU')->getId(),
+            'account_id'           => auth()->user()->getAccountFor('NAU')->getId(),
             'label'                => $request->label,
             'description'          => $request->description,
             'reward'               => $request->reward,
-            'start_date'           => $request->start_date,
-            'start_time'           => $request->start_time,
-            'finish_date'          => $request->finish_date,
-            'finish_time'          => $request->finish_time,
+            'dt_start'           => Carbon::parse($request->start_date),
+            'tm_start'           => Carbon::parse($request->start_time),
+            'finish_date'          => Carbon::parse($request->finish_date),
+            'finish_time'          => Carbon::parse($request->finish_time),
+            'status' => 'deactive',
             'country'              => $request->country,
             'city'                 => $request->city,
             'category_id'          => null, // $categories->findByName($request->category);
@@ -61,8 +66,8 @@ class OfferController extends Controller
             'longitude'            => $request->longitude,
             'radius'               => $request->radius
         ]);
-
-        //todo @coreservise call with $newOffer
+        $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff6';
+        $newOffer->save(); // can refactor to ->create
 
         return \response()->render('empty', ['msg' => trans('msg.offer.creating')]);
     }
@@ -76,44 +81,14 @@ class OfferController extends Controller
     {
         $offer = new Offer();
         $offer->findOrFail($offerUuid);
-        $ownerId = $offer->getOwner();
+        $owner = $offer->getOwner();
 
-        if ($ownerId !== null && $ownerId === Auth::user()) {
-            return \response()->render('offer.show', [
+        if ($owner !== null && $owner === Auth::user()) {
+            return \response()->render('advert.offer.show', [
                 'data' => $offer
             ]);
         }
         return \response()->error('404', trans('errors.offer_not_found'));
-    }
-
-    /**
-     * Get offer short info(for User) by it uuid
-     * @param string $offerUuid
-     * @return Response
-     */
-    public function view(string $offerUuid) : Response
-    {
-        $offer = new Offer();
-        $offer->findOrFail($offerUuid);
-        return \response()->render('offer.view', [
-            'data' => [
-                'label' => $offer->getLabel(),
-                'description' => $offer->getDescription()
-            ]
-        ]);
-    }
-
-    /**
-     * Offer redemption
-     * @param string $offerUuid
-     */
-    public function activate(string $offerUuid)
-    {
-        $offer = new Offer();
-        $offer->findOrFail($offerUuid);
-        $offer->redeem(Auth::user());
-
-        return \response()->render('empty', ['msg' => trans('msg.offer.activating')], Response::HTTP_CREATED);
     }
 
 }
