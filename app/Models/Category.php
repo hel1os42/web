@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Category
@@ -63,6 +64,14 @@ class Category extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function children(): hasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 
     /** @return Carbon */
