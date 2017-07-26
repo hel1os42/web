@@ -14,7 +14,7 @@ class GeoTest extends TestCase
      */
     public function testGettersAndSetters()
     {
-        $faker   = Faker::create();
+        $faker = Faker::create();
 
         $radius  = $faker->randomDigitNotNull;
         $city    = $faker->city;
@@ -44,9 +44,6 @@ class GeoTest extends TestCase
             'country'   => $country,
         ];
 
-        $this->assertJsonStringEqualsJsonString(
-            \GuzzleHttp\json_encode($jsonSerialize),
-            \GuzzleHttp\json_encode($geo->jsonSerialize())
-        , 'jsonSerialize');
+        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($geo->jsonSerialize()), 'jsonSerialize');
     }
 }

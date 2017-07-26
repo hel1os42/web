@@ -13,14 +13,14 @@ class LimitsTest extends TestCase
      */
     public function testGettersAndSetters()
     {
-        $faker    = Faker::create();
+        $faker = Faker::create();
 
         $offers   = $faker->randomDigitNotNull;
         $perDay   = $faker->randomDigitNotNull;
         $perUser  = $faker->randomDigitNotNull;
         $minLevel = $faker->randomDigitNotNull;
 
-        $limits   = new Limits($offers, $perDay, $perUser, $minLevel);
+        $limits = new Limits($offers, $perDay, $perUser, $minLevel);
 
         $this->assertTrue($offers === $limits->getOffers(), 'offers');
         $this->assertTrue($perDay === $limits->getPerDay(), 'perDay');
@@ -34,9 +34,6 @@ class LimitsTest extends TestCase
             'min_level' => $minLevel,
         ];
 
-        $this->assertJsonStringEqualsJsonString(
-            \GuzzleHttp\json_encode($jsonSerialize),
-            \GuzzleHttp\json_encode($limits->jsonSerialize())
-        , 'jsonSerialize');
+        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize),\GuzzleHttp\json_encode($limits->jsonSerialize()),'jsonSerialize');
     }
 }

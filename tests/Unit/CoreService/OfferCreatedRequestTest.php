@@ -71,7 +71,7 @@ class OfferCreatedRequestTest extends TestCase
          * Create Offer request and prepare jsonSerialize for comparing
          */
         $offerCreatedRequest = new \OmniSynapse\CoreService\Request\Offer($offer);
-        $jsonSerialize = [
+        $jsonSerialize       = [
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,
             'description'       => $description,
@@ -88,9 +88,6 @@ class OfferCreatedRequestTest extends TestCase
         /*
          * Compare json strings
          */
-        $this->assertJsonStringEqualsJsonString(
-            \GuzzleHttp\json_encode($jsonSerialize),
-            \GuzzleHttp\json_encode($offerCreatedRequest->jsonSerialize())
-        , 'jsonSerialize');
+        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($offerCreatedRequest->jsonSerialize()), 'jsonSerialize');
     }
 }
