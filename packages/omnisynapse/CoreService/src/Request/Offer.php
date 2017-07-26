@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService\Request;
 
 use Carbon\Carbon;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\Offer\Geo;
 use OmniSynapse\CoreService\Request\Offer\Limits;
 use OmniSynapse\CoreService\Request\Offer\Point;
@@ -65,12 +66,22 @@ class Offer implements \JsonSerializable
      */
     public function __construct(\App\Models\Offer $offer)
     {
-        $point   = new Point($offer->getLatitude(), $offer->getLongitude());
+        $point = null;
+
+        if (null !== $offer->getLatitude() && null !== $offer->getLongitude()) {
+            $point = new Point($offer->getLatitude(), $offer->getLongitude());
+        }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
         $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
         $account = $offer->account;
 
-        $this->setOwnerId(null !== $account ? $account->getOwnerId() : null)
+        if (null === $account) {
+            throw new RequestException(printf('Offer %d without account.', [
+                $offer->getId()
+            ]));
+        }
+
+        $this->setOwnerId($account->getOwnerId())
             ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
             ->setCategoryId($offer->getCategoryId())

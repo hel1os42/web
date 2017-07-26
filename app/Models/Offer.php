@@ -30,8 +30,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int max_per_day
  * @property int max_for_user_per_day
  * @property int user_level_min
- * @property double latitude
- * @property double longitude
+ * @property float latitude
+ * @property float longitude
  * @property int radius
  * @property Carbon created_at
  * @property Carbon updated_at
@@ -89,12 +89,15 @@ class Offer extends Model
         'max_per_day'           => 'integer',
         'max_for_user_per_day'  => 'integer',
         'user_level_min'        => 'integer',
-        'latitude'              => 'double',
-        'longitude'             => 'double',
+        'latitude'              => 'float',
+        'longitude'             => 'float',
         'radius'                => 'integer',
         'created_at'            => 'datetime',
         'updated_at'            => 'datetime',
     ];
+
+    /** @var Account */
+    public $account;
 
     /** @return string */
     public function getId(): string
@@ -219,14 +222,14 @@ class Offer extends Model
         return $this->user_level_min;
     }
 
-    /** @return double */
-    public function getLatitude(): double
+    /** @return float */
+    public function getLatitude(): float
     {
         return $this->latitude;
     }
 
-    /** @return double */
-    public function getLongitude(): double
+    /** @return float */
+    public function getLongitude(): float
     {
         return $this->longitude;
     }

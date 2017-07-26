@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService;
+namespace Tests\Feature\CoreService;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;

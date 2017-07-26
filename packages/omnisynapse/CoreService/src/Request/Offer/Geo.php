@@ -14,6 +14,11 @@ namespace OmniSynapse\CoreService\Request\Offer;
  */
 class Geo implements \JsonSerializable
 {
+    const TYPE_WORLD   = 'world';
+    const TYPE_COUNTRY = 'country';
+    const TYPE_CITY    = 'city';
+    const TYPE_POINT   = 'point';
+
     /** @var string */
     private $type;
 
@@ -37,21 +42,21 @@ class Geo implements \JsonSerializable
      * @param string $city
      * @param string $country
      */
-    public function __construct(Point $point, int $radius, string $city, string $country)
+    public function __construct(Point $point=null, int $radius, string $city, string $country)
     {
-        $this->setPoint($point)
-            ->setRadius($radius)
+        $this->setRadius($radius)
             ->setCity($city)
             ->setCountry($country);
 
-        $type = null;
+        $type = self::TYPE_WORLD;
+        $this->setPoint($point);
 
-        if ($point->getLat() > 0 && $point->getLon() > 0) {
-            $type = 'point';
-        } elseif (null !== $city && null !== $country) {
-            $type = 'city';
-        } elseif (null !== $country) {
-            $type = 'country';
+        if (null !== $point) {
+            $type = self::TYPE_POINT;
+        } elseif (!empty($city) && !empty($country)) {
+            $type = self::TYPE_CITY;
+        } elseif (!empty($country)) {
+            $type = self::TYPE_COUNTRY;
         }
 
         $this->setType($type);
@@ -64,7 +69,9 @@ class Geo implements \JsonSerializable
     {
         return [
             'type'      => $this->getType(),
-            'point'     => $this->getPoint()->jsonSerialize(),
+            'point'     => null !== $this->getPoint()
+                ? $this->getPoint()->jsonSerialize()
+                : null,
             'radius'    => $this->getRadius(),
             'city'      => $this->getCity(),
             'country'   => $this->getCountry(),
@@ -80,9 +87,9 @@ class Geo implements \JsonSerializable
     }
 
     /**
-     * @return Point
+     * @return Point|null
      */
-    public function getPoint() : Point
+    public function getPoint()
     {
         return $this->point;
     }
@@ -125,7 +132,7 @@ class Geo implements \JsonSerializable
      * @param Point $point
      * @return Geo
      */
-    public function setPoint(Point $point) : Geo
+    public function setPoint(Point $point=null) : Geo
     {
         $this->point = $point;
         return $this;

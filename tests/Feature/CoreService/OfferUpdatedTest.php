@@ -1,11 +1,8 @@
 <?php
 
-namespace Tests\Unit\CoreService;
+namespace Tests\Feature\CoreService;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class OfferUpdatedTest extends TestCase
 {

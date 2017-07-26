@@ -9,22 +9,41 @@ class Client
     const METHOD_POST   = 'POST';
     const METHOD_GET    = 'GET';
 
-    /**
-     * @var Client
-     */
-    public $client;
+    /** @var \GuzzleHttp\Client */
+    private $client;
+
+    /** @var array */
+    private $config;
 
     /**
-     * CoreService constructor.
+     * Client constructor.
      */
     public function __construct()
     {
-        $config = [
+        $this->config = [
             'base_uri'    => config('core-config.base_uri'),
             'verify'      => (bool)config('core-config.verify'),
             'http_errors' => (bool)config('core-config.http_errors'),
         ];
+    }
 
-        $this->client = new \GuzzleHttp\Client($config);
+    /**
+     * @param \GuzzleHttp\Client $client
+     * @return \GuzzleHttp\Client
+     */
+    public function setClient(\GuzzleHttp\Client $client) : \GuzzleHttp\Client
+    {
+        return $this->client = $client;
+    }
+
+    /**
+     * @return \GuzzleHttp\Client|Client
+     */
+    public function getClient()
+    {
+        if (null === $this->client) {
+            $this->client = new \GuzzleHttp\Client($this->config);
+        }
+        return $this->client;
     }
 }

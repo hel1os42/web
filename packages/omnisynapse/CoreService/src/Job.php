@@ -29,7 +29,7 @@ abstract class Job implements ShouldQueue
     public function handle()
     {
         /** @var Response $response */
-        $response = (new Client())->client->request($this->getHttpMethod(), $this->getHttpPath(),
+        $response = (new Client())->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
             [
                 'json' => null !== $this->requestObject
                     ? $this->getRequestObject()->jsonSerialize()
