@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string parent_id
  * @property Carbon created_at
  * @property Carbon updated_at
- * @property User parent
- * @property Category getFindByName
+ * @property Category parent
+ * @property Category findByName
  */
 class Category extends Model
 {
@@ -62,7 +62,7 @@ class Category extends Model
     /** @return BelongsTo */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'parent_id', 'id');
+        return $this->belongsTo(Category::class, 'parent_id', 'id');
     }
 
     /** @return Carbon */
@@ -81,7 +81,7 @@ class Category extends Model
      * @param string $name
      * @return Category
      */
-    public function getFindByName(string $name): Category
+    public function findByName(string $name): Category
     {
         return $this->where('name', $name)->first();
     }
