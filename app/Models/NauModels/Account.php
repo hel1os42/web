@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\NauModels;
 
-use App\Models\Traits\HasNau;
-use Illuminate\Database\Eloquent\Model;
+
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,37 +22,31 @@ use Illuminate\Support\Collection;
  * @property Collection|Offer[] offers
  * @property User owner
  */
-class Account extends Model
+class Account extends NauModel
 {
-    use ReadOnlyTrait;
-    use HasNau;
 
     /** @var string */
-    protected $connection = 'pgsql_nau';
-
-    /** @var string */
-    protected $table = "account";
+    protected $table = 'account';
 
     /** @var string */
     protected $primaryKey = 'id';
+
+    /** @var array */
+    protected $casts = [
+        'id'         => 'integer',
+        'owner_id'   => 'string',
+        'addr'       => 'string',
+        'amount'     => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+
+    ];
 
     /** @var array */
     protected $maps = [
         'balance' => 'amount',
         'address' => 'addr',
     ];
-
-    /** @var array */
-    protected $casts = [
-        'id'         => 'integer',
-        'owner_id'   => 'string',
-        'address'    => 'string',
-        'balance'    => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-
-    ];
-
 
     /** @return BelongsTo */
     public function owner(): BelongsTo

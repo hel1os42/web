@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\NauModels;
 
-use App\Models\Traits\HasNau;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Query\Builder;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
+use Sofa\Eloquence\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
@@ -39,38 +37,18 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
- * @method filterByPosition(string $latitude, string $longitude, int $radius) : Offer
- * @method accountOffers(int $accountId) : Offer
+ * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
+ * @method static accountOffers(int $accountId) : Offer
  *
  */
-class Offer extends Model
+class Offer extends NauModel
 {
-    //use ReadOnlyTrait;
-    use HasNau;
-
-    /** @var string */
-    protected $connection = 'pgsql_nau';
 
     /** @var string */
     protected $table = "offer";
 
     /** @var string */
     protected $primaryKey = 'id';
-
-    /** @var array */
-    protected $maps = [
-        'account_id'     => 'acc_id',
-        'label'          => 'name',
-        'description'    => 'descr',
-        'start_date'     => 'dt_start',
-        'finish_date'    => 'dt_finish',
-        'start_time'     => 'tm_start',
-        'finish_time'    => 'tm_finish',
-        'category_id'    => 'categ',
-        'user_level_min' => 'min_level',
-        'latitude'       => 'lat',
-        'longitude'      => 'lng'
-    ];
 
     /** @var array */
     protected $casts = [
@@ -94,15 +72,13 @@ class Offer extends Model
         'user_level_min'       => 'integer',
         'latitude'             => 'double',
         'longitude'            => 'double',
-        'radius'               => 'integer',
-        'created_at'           => 'datetime',
-        'updated_at'           => 'datetime',
+        'radius'               => 'integer'
     ];
 
     /** @var array */
     protected $attributes = array(
-        'account_id'           => null,
-        'label'                 => null,
+        'acc_id'               => null,
+        'name'                 => null,
         'descr'                => null,
         'reward'               => '10000',
         'status'               => null,
@@ -131,30 +107,44 @@ class Offer extends Model
     protected $fillable = [
         'account_id',
         'label',
-        'descr',
+        'description',
         'reward',
-        'status',
-        'dt_start',
-        'dt_finish',
-        'tm_start',
-        'tm_finish',
+        'start_date',
+        'finish_date',
+        'start_time',
+        'finish_time',
         'country',
         'city',
-        'categ',
+        'category_id',
         'max_count',
         'max_for_user',
         'max_per_day',
         'max_for_user_per_day',
-        'min_level',
-        'lat',
-        'lng',
+        'user_level_min',
+        'latitude',
+        'longitude',
         'radius'
+    ];
+
+    /** @var array */
+    public $maps = [
+        'account_id'     => 'acc_id',
+        'label'          => 'name',
+        'description'    => 'descr',
+        'start_date'     => 'dt_start',
+        'finish_date'    => 'dt_finish',
+        'start_time'     => 'tm_start',
+        'finish_time'    => 'tm_finish',
+        'category_id'    => 'categ',
+        'user_level_min' => 'min_level',
+        'latitude'       => 'lat',
+        'longitude'      => 'lng'
     ];
 
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'acc_id', 'id');
+        return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
 
@@ -293,25 +283,13 @@ class Offer extends Model
         return $this->radius;
     }
 
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
-    }
-
     /**
-     * @return string
+     * @return User|null
      */
-    public function getOwner(): string
+    public function getOwner()
     {
         $account = $this->account;
-        return $account === null ?? $account->owner;
+        return $account === null ? null : $account->owner;
     }
 
     /**
@@ -321,7 +299,7 @@ class Offer extends Model
      */
     public function scopeAccountOffers(Builder $builder, int $accountId): Builder
     {
-        return $builder->where('acc_id', $accountId);
+        return $builder->where('account_id', $accountId);
     }
 
     /**
@@ -347,6 +325,7 @@ class Offer extends Model
     public function redeem(User $user)
     {
         //return $this->redemptions()->create(['user_id' => $user->id]);
+        return true;
     }
 
 }

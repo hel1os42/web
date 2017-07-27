@@ -5,11 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Offer;
+use App\Models\NauModels\Offer;
 
 class OfferController extends Controller
 {
-     /**
+    /**
      * Get offer short info(for User) by it uuid
      * @param string $offerUuid
      * @return Response
@@ -19,8 +19,8 @@ class OfferController extends Controller
         $offer = new Offer();
         $offer->findOrFail($offerUuid);
         return \response()->render('user.offer.show', [
-            'data' => [
-                'label' => $offer->getLabel(),
+            'data' => (object)[
+                'label'       => $offer->getLabel(),
                 'description' => $offer->getDescription()
             ]
         ]);
@@ -30,11 +30,11 @@ class OfferController extends Controller
      * Offer redemption
      * @param string $offerUuid
      */
-    public function activate(string $offerUuid)
+    public function redemption(string $offerUuid)
     {
         $offer = new Offer();
         $offer->findOrFail($offerUuid);
-        $offer->redeem(Auth::user());
+        $offer->redeem(auth()->user());
 
         return \response()->render('empty', ['msg' => trans('msg.offer.activating')], Response::HTTP_CREATED);
     }

@@ -29,13 +29,16 @@ class RegisterController extends Controller
 
         return Auth::check() ?
             redirect()->route('profile', Auth::id()) :
-            response()->render('auth.register', [
-                'name' => null,
-                'email' => null,
-                'password' => null,
-                'password_confirm' => null,
-                'referrer_id' => $referrerUser->getId()
-            ]);
+            response()->render('auth.register',
+                [
+                    'data' => (object)[
+                        'name'             => null,
+                        'email'            => null,
+                        'password'         => null,
+                        'password_confirm' => null,
+                        'referrer_id'      => $referrerUser->getId()
+                    ]
+                ]);
     }
 
     /**
@@ -51,8 +54,8 @@ class RegisterController extends Controller
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => $request->password,
         ]);
 
@@ -60,7 +63,7 @@ class RegisterController extends Controller
 
         if ($request->wantsJson()) {
             return response()
-                ->render('', $user->fresh(), Response::HTTP_CREATED)
+                ->render('', ['data' => $user->fresh()], Response::HTTP_CREATED)
                 ->header('Location', sprintf('/users/%s', $user->id));
         }
 

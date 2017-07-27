@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\NauModels\Account;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -226,6 +227,6 @@ class User extends Authenticatable
         switch ($token){
             case 'NAU': return $this->account()->first();
             default: throw new TokenException("unknown token " . $token);
-        };
+        }
     }
 }

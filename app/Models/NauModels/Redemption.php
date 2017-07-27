@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\NauModels;
 
-use App\Models\Traits\HasNau;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Carbon\Carbon;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -25,13 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User rewardedUser
  * @property User user
  */
-class Redemption extends Model
+class Redemption extends NauModel
 {
-    use ReadOnlyTrait;
-    use HasNau;
-
-    /** @var string */
-    protected $connection = 'pgsql_nau';
 
     /** @var string */
     protected $table = "redemption";
@@ -41,15 +34,15 @@ class Redemption extends Model
 
     /** @var array */
     protected $casts = [
-        'id'            => 'string',
-        'offer_id'      => 'string',
-        'user_id'       => 'string',
-        'points'        => 'integer',
-        'rewarded_id'   => 'string',
-        'amount'        => 'integer',
-        'fee'           => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'id'          => 'string',
+        'offer_id'    => 'string',
+        'user_id'     => 'string',
+        'points'      => 'integer',
+        'rewarded_id' => 'string',
+        'amount'      => 'integer',
+        'fee'         => 'integer',
+        'created_at'  => 'datetime',
+        'updated_at'  => 'datetime',
     ];
 
     /** @return string */

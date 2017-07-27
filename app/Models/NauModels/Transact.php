@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\NauModels;
 
-use App\Models\Traits\HasNau;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -22,14 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Account source
  * @property Account destination
  */
-class Transact extends Model
+class Transact extends NauModel
 {
-    use ReadOnlyTrait;
-    use HasNau;
-
-    /** @var string */
-    protected $connection = 'pgsql_nau';
-
     /** @var string */
     protected $table = "transact";
 
@@ -37,21 +28,21 @@ class Transact extends Model
     protected $primaryKey = 'txid';
 
     /** @var array */
-    protected $maps = [
-        'txid'     => 'id',
-        'src_id'   => 'source_account_id',
-        'dst_id'   => 'destination_account_id',
+    protected $casts = [
+        'txid'       => 'string',
+        'src_id'     => 'string',
+        'dst_id'     => 'string',
+        'amount'     => 'float',
+        'status'     => 'string',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /** @var array */
-    protected $casts = [
-        'id'                     => 'string',
-        'source_account_id'      => 'string',
-        'destination_account_id' => 'string',
-        'amount'                 => 'float',
-        'status'                 => 'string',
-        'created_at'             => 'datetime',
-        'updated_at'             => 'datetime',
+    protected $maps = [
+        'txid'   => 'id',
+        'src_id' => 'source_account_id',
+        'dst_id' => 'destination_account_id',
     ];
 
     /** @return string */

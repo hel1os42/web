@@ -1,6 +1,6 @@
 {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
 
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html>
 <head>
     <title>Create offer</title>
@@ -45,7 +45,7 @@
             border-bottom: 1px solid #38bdff;
             width: 96%;
             left: 0;
-            padding:2%;
+            padding: 2%;
         }
 
         .header-right {
@@ -79,24 +79,30 @@
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-            <form action="{{route('advert.offer.save')}}" method="post" target="_top">
+            <form action="{{route('advert.offer')}}" method="post" target="_top">
                 {{ csrf_field() }}
                 <input type="label" name="label" placeholder="label" value="{{$data->label}}"> <br>
-                <input type="description" name="description" placeholder="description" value="{{$data->description}}"><br>
+                <input type="description" name="description" placeholder="description"
+                       value="{{$data->description}}"><br>
                 <input type="reward" name="reward" placeholder="reward" value="{{$data->reward}}"><br>
                 <input type="start_date" name="start_date" placeholder="start_date" value="{{$data->date_start}}">
                 <input type="start_time" name="start_time" placeholder="start_time" value="{{$data->time_start}}"><br>
                 <input type="finish_date" name="finish_date" placeholder="finish_date" value="{{$data->date_finish}}">
-                <input type="finish_time" name="finish_time" placeholder="finish_time" value="{{$data->time_finish}}"><br>
+                <input type="finish_time" name="finish_time" placeholder="finish_time"
+                       value="{{$data->time_finish}}"><br>
                 <input type="category" name="category" placeholder="category" value="{{$data->category}}"><br>
                 <input type="max_count" name="max_count" placeholder="max_count" value="{{$data->max_count}}"><br>
-                <input type="max_for_user" name="max_for_user" placeholder="max_for_user" value="{{$data->max_for_user}}"><br>
-                <input type="max_per_day" name="max_per_day" placeholder="max_per_day" value="{{$data->max_per_day}}"><br>
-                <input type="max_for_user_per_day" name="max_for_user_per_day" placeholder="max_for_user_per_day" value="{{$data->max_for_user_per_day}}"><br>
-                <input type="user_level_min" name="user_level_min" placeholder="user_level_min" value="{{$data->min_level}}"><br>
+                <input type="max_for_user" name="max_for_user" placeholder="max_for_user"
+                       value="{{$data->max_for_user}}"><br>
+                <input type="max_per_day" name="max_per_day" placeholder="max_per_day"
+                       value="{{$data->max_per_day}}"><br>
+                <input type="max_for_user_per_day" name="max_for_user_per_day" placeholder="max_for_user_per_day"
+                       value="{{$data->max_for_user_per_day}}"><br>
+                <input type="user_level_min" name="user_level_min" placeholder="user_level_min"
+                       value="{{$data->min_level}}"><br>
                 <input type="latitude" name="latitude" placeholder="latitude" value="{{$data->latitude}}"><br>
                 <input type="longitude" name="longitude" placeholder="longitude" value="{{$data->longitude}}"><br>
                 <input type="radius" name="radius" placeholder="radius" value="{{$data->radius}}"><br>

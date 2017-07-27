@@ -1,6 +1,6 @@
 {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
 
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html>
 <head>
     <title>NAU</title>
@@ -45,7 +45,7 @@
             border-bottom: 1px solid #38bdff;
             width: 96%;
             left: 0;
-            padding:2%;
+            padding: 2%;
         }
 
         .header-right {
@@ -78,10 +78,32 @@
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right">
+                <a href="{{route('logout')}}">Logout</a>
+            </div>
         </div>
         <div class="offer">
-        Offer created!
+            <pre>
+                {{$data->label}}
+                {{$data->description}}
+                {{$data->reward}}
+                {{$data->status}}
+                {{$data->start_date}} / {{$data->start_time}}
+                {{$data->finish_date}} / {{$data->finish_time}}
+                {{$data->category_id}}
+                {{$data->max_count}}
+                {{$data->max_for_user}}
+                {{$data->max_per_day}}
+                {{$data->max_for_user_per_day}}
+                {{$data->user_level_min}}
+
+                geo data:
+                {{$data->country}}
+                {{$data->city}}
+                {{$data->latitude}}
+                {{$data->longitude}}
+                {{$data->radius}}
+            </pre>
         </div>
         <div class="title">NAU</div>
     </div>

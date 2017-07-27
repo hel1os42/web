@@ -3,22 +3,24 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Offer;
+use App\Models\NauModels\Offer;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\SearchOfferRequest;
 
 class SearchOfferController extends Controller
 {
     /**
-     * Get default data for search request
+     * Create search request
      * @return Response
      */
     public function index(): Response
     {
-        response()->render('offer.search', [
-            'latitude'  => null,
-            'longitude' => null,
-            'radius'    => 1
+        return response()->render('user.offer.search', [
+            'data' => (object)[
+                'latitude'  => null,
+                'longitude' => null,
+                'radius'    => 1
+            ]
         ]);
     }
 
@@ -31,7 +33,8 @@ class SearchOfferController extends Controller
     {
         $offers = new Offer();
         $offers->filterByPosition($request->latitude, $request->longitude, $request->radius)->get();
-
+        dd($offers);
+        return true;
     }
 
 }

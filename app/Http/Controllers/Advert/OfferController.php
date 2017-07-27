@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Advert;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Offer;
+use App\Models\NauModels\Offer;
 
 class OfferController extends Controller
 {
@@ -17,9 +16,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        $offers = new Offer();
-        $offers->accountOffers(Auth::user()->getAccountFor('NAU')->getId());
-        //get offer list
+        $offers = Offer::accountOffers(auth()->user()->getAccountFor('NAU')->getId())->get();
         return \response()->render('advert.offer.list', [
             'data' => $offers
         ]);
@@ -45,15 +42,14 @@ class OfferController extends Controller
     {
         $newOffer = new Offer();
         $newOffer->fill([
-            'account_id'           => auth()->user()->getAccountFor('NAU')->getId(),
+            'account_id'           => (int)auth()->user()->getAccountFor('NAU')->getId(),
             'label'                => $request->label,
             'description'          => $request->description,
             'reward'               => $request->reward,
-            'dt_start'           => Carbon::parse($request->start_date),
-            'tm_start'           => Carbon::parse($request->start_time),
+            'start_date'           => Carbon::parse($request->start_date),
+            'start_time'           => Carbon::parse($request->start_time),
             'finish_date'          => Carbon::parse($request->finish_date),
             'finish_time'          => Carbon::parse($request->finish_time),
-            'status' => 'deactive',
             'country'              => $request->country,
             'city'                 => $request->city,
             'category_id'          => null, // $categories->findByName($request->category);
@@ -66,8 +62,11 @@ class OfferController extends Controller
             'longitude'            => $request->longitude,
             'radius'               => $request->radius
         ]);
-        $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff6';
-        $newOffer->save(); // can refactor to ->create
+        /*
+        $newOffer->status = 'deactive';
+        $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';
+        $newOffer->save();
+        */
 
         return \response()->render('empty', ['msg' => trans('msg.offer.creating')]);
     }
@@ -80,10 +79,10 @@ class OfferController extends Controller
     public function show(string $offerUuid): Response
     {
         $offer = new Offer();
-        $offer->findOrFail($offerUuid);
+        $offer = $offer->findOrFail($offerUuid);
         $owner = $offer->getOwner();
 
-        if ($owner !== null && $owner === Auth::user()) {
+        if ($owner !== null && $owner->id === auth()->user()->id) {
             return \response()->render('advert.offer.show', [
                 'data' => $offer
             ]);
