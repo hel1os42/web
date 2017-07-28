@@ -16,10 +16,10 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = new Offer();
-        $offer->findOrFail($offerUuid);
+        //check is this offer have active status
+        $offer = (new Offer())->findOrFail($offerUuid);
         return \response()->render('user.offer.show', [
-            'data' => (object)[
+            'data' => [
                 'label'       => $offer->getLabel(),
                 'description' => $offer->getDescription()
             ]
@@ -27,16 +27,21 @@ class OfferController extends Controller
     }
 
     /**
-     * Offer redemption
+     *  Get activation code for Offer
      * @param string $offerUuid
      */
-    public function redemption(string $offerUuid)
+    public function getActivationCode(string $offerUuid)
     {
         $offer = new Offer();
         $offer->findOrFail($offerUuid);
-        $offer->redeem(auth()->user());
+        //If offer exist search or create activation code model obj and save it
+        // create table activation_codes with offer uuid, user uuid, expire_date
 
-        return \response()->render('empty', ['msg' => trans('msg.offer.activating')], Response::HTTP_CREATED);
+        return \response()->render('empty', [
+            'data' =>
+                [
+                    'code' => 'AKS7'
+                ]
+        ], Response::HTTP_CREATED);
     }
-
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\NauModels\Offer;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\SearchOfferRequest;
+use App\Http\Requests\User\SearchOfferRequest;
 
 class SearchOfferController extends Controller
 {
@@ -16,10 +16,11 @@ class SearchOfferController extends Controller
     public function index(): Response
     {
         return response()->render('user.offer.search', [
-            'data' => (object)[
+            'data' => [
                 'latitude'  => null,
                 'longitude' => null,
-                'radius'    => 1
+                'radius'    => 1,
+                'results' => null
             ]
         ]);
     }
@@ -32,9 +33,14 @@ class SearchOfferController extends Controller
     public function search(SearchOfferRequest $request)
     {
         $offers = new Offer();
-        $offers->filterByPosition($request->latitude, $request->longitude, $request->radius)->get();
-        dd($offers);
-        return true;
+        $offers = $offers->filterByPosition($request->latitude, $request->longitude, $request->radius)->get();
+        return response()->render('user.offer.search', [
+            'data' => [
+                'latitude'  => $request->latitude,
+                'longitude' => $request->longitude,
+                'radius'    => $request->radius,
+                'results' => $offers
+            ]
+        ]);
     }
-
 }

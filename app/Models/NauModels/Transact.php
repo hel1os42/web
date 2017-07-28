@@ -33,9 +33,7 @@ class Transact extends NauModel
         'src_id'     => 'string',
         'dst_id'     => 'string',
         'amount'     => 'float',
-        'status'     => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'status'     => 'string'
     ];
 
     /** @var array */
@@ -94,17 +92,5 @@ class Transact extends NauModel
     public function destination(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'destination_account_id', 'id');
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
     }
 }

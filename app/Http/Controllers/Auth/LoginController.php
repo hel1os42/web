@@ -16,7 +16,7 @@ class LoginController extends Controller
     public function getLogin()
     {
         return response()->render('auth.login', [
-            'data' => (object)[
+            'data' => [
                 'email'    => null,
                 'password' => null
             ]

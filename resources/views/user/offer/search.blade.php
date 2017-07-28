@@ -84,11 +84,17 @@
         <div class="offer">
             <form action="{{route('offer.search')}}" method="post" target="_top">
                 {{ csrf_field() }}
-                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data->latitude}}"><br>
-                <input type="longitude" name="longitude" placeholder="longitude" value="{{$data->longitude}}"><br>
-                <input type="radius" name="radius" placeholder="radius" value="{{$data->radius}}"><br>
+                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
+                <input type="longitude" name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>
+                <input type="radius" name="radius" placeholder="radius" value="{{$data['radius']}}"><br>
                 <input type="submit">
             </form>
+            @if($data['results'])
+                <h2>Results</h2>
+                @foreach($data['results'] as $offer)
+                    <a href="{{route('offer.show', $offer->id)}}">{{$offer->name}}</a><br>
+                    @endforeach
+                @endif
         </div>
         <div class="title">NAU</div>
     </div>

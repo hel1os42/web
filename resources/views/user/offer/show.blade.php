@@ -78,10 +78,11 @@
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-        Offer created!
+            {{$data['label']}}<br>
+            {{$data['description']}}
         </div>
         <div class="title">NAU</div>
     </div>

@@ -31,7 +31,7 @@ class RegisterController extends Controller
             redirect()->route('profile', Auth::id()) :
             response()->render('auth.register',
                 [
-                    'data' => (object)[
+                    'data' => [
                         'name'             => null,
                         'email'            => null,
                         'password'         => null,

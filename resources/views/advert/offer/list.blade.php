@@ -91,6 +91,8 @@
                 <p>{{$offer->start_date}} / {{$offer->start_time}}</p>
                 <p>{{$offer->finish_date}} / {{$offer->finish_time}}</p>
                 <p>{{$offer->category_id}}</p>
+                <p>{{$offer->updated_at}}</p>
+                <p>{{$offer->created_at}}</p>
                 //-------------------------------------------
             @endforeach
         </div>

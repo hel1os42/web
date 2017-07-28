@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Advert;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\NauModels\Offer;
+use App\Http\Requests\Advert;
+use App\Models\User;
 
 class OfferController extends Controller
 {
@@ -16,7 +19,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        $offers = Offer::accountOffers(auth()->user()->getAccountFor('NAU')->getId())->get();
+        $offers = auth()->user()->getAccountFor('NAU')->offers;
         return \response()->render('advert.offer.list', [
             'data' => $offers
         ]);
@@ -35,10 +38,10 @@ class OfferController extends Controller
 
     /**
      * Send new offer data to core to store
-     * @param  \App\Http\Requests\OfferRequest $request
+     * @param  Advert\OfferRequest $request
      * @return Response
      */
-    public function store(\App\Http\Requests\OfferRequest $request): Response
+    public function store(Advert\OfferRequest $request): Response
     {
         $newOffer = new Offer();
         $newOffer->fill([
@@ -52,7 +55,7 @@ class OfferController extends Controller
             'finish_time'          => Carbon::parse($request->finish_time),
             'country'              => $request->country,
             'city'                 => $request->city,
-            'category_id'          => null, // $categories->findByName($request->category);
+            'category_id'          => (new Category())->find($request->category),
             'max_count'            => $request->max_count,
             'max_for_user'         => $request->max_for_user,
             'max_per_day'          => $request->max_per_day,
@@ -82,7 +85,7 @@ class OfferController extends Controller
         $offer = $offer->findOrFail($offerUuid);
         $owner = $offer->getOwner();
 
-        if ($owner !== null && $owner->id === auth()->user()->id) {
+        if (auth()->user()->equals($owner)) {
             return \response()->render('advert.offer.show', [
                 'data' => $offer
             ]);
@@ -90,4 +93,20 @@ class OfferController extends Controller
         return \response()->error('404', trans('errors.offer_not_found'));
     }
 
+    /**
+     * @param Advert\OfferRedemptionRequest $request
+     * @return Response
+     */
+    public function redemption(Advert\OfferRedemptionRequest $request): Response
+    {
+
+        //check is current user owner of $request->offer_id and offer exist
+        //check is offer have active status, etc
+        (new Offer)->redeem(new User());//get user model(from code) and call Offer->redeem(User)
+
+        if($request->code == 'AKS7'){ //check is code valid from activation_codes table
+            return \response()->render('empty', ['msg' => trans('msg.offer.activating')]);
+        }
+        return \response()->error('404', trans('error.bad_activation_code'));
+    }
 }

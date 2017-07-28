@@ -24,7 +24,13 @@ class NauModel extends Model
         ReadOnlyTrait::save insteadof Eloquence;
     }
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $connection = 'pgsql_nau';
 
+    /**
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:sO';
 }

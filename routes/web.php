@@ -48,12 +48,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('search', '\App\Http\Controllers\User\SearchOfferController@index')->name('offer.searchForm');
         Route::post('search', '\App\Http\Controllers\User\SearchOfferController@search')->name('offer.search');
 
-        Route::get('{id}', '\App\Http\Controllers\User\OfferController@show')
-            ->where('id', '[a-z0-9-]+')
-            ->name('offer.show');
         Route::get('redemption/{id}', '\App\Http\Controllers\User\OfferController@redemption')
             ->where('id', '[a-z0-9-]+')
             ->name('offer.redemption');
+        Route::get('category', '\App\Http\Controllers\CategoryController@index')->name('offer.category');
+
+        Route::get('{id}', '\App\Http\Controllers\User\OfferController@show')
+            ->where('id', '[a-z0-9-]+')
+            ->name('offer.show');
     });
 
 });

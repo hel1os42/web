@@ -40,9 +40,7 @@ class Redemption extends NauModel
         'points'      => 'integer',
         'rewarded_id' => 'string',
         'amount'      => 'integer',
-        'fee'         => 'integer',
-        'created_at'  => 'datetime',
-        'updated_at'  => 'datetime',
+        'fee'         => 'integer'
     ];
 
     /** @return string */
@@ -103,18 +101,6 @@ class Redemption extends NauModel
     public function getFee(): float
     {
         return $this->fee;
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
     }
 
     /** @return BelongsTo */

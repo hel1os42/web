@@ -8,7 +8,6 @@ use Sofa\Eloquence\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-
 /**
  * Class Offer
  * @package App
@@ -127,7 +126,7 @@ class Offer extends NauModel
     ];
 
     /** @var array */
-    public $maps = [
+    protected $maps = [
         'account_id'     => 'acc_id',
         'label'          => 'name',
         'description'    => 'descr',
@@ -311,21 +310,26 @@ class Offer extends NauModel
      */
     public function scopeFilterByPosition(Builder $builder, string $lat, string $lng, int $radius): Builder
     {
+        $radius = $radius * 1000; //kilometers
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((\'lat\' - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(\'lat\' * PI()/180) * 
+        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
         COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((\'lng\' - %2$s) * 
-        PI()/180 / 2), 2)))) < (\'radius\' + %3$d)',
+        POWER(SIN((lng - %2$s) * 
+        PI()/180 / 2), 2)))) < (radius + %3$d)',
             DB::connection()->getPdo()->quote($lat),
             DB::connection()->getPdo()->quote($lng),
             $radius));
     }
 
+    /**
+     * @param User $user
+     * @return bool
+     */
     public function redeem(User $user)
     {
+        $user->get(); // just sample
         //return $this->redemptions()->create(['user_id' => $user->id]);
         return true;
     }
-
 }

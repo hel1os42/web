@@ -93,7 +93,9 @@
                 <input type="finish_date" name="finish_date" placeholder="finish_date" value="{{$data->date_finish}}">
                 <input type="finish_time" name="finish_time" placeholder="finish_time"
                        value="{{$data->time_finish}}"><br>
-                <input type="category" name="category" placeholder="category" value="{{$data->category}}"><br>
+                <select id="offer-category" type="category" name="category" placeholder="category" value="{{$data->category}}">
+
+                </select><br>
                 <input type="max_count" name="max_count" placeholder="max_count" value="{{$data->max_count}}"><br>
                 <input type="max_for_user" name="max_for_user" placeholder="max_for_user"
                        value="{{$data->max_for_user}}"><br>
@@ -114,5 +116,26 @@
         <div class="title">NAU</div>
     </div>
 </div>
+<script type="text/javascript">
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+                if (xmlhttp.status == 200) {
+                    document.getElementById("offer-category").innerHTML = xmlhttp.responseText;
+                }
+                else if (xmlhttp.status == 400) {
+                    alert('There was an error 400');
+                }
+                else {
+                    alert('something else other than 200 was returned');
+                }
+            }
+        };
+
+        xmlhttp.open("GET", "{{route('offer.category')}}", true);
+        xmlhttp.send();
+</script>
+
 </body>
 </html>

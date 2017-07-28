@@ -225,8 +225,19 @@ class User extends Authenticatable
     public function getAccountFor(string $token) : Account
     {
         switch ($token){
-            case 'NAU': return $this->account()->first();
-            default: throw new TokenException("unknown token " . $token);
+            case 'NAU':
+                return $this->account()->first();
+            default:
+                throw new TokenException("unknown token " . $token);
         }
+    }
+
+    /**
+     * @param User|null $user
+     * @return bool
+     */
+    public function equals(User $user = null)
+    {
+        return null != $user && $this->id === $user->id;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models\NauModels;
 
-
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,10 +35,7 @@ class Account extends NauModel
         'id'         => 'integer',
         'owner_id'   => 'string',
         'addr'       => 'string',
-        'amount'     => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-
+        'amount'     => 'integer'
     ];
 
     /** @var array */
@@ -91,17 +87,5 @@ class Account extends NauModel
     public function getBalance(): float
     {
         return $this->balance;
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
     }
 }
