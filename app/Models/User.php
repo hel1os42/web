@@ -198,10 +198,10 @@ class User extends Authenticatable
      *
      * @param string $invite
      *
-     * @return User
+     * @return User|null
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite) : User
+    public function findByInvite(string $invite)
     {
         return $this->where('invite_code', $invite)->first();
     }
