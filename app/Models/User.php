@@ -201,7 +201,7 @@ class User extends Authenticatable
      * @return User|null
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite)
+    public function findByInvite(string $invite): ?User
     {
         return $this->where('invite_code', $invite)->first();
     }
