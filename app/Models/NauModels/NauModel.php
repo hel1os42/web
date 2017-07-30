@@ -8,13 +8,11 @@
 
 namespace App\Models\NauModels;
 
-
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasNau;
 use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
-use Sofa\Eloquence\{
-    Eloquence, Mappable
-};
+use Sofa\Eloquence\Eloquence;
+use Sofa\Eloquence\Mappable;
 
 class NauModel extends Model
 {
