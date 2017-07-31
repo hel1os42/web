@@ -18,7 +18,7 @@ class UserTest extends TestCase
         /*
          * Prepare params
          */
-        $id         = $faker->uuid;
+        $userId     = $faker->uuid;
         $name       = $faker->name;
         $referrerId = $faker->uuid;
 
@@ -36,7 +36,7 @@ class UserTest extends TestCase
         /*
          * Set User methods
          */
-        $user->method('getId')->willReturn($id);
+        $user->method('getId')->willReturn($userId);
         $user->method('getName')->willReturn($name);
         $user->method('getReferrer')->willReturn($referrer);
 
@@ -45,7 +45,7 @@ class UserTest extends TestCase
          */
         $userCreatedRequest = new User($user);
         $jsonSerialize      = [
-            'id'          => $id,
+            'id'          => $userId,
             'username'    => $name,
             'referrer_id' => $referrerId,
         ];

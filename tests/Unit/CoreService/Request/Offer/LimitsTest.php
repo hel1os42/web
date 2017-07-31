@@ -34,6 +34,6 @@ class LimitsTest extends TestCase
             'min_level' => $minLevel,
         ];
 
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize),\GuzzleHttp\json_encode($limits->jsonSerialize()),'jsonSerialize');
+        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($limits->jsonSerialize()), 'jsonSerialize');
     }
 }

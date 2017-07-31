@@ -19,8 +19,8 @@ class OfferForRedemptionTest extends TestCase
         /*
          * Prepare params
          */
-        $id     = $faker->uuid;
-        $userId = $faker->uuid;
+        $offerId = $faker->uuid;
+        $userId  = $faker->uuid;
 
         /*
          * Prepare Redemption mock
@@ -30,7 +30,7 @@ class OfferForRedemptionTest extends TestCase
         /*
          * Set Redemption methods
          */
-        $redemption->method('getId')->willReturn($id);
+        $redemption->method('getId')->willReturn($offerId);
         $redemption->method('getUserId')->willReturn($userId);
 
         /*

@@ -27,7 +27,7 @@ class OfferForUpdateTest extends TestCase
          * Prepare Offer mock and params
          */
         $offer        = $this->createMock(Offer::class);
-        $id           = $faker->uuid;
+        $offerId      = $faker->uuid;
         $name         = $faker->name;
         $description  = $faker->text();
         $categoryId   = $faker->uuid;
@@ -49,7 +49,7 @@ class OfferForUpdateTest extends TestCase
         /*
          * Set Offer methods
          */
-        $offer->method('getId')->willReturn($id);
+        $offer->method('getId')->willReturn($offerId);
         $offer->method('getLabel')->willReturn($name);
         $offer->method('getDescription')->willReturn($description);
         $offer->method('getCategoryId')->willReturn($categoryId);
