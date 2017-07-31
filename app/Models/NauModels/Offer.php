@@ -139,8 +139,6 @@ class Offer extends NauModel
         'longitude'      => 'lng'
     ];
 
-//    protected $hidden = ['reward'];
-
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
