@@ -19,8 +19,8 @@ class SendNauTest extends TestCase
         /*
          * Prepare params
          */
-        $sourceAccountId      = $faker->randomDigitNotNull;
-        $destinationAccountId = $faker->randomDigitNotNull;
+        $sourceAccountId      = $faker->uuid;
+        $destinationAccountId = $faker->uuid;
         $amount               = $faker->randomFloat();
 
         /*

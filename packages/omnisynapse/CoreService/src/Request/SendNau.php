@@ -48,20 +48,20 @@ class SendNau implements \JsonSerializable
     }
 
     /**
-     * @param int $sourceAccountId
+     * @param string $sourceAccountId
      * @return SendNau
      */
-    public function setSourceAccountId(int $sourceAccountId) : SendNau
+    public function setSourceAccountId(string $sourceAccountId) : SendNau
     {
         $this->sourceAccountId = $sourceAccountId;
         return $this;
     }
 
     /**
-     * @param int $destinationAccountId
+     * @param string $destinationAccountId
      * @return SendNau
      */
-    public function setDestinationAccountId(int $destinationAccountId) : SendNau
+    public function setDestinationAccountId(string $destinationAccountId) : SendNau
     {
         $this->destinationAccountId = $destinationAccountId;
         return $this;

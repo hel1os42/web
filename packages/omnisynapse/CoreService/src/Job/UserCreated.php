@@ -41,7 +41,7 @@ class UserCreated extends Job
      */
     public function getHttpPath() : string
     {
-        return '/user';
+        return '/users';
     }
 
     /**

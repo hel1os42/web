@@ -15,7 +15,7 @@ class ClientTest extends TestCase
         $coreClient   = new Client();
         $guzzleClient = new \GuzzleHttp\Client();
         $coreClient->setClient($guzzleClient);
-        $this->assertInstanceOf(\GuzzleHttp\Client::class, $coreClient->getClient());
+        $this->assertEquals($guzzleClient, $coreClient->getClient());
     }
 
     /**
