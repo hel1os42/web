@@ -9,18 +9,18 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Feature Tests">
-            <directory suffix="Test.php">./tests/Feature</directory>
+        <testsuite name="CoreService REQUEST OFFER UNIT">
+            <directory suffix="Test.php">./tests/Unit/CoreService/Request/Offer</directory>
         </testsuite>
-        <testsuite name="Unit Tests">
-            <directory suffix="Test.php">./tests/Unit</directory>
+        <testsuite name="CoreService REQUEST UNIT">
+            <directory suffix="Test.php">./tests/Unit/CoreService/Request</directory>
         </testsuite>
-
-        <testsuite name="CoreService Unit">
+        <testsuite name="CoreService UNIT">
             <directory suffix="Test.php">./tests/Unit/CoreService</directory>
         </testsuite>
-        <testsuite name="CoreService Feature">
-            <directory suffix="Test.php">./tests/Feature/CoreService</directory>
+
+        <testsuite name="CoreService JOBS INTEGRATION">
+            <directory suffix="Test.php">./tests/Integration/CoreService/Jobs</directory>
         </testsuite>
     </testsuites>
     <filter>

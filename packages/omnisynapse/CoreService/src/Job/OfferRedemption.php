@@ -16,10 +16,14 @@ class OfferRedemption extends Job
 {
     /**
      * OfferRedemption constructor.
+     *
      * @param Redemption $redemption
+     * @param \GuzzleHttp\Client $client
      */
-    public function __construct(Redemption $redemption)
+    public function __construct(Redemption $redemption, \GuzzleHttp\Client $client=null)
     {
+        $this->client = $client;
+
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = new OfferForRedemptionRequest($redemption);
     }

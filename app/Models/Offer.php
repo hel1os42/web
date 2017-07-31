@@ -96,9 +96,6 @@ class Offer extends Model
         'updated_at'            => 'datetime',
     ];
 
-    /** @var Account */
-    public $account;
-
     /** @return string */
     public function getId(): string
     {
@@ -115,6 +112,14 @@ class Offer extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount() : Account
+    {
+        return $this->account;
     }
 
     /** @return string */

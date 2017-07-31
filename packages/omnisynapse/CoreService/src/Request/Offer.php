@@ -73,7 +73,7 @@ class Offer implements \JsonSerializable
         }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
         $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
-        $account = $offer->account;
+        $account = $offer->getAccount();
 
         if (null === $account) {
             throw new RequestException(printf('Offer %d without account.', [

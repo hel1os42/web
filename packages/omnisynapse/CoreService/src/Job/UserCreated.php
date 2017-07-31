@@ -18,9 +18,12 @@ class UserCreated extends Job
      * UserCreated constructor.
      *
      * @param User $user
+     * @param \GuzzleHttp\Client $client
      */
-    public function __construct(User $user)
+    public function __construct(User $user, \GuzzleHttp\Client $client=null)
     {
+        $this->client = $client;
+
         /** @var UserRequest requestObject */
         $this->requestObject = new UserRequest($user);
     }
@@ -38,7 +41,7 @@ class UserCreated extends Job
      */
     public function getHttpPath() : string
     {
-        return '/users';
+        return '/user';
     }
 
     /**

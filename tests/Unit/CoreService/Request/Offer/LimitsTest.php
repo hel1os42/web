@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService;
+namespace Tests\Unit\CoreService\Request\Offer;
 
 use OmniSynapse\CoreService\Request\Offer\Limits;
 use Tests\TestCase;

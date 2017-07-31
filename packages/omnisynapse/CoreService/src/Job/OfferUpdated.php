@@ -16,10 +16,14 @@ class OfferUpdated extends Job
 {
     /**
      * OfferUpdated constructor.
+     *
      * @param Offer $offer
+     * @param \GuzzleHttp\Client $client
      */
-    public function __construct(Offer $offer)
+    public function __construct(Offer $offer, \GuzzleHttp\Client $client=null)
     {
+        $this->client = $client;
+
         /** @var OfferForUpdate requestObject */
         $this->requestObject = new OfferForUpdate($offer);
     }

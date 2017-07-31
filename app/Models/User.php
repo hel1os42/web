@@ -25,6 +25,7 @@ class User extends Authenticatable
 
     use Notifiable;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -54,7 +55,6 @@ class User extends Authenticatable
      */
     public $incrementing = false;
 
-
     /**
      * Get the referrer record associated with the user.
      *
@@ -63,6 +63,14 @@ class User extends Authenticatable
     public function referrer()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return User
+     */
+    public function getReferrer() : User
+    {
+        return $this->referrer;
     }
 
     /**

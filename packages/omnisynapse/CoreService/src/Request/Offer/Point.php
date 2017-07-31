@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
 
 /**
  * Class Point
- * @package OmniSynapse\CoreService\Point
+ * @package OmniSynapse\CoreService\Request\Offer
  *
  * @property float lat
  * @property float lon

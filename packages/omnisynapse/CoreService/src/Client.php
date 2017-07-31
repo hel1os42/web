@@ -17,9 +17,15 @@ class Client
 
     /**
      * Client constructor.
+     *
+     * @param \GuzzleHttp\Client|null $client
      */
-    public function __construct()
+    public function __construct(\GuzzleHttp\Client $client=null)
     {
+        if (null !== $client) {
+            $this->setClient($client);
+        }
+
         $this->config = [
             'base_uri'    => config('core-config.base_uri'),
             'verify'      => (bool)config('core-config.verify'),

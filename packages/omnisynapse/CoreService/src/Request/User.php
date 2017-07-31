@@ -30,7 +30,7 @@ class User implements \JsonSerializable
     {
         $this->setUserId($user->getId())
             ->setUsername($user->getName())
-            ->setReferrerId($user->referrer);
+            ->setReferrerId($user->getReferrer());
     }
 
     /**

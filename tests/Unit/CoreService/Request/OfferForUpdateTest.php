@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService;
+namespace Tests\Unit\CoreService\Request;
 
 use App\Models\Account;
 use App\Models\Offer;
@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
-class OfferCreatedRequestTest extends TestCase
+class OfferForUpdateTest extends TestCase
 {
     /**
      * @return void
@@ -27,6 +27,7 @@ class OfferCreatedRequestTest extends TestCase
          * Prepare Offer mock and params
          */
         $offer        = $this->createMock(Offer::class);
+        $id           = $faker->uuid;
         $name         = $faker->name;
         $description  = $faker->text();
         $categoryId   = $faker->uuid;
@@ -48,7 +49,7 @@ class OfferCreatedRequestTest extends TestCase
         /*
          * Set Offer methods
          */
-        $offer->account = $account;
+        $offer->method('getId')->willReturn($id);
         $offer->method('getLabel')->willReturn($name);
         $offer->method('getDescription')->willReturn($description);
         $offer->method('getCategoryId')->willReturn($categoryId);
@@ -66,11 +67,12 @@ class OfferCreatedRequestTest extends TestCase
         $offer->method('getFinishDate')->willReturn($endDate);
         $offer->method('getStartTime')->willReturn($startTime);
         $offer->method('getFinishTime')->willReturn($endTime);
+        $offer->method('getAccount')->willReturn($account);
 
         /*
          * Create Offer request and prepare jsonSerialize for comparing
          */
-        $offerCreatedRequest = new \OmniSynapse\CoreService\Request\Offer($offer);
+        $offerCreatedRequest = new \OmniSynapse\CoreService\Request\OfferForUpdate($offer);
         $jsonSerialize       = [
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,

@@ -18,9 +18,12 @@ class OfferCreated extends Job
      * OfferCreated constructor.
      *
      * @param Offer $offer
+     * @param \GuzzleHttp\Client|null $client
      */
-    public function __construct(Offer $offer)
+    public function __construct(Offer $offer, \GuzzleHttp\Client $client=null)
     {
+        $this->client = $client;
+
         /** @var OfferRequest requestObject */
         $this->requestObject = new OfferRequest($offer);
     }

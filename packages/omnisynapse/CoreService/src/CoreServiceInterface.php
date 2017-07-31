@@ -4,6 +4,7 @@ namespace OmniSynapse\CoreService;
 
 use App\Models\Offer;
 use App\Models\Redemption;
+use App\Models\Transact;
 use App\Models\User;
 
 interface CoreServiceInterface
@@ -27,13 +28,21 @@ interface CoreServiceInterface
     public function offerUpdated(Offer $offer) : Job;
 
     /**
+     * @param Transact $transaction
      * @return Job
      */
-    public function sendNau() : Job;
+    public function sendNau(Transact $transaction) : Job;
 
     /**
      * @param User $user
      * @return Job
      */
     public function userCreated(User $user) : Job;
+
+    /**
+     * @param Transact $transaction
+     * @param string $category
+     * @return Job
+     */
+    public function transactionNotification(Transact $transaction, $category) : Job;
 }

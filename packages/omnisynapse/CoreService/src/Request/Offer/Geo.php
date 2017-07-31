@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
 
 /**
  * Class Geo
- * @package OmniSynapse\CoreService\Offer
+ * @package OmniSynapse\CoreService\Request\Offer
  *
  * @property string type
  * @property Point point

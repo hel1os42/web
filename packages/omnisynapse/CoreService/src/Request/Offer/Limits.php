@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
 
 /**
  * Class Limits
- * @package OmniSynapse\CoreService\Limits
+ * @package OmniSynapse\CoreService\Request\Offer
  *
  * @property int offers
  * @property int perDay

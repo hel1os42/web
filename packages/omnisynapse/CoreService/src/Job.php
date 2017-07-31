@@ -20,6 +20,9 @@ abstract class Job implements ShouldQueue
     /** @var object $responseContent */
     protected $responseContent = null;
 
+    /** @var \GuzzleHttp\Client */
+    protected $client;
+
     /**
      * Execute the job.
      *
@@ -29,7 +32,7 @@ abstract class Job implements ShouldQueue
     public function handle()
     {
         /** @var Response $response */
-        $response = (new Client())->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
+        $response = (new Client($this->client))->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
             [
                 'json' => null !== $this->requestObject
                     ? $this->getRequestObject()->jsonSerialize()
