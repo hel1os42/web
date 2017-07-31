@@ -33,7 +33,7 @@ class OfferRedemptionRequest extends FormRequest
     {
         return [
             'offer_id' => 'required|string',
-            'code'  => 'required|string|min:4|max:5'
+            'code'     => 'required|string|min:4|max:5'
         ];
     }
 } 

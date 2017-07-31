@@ -64,7 +64,7 @@ class RegisterController extends Controller
         if ($request->wantsJson()) {
             return response()
                 ->render('', ['data' => $user->fresh()], Response::HTTP_CREATED)
-                ->header('Location', sprintf('/users/%s', $user->id));
+                ->header('Location', sprintf('/users/%s', $user->getId()));
         }
 
         return redirect()->route('loginForm');

@@ -29,11 +29,11 @@ class Transact extends NauModel
 
     /** @var array */
     protected $casts = [
-        'txid'       => 'string',
-        'src_id'     => 'string',
-        'dst_id'     => 'string',
-        'amount'     => 'float',
-        'status'     => 'string'
+        'txid'   => 'string',
+        'src_id' => 'string',
+        'dst_id' => 'string',
+        'amount' => 'float',
+        'status' => 'string'
     ];
 
     /** @var array */

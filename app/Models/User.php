@@ -20,9 +20,9 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
- * @property mixed  referrer_id
+ * @property mixed referrer_id
  *
- * @property User   referrer
+ * @property User referrer
  */
 class User extends Authenticatable
 {
@@ -64,7 +64,7 @@ class User extends Authenticatable
      *
      * @return BelongsTo
      */
-    public function referrer() : BelongsTo
+    public function referrer(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -74,7 +74,7 @@ class User extends Authenticatable
      *
      * @return HasMany
      */
-    public function account() : HasMany
+    public function account(): HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
     }
@@ -82,7 +82,7 @@ class User extends Authenticatable
     /**
      * @return string
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -92,7 +92,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -102,7 +102,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function getEmail() : string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -112,7 +112,7 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function getReferrerId() : string
+    public function getReferrerId(): string
     {
         return $this->referrer_id;
     }
@@ -125,7 +125,7 @@ class User extends Authenticatable
      *
      * @return User
      */
-    public function setName(string $name) : User
+    public function setName(string $name): User
     {
         $this->name = $name;
 
@@ -139,7 +139,7 @@ class User extends Authenticatable
      *
      * @return User
      */
-    public function setEmail(string $email) : User
+    public function setEmail(string $email): User
     {
         $this->email = $email;
 
@@ -153,7 +153,7 @@ class User extends Authenticatable
      *
      * @return User
      */
-    public function setPassword(string $password) : User
+    public function setPassword(string $password): User
     {
         $this->password = $password;
 
@@ -175,7 +175,7 @@ class User extends Authenticatable
         static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-                $model->id          = Uuid::generate(4)->__toString();
+                $model->id = Uuid::generate(4)->__toString();
             }
         });
     }
@@ -186,7 +186,7 @@ class User extends Authenticatable
      * @param string $invite
      * @return User
      */
-    public function setInvite(string $invite) : User
+    public function setInvite(string $invite): User
     {
         $this->invite_code = $invite;
 
@@ -211,7 +211,7 @@ class User extends Authenticatable
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function generateInvite() : string
+    public function generateInvite(): string
     {
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
@@ -222,9 +222,9 @@ class User extends Authenticatable
      * @param string $token
      * @return Account
      */
-    public function getAccountFor(string $token) : Account
+    public function getAccountFor(string $token): Account
     {
-        switch ($token){
+        switch ($token) {
             case 'NAU':
                 return $this->account()->first();
             default:

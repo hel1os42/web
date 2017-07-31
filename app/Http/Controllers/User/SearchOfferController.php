@@ -20,7 +20,7 @@ class SearchOfferController extends Controller
                 'latitude'  => null,
                 'longitude' => null,
                 'radius'    => 1,
-                'results' => null
+                'results'   => null
             ]
         ]);
     }
@@ -39,7 +39,7 @@ class SearchOfferController extends Controller
                 'latitude'  => $request->latitude,
                 'longitude' => $request->longitude,
                 'radius'    => $request->radius,
-                'results' => $offers
+                'results'   => $offers
             ]
         ]);
     }

@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 class ProfileController extends Controller
 {
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|Response
+     */
     public function index()
     {
         return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home', []);
@@ -24,7 +27,7 @@ class ProfileController extends Controller
      */
     public function show(string $uuid)
     {
-        $userId = auth()->user()->id;
+        $userId = auth()->user()->getId();
         if ($uuid !== $userId) {
             return response()->error(Response::HTTP_FORBIDDEN);
         }

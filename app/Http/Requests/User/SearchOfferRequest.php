@@ -33,9 +33,9 @@ class SearchOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'latitude' => 'required|string',
+            'latitude'  => 'required|string',
             'longitude' => 'required|string',
-            'radius' => 'required|integer'
+            'radius'    => 'required|integer'
         ];
     }
 } 
