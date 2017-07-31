@@ -17,12 +17,9 @@ class OfferController extends Controller
     public function show(string $offerUuid): Response
     {
         //check is this offer have active status
-        $offer = (new Offer())->findOrFail($offerUuid);
+        $offer = (new Offer())->findOrFail($offerUuid)->forUser();
         return \response()->render('user.offer.show', [
-            'data' => [
-                'label'       => $offer->getLabel(),
-                'description' => $offer->getDescription()
-            ]
+            'data' => $offer
         ]);
     }
 

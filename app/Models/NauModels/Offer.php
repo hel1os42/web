@@ -55,7 +55,6 @@ class Offer extends NauModel
         'account_id'           => 'integer',
         'label'                => 'string',
         'description'          => 'string',
-        'reward'               => 'integer',
         'status'               => 'string',
         'start_date'           => 'date',
         'finish_date'          => 'date',
@@ -139,6 +138,8 @@ class Offer extends NauModel
         'latitude'       => 'lat',
         'longitude'      => 'lng'
     ];
+
+//    protected $hidden = ['reward'];
 
     /** @return BelongsTo */
     public function account(): BelongsTo
@@ -331,5 +332,23 @@ class Offer extends NauModel
         $user->get(); // just sample
         //return $this->redemptions()->create(['user_id' => $user->id]);
         return true;
+    }
+
+    /**
+     * @return Offer
+     */
+    public function forUser(): Offer
+    {
+        //if(auth()->user()->equals($this->getOwner())){
+            $this->setHidden([
+                'reward',
+                'max_count',
+                'max_for_user',
+                'max_per_day',
+                'max_for_user_per_day',
+                'min_level'
+            ]);
+        //}
+        return $this;
     }
 }

@@ -19,10 +19,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        $offers = auth()->user()->getAccountFor('NAU')->offers;
-        return \response()->render('advert.offer.list', [
-            'data' => $offers
-        ]);
+        return \response()->render('advert.offer.list', auth()->user()->getAccountFor('NAU')->offers()->paginate());
     }
 
     /**
@@ -81,11 +78,9 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = new Offer();
-        $offer = $offer->findOrFail($offerUuid);
-        $owner = $offer->getOwner();
+        $offer = (new Offer())->findOrFail($offerUuid);
 
-        if (auth()->user()->equals($owner)) {
+        if (auth()->user()->equals($offer->getOwner())) {
             return \response()->render('advert.offer.show', [
                 'data' => $offer
             ]);
@@ -104,7 +99,7 @@ class OfferController extends Controller
         //check is offer have active status, etc
         (new Offer)->redeem(new User());//get user model(from code) and call Offer->redeem(User)
 
-        if($request->code == 'AKS7'){ //check is code valid from activation_codes table
+        if ($request->code == 'AKS7') { //check is code valid from activation_codes table
             return \response()->render('empty', ['msg' => trans('msg.offer.activating')]);
         }
         return \response()->error('404', trans('error.bad_activation_code'));
