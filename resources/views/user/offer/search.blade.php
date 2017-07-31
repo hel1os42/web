@@ -82,7 +82,7 @@
             <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-            <form action="{{route('offer.search')}}" method="post" target="_top">
+            <form action="{{route('offer.search')}}" target="_top">
                 {{ csrf_field() }}
                 <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
                 <input type="longitude" name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>

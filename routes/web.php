@@ -44,9 +44,9 @@ Route::group(['middleware' => 'auth'], function () {
             'index'  => 'advert.offer.list'
         ]
     ]);
+    Route::get('offers', '\App\Http\Controllers\User\SearchOfferController@search')->name('offer.search');
     Route::group(['prefix' => 'offers'], function () {
         Route::get('search', '\App\Http\Controllers\User\SearchOfferController@index')->name('offer.searchForm');
-        Route::post('search', '\App\Http\Controllers\User\SearchOfferController@search')->name('offer.search');
 
         Route::get('redemption/{id}', '\App\Http\Controllers\User\OfferController@redemption')
             ->where('id', '[a-z0-9-]+')
