@@ -12,8 +12,6 @@ class UserCreatedTest extends TestCase
      */
     public function testUserCreated()
     {
-        $faker = Faker::create();
 
-        // ...
     }
 }
