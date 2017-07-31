@@ -44,7 +44,7 @@ class UserTest extends TestCase
          * Create User request and prepare jsonSerialize for comparing
          */
         $userCreatedRequest = new User($user);
-        $jsonSerialize = [
+        $jsonSerialize      = [
             'id'          => $id,
             'username'    => $name,
             'referrer_id' => $referrerId,

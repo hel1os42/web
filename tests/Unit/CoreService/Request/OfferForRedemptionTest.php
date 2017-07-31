@@ -37,7 +37,7 @@ class OfferForRedemptionTest extends TestCase
          * Create Offer request and prepare jsonSerialize for comparing
          */
         $redemptionCreatedRequest = new OfferForRedemption($redemption);
-        $jsonSerialize = [
+        $jsonSerialize            = [
             'user_id' => $userId,
         ];
 

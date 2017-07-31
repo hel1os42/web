@@ -57,8 +57,8 @@ class TransactionNotification implements \JsonSerializable
      */
     public function __construct(Transact $transaction, $category)
     {
-        $source      = $transaction->source;
-        $destination = $transaction->destination;
+        $source      = $transaction->getSource();
+        $destination = $transaction->getDestination();
 
         $this->setTxid($transaction->getId())
             ->setCategory($category)
