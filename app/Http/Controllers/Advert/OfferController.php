@@ -52,7 +52,7 @@ class OfferController extends Controller
             'finish_time'          => Carbon::parse($request->finish_time),
             'country'              => $request->country,
             'city'                 => $request->city,
-            'category_id'          => (new Category())->find($request->category),
+            'category_id'          => (new Category())->findOrFail($request->category),
             'max_count'            => $request->max_count,
             'max_for_user'         => $request->max_for_user,
             'max_per_day'          => $request->max_per_day,

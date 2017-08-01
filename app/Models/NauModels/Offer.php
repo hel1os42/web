@@ -51,29 +51,6 @@ class Offer extends NauModel
 
         $this->primaryKey = 'id';
 
-        $this->casts = [
-            'id'                   => 'string',
-            'account_id'           => 'integer',
-            'label'                => 'string',
-            'description'          => 'string',
-            'status'               => 'string',
-            'start_date'           => 'datetime',
-            'finish_date'          => 'datetime',
-            'start_time'           => 'datetime',
-            'finish_time'          => 'datetime',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'category_id'          => 'string',
-            'max_count'            => 'integer',
-            'max_for_user'         => 'integer',
-            'max_per_day'          => 'integer',
-            'max_for_user_per_day' => 'integer',
-            'user_level_min'       => 'integer',
-            'latitude'             => 'double',
-            'longitude'            => 'double',
-            'radius'               => 'integer'
-        ];
-
         $this->attributes = array(
             'account_id'           => null,
             'label'                => null,
@@ -149,6 +126,9 @@ class Offer extends NauModel
         ];
     }
 
+    /**
+     * @var array
+     */
     protected $maps = [
         'account_id'     => 'acc_id',
         'label'          => 'name',
@@ -162,11 +142,12 @@ class Offer extends NauModel
         'latitude'       => 'lat',
         'longitude'      => 'lng'
     ];
+
     /**
      * @var array
      */
     public static $visibleFields = [
-        'account_id',
+        'id',
         'label',
         'description',
         'start_date',
@@ -181,12 +162,30 @@ class Offer extends NauModel
         'radius'
     ];
 
+    /**
+     * @var array
+     */
+    public static $visibleDbFields = [
+        'id',
+        'name',
+        'descr',
+        'dt_start',
+        'dt_finish',
+        'tm_start',
+        'tm_finish',
+        'country',
+        'city',
+        'categ',
+        'lat',
+        'lng',
+        'radius'
+    ];
+
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
-
 
     /** @return string */
     public function getId(): string

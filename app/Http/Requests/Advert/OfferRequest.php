@@ -55,7 +55,7 @@ class OfferRequest extends FormRequest
             'start_time'           => 'required|string',
             'finish_date'          => 'required|nullable|string',
             'finish_time'          => 'required|nullable|string',
-            'category'             => 'required|string|exists:category,id',
+            'category'             => 'required|string|exists:categories,id',
             'max_count'            => 'required|nullable|integer',
             'max_for_user'         => 'required|nullable|integer',
             'max_per_day'          => 'required|nullable|integer',

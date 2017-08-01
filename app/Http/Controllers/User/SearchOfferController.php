@@ -32,7 +32,7 @@ class SearchOfferController extends Controller
      */
     public function search(SearchOfferRequest $request)
     {
-        $offers = Offer::filterByPosition($request->latitude, $request->longitude, $request->radius)->get(Offer::$visibleFields);
+        $offers = Offer::filterByPosition($request->latitude, $request->longitude, $request->radius)->get(Offer::$visibleDbFields);
         return response()->render('user.offer.search', [
             'data' => [
                 'latitude'  => $request->latitude,

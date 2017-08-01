@@ -24,24 +24,36 @@ use Illuminate\Support\Collection;
 class Account extends NauModel
 {
 
-    /** @var string */
-    protected $table = 'account';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /** @var string */
-    protected $primaryKey = 'id';
+        $this->table = 'account';
 
-    /** @var array */
-    protected $casts = [
-        'id'         => 'integer',
-        'owner_id'   => 'string',
-        'addr'       => 'string',
-        'amount'     => 'integer'
-    ];
+        $this->primaryKey = 'id';
+
+        $this->casts = [
+            'id'       => 'integer',
+            'owner_id' => 'string',
+            'addr'     => 'string',
+            'amount'   => 'integer'
+        ];
+
+        $this->appends = [
+            'balance',
+            'address'
+        ];
+
+        $this->hidden = [
+            'amount',
+            'addr'
+        ];
+    }
 
     /** @var array */
     protected $maps = [
         'balance' => 'amount',
-        'address' => 'addr',
+        'address' => 'addr'
     ];
 
     /** @return BelongsTo */

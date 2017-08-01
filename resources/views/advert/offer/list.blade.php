@@ -84,15 +84,9 @@
         </div>
         <div class="offer">
             @foreach ($data as $offer)
-                <p>{{$offer->label}}</p>
-                <p>{{$offer->description}}</p>
-                <p> {{$offer->reward}}</p>
-                <p>{{$offer->status}}</p>
-                <p>{{$offer->start_date}} / {{$offer->start_time}}</p>
-                <p>{{$offer->finish_date}} / {{$offer->finish_time}}</p>
-                <p>{{$offer->category_id}}</p>
-                <p>{{$offer->updated_at}}</p>
-                <p>{{$offer->created_at}}</p>
+                @foreach ($offer as $val)
+                <p>{{$val}}</p>
+                @endforeach
                 //-------------------------------------------
             @endforeach
         </div>

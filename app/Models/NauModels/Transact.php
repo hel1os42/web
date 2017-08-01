@@ -21,20 +21,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Transact extends NauModel
 {
-    /** @var string */
-    protected $table = "transact";
 
-    /** @var string */
-    protected $primaryKey = 'txid';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /** @var array */
-    protected $casts = [
-        'txid'   => 'string',
-        'src_id' => 'string',
-        'dst_id' => 'string',
-        'amount' => 'float',
-        'status' => 'string'
-    ];
+        $this->table = "transact";
+
+        $this->primaryKey = 'txid';
+
+        $this->casts = [
+            'txid'   => 'string',
+            'src_id' => 'string',
+            'dst_id' => 'string',
+            'amount' => 'float',
+            'status' => 'string'
+        ];
+
+        $this->appends = [
+            'id',
+            'source_account_id',
+            'destination_account_id'
+        ];
+
+        $this->hidden = [
+            'txid',
+            'src_id',
+            'dst_id'
+        ];
+    }
 
     /** @var array */
     protected $maps = [

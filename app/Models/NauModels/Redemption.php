@@ -26,22 +26,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Redemption extends NauModel
 {
 
-    /** @var string */
-    protected $table = "redemption";
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /** @var string */
-    protected $primaryKey = 'id';
+        $this->table = "redemption";
 
-    /** @var array */
-    protected $casts = [
-        'id'          => 'string',
-        'offer_id'    => 'string',
-        'user_id'     => 'string',
-        'points'      => 'integer',
-        'rewarded_id' => 'string',
-        'amount'      => 'integer',
-        'fee'         => 'integer'
-    ];
+        $this->primaryKey = 'id';
+
+        $this->casts = [
+            'id'          => 'string',
+            'offer_id'    => 'string',
+            'user_id'     => 'string',
+            'points'      => 'integer',
+            'rewarded_id' => 'string',
+            'amount'      => 'integer',
+            'fee'         => 'integer'
+        ];
+    }
 
     /** @return string */
     public function getId(): string
