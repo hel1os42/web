@@ -32,6 +32,8 @@ class Category extends Model
     {
         parent::__construct($attributes);
 
+        $this->connection = config('database.default');
+
         $this->table      = 'categories';
         $this->primaryKey = 'id';
 

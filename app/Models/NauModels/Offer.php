@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Sofa\Eloquence\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class Offer
@@ -348,8 +349,15 @@ class Offer extends NauModel
      * @param int $radius
      * @return Builder
      */
-    public function scopeFilterByPosition(Builder $builder, string $lat, string $lng, int $radius): Builder
-    {
+    public function scopeFilterByPosition(
+        Builder $builder,
+        string $lat = null,
+        string $lng = null,
+        int $radius = null
+    ): Builder {
+        if (empty($lat) || empty($lng) || $radius < 1) {
+            return $builder;
+        }
         $radius = $radius * 1000; //kilometers
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
         ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
@@ -360,6 +368,12 @@ class Offer extends NauModel
             DB::connection()->getPdo()->quote($lat),
             DB::connection()->getPdo()->quote($lng),
             $radius));
+    }
+
+
+    public function scopeFilterByCategory(Builder $builder, $categoryId = null)
+    {
+        return !Uuid::isValid($categoryId) ? $builder : $builder->where('category_id', $categoryId);
     }
 
     /**

@@ -29,29 +29,24 @@ class User extends Authenticatable
 
     use Notifiable;
 
-    protected $connection = 'pgsql';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+        $this->connection = config('database.default');
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'referrer_id'
-    ];
+        $this->fillable = [
+            'name',
+            'email',
+            'password',
+        ];
+
+        $this->hidden = [
+            'password',
+            'remember_token',
+            'referrer_id'
+        ];
+    }
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -177,7 +172,7 @@ class User extends Authenticatable
         static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-                $model->id          = Uuid::generate(4)->__toString();
+                $model->id = Uuid::generate(4)->__toString();
             }
         });
     }

@@ -85,6 +85,7 @@
             <form action="{{route('offer.search')}}" target="_top">
                 {{ csrf_field() }}
                 <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
+                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
                 <input type="longitude" name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>
                 <input type="radius" name="radius" placeholder="radius" value="{{$data['radius']}}"><br>
                 <input type="submit">
