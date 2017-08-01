@@ -37,8 +37,9 @@ use Ramsey\Uuid\Uuid;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
- * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static accountOffers(int $accountId) : Offer
+ * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
+ * @method static filterByCategory(string $categoryId = null)
  *
  */
 class Offer extends NauModel
@@ -370,8 +371,12 @@ class Offer extends NauModel
             $radius));
     }
 
-
-    public function scopeFilterByCategory(Builder $builder, $categoryId = null)
+    /**
+     * @param Builder $builder
+     * @param string $categoryId
+     * @return Builder
+     */
+    public function scopeFilterByCategory(Builder $builder, string $categoryId = null): Builder
     {
         return !Uuid::isValid($categoryId) ? $builder : $builder->where('category_id', $categoryId);
     }

@@ -84,10 +84,11 @@
         <div class="offer">
             <form action="{{route('offer.search')}}" target="_top">
                 {{ csrf_field() }}
-                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
-                <input type="latitude" name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
-                <input type="longitude" name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>
-                <input type="radius" name="radius" placeholder="radius" value="{{$data['radius']}}"><br>
+                <select id="offer-category" name="category">
+                </select><br>
+                <input name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
+                <input name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>
+                <input name="radius" placeholder="radius" value="{{$data['radius']}}"><br>
                 <input type="submit">
             </form>
             @if($data['results'])
@@ -100,5 +101,25 @@
         <div class="title">NAU</div>
     </div>
 </div>
+<script type="text/javascript">
+    var xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+            if (xmlhttp.status == 200) {
+                document.getElementById("offer-category").innerHTML = xmlhttp.responseText;
+            }
+            else if (xmlhttp.status == 400) {
+                alert('There was an error 400');
+            }
+            else {
+                alert('something else other than 200 was returned');
+            }
+        }
+    };
+
+    xmlhttp.open("GET", "{{route('offer.category')}}", true);
+    xmlhttp.send();
+</script>
 </body>
 </html>

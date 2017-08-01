@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class OfferRequest
  * @package App\Http\Requests\Auth
  *
+ * @property string category
  * @property string latitude
  * @property string longitude
  * @property int radius
@@ -33,9 +34,10 @@ class SearchOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'latitude'  => 'required|string',
-            'longitude' => 'required|string',
-            'radius'    => 'required|integer'
+            'category'  => 'string|exists:categories,id',
+            'latitude'  => 'string|nullable',
+            'longitude' => 'string|nullable',
+            'radius'    => 'integer|nullable'
         ];
     }
 } 
