@@ -39,15 +39,15 @@ class SendNauTest extends TestCase
          * Create SendNau request and prepare jsonSerialize for comparing
          */
         $sendNauRequest = new SendNau($transaction);
-        $expectedData  = [
+        $expected       = [
             'source_account_id'      => $sourceAccountId,
             'destination_account_id' => $destinationAccountId,
             'amount'                 => $amount,
         ];
 
         /*
-         * Compare json strings
+         * Compare arrays
          */
-        $this->assertEquals($expectedData, $sendNauRequest->jsonSerialize(), 'jsonSerialize');
+        $this->assertEquals($expected, $sendNauRequest->jsonSerialize(), 'Expected array is not equals with sendNau array');
     }
 }

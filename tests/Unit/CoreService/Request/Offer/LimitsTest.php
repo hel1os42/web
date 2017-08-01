@@ -27,13 +27,13 @@ class LimitsTest extends TestCase
         $this->assertTrue($perUser === $limits->getPerUser(), 'perUser');
         $this->assertTrue($minLevel === $limits->getMinLevel(), 'minLevel');
 
-        $jsonSerialize = [
+        $expected = [
             'offers'    => $offers,
             'per_day'   => $perDay,
             'per_user'  => $perUser,
             'min_level' => $minLevel,
         ];
 
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($limits->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expected, $limits->jsonSerialize(), 'Expected array is not equals with LIMITS array');
     }
 }

@@ -44,15 +44,15 @@ class UserTest extends TestCase
          * Create User request and prepare jsonSerialize for comparing
          */
         $userCreatedRequest = new User($user);
-        $jsonSerialize      = [
+        $expected           = [
             'id'          => $userId,
             'username'    => $name,
             'referrer_id' => $referrerId,
         ];
 
         /*
-         * Compare json strings
+         * Compare arrays
          */
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($userCreatedRequest->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expected, $userCreatedRequest->jsonSerialize(), 'Expected array is not equals with userCreated array');
     }
 }

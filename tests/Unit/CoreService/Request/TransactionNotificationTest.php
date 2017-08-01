@@ -51,7 +51,7 @@ class TransactionNotificationTest extends TestCase
          * Create TransactionNotification request and prepare jsonSerialize for comparing
          */
         $transactionNotificationRequest = new TransactionNotification($transaction, $category);
-        $jsonSerialize                  = [
+        $expected                       = [
             'txid'     => $txid,
             'category' => $category,
             'from'     => $sendFrom,
@@ -60,8 +60,8 @@ class TransactionNotificationTest extends TestCase
         ];
 
         /*
-         * Compare json strings
+         * Compare arrays
          */
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($transactionNotificationRequest->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expected, $transactionNotificationRequest->jsonSerialize(), 'Expected array is not equals with transactionNotification array');
     }
 }

@@ -37,13 +37,13 @@ class OfferForRedemptionTest extends TestCase
          * Create Offer request and prepare jsonSerialize for comparing
          */
         $redemptionCreatedRequest = new OfferForRedemption($redemption);
-        $jsonSerialize            = [
+        $expected                 = [
             'user_id' => $userId,
         ];
 
         /*
-         * Compare json strings
+         * Compare arrays
          */
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($redemptionCreatedRequest->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expected, $redemptionCreatedRequest->jsonSerialize(), 'Expected array is not equals with redemptionCreated array');
     }
 }

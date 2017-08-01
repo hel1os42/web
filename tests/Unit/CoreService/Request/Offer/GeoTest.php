@@ -34,7 +34,7 @@ class GeoTest extends TestCase
         $this->assertTrue($country === $geo->getCountry(), 'country');
         $this->assertTrue($expType === $geo->getType(), 'type');
 
-        $jsonSerialize = [
+        $expected = [
             'type'      => $expType,
             'point'     => null !== $point
                 ? $point->jsonSerialize()
@@ -44,6 +44,6 @@ class GeoTest extends TestCase
             'country'   => $country,
         ];
 
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($geo->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expected, $geo->jsonSerialize(), 'Expected array is not equals with GEO array');
     }
 }
