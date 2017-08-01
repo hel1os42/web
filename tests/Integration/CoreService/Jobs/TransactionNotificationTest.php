@@ -61,7 +61,7 @@ class TransactionNotificationTest extends TestCase
             "amount" => $amount,
         ]));
         $client = \Mockery::mock(Client::class);
-        $client->shouldReceive('request')->andReturn($response);
+        $client->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
         \Event::listen(\OmniSynapse\CoreService\Response\Transaction::class, function ($response) use ($amount, &$eventCalled) {

@@ -9,7 +9,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OmniSynapse\CoreService\Exception\RequestException;
-use OmniSynapse\CoreService\Response\User;
 
 abstract class Job implements ShouldQueue
 {

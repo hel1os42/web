@@ -25,8 +25,8 @@ class OfferRedemptionTest extends TestCase
         $userId  = $faker->uuid;
 
         $redemption = \Mockery::mock(Redemption::class);
-        $redemption->shouldReceive('getId')->andReturn($offerId);
-        $redemption->shouldReceive('getUserId')->andReturn($userId);
+        $redemption->shouldReceive('getId')->once()->andReturn($offerId);
+        $redemption->shouldReceive('getUserId')->once()->andReturn($userId);
 
         /*
          * Test JOB
@@ -37,7 +37,7 @@ class OfferRedemptionTest extends TestCase
             "user_id" => $userId,
         ]));
         $client = \Mockery::mock(Client::class);
-        $client->shouldReceive('request')->andReturn($response);
+        $client->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
         \Event::listen(\OmniSynapse\CoreService\Response\OfferForRedemption::class, function ($response) use ($userId, &$eventCalled) {

@@ -24,12 +24,12 @@ class UserCreatedTest extends TestCase
         $name       = $faker->name;
 
         $referrer = \Mockery::mock(\App\Models\User::class);
-        $referrer->shouldReceive('getId')->andReturn($referrerId);
+        $referrer->shouldReceive('getId')->once()->andReturn($referrerId);
 
         $user = \Mockery::mock(\App\Models\User::class);
-        $user->shouldReceive('getId')->andReturn($userId);
-        $user->shouldReceive('getName')->andReturn($name);
-        $user->shouldReceive('getReferrer')->andReturn($referrer);
+        $user->shouldReceive('getId')->once()->andReturn($userId);
+        $user->shouldReceive('getName')->once()->andReturn($name);
+        $user->shouldReceive('getReferrer')->once()->andReturn($referrer);
 
         $response = new Response(200, [
             'Content-Type' => 'application/json',
@@ -37,7 +37,7 @@ class UserCreatedTest extends TestCase
             "id" => $userId,
         ]));
         $client = \Mockery::mock(Client::class);
-        $client->shouldReceive('request')->andReturn($response);
+        $client->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
         \Event::listen(User::class, function ($response) use ($userId, &$eventCalled) {

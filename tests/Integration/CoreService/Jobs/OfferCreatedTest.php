@@ -30,7 +30,7 @@ class OfferCreatedTest extends TestCase
         $ownerId   = $faker->uuid;
         $account   = \Mockery::mock(Account::class);
         $account->shouldReceive('getId')->andReturn($accountId);
-        $account->shouldReceive('getOwnerId')->andReturn($ownerId);
+        $account->shouldReceive('getOwnerId')->once()->andReturn($ownerId);
 
         /*
          * Offer
@@ -56,24 +56,24 @@ class OfferCreatedTest extends TestCase
         $minLevel    = $faker->randomDigitNotNull;
 
         $offer       = \Mockery::mock(Offer::class);
-        $offer->shouldReceive('getLabel')->andReturn($name);
-        $offer->shouldReceive('getDescription')->andReturn($description);
-        $offer->shouldReceive('getCategoryId')->andReturn($categoryId);
-        $offer->shouldReceive('getReward')->andReturn($reward);
-        $offer->shouldReceive('getStartDate')->andReturn($startDate);
-        $offer->shouldReceive('getFinishDate')->andReturn($endDate);
-        $offer->shouldReceive('getStartTime')->andReturn($startTime);
-        $offer->shouldReceive('getFinishTime')->andReturn($endTime);
-        $offer->shouldReceive('getLatitude')->andReturn($lat);
-        $offer->shouldReceive('getLongitude')->andReturn($lon);
-        $offer->shouldReceive('getRadius')->andReturn($radius);
-        $offer->shouldReceive('getCity')->andReturn($city);
-        $offer->shouldReceive('getCountry')->andReturn($country);
-        $offer->shouldReceive('getMaxCount')->andReturn($offers);
-        $offer->shouldReceive('getMaxPerDay')->andReturn($perDay);
-        $offer->shouldReceive('getMaxForUser')->andReturn($perUser);
-        $offer->shouldReceive('getUserLevelMin')->andReturn($minLevel);
-        $offer->shouldReceive('getAccount')->andReturn($account);
+        $offer->shouldReceive('getLabel')->once()->andReturn($name);
+        $offer->shouldReceive('getDescription')->once()->andReturn($description);
+        $offer->shouldReceive('getCategoryId')->once()->andReturn($categoryId);
+        $offer->shouldReceive('getReward')->once()->andReturn($reward);
+        $offer->shouldReceive('getStartDate')->once()->andReturn($startDate);
+        $offer->shouldReceive('getFinishDate')->once()->andReturn($endDate);
+        $offer->shouldReceive('getStartTime')->once()->andReturn($startTime);
+        $offer->shouldReceive('getFinishTime')->once()->andReturn($endTime);
+        $offer->shouldReceive('getLatitude')->once()->andReturn($lat);
+        $offer->shouldReceive('getLongitude')->once()->andReturn($lon);
+        $offer->shouldReceive('getRadius')->once()->andReturn($radius);
+        $offer->shouldReceive('getCity')->once()->andReturn($city);
+        $offer->shouldReceive('getCountry')->once()->andReturn($country);
+        $offer->shouldReceive('getMaxCount')->once()->andReturn($offers);
+        $offer->shouldReceive('getMaxPerDay')->once()->andReturn($perDay);
+        $offer->shouldReceive('getMaxForUser')->once()->andReturn($perUser);
+        $offer->shouldReceive('getUserLevelMin')->once()->andReturn($minLevel);
+        $offer->shouldReceive('getAccount')->once()->andReturn($account);
 
         /*
          * Test JOB
@@ -84,7 +84,7 @@ class OfferCreatedTest extends TestCase
             "name" => $name,
         ]));
         $client = \Mockery::mock(Client::class);
-        $client->shouldReceive('request')->andReturn($response);
+        $client->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
         \Event::listen(\OmniSynapse\CoreService\Response\Offer::class, function ($response) use ($name, &$eventCalled) {

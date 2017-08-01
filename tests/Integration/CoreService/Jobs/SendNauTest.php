@@ -26,9 +26,9 @@ class SendNauTest extends TestCase
         $amount                = $faker->randomFloat();
 
         $sendNau               = \Mockery::mock(Transact::class);
-        $sendNau->shouldReceive('getSourceAccountId')->andReturn($sourceAccountId);
-        $sendNau->shouldReceive('getDestinationAccountId')->andReturn($destinationAccountId);
-        $sendNau->shouldReceive('getAmount')->andReturn($amount);
+        $sendNau->shouldReceive('getSourceAccountId')->once()->andReturn($sourceAccountId);
+        $sendNau->shouldReceive('getDestinationAccountId')->once()->andReturn($destinationAccountId);
+        $sendNau->shouldReceive('getAmount')->once()->andReturn($amount);
 
         /*
          * Test JOB
@@ -39,7 +39,7 @@ class SendNauTest extends TestCase
             "source_account_id" => $sourceAccountId,
         ]));
         $client = \Mockery::mock(Client::class);
-        $client->shouldReceive('request')->andReturn($response);
+        $client->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
         \Event::listen(\OmniSynapse\CoreService\Response\Transaction::class, function ($response) use ($sourceAccountId, &$eventCalled) {

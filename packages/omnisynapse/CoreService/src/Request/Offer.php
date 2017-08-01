@@ -56,8 +56,11 @@ class Offer implements \JsonSerializable
     {
         $point = null;
 
-        if (null !== $offer->getLatitude() && null !== $offer->getLongitude()) {
-            $point = new Point($offer->getLatitude(), $offer->getLongitude());
+        $lat = $offer->getLatitude();
+        $lon = $offer->getLongitude();
+
+        if (null !== $lat && null !== $lon) {
+            $point = new Point($lat, $lon);
         }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
         $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
