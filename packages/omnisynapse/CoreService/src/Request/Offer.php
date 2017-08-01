@@ -11,18 +11,6 @@ use OmniSynapse\CoreService\Request\Offer\Point;
 /**
  * Class Offer
  * @package OmniSynapse\CoreService\Request
- *
- * @property string offerId
- * @property string ownerId
- * @property string name
- * @property string description
- * @property string categoryId
- *
- * @property float reward
- * @property Carbon startDate
- * @property Carbon endDate
- * @property Carbon startTime
- * @property Carbon endTime
  */
 class Offer implements \JsonSerializable
 {

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\CoreService;
 
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use Tests\TestCase;
 
 class ClientTest extends TestCase
@@ -12,7 +12,7 @@ class ClientTest extends TestCase
      */
     public function testSetClient()
     {
-        $coreClient   = new Client();
+        $coreClient   = new CoreServiceClient();
         $guzzleClient = new \GuzzleHttp\Client();
         $coreClient->setClient($guzzleClient);
         $this->assertEquals($guzzleClient, $coreClient->getClient());
@@ -23,7 +23,7 @@ class ClientTest extends TestCase
      */
     public function testGetClient()
     {
-        $coreClient = new Client();
+        $coreClient = new CoreServiceClient();
         $this->assertInstanceOf(\GuzzleHttp\Client::class, $coreClient->getClient());
     }
 }

@@ -7,9 +7,6 @@ use App\Models\Redemption;
 /**
  * Class OfferForRedemption
  * @package OmniSynapse\CoreService\Request
- *
- * @property string offerId
- * @property string userId
  */
 class OfferForRedemption implements \JsonSerializable
 {

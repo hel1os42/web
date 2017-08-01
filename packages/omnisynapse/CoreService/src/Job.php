@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\Response\User;
 
 abstract class Job implements ShouldQueue
 {
@@ -21,7 +22,7 @@ abstract class Job implements ShouldQueue
     protected $responseContent = null;
 
     /** @var \GuzzleHttp\Client */
-    protected $client;
+    protected $guzzleClient;
 
     /**
      * Execute the job.
@@ -32,7 +33,7 @@ abstract class Job implements ShouldQueue
     public function handle()
     {
         /** @var Response $response */
-        $response = (new Client($this->client))->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
+        $response = (new CoreServiceClient($this->guzzleClient))->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
             [
                 'json' => null !== $this->requestObject
                     ? $this->getRequestObject()->jsonSerialize()

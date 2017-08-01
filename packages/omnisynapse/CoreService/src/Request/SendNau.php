@@ -7,10 +7,6 @@ use App\Models\Transact;
 /**
  * Class SendNau
  * @package OmniSynapse\CoreService\Request
- *
- * @property integer sourceAccountId
- * @property integer destinationAccountId
- * @property float amount
  */
 class SendNau implements \JsonSerializable
 {

@@ -29,14 +29,14 @@ class SendNauTest extends TestCase
         $sendNau->shouldReceive('getDestinationAccountId')->andReturn($destinationAccountId);
         $sendNau->shouldReceive('getAmount')->andReturn($amount);
 
-        $mockHandler = new MockHandler();
-        $client      = new Client([
-            'handler'       => $mockHandler,
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]);
-        $sendNauImpl = (new CoreServiceImpl($client))
-            ->sendNau($sendNau);
+//        $mockHandler = new MockHandler();
+//        $client      = new Client([
+//            'handler'       => $mockHandler,
+//            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+//            'verify'        => env('CORE_SERVICE_VERIFY', false),
+//            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
+//        ]);
+//        $sendNauImpl = (new CoreServiceImpl($client))
+//            ->sendNau($sendNau);
     }
 }

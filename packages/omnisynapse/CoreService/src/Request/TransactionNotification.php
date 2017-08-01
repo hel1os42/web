@@ -8,12 +8,6 @@ use App\Models\Transact;
  * Class TransactionNotification
  * @package OmniSynapse\CoreService\Request
  *
- * @property string txid
- * @property string category
- * @property string from
- * @property string to
- * @property float amount
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  * @SuppressWarnings(PHPMD.ShortVariable)

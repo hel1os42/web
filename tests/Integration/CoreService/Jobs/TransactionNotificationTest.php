@@ -51,14 +51,14 @@ class TransactionNotificationTest extends TestCase
         $transaction->method('getDestination')->willReturn($destination);
         $transaction->method('getAmount')->willReturn($amount);
 
-        $mockHandler = new MockHandler();
-        $client      = new Client([
-            'handler'       => $mockHandler,
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]);
-        $transactionNotification = (new CoreServiceImpl($client))
-            ->transactionNotification($transaction, $category);
+//        $mockHandler = new MockHandler();
+//        $client      = new Client([
+//            'handler'       => $mockHandler,
+//            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+//            'verify'        => env('CORE_SERVICE_VERIFY', false),
+//            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
+//        ]);
+//        $transactionNotification = (new CoreServiceImpl($client))
+//            ->transactionNotification($transaction, $category);
     }
 }

@@ -8,15 +8,6 @@ use Carbon\Carbon;
  * Class SendNau
  * @package OmniSynapse\CoreService\Response
  *
- * @property string transaction_id
- * @property int source_account_id
- * @property int destination_account_id
- * @property float amount
- * @property string status
- * @property string created_at
- * @property string type
- * @property array feeTransactions
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  * @SuppressWarnings(PHPMD.ShortVariable)

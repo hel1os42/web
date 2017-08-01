@@ -3,7 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\User;
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
@@ -22,7 +22,7 @@ class UserCreated extends Job
      */
     public function __construct(User $user, \GuzzleHttp\Client $client=null)
     {
-        $this->client = $client;
+        $this->guzzleClient = $client;
 
         /** @var UserRequest requestObject */
         $this->requestObject = new UserRequest($user);
@@ -33,7 +33,7 @@ class UserCreated extends Job
      */
     public function getHttpMethod() : string
     {
-        return Client::METHOD_PUT;
+        return CoreServiceClient::METHOD_PUT;
     }
 
     /**

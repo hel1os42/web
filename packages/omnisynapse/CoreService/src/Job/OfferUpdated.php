@@ -3,7 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Offer;
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
@@ -22,7 +22,7 @@ class OfferUpdated extends Job
      */
     public function __construct(Offer $offer, \GuzzleHttp\Client $client=null)
     {
-        $this->client = $client;
+        $this->guzzleClient = $client;
 
         /** @var OfferForUpdate requestObject */
         $this->requestObject = new OfferForUpdate($offer);
@@ -33,7 +33,7 @@ class OfferUpdated extends Job
      */
     public function getHttpMethod() : string
     {
-        return Client::METHOD_PUT;
+        return CoreServiceClient::METHOD_PUT;
     }
 
     /**

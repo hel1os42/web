@@ -8,14 +8,6 @@ use Carbon\Carbon;
  * Class User
  * @package OmniSynapse\CoreService\Response
  *
- * @property string id
- * @property string username
- * @property string referrer_id
- * @property int level
- * @property int points
- * @property array wallets
- * @property string created_at
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  * @SuppressWarnings(PHPMD.ShortVariable)

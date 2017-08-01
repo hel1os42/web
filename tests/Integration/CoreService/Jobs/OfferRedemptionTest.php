@@ -27,14 +27,14 @@ class OfferRedemptionTest extends TestCase
         $redemption->shouldReceive('getId')->andReturn($offerId);
         $redemption->shouldReceive('getUserId')->andReturn($userId);
 
-        $mockHandler = new MockHandler();
-        $client      = new Client([
-            'handler'       => $mockHandler,
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]);
-        $offerRedemption = (new CoreServiceImpl($client))
-            ->offerRedemption($redemption);
+//        $mockHandler = new MockHandler();
+//        $client      = new Client([
+//            'handler'       => $mockHandler,
+//            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+//            'verify'        => env('CORE_SERVICE_VERIFY', false),
+//            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
+//        ]);
+//        $offerRedemption = (new CoreServiceImpl($client))
+//            ->offerRedemption($redemption);
     }
 }

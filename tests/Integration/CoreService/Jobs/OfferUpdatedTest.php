@@ -81,14 +81,14 @@ class OfferUpdatedTest extends TestCase
          * Test JOB
          */
 
-        $mockHandler  = new MockHandler();
-        $client       = new Client([
-            'handler'       => $mockHandler,
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]);
-        $offerUpdated = (new CoreServiceImpl($client))
-            ->offerUpdated($offer);
+//        $mockHandler  = new MockHandler();
+//        $client       = new Client([
+//            'handler'       => $mockHandler,
+//            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+//            'verify'        => env('CORE_SERVICE_VERIFY', false),
+//            'http_errors'   => env('CORE_SERVICE_HTTP_ERRORS', false),
+//        ]);
+//        $offerUpdated = (new CoreServiceImpl($client))
+//            ->offerUpdated($offer);
     }
 }

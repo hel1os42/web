@@ -8,15 +8,6 @@ use Carbon\Carbon;
  * Class OfferForRedemption.
  * @package OmniSynapse\CoreService\Response
  *
- * @property string id
- * @property string offer_id
- * @property string user_id
- * @property int points
- * @property string rewarded_id
- * @property float amount
- * @property float fee
- * @property string created_at
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  * @SuppressWarnings(PHPMD.ShortVariable)

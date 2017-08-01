@@ -3,7 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Redemption;
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
@@ -22,7 +22,7 @@ class OfferRedemption extends Job
      */
     public function __construct(Redemption $redemption, \GuzzleHttp\Client $client=null)
     {
-        $this->client = $client;
+        $this->guzzleClient = $client;
 
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = new OfferForRedemptionRequest($redemption);
@@ -33,7 +33,7 @@ class OfferRedemption extends Job
      */
     public function getHttpMethod() : string
     {
-        return Client::METHOD_POST;
+        return CoreServiceClient::METHOD_POST;
     }
 
     /**

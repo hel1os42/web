@@ -10,18 +10,6 @@ use OmniSynapse\CoreService\Request\Offer\Limits;
  * Class OfferCreatedResponse
  * @package OmniSynapse\CoreService\Response
  *
- * @property string id
- * @property string owner_id
- * @property string name
- * @property string description
- * @property string category_id
- *
- * @property float reward
- * @property string start_date
- * @property string end_date
- * @property string start_time
- * @property string end_time
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  * @SuppressWarnings(PHPMD.ShortVariable)

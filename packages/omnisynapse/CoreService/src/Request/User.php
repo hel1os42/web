@@ -5,10 +5,6 @@ namespace OmniSynapse\CoreService\Request;
 /**
  * Class UserCreatedRequest
  * @package OmniSynapse\CoreService\Request
- *
- * @property string userId
- * @property string username
- * @property string referrerId
  */
 class User implements \JsonSerializable
 {

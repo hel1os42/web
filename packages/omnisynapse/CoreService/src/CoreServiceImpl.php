@@ -6,6 +6,7 @@ use App\Models\Offer;
 use App\Models\Redemption;
 use App\Models\Transact;
 use App\Models\User;
+use GuzzleHttp\Client;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferRedemption;
 use OmniSynapse\CoreService\Job\OfferUpdated;
@@ -18,14 +19,47 @@ class CoreServiceImpl implements CoreServiceInterface
     /** @var \GuzzleHttp\Client $client */
     private $client;
 
+    /** @var array $config */
+    private $config;
+
     /**
-     * CoreService constructor.
+     * CoreServiceImpl constructor.
      *
-     * @param \GuzzleHttp\Client|null $client
+     * @param array $config
      */
-    public function __construct(\GuzzleHttp\Client $client=null)
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @param \GuzzleHttp\Client $client
+     * @return CoreServiceImpl
+     */
+    public function setClient(\GuzzleHttp\Client $client) : CoreServiceImpl
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return \GuzzleHttp\Client
+     */
+    public function getClient() : Client
+    {
+        if (null === $this->client) {
+            $this->client = $this->initClient();
+        }
+        return $this->client;
+    }
+
+    /**
+     * @return Client
+     */
+    private function initClient()
+    {
+        return new Client($this->config);
     }
 
     /**

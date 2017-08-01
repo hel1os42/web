@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService;
 
-class Client
+class CoreServiceClient
 {
     const METHOD_DELETE = 'DELETE';
     const METHOD_PUT    = 'PUT';
@@ -43,7 +43,7 @@ class Client
     }
 
     /**
-     * @return \GuzzleHttp\Client|Client
+     * @return \GuzzleHttp\Client|CoreServiceClient
      */
     public function getClient()
     {

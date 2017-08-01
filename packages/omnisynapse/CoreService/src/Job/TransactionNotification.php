@@ -3,7 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Transact;
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Request\TransactionNotification as TransactionNotificationRequest;
 use OmniSynapse\CoreService\Response\Transaction;
@@ -19,7 +19,7 @@ class TransactionNotification extends Job
      */
     public function __construct(Transact $transaction, $category, \GuzzleHttp\Client $client=null)
     {
-        $this->client = $client;
+        $this->guzzleClient = $client;
 
         /** @var SendNau requestObject */
         $this->requestObject = (new TransactionNotificationRequest($transaction, $category));
@@ -30,7 +30,7 @@ class TransactionNotification extends Job
      */
     public function getHttpMethod() : string
     {
-        return Client::METHOD_POST;
+        return CoreServiceClient::METHOD_POST;
     }
 
     /**

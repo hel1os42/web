@@ -3,7 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Transact;
-use OmniSynapse\CoreService\Client;
+use OmniSynapse\CoreService\CoreServiceClient;
 use OmniSynapse\CoreService\Job;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
@@ -22,7 +22,7 @@ class SendNau extends Job
      */
     public function __construct(Transact $transaction, \GuzzleHttp\Client $client=null)
     {
-        $this->client = $client;
+        $this->guzzleClient = $client;
 
         /** @var SendNau requestObject */
         $this->requestObject = (new SendNauRequest($transaction));
@@ -33,7 +33,7 @@ class SendNau extends Job
      */
     public function getHttpMethod() : string
     {
-        return Client::METHOD_POST;
+        return CoreServiceClient::METHOD_POST;
     }
 
     /**
