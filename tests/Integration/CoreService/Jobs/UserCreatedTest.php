@@ -5,6 +5,7 @@ namespace Tests\Integration\CoreService\Jobs;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreServiceInterface;
 use OmniSynapse\CoreService\Response\User;
 use Tests\TestCase;
 use Faker\Factory as Faker;
@@ -44,7 +45,7 @@ class UserCreatedTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl())
+        (app(CoreServiceInterface::class))
             ->setClient($client)
             ->userCreated($user)
             ->handle();

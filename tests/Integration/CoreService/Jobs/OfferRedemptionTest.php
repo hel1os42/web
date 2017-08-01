@@ -6,6 +6,7 @@ use App\Models\Redemption;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreServiceInterface;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
@@ -44,7 +45,7 @@ class OfferRedemptionTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl())
+        (app(CoreServiceInterface::class))
             ->setClient($client)
             ->offerRedemption($redemption)
             ->handle();

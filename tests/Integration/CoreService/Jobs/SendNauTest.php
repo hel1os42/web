@@ -6,6 +6,7 @@ use App\Models\Transact;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreServiceInterface;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
@@ -46,7 +47,7 @@ class SendNauTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl())
+        (app(CoreServiceInterface::class))
             ->setClient($client)
             ->sendNau($sendNau)
             ->handle();

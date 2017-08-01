@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreServiceInterface;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
@@ -94,7 +95,7 @@ class OfferUpdatedTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl())
+        (app(CoreServiceInterface::class))
             ->setClient($client)
             ->offerCreated($offer)
             ->handle();
