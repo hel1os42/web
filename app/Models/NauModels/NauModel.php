@@ -8,19 +8,13 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\NauModels\Traits\Nau;
+use App\Models\Support\NauCollection;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasNau;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
-use Sofa\Eloquence\Eloquence;
-use Sofa\Eloquence\Mappable;
 
 class NauModel extends Model
 {
-
-    use HasNau;
-    use ReadOnlyTrait, Eloquence, Mappable {
-        ReadOnlyTrait::save insteadof Eloquence;
-    }
+    use Nau;
 
     /**
      * @var string
@@ -31,4 +25,16 @@ class NauModel extends Model
      * @var string
      */
     protected $dateFormat = 'Y-m-d H:i:s.uO';
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param  array $models
+     *
+     * @return NauCollection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new NauCollection($models);
+    }
 }
