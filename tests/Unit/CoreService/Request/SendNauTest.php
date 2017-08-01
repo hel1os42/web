@@ -3,15 +3,18 @@
 namespace Tests\Unit\CoreService\Request;
 
 use App\Models\Transact;
-use OmniSynapse\CoreService\CoreServiceImpl;
+use Faker\Factory as Faker;
 use OmniSynapse\CoreService\Request\SendNau;
 use Tests\TestCase;
-use Faker\Factory as Faker;
 
 class SendNauTest extends TestCase
 {
     /**
      * @return void
+     *
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_ExpectationFailedException
      */
     public function testGettersAndSetters()
     {
@@ -36,7 +39,7 @@ class SendNauTest extends TestCase
          * Create SendNau request and prepare jsonSerialize for comparing
          */
         $sendNauRequest = new SendNau($transaction);
-        $jsonSerialize  = [
+        $expectedData  = [
             'source_account_id'      => $sourceAccountId,
             'destination_account_id' => $destinationAccountId,
             'amount'                 => $amount,
@@ -45,6 +48,6 @@ class SendNauTest extends TestCase
         /*
          * Compare json strings
          */
-        $this->assertJsonStringEqualsJsonString(\GuzzleHttp\json_encode($jsonSerialize), \GuzzleHttp\json_encode($sendNauRequest->jsonSerialize()), 'jsonSerialize');
+        $this->assertEquals($expectedData, $sendNauRequest->jsonSerialize(), 'jsonSerialize');
     }
 }
