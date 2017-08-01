@@ -8,19 +8,13 @@ use App\Models\Transact;
 use App\Models\User;
 use GuzzleHttp\Client;
 
-interface CoreServiceInterface
+interface CoreService
 {
-    /**
-     * @param array $config
-     * @return CoreServiceImpl
-     */
-    public function setConfig(array $config) : CoreServiceImpl;
-
     /**
      * @param Client $client
      * @return CoreServiceImpl
      */
-    public function setClient(Client $client) : CoreServiceImpl;
+    public function setClient(Client $client) : CoreService;
 
     /**
      * @return Client

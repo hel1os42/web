@@ -5,12 +5,11 @@ namespace Tests\Integration\CoreService\Jobs;
 use App\Models\Account;
 use App\Models\Offer;
 use Carbon\Carbon;
+use Faker\Factory as Faker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use OmniSynapse\CoreService\CoreServiceImpl;
-use OmniSynapse\CoreService\CoreServiceInterface;
+use OmniSynapse\CoreService\CoreService;
 use Tests\TestCase;
-use Faker\Factory as Faker;
 
 class OfferCreatedTest extends TestCase
 {
@@ -92,7 +91,7 @@ class OfferCreatedTest extends TestCase
             $eventCalled++;
         });
 
-        (app(CoreServiceInterface::class))
+        $this->app->make(CoreService::class)
             ->setClient($client)
             ->offerCreated($offer)
             ->handle();

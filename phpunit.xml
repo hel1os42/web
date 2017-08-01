@@ -28,14 +28,4 @@
             <directory suffix=".php">./app</directory>
         </whitelist>
     </filter>
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="beanstalkd"/>
-
-        <env name="CORE_SERVICE_BASE_URL" value="https://core.nau.toavalon.com"/>
-        <env name="CORE_SERVICE_VERIFY" value="false"/>
-        <env name="CORE_SERVICE_HTTP_ERRORS" value="false"/>
-    </php>
 </phpunit>
