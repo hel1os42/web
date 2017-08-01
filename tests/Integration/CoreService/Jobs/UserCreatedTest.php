@@ -44,15 +44,11 @@ class UserCreatedTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl([
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]))
+        (new CoreServiceImpl())
             ->setClient($client)
             ->userCreated($user)
             ->handle();
 
-        $this->assertTrue($eventCalled > 0, 'Can not listen User response event.');
+        $this->assertEquals( 1, $eventCalled, 'Can not listen User response event.');
     }
 }

@@ -20,8 +20,8 @@ class SendNauTest extends TestCase
     {
         $faker = Faker::create();
 
-        $sourceAccountId       = $faker->uuid;
-        $destinationAccountId  = $faker->uuid;
+        $sourceAccountId       = $faker->randomDigitNotNull;
+        $destinationAccountId  = $faker->randomDigitNotNull;
         $amount                = $faker->randomFloat();
 
         $sendNau               = \Mockery::mock(Transact::class);
@@ -46,15 +46,11 @@ class SendNauTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl([
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]))
+        (new CoreServiceImpl())
             ->setClient($client)
             ->sendNau($sendNau)
             ->handle();
 
-        $this->assertTrue($eventCalled > 0, 'Can not listen Transaction event.');
+        $this->assertEquals( 1, $eventCalled, 'Can not listen Transaction event.');
     }
 }

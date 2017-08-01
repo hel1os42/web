@@ -10,7 +10,7 @@ use App\Models\Transact;
  */
 class SendNau implements \JsonSerializable
 {
-    /** @var integer $id */
+    /** @var int $id */
     public $sourceAccountId;
 
     /** @var int $destinationAccountId */
@@ -44,20 +44,20 @@ class SendNau implements \JsonSerializable
     }
 
     /**
-     * @param string $sourceAccountId
+     * @param int $sourceAccountId
      * @return SendNau
      */
-    public function setSourceAccountId(string $sourceAccountId) : SendNau
+    public function setSourceAccountId(int $sourceAccountId) : SendNau
     {
         $this->sourceAccountId = $sourceAccountId;
         return $this;
     }
 
     /**
-     * @param string $destinationAccountId
+     * @param int $destinationAccountId
      * @return SendNau
      */
-    public function setDestinationAccountId(string $destinationAccountId) : SendNau
+    public function setDestinationAccountId(int $destinationAccountId) : SendNau
     {
         $this->destinationAccountId = $destinationAccountId;
         return $this;

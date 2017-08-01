@@ -57,26 +57,22 @@ class TransactionNotificationTest extends TestCase
         $response = new Response(202, [
             'Content-Type' => 'application/json',
         ], \GuzzleHttp\json_encode([
-            "source_account_id" => $sendFrom,
+            "amount" => $amount,
         ]));
         $client = \Mockery::mock(Client::class);
         $client->shouldReceive('request')->andReturn($response);
 
         $eventCalled = 0;
-        \Event::listen(\OmniSynapse\CoreService\Response\Transaction::class, function ($response) use ($sendFrom, &$eventCalled) {
-            $this->assertEquals($response->getSourceAccountId(), $sendFrom, 'TransactionNotification source_account_id is not equals to request source_account_id.');
+        \Event::listen(\OmniSynapse\CoreService\Response\Transaction::class, function ($response) use ($amount, &$eventCalled) {
+            $this->assertEquals($response->getAmount(), $amount, 'TransactionNotification amount is not equals to request amount.');
             $eventCalled++;
         });
 
-        (new CoreServiceImpl([
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]))
+        (new CoreServiceImpl())
             ->setClient($client)
             ->transactionNotification($transaction, $category)
             ->handle();
 
-        $this->assertTrue($eventCalled > 0, 'Can not listen Transaction event.');
+        $this->assertEquals( 1, $eventCalled, 'Can not listen Transaction event.');
     }
 }

@@ -44,15 +44,11 @@ class OfferRedemptionTest extends TestCase
             $eventCalled++;
         });
 
-        (new CoreServiceImpl([
-            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-            'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
-            'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
-        ]))
+        (new CoreServiceImpl())
             ->setClient($client)
             ->offerRedemption($redemption)
             ->handle();
 
-        $this->assertTrue($eventCalled > 0, 'Can not listen Offer redemption event.');
+        $this->assertEquals( 1, $eventCalled, 'Can not listen Offer redemption event.');
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Unit\CoreService\Request;
 
 use App\Models\Transact;
+use OmniSynapse\CoreService\CoreServiceImpl;
 use OmniSynapse\CoreService\Request\SendNau;
 use Tests\TestCase;
 use Faker\Factory as Faker;
@@ -19,8 +20,8 @@ class SendNauTest extends TestCase
         /*
          * Prepare params
          */
-        $sourceAccountId      = $faker->uuid;
-        $destinationAccountId = $faker->uuid;
+        $sourceAccountId      = $faker->randomDigitNotNull;
+        $destinationAccountId = $faker->randomDigitNotNull;
         $amount               = $faker->randomFloat();
 
         /*

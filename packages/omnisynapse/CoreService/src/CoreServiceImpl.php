@@ -27,8 +27,16 @@ class CoreServiceImpl implements CoreServiceInterface
      *
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct(array $config=null)
     {
+        if (null === $config) {
+            $config = [
+                'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+                'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
+                'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
+            ];
+        }
+
         $this->config = $config;
     }
 
