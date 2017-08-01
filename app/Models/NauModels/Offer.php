@@ -43,88 +43,112 @@ use Illuminate\Support\Facades\DB;
 class Offer extends NauModel
 {
 
-    /** @var string */
-    protected $table = "offer";
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /** @var string */
-    protected $primaryKey = 'id';
+        $this->table = "offer";
 
-    /** @var array */
-    protected $casts = [
-        'id'                   => 'string',
-        'account_id'           => 'integer',
-        'label'                => 'string',
-        'description'          => 'string',
-        'status'               => 'string',
-        'start_date'           => 'date',
-        'finish_date'          => 'date',
-        'start_time'           => 'datetime',
-        'finish_time'          => 'datetime',
-        'country'              => 'string',
-        'city'                 => 'string',
-        'category_id'          => 'string',
-        'max_count'            => 'integer',
-        'max_for_user'         => 'integer',
-        'max_per_day'          => 'integer',
-        'max_for_user_per_day' => 'integer',
-        'user_level_min'       => 'integer',
-        'latitude'             => 'double',
-        'longitude'            => 'double',
-        'radius'               => 'integer'
-    ];
+        $this->primaryKey = 'id';
 
-    /** @var array */
-    protected $attributes = array(
-        'acc_id'               => null,
-        'name'                 => null,
-        'descr'                => null,
-        'reward'               => '10000',
-        'status'               => null,
-        'dt_start'             => null,
-        'dt_finish'            => null,
-        'tm_start'             => null,
-        'tm_finish'            => null,
-        'country'              => null,
-        'city'                 => null,
-        'categ'                => null,
-        'max_count'            => null,
-        'max_for_user'         => null,
-        'max_per_day'          => null,
-        'max_for_user_per_day' => null,
-        'min_level'            => null,
-        'lat'                  => null,
-        'lng'                  => null,
-        'radius'               => null
-    );
+        $this->casts = [
+            'id'                   => 'string',
+            'account_id'           => 'integer',
+            'label'                => 'string',
+            'description'          => 'string',
+            'status'               => 'string',
+            'start_date'           => 'datetime',
+            'finish_date'          => 'datetime',
+            'start_time'           => 'datetime',
+            'finish_time'          => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'category_id'          => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'user_level_min'       => 'integer',
+            'latitude'             => 'double',
+            'longitude'            => 'double',
+            'radius'               => 'integer'
+        ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'account_id',
-        'label',
-        'description',
-        'reward',
-        'start_date',
-        'finish_date',
-        'start_time',
-        'finish_time',
-        'country',
-        'city',
-        'category_id',
-        'max_count',
-        'max_for_user',
-        'max_per_day',
-        'max_for_user_per_day',
-        'user_level_min',
-        'latitude',
-        'longitude',
-        'radius'
-    ];
+        $this->attributes = array(
+            'account_id'           => null,
+            'label'                => null,
+            'descr'                => null,
+            'reward'               => '10000',
+            'status'               => null,
+            'dt_start'             => null,
+            'dt_finish'            => null,
+            'tm_start'             => null,
+            'tm_finish'            => null,
+            'country'              => null,
+            'city'                 => null,
+            'categ'                => null,
+            'max_count'            => null,
+            'max_for_user'         => null,
+            'max_per_day'          => null,
+            'max_for_user_per_day' => null,
+            'min_level'            => null,
+            'lat'                  => null,
+            'lng'                  => null,
+            'radius'               => null
+        );
 
-    /** @var array */
+        $this->fillable = [
+            'account_id',
+            'label',
+            'description',
+            'reward',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'country',
+            'city',
+            'category_id',
+            'max_count',
+            'max_for_user',
+            'max_per_day',
+            'max_for_user_per_day',
+            'user_level_min',
+            'latitude',
+            'longitude',
+            'radius'
+        ];
+
+
+        $this->hidden = [
+            'acc_id',
+            'name',
+            'descr',
+            'dt_start',
+            'dt_finish',
+            'tm_start',
+            'tm_finish',
+            'categ',
+            'min_level',
+            'lat',
+            'lng'
+        ];
+
+        $this->appends = [
+            'account_id',
+            'label',
+            'description',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'category_id',
+            'user_level_min',
+            'latitude',
+            'longitude'
+        ];
+    }
+
     protected $maps = [
         'account_id'     => 'acc_id',
         'label'          => 'name',
@@ -138,23 +162,22 @@ class Offer extends NauModel
         'latitude'       => 'lat',
         'longitude'      => 'lng'
     ];
-
     /**
      * @var array
      */
     public static $visibleFields = [
-        'acc_id',
-        'name',
-        'descr',
-        'dt_start',
-        'dt_finish',
-        'tm_start',
-        'tm_finish',
+        'account_id',
+        'label',
+        'description',
+        'start_date',
+        'finish_date',
+        'start_time',
+        'finish_time',
         'country',
         'city',
-        'categ',
-        'lat',
-        'lng',
+        'category_id',
+        'latitude',
+        'longitude',
         'radius'
     ];
 
