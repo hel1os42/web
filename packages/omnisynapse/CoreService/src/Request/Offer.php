@@ -109,7 +109,7 @@ class Offer implements \JsonSerializable
      * @param string $ownerId
      * @return Offer
      */
-    public function setOwnerId(string $ownerId) : Offer
+    public function setOwnerId(string $ownerId): Offer
     {
         $this->ownerId = $ownerId;
         return $this;
@@ -119,7 +119,7 @@ class Offer implements \JsonSerializable
      * @param string $name
      * @return Offer
      */
-    public function setName(string $name) : Offer
+    public function setName(string $name): Offer
     {
         $this->name = $name;
         return $this;
@@ -129,7 +129,7 @@ class Offer implements \JsonSerializable
      * @param string $description
      * @return Offer
      */
-    public function setDescription(string $description) : Offer
+    public function setDescription(string $description): Offer
     {
         $this->description = $description;
         return $this;
@@ -139,7 +139,7 @@ class Offer implements \JsonSerializable
      * @param string $categoryId
      * @return Offer
      */
-    public function setCategoryId(string $categoryId) : Offer
+    public function setCategoryId(string $categoryId): Offer
     {
         $this->categoryId = $categoryId;
         return $this;
@@ -149,7 +149,7 @@ class Offer implements \JsonSerializable
      * @param Geo $geo
      * @return Offer
      */
-    public function setGeo(Geo $geo) : Offer
+    public function setGeo(Geo $geo): Offer
     {
         $this->geo = $geo;
         return $this;
@@ -159,7 +159,7 @@ class Offer implements \JsonSerializable
      * @param Limits $limits
      * @return Offer
      */
-    public function setLimits(Limits $limits) : Offer
+    public function setLimits(Limits $limits): Offer
     {
         $this->limits = $limits;
         return $this;
@@ -169,7 +169,7 @@ class Offer implements \JsonSerializable
      * @param float $reward
      * @return Offer
      */
-    public function setReward(float $reward) : Offer
+    public function setReward(float $reward): Offer
     {
         $this->reward = $reward;
         return $this;
@@ -179,7 +179,7 @@ class Offer implements \JsonSerializable
      * @param Carbon $startDate
      * @return Offer
      */
-    public function setStartDate(Carbon $startDate) : Offer
+    public function setStartDate(Carbon $startDate): Offer
     {
         $this->startDate = $startDate->toDateString();
         return $this;
@@ -189,7 +189,7 @@ class Offer implements \JsonSerializable
      * @param Carbon $endDate
      * @return Offer
      */
-    public function setEndDate(Carbon $endDate) : Offer
+    public function setEndDate(Carbon $endDate): Offer
     {
         $this->endDate = $endDate->toDateString();
         return $this;
@@ -199,7 +199,7 @@ class Offer implements \JsonSerializable
      * @param Carbon $startTime
      * @return Offer
      */
-    public function setStartTime(Carbon $startTime) : Offer
+    public function setStartTime(Carbon $startTime): Offer
     {
         $this->startTime = $startTime->toTimeString();
         return $this;
@@ -209,7 +209,7 @@ class Offer implements \JsonSerializable
      * @param Carbon $endTime
      * @return Offer
      */
-    public function setEndTime(Carbon $endTime) : Offer
+    public function setEndTime(Carbon $endTime): Offer
     {
         $this->endTime = $endTime->toTimeString();
         return $this;

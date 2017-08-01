@@ -42,7 +42,7 @@ class Point implements \JsonSerializable
     /**
      * @return float
      */
-    public function getLat() : float
+    public function getLat(): float
     {
         return $this->lat;
     }
@@ -50,7 +50,7 @@ class Point implements \JsonSerializable
     /**
      * @return float
      */
-    public function getLon() : float
+    public function getLon(): float
     {
         return $this->lon;
     }
@@ -59,7 +59,7 @@ class Point implements \JsonSerializable
      * @param float $lat
      * @return Point
      */
-    public function setLat(float $lat) : Point
+    public function setLat(float $lat): Point
     {
         $this->lat = $lat;
         return $this;
@@ -69,7 +69,7 @@ class Point implements \JsonSerializable
      * @param float $lon
      * @return Point
      */
-    public function setLon(float $lon) : Point
+    public function setLon(float $lon): Point
     {
         $this->lon = $lon;
         return $this;

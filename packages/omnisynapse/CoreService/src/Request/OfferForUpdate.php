@@ -27,7 +27,7 @@ class OfferForUpdate extends Offer implements \JsonSerializable
      * @param string $offerId
      * @return OfferForUpdate
      */
-    public function setOfferId(string $offerId) : OfferForUpdate
+    public function setOfferId(string $offerId): OfferForUpdate
     {
         $this->offerId = $offerId;
         return $this;

@@ -5,13 +5,12 @@ namespace OmniSynapse\CoreService\Response;
 use Carbon\Carbon;
 
 /**
- * Class SendNau
- * @package OmniSynapse\CoreService\Response
+ * Class Limits
+ * @package OmniSynapse\CoreService\FeeTransaction
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Transaction
+class FeeTransaction implements \JsonSerializable
 {
     /** @var string */
     public $transaction_id;
@@ -36,6 +35,23 @@ class Transaction
 
     /** @var FeeTransaction[] */
     public $feeTransactions;
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'transaction_id'         => $this->getTransactionId(),
+            'source_account_id'      => $this->getSourceAccountId(),
+            'destination_account_id' => $this->getDestinationAccountId(),
+            'amount'                 => $this->getAmount(),
+            'status'                 => $this->getStatus(),
+            'created_at'             => $this->getCreatedAt()->format('Y-m-d H:i:sO'),
+            'type'                   => $this->getType(),
+            'feeTransactions'        => $this->getFeeTransactions(),
+        ];
+    }
 
     /**
      * @return string
@@ -94,7 +110,7 @@ class Transaction
     }
 
     /**
-     * @return FeeTransaction[]
+     * @return array
      */
     public function getFeeTransactions(): array
     {

@@ -12,49 +12,49 @@ interface CoreService
 {
     /**
      * @param Client $client
-     * @return CoreServiceImpl
+     * @return CoreService
      */
-    public function setClient(Client $client) : CoreService;
+    public function setClient(Client $client): CoreService;
 
     /**
      * @return Client
      */
-    public function getClient() : Client;
+    public function getClient(): Client;
 
     /**
      * @param Offer $offer
      * @return Job
      */
-    public function offerCreated(Offer $offer) : Job;
+    public function offerCreated(Offer $offer): Job;
 
     /**
      * @param Redemption $redemption
      * @return Job
      */
-    public function offerRedemption(Redemption $redemption) : Job;
+    public function offerRedemption(Redemption $redemption): Job;
 
     /**
      * @param Offer $offer
      * @return Job
      */
-    public function offerUpdated(Offer $offer) : Job;
+    public function offerUpdated(Offer $offer): Job;
 
     /**
      * @param Transact $transaction
      * @return Job
      */
-    public function sendNau(Transact $transaction) : Job;
+    public function sendNau(Transact $transaction): Job;
 
     /**
      * @param User $user
      * @return Job
      */
-    public function userCreated(User $user) : Job;
+    public function userCreated(User $user): Job;
 
     /**
      * @param Transact $transaction
      * @param string $category
      * @return Job
      */
-    public function transactionNotification(Transact $transaction, $category) : Job;
+    public function transactionNotification(Transact $transaction, $category): Job;
 }

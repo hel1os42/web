@@ -81,7 +81,7 @@ class Geo implements \JsonSerializable
     /**
      * @return string
      */
-    public function getType() : string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -97,7 +97,7 @@ class Geo implements \JsonSerializable
     /**
      * @return int
      */
-    public function getRadius() : int
+    public function getRadius(): int
     {
         return $this->radius;
     }
@@ -105,7 +105,7 @@ class Geo implements \JsonSerializable
     /**
      * @return string
      */
-    public function getCity() : string
+    public function getCity(): string
     {
         return $this->city;
     }
@@ -113,7 +113,7 @@ class Geo implements \JsonSerializable
     /**
      * @return string
      */
-    public function getCountry() : string
+    public function getCountry(): string
     {
         return $this->country;
     }
@@ -122,7 +122,7 @@ class Geo implements \JsonSerializable
      * @param string $type
      * @return Geo
      */
-    public function setType(string $type) : Geo
+    public function setType(string $type): Geo
     {
         $this->type = $type;
         return $this;
@@ -132,7 +132,7 @@ class Geo implements \JsonSerializable
      * @param Point $point
      * @return Geo
      */
-    public function setPoint(Point $point=null) : Geo
+    public function setPoint(Point $point=null): Geo
     {
         $this->point = $point;
         return $this;
@@ -142,7 +142,7 @@ class Geo implements \JsonSerializable
      * @param string $radius
      * @return Geo
      */
-    public function setRadius(string $radius) : Geo
+    public function setRadius(string $radius): Geo
     {
         $this->radius = $radius;
         return $this;
@@ -152,7 +152,7 @@ class Geo implements \JsonSerializable
      * @param string $city
      * @return Geo
      */
-    public function setCity(string $city) : Geo
+    public function setCity(string $city): Geo
     {
         $this->city = $city;
         return $this;
@@ -162,7 +162,7 @@ class Geo implements \JsonSerializable
      * @param string $country
      * @return Geo
      */
-    public function setCountry(string $country) : Geo
+    public function setCountry(string $country): Geo
     {
         $this->country = $country;
         return $this;

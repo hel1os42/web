@@ -9,7 +9,7 @@ use Carbon\Carbon;
  * @package OmniSynapse\CoreService\Response
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class OfferForRedemption
@@ -41,7 +41,7 @@ class OfferForRedemption
     /**
      * @return string
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -49,7 +49,7 @@ class OfferForRedemption
     /**
      * @return string
      */
-    public function getOfferId() : string
+    public function getOfferId(): string
     {
         return $this->offer_id;
     }
@@ -57,7 +57,7 @@ class OfferForRedemption
     /**
      * @return string
      */
-    public function getUserId() : string
+    public function getUserId(): string
     {
         return $this->user_id;
     }
@@ -65,7 +65,7 @@ class OfferForRedemption
     /**
      * @return float
      */
-    public function getPoints() : float
+    public function getPoints(): float
     {
         return $this->points;
     }
@@ -73,7 +73,7 @@ class OfferForRedemption
     /**
      * @return string
      */
-    public function getRewardedId() : string
+    public function getRewardedId(): string
     {
         return $this->rewarded_id;
     }
@@ -81,7 +81,7 @@ class OfferForRedemption
     /**
      * @return float
      */
-    public function getAmount() : float
+    public function getAmount(): float
     {
         return $this->amount;
     }
@@ -89,7 +89,7 @@ class OfferForRedemption
     /**
      * @return float
      */
-    public function getFee() : float
+    public function getFee(): float
     {
         return $this->fee;
     }
@@ -97,7 +97,7 @@ class OfferForRedemption
     /**
      * @return Carbon
      */
-    public function getCreatedAt() : Carbon
+    public function getCreatedAt(): Carbon
     {
         return Carbon::parse($this->created_at);
     }

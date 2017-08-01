@@ -41,7 +41,7 @@ class OfferForRedemption implements \JsonSerializable
      * @param string $offerId
      * @return OfferForRedemption
      */
-    public function setOfferId(string $offerId) : OfferForRedemption
+    public function setOfferId(string $offerId): OfferForRedemption
     {
         $this->offerId = $offerId;
         return $this;
@@ -51,7 +51,7 @@ class OfferForRedemption implements \JsonSerializable
      * @param string $userId
      * @return OfferForRedemption
      */
-    public function setUserId(string $userId) : OfferForRedemption
+    public function setUserId(string $userId): OfferForRedemption
     {
         $this->userId = $userId;
         return $this;

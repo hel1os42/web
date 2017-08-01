@@ -20,13 +20,9 @@ class GeoTest extends TestCase
         $city    = $faker->city;
         $country = $faker->country;
 
-        $point   = $faker->boolean()
-            ? new Point($faker->latitude, $faker->longitude)
-            : null;
+        $point   = new Point($faker->latitude, $faker->longitude);
         $geo     = new Geo($point, $radius, $city, $country);
-        $expType = null !== $point
-            ? Geo::TYPE_POINT
-            : Geo::TYPE_CITY;
+        $expType = Geo::TYPE_POINT;
 
         $this->assertTrue($point === $geo->getPoint(), 'point');
         $this->assertTrue($radius === $geo->getRadius(), 'radius');

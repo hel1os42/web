@@ -37,7 +37,7 @@ class CoreServiceClient
      * @param \GuzzleHttp\Client $client
      * @return \GuzzleHttp\Client
      */
-    public function setClient(\GuzzleHttp\Client $client) : \GuzzleHttp\Client
+    public function setClient(\GuzzleHttp\Client $client): \GuzzleHttp\Client
     {
         return $this->client = $client;
     }

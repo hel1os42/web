@@ -9,7 +9,7 @@ use Carbon\Carbon;
  * @package OmniSynapse\CoreService\Response
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class User
@@ -29,7 +29,7 @@ class User
     /** @var int */
     public $points;
 
-    /** @var array */
+    /** @var Wallet[] */
     public $wallets;
 
     /** @var string */
@@ -38,7 +38,7 @@ class User
     /**
      * @return string
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -46,7 +46,7 @@ class User
     /**
      * @return string
      */
-    public function getUsername() : string
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -54,15 +54,15 @@ class User
     /**
      * @return string
      */
-    public function getReferrerId() : string
+    public function getReferrerId(): string
     {
         return $this->referrer_id;
     }
 
     /**
-     * @return array
+     * @return Wallet[]
      */
-    public function getWallets() : array
+    public function getWallets(): array
     {
         return $this->wallets;
     }
@@ -70,7 +70,7 @@ class User
     /**
      * @return int
      */
-    public function getLevel() : int
+    public function getLevel(): int
     {
         return $this->level;
     }
@@ -78,7 +78,7 @@ class User
     /**
      * @return int
      */
-    public function getPoints() : int
+    public function getPoints(): int
     {
         return $this->points;
     }
@@ -86,7 +86,7 @@ class User
     /**
      * @return Carbon
      */
-    public function getCreatedAt() : Carbon
+    public function getCreatedAt(): Carbon
     {
         return Carbon::parse($this->created_at);
     }

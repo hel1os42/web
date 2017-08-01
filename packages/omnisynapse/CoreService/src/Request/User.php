@@ -45,7 +45,7 @@ class User implements \JsonSerializable
      * @param string $userId
      * @return User
      */
-    public function setUserId(string $userId) : User
+    public function setUserId(string $userId): User
     {
         $this->userId = $userId;
         return $this;
@@ -55,7 +55,7 @@ class User implements \JsonSerializable
      * @param string $username
      * @return User
      */
-    public function setUsername(string $username) : User
+    public function setUsername(string $username): User
     {
         $this->username = $username;
         return $this;
@@ -65,7 +65,7 @@ class User implements \JsonSerializable
      * @param \App\Models\User $referrer
      * @return User
      */
-    public function setReferrerId(\App\Models\User $referrer=null) : User
+    public function setReferrerId(\App\Models\User $referrer=null): User
     {
         $this->referrerId = null !== $referrer
             ? $referrer->getId()

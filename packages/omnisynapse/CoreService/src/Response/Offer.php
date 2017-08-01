@@ -3,15 +3,13 @@
 namespace OmniSynapse\CoreService\Response;
 
 use Carbon\Carbon;
-use OmniSynapse\CoreService\Request\Offer\Geo;
-use OmniSynapse\CoreService\Request\Offer\Limits;
 
 /**
  * Class OfferCreatedResponse
  * @package OmniSynapse\CoreService\Response
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Offer
@@ -55,7 +53,7 @@ class Offer
     /**
      * @return string
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -63,7 +61,7 @@ class Offer
     /**
      * @return string
      */
-    public function getOwnerId() : string
+    public function getOwnerId(): string
     {
         return $this->owner_id;
     }
@@ -71,7 +69,7 @@ class Offer
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -79,7 +77,7 @@ class Offer
     /**
      * @return string
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -87,7 +85,7 @@ class Offer
     /**
      * @return string
      */
-    public function getCategoryId() : string
+    public function getCategoryId(): string
     {
         return $this->category_id;
     }
@@ -95,7 +93,7 @@ class Offer
     /**
      * @return Geo
      */
-    public function geoGeo() : Geo
+    public function getGeo(): Geo
     {
         return $this->geo;
     }
@@ -103,7 +101,7 @@ class Offer
     /**
      * @return Limits
      */
-    public function getLimits() : Limits
+    public function getLimits(): Limits
     {
         return $this->limits;
     }
@@ -111,7 +109,7 @@ class Offer
     /**
      * @return float
      */
-    public function getReward() : float
+    public function getReward(): float
     {
         return $this->reward;
     }
@@ -119,7 +117,7 @@ class Offer
     /**
      * @return Carbon
      */
-    public function getStartDate() : Carbon
+    public function getStartDate(): Carbon
     {
         return Carbon::parse($this->start_date);
     }
@@ -127,7 +125,7 @@ class Offer
     /**
      * @return Carbon
      */
-    public function getEndDate() : Carbon
+    public function getEndDate(): Carbon
     {
         return Carbon::parse($this->end_date);
     }
@@ -135,16 +133,16 @@ class Offer
     /**
      * @return Carbon
      */
-    public function getStartTime() : Carbon
+    public function getStartTime(): Carbon
     {
-        return $this->getStartDate()->setTimeFromTimeString($this->start_time);
+        return Carbon::parse($this->start_time);
     }
 
     /**
      * @return Carbon
      */
-    public function getEndTime() : Carbon
+    public function getEndTime(): Carbon
     {
-        return $this->getEndDate()->setTimeFromTimeString($this->end_time);
+        return Carbon::parse($this->end_time);
     }
 }

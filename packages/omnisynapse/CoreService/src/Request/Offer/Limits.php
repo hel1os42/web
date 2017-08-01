@@ -56,7 +56,7 @@ class Limits implements \JsonSerializable
     /**
      * @return int
      */
-    public function getOffers() : int
+    public function getOffers(): int
     {
         return $this->offers;
     }
@@ -64,7 +64,7 @@ class Limits implements \JsonSerializable
     /**
      * @return int
      */
-    public function getPerDay() : int
+    public function getPerDay(): int
     {
         return $this->perDay;
     }
@@ -72,7 +72,7 @@ class Limits implements \JsonSerializable
     /**
      * @return int
      */
-    public function getPerUser() : int
+    public function getPerUser(): int
     {
         return $this->perUser;
     }
@@ -80,7 +80,7 @@ class Limits implements \JsonSerializable
     /**
      * @return int
      */
-    public function getMinLevel() : int
+    public function getMinLevel(): int
     {
         return $this->minLevel;
     }
@@ -89,7 +89,7 @@ class Limits implements \JsonSerializable
      * @param int $offers
      * @return Limits
      */
-    public function setOffers(int $offers) : Limits
+    public function setOffers(int $offers): Limits
     {
         $this->offers = $offers;
         return $this;
@@ -99,7 +99,7 @@ class Limits implements \JsonSerializable
      * @param int $perDay
      * @return Limits
      */
-    public function setPerDay(int $perDay) : Limits
+    public function setPerDay(int $perDay): Limits
     {
         $this->perDay = $perDay;
         return $this;
@@ -109,7 +109,7 @@ class Limits implements \JsonSerializable
      * @param int $perUser
      * @return Limits
      */
-    public function setPerUser(int $perUser) : Limits
+    public function setPerUser(int $perUser): Limits
     {
         $this->perUser = $perUser;
         return $this;
@@ -119,7 +119,7 @@ class Limits implements \JsonSerializable
      * @param int $minLevel
      * @return Limits
      */
-    public function setMinLevel(int $minLevel) : Limits
+    public function setMinLevel(int $minLevel): Limits
     {
         $this->minLevel = $minLevel;
         return $this;

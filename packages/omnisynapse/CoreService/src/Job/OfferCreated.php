@@ -31,7 +31,7 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    public function getHttpMethod() : string
+    public function getHttpMethod(): string
     {
         return CoreServiceClient::METHOD_POST;
     }
@@ -39,7 +39,7 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    public function getHttpPath() : string
+    public function getHttpPath(): string
     {
         return '/offers';
     }
@@ -47,7 +47,7 @@ class OfferCreated extends Job
     /**
      * @return \JsonSerializable
      */
-    protected function getRequestObject() : \JsonSerializable
+    protected function getRequestObject(): \JsonSerializable
     {
         return $this->requestObject;
     }
@@ -55,7 +55,7 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    protected function getResponseClass() : string
+    protected function getResponseClass(): string
     {
         return OfferResponse::class;
     }

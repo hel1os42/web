@@ -47,7 +47,7 @@ class SendNau implements \JsonSerializable
      * @param int $sourceAccountId
      * @return SendNau
      */
-    public function setSourceAccountId(int $sourceAccountId) : SendNau
+    public function setSourceAccountId(int $sourceAccountId): SendNau
     {
         $this->sourceAccountId = $sourceAccountId;
         return $this;
@@ -57,7 +57,7 @@ class SendNau implements \JsonSerializable
      * @param int $destinationAccountId
      * @return SendNau
      */
-    public function setDestinationAccountId(int $destinationAccountId) : SendNau
+    public function setDestinationAccountId(int $destinationAccountId): SendNau
     {
         $this->destinationAccountId = $destinationAccountId;
         return $this;
@@ -67,7 +67,7 @@ class SendNau implements \JsonSerializable
      * @param float $amount
      * @return SendNau
      */
-    public function setAmount(float $amount) : SendNau
+    public function setAmount(float $amount): SendNau
     {
         $this->amount = $amount;
         return $this;

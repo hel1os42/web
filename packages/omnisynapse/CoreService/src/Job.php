@@ -64,16 +64,16 @@ abstract class Job implements ShouldQueue
     }
 
     /** @return string */
-    abstract protected function getHttpMethod() : string;
+    abstract protected function getHttpMethod(): string;
 
     /** @return string */
-    abstract protected function getHttpPath() : string;
+    abstract protected function getHttpPath(): string;
 
     /** @return \JsonSerializable */
-    abstract protected function getRequestObject() : \JsonSerializable;
+    abstract protected function getRequestObject(): \JsonSerializable;
 
     /** @return string */
-    abstract protected function getResponseClass() : string;
+    abstract protected function getResponseClass(): string;
 
     /**
      * @param Response $response

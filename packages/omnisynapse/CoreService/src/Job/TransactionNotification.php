@@ -28,7 +28,7 @@ class TransactionNotification extends Job
     /**
      * @return string
      */
-    public function getHttpMethod() : string
+    public function getHttpMethod(): string
     {
         return CoreServiceClient::METHOD_POST;
     }
@@ -36,7 +36,7 @@ class TransactionNotification extends Job
     /**
      * @return string
      */
-    public function getHttpPath() : string
+    public function getHttpPath(): string
     {
         return '/transactions/incoming';
     }
@@ -44,7 +44,7 @@ class TransactionNotification extends Job
     /**
      * @return \JsonSerializable
      */
-    protected function getRequestObject() : \JsonSerializable
+    protected function getRequestObject(): \JsonSerializable
     {
         return $this->requestObject;
     }
@@ -52,7 +52,7 @@ class TransactionNotification extends Job
     /**
      * @return string
      */
-    protected function getResponseClass() : string
+    protected function getResponseClass(): string
     {
         return Transaction::class;
     }
