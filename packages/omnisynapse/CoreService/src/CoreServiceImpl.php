@@ -23,21 +23,14 @@ class CoreServiceImpl implements CoreServiceInterface
     private $config;
 
     /**
-     * CoreServiceImpl constructor.
-     *
      * @param array $config
+     * @return CoreServiceImpl
      */
-    public function __construct(array $config=null)
+    public function setConfig(array $config) : CoreServiceImpl
     {
-        if (null === $config) {
-            $config = [
-                'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
-                'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
-                'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
-            ];
-        }
-
         $this->config = $config;
+
+        return $this;
     }
 
     /**
@@ -63,10 +56,26 @@ class CoreServiceImpl implements CoreServiceInterface
     }
 
     /**
+     * @return array
+     */
+    private function defaultConfig() : array
+    {
+        return [
+            'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
+            'verify'        => (boolean)env('CORE_SERVICE_VERIFY', false),
+            'http_errors'   => (boolean)env('CORE_SERVICE_HTTP_ERRORS', false),
+        ];
+    }
+
+    /**
      * @return Client
      */
     private function initClient()
     {
+        if (null === $this->config) {
+            $this->config = $this->defaultConfig();
+        }
+
         return new Client($this->config);
     }
 
@@ -76,7 +85,7 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function offerCreated(Offer $offer) : Job
     {
-        return new OfferCreated($offer, $this->client);
+        return new OfferCreated($offer, $this->getClient());
     }
 
     /**
@@ -85,7 +94,7 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function offerRedemption(Redemption $redemption) : Job
     {
-        return new OfferRedemption($redemption, $this->client);
+        return new OfferRedemption($redemption, $this->getClient());
     }
 
     /**
@@ -94,7 +103,7 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function offerUpdated(Offer $offer) : Job
     {
-        return new OfferUpdated($offer, $this->client);
+        return new OfferUpdated($offer, $this->getClient());
     }
 
     /**
@@ -103,7 +112,7 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function sendNau(Transact $transaction) : Job
     {
-        return new SendNau($transaction, $this->client);
+        return new SendNau($transaction, $this->getClient());
     }
 
     /**
@@ -112,7 +121,7 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function userCreated(User $user) : Job
     {
-        return new UserCreated($user, $this->client);
+        return new UserCreated($user, $this->getClient());
     }
 
     /**
@@ -122,6 +131,6 @@ class CoreServiceImpl implements CoreServiceInterface
      */
     public function transactionNotification(Transact $transaction, $category) : Job
     {
-        return new TransactionNotification($transaction, $category, $this->client);
+        return new TransactionNotification($transaction, $category, $this->getClient());
     }
 }

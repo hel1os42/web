@@ -11,6 +11,12 @@ use GuzzleHttp\Client;
 interface CoreServiceInterface
 {
     /**
+     * @param array $config
+     * @return CoreServiceImpl
+     */
+    public function setConfig(array $config) : CoreServiceImpl;
+
+    /**
      * @param Client $client
      * @return CoreServiceImpl
      */
