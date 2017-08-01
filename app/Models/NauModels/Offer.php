@@ -139,6 +139,25 @@ class Offer extends NauModel
         'longitude'      => 'lng'
     ];
 
+    /**
+     * @var array
+     */
+    public static $visibleFields = [
+        'acc_id',
+        'name',
+        'descr',
+        'dt_start',
+        'dt_finish',
+        'tm_start',
+        'tm_finish',
+        'country',
+        'city',
+        'categ',
+        'lat',
+        'lng',
+        'radius'
+    ];
+
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
@@ -333,20 +352,11 @@ class Offer extends NauModel
     }
 
     /**
-     * @return Offer
+     * @param User $user
+     * @return bool
      */
-    public function forUser(): Offer
+    public function isOwner(User $user): bool
     {
-        //if(auth()->user()->equals($this->getOwner())){
-            $this->setHidden([
-                'reward',
-                'max_count',
-                'max_for_user',
-                'max_per_day',
-                'max_for_user_per_day',
-                'min_level'
-            ]);
-        //}
-        return $this;
+        return $user->equals($this->getOwner());
     }
 }
