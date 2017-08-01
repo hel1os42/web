@@ -17,10 +17,10 @@ class Transaction
     /** @var string */
     public $transaction_id;
 
-    /** @var int */
+    /** @var string */
     public $source_account_id;
 
-    /** @var int */
+    /** @var string */
     public $destination_account_id;
 
     /** @var float */
@@ -47,17 +47,17 @@ class Transaction
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getSourceAccountId() : int
+    public function getSourceAccountId() : string
     {
         return $this->source_account_id;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getDestinationAccountId() : int
+    public function getDestinationAccountId() : string
     {
         return $this->destination_account_id;
     }

@@ -2,7 +2,6 @@
 
 namespace Tests\Integration\CoreService\Jobs;
 
-use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreServiceImpl;
@@ -34,20 +33,16 @@ class UserCreatedTest extends TestCase
         $response = new Response(200, [
             'Content-Type' => 'application/json',
         ], \GuzzleHttp\json_encode([
-            "id"          => $userId,
-            "username"    => $name,
-            'referrer_id' => $referrerId,
-            "level"       => $faker->randomDigitNotNull,
-            "points"      => $faker->randomDigitNotNull,
-            "wallets"     => [
-                "currency" => "NAU",
-                "address"  => md5($faker->uuid),
-                "balance"  => $faker->randomFloat(),
-            ],
-            "created_at"  => Carbon::now()->format('Y-m-d H:i:sO'),
+            "id" => $userId,
         ]));
         $client = \Mockery::mock(Client::class);
         $client->shouldReceive('request')->andReturn($response);
+
+        $eventCalled = 0;
+        \Event::listen(User::class, function ($response) use ($userId, &$eventCalled) {
+            $this->assertEquals($response->getId(), $userId, 'User name is not equals to request name.');
+            $eventCalled++;
+        });
 
         (new CoreServiceImpl([
             'base_uri'      => env('CORE_SERVICE_BASE_URL', ''),
@@ -58,12 +53,6 @@ class UserCreatedTest extends TestCase
             ->userCreated($user)
             ->handle();
 
-        $eventCalled = 0;
-        \Event::listen(User::class, function ($createdUser) use ($name, &$eventCalled) {
-            $this->assertEquals($createdUser->getName(), $name, 'User name is not equals to request name.');
-            $eventCalled++;
-        });
-
-        $this->assertTrue($eventCalled > 0, 'Can not listen User created response event.');
+        $this->assertTrue($eventCalled > 0, 'Can not listen User response event.');
     }
 }
