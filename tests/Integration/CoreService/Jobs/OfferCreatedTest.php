@@ -126,18 +126,18 @@ class OfferCreatedTest extends TestCase
             $limits,
             &$eventCalled)
         {
-            $this->assertEquals($response->getId(), $offerId, 'Offer id');
-            $this->assertEquals($response->getOwnerId(), $account['owner_id'], 'Offer owner_id');
-            $this->assertEquals($response->getName(), $offer['name'], 'Offer name');
-            $this->assertEquals($response->getDescription(), $offer['description'], 'Offer description');
-            $this->assertEquals($response->getCategoryId(), $offer['categoryId'], 'Offer category_id');
-            $this->assertEquals($response->getGeo()->jsonSerialize(), $geo->jsonSerialize(), 'Offer GEO');
-            $this->assertEquals($response->getLimits()->jsonSerialize(), $limits->jsonSerialize(), 'Offer id');
-            $this->assertEquals($response->getReward(), $offer['reward'], 'Offer reward');
-            $this->assertEquals($response->getStartDate(), $offerDateTimes['startDate'], 'Offer start_date');
-            $this->assertEquals($response->getEndDate(), $offerDateTimes['endDate'], 'Offer end_date');
-            $this->assertEquals($response->getStartTime(), $offerDateTimes['startTime'], 'Offer start_time');
-            $this->assertEquals($response->getEndTime(), $offerDateTimes['endTime'], 'Offer end_time');
+            $this->assertEquals($offerId, $response->getId(), 'Offer id');
+            $this->assertEquals($account['owner_id'], $response->getOwnerId(), 'Offer owner_id');
+            $this->assertEquals($offer['name'], $response->getName(), 'Offer name');
+            $this->assertEquals($offer['description'], $response->getDescription(), 'Offer description');
+            $this->assertEquals($offer['categoryId'], $response->getCategoryId(), 'Offer category_id');
+            $this->assertEquals($geo->jsonSerialize(), $response->getGeo()->jsonSerialize(), 'Offer GEO');
+            $this->assertEquals($limits->jsonSerialize(), $response->getLimits()->jsonSerialize(), 'Offer id');
+            $this->assertEquals($offer['reward'], $response->getReward(), 'Offer reward');
+            $this->assertEquals($offerDateTimes['startDate'], $response->getStartDate(), 'Offer start_date');
+            $this->assertEquals($offerDateTimes['endDate'], $response->getEndDate(), 'Offer end_date');
+            $this->assertEquals($offerDateTimes['startTime'], $response->getStartTime(), 'Offer start_time');
+            $this->assertEquals($offerDateTimes['endTime'], $response->getEndTime(), 'Offer end_time');
             $eventCalled++;
         });
 

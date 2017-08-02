@@ -71,14 +71,14 @@ class SendNauTest extends TestCase
 
         $eventCalled = 0;
         \Event::listen(Transaction::class, function ($response) use ($sendNau, &$eventCalled) {
-            $this->assertEquals($response->getTransactionId(), $sendNau['transaction_id'], 'SendNau: transaction_id');
-            $this->assertEquals($response->getSourceAccountId(), $sendNau['sourceAccountId'], 'SendNau: source_account_id');
-            $this->assertEquals($response->getDestinationAccountId(), $sendNau['destinationAccountId'], 'SendNau: destination_account_id');
-            $this->assertEquals($response->getAmount(), $sendNau['amount'], 'SendNau: amount');
-            $this->assertEquals($response->getStatus(), $sendNau['status'], 'SendNau: status');
-            $this->assertEquals($response->getCreatedAt(), $sendNau['createdAt'], 'SendNau: created_at');
-            $this->assertEquals($response->getType(), $sendNau['type'], 'SendNau: type');
-            $this->assertEquals($response->getFeeTransactions(), $sendNau['feeTransactions'], 'SendNau: fee_transactions');
+            $this->assertEquals($sendNau['transaction_id'], $response->getTransactionId(), 'SendNau: transaction_id');
+            $this->assertEquals($sendNau['sourceAccountId'], $response->getSourceAccountId(), 'SendNau: source_account_id');
+            $this->assertEquals($sendNau['destinationAccountId'], $response->getDestinationAccountId(), 'SendNau: destination_account_id');
+            $this->assertEquals($sendNau['amount'], $response->getAmount(), 'SendNau: amount');
+            $this->assertEquals($sendNau['status'], $response->getStatus(), 'SendNau: status');
+            $this->assertEquals($sendNau['createdAt'], $response->getCreatedAt(), 'SendNau: created_at');
+            $this->assertEquals($sendNau['type'], $response->getType(), 'SendNau: type');
+            $this->assertEquals($sendNau['feeTransactions'], $response->getFeeTransactions(), 'SendNau: fee_transactions');
             $eventCalled++;
         });
 

@@ -55,14 +55,14 @@ class OfferRedemptionTest extends TestCase
 
         $eventCalled = 0;
         \Event::listen(OfferForRedemption::class, function ($response) use ($redemption, &$eventCalled) {
-            $this->assertEquals($response->getId(), $redemption['id'], 'Redemption: id');
-            $this->assertEquals($response->getOfferId(), $redemption['offerId'], 'Redemption: offer_id');
-            $this->assertEquals($response->getUserId(), $redemption['userId'], 'Redemption: user_id');
-            $this->assertEquals($response->getPoints(), $redemption['points'], 'Redemption: points');
-            $this->assertEquals($response->getRewardedId(), $redemption['rewardedId'], 'Redemption: rewarded_id');
-            $this->assertEquals($response->getAmount(), $redemption['amount'], 'Redemption: amount');
-            $this->assertEquals($response->getFee(), $redemption['fee'], 'Redemption: fee');
-            $this->assertEquals($response->getCreatedAt(), $redemption['createdAt'], 'Redemption: created_at');
+            $this->assertEquals($redemption['id'], $response->getId(), 'Redemption: id');
+            $this->assertEquals($redemption['offerId'], $response->getOfferId(), 'Redemption: offer_id');
+            $this->assertEquals($redemption['userId'], $response->getUserId(), 'Redemption: user_id');
+            $this->assertEquals($redemption['points'], $response->getPoints(), 'Redemption: points');
+            $this->assertEquals($redemption['rewardedId'], $response->getRewardedId(), 'Redemption: rewarded_id');
+            $this->assertEquals($redemption['amount'], $response->getAmount(), 'Redemption: amount');
+            $this->assertEquals($redemption['fee'], $response->getFee(), 'Redemption: fee');
+            $this->assertEquals($redemption['createdAt'], $response->getCreatedAt(), 'Redemption: created_at');
             $eventCalled++;
         });
 

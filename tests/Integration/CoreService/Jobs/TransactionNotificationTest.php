@@ -92,14 +92,14 @@ class TransactionNotificationTest extends TestCase
 
         $eventCalled = 0;
         \Event::listen(Transaction::class, function ($response) use ($transaction, $feeTransaction, &$eventCalled) {
-            $this->assertEquals($response->getTransactionId(), $transaction['txid'], 'TransactionNotification: transaction_id');
-            $this->assertEquals($response->getSourceAccountId(), $transaction['sendFrom'], 'TransactionNotification: source_account_id');
-            $this->assertEquals($response->getDestinationAccountId(), $transaction['sendTo'], 'TransactionNotification: destination_account_id');
-            $this->assertEquals($response->getAmount(), $transaction['amount'], 'TransactionNotification: amount');
-            $this->assertEquals($response->getStatus(), $transaction['status'], 'TransactionNotification: status');
-            $this->assertEquals($response->getCreatedAt(), $transaction['createdAt'], 'TransactionNotification: created_at');
-            $this->assertEquals($response->getType(), $transaction['type'], 'TransactionNotification: type');
-            $this->assertEquals($response->getFeeTransactions(), $transaction['feeTransactions'], 'TransactionNotification: fee_transactions');
+            $this->assertEquals($transaction['txid'], $response->getTransactionId(), 'TransactionNotification: transaction_id');
+            $this->assertEquals($transaction['sendFrom'], $response->getSourceAccountId(), 'TransactionNotification: source_account_id');
+            $this->assertEquals($transaction['sendTo'], $response->getDestinationAccountId(), 'TransactionNotification: destination_account_id');
+            $this->assertEquals($transaction['amount'], $response->getAmount(), 'TransactionNotification: amount');
+            $this->assertEquals($transaction['status'], $response->getStatus(), 'TransactionNotification: status');
+            $this->assertEquals($transaction['createdAt'], $response->getCreatedAt(), 'TransactionNotification: created_at');
+            $this->assertEquals($transaction['type'], $response->getType(), 'TransactionNotification: type');
+            $this->assertEquals($transaction['feeTransactions'], $response->getFeeTransactions(), 'TransactionNotification: fee_transactions');
             $eventCalled++;
         });
 

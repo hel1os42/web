@@ -66,13 +66,13 @@ class UserCreatedTest extends TestCase
 
         $eventCalled = 0;
         \Event::listen(User::class, function ($response) use ($user, $createdAt, &$eventCalled) {
-            $this->assertEquals($response->getId(), $user['id'], 'User: id');
-            $this->assertEquals($response->getUsername(), $user['username'], 'User: username');
-            $this->assertEquals($response->getReferrerId(), $user['referrerId'], 'User: referrer_id');
-            $this->assertEquals($response->getLevel(), $user['level'], 'User: level');
-            $this->assertEquals($response->getPoints(), $user['points'], 'User: points');
-            $this->assertEquals($response->getWallets(), $user['wallets'], 'User: wallets');
-            $this->assertEquals($response->getCreatedAt(), $createdAt, 'User: created_at');
+            $this->assertEquals($user['id'], $response->getId(), 'User: id');
+            $this->assertEquals($user['username'], $response->getUsername(), 'User: username');
+            $this->assertEquals($user['referrerId'], $response->getReferrerId(), 'User: referrer_id');
+            $this->assertEquals($user['level'], $response->getLevel(), 'User: level');
+            $this->assertEquals($user['points'], $response->getPoints(), 'User: points');
+            $this->assertEquals($user['wallets'], $response->getWallets(), 'User: wallets');
+            $this->assertEquals($createdAt, $response->getCreatedAt(), 'User: created_at');
             $eventCalled++;
         });
 
