@@ -6,9 +6,7 @@ use Carbon\Carbon;
 use Faker\Factory as Faker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Mockery\MockInterface;
 use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Response\User;
 use OmniSynapse\CoreService\Response\Wallet;
 use Tests\TestCase;
@@ -79,49 +77,9 @@ class UserCreatedTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->setClient($clientMock)
-            ->userCreated($userMock)
-             ->handle();
+            ->userCreated($userMock, $clientMock)
+            ->handle();
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen User response event.');
-
-        /*
-         * Testing server error
-         */
-        $status        = $faker->randomElement([404, 403, 500, 503, 504]);
-        $errorResponse = new Response($status, [
-            'Content-Type' => 'text/plain',
-        ]);
-        $this->sendRequestAndAssertException($errorResponse, $userMock, $status);
-
-        /*
-         * Testing wrong JSON response
-         */
-        $status        = 200;
-        $errorResponse = new Response($status, [
-            'Content-Type' => 'application/json',
-        ]);
-        $this->sendRequestAndAssertException($errorResponse, $userMock, $status);
-    }
-
-    /**
-     * @param Response $response
-     * @param MockInterface $userMock
-     * @param int $status
-     */
-    private function sendRequestAndAssertException($response, $userMock, $status)
-    {
-        $errorClientMock = \Mockery::mock(Client::class);
-        $errorClientMock->shouldReceive('request')->once()->andReturn($response);
-
-        try {
-            $this->app->make(CoreService::class)
-                ->setClient($errorClientMock)
-                ->userCreated($userMock)
-                ->handle();
-        } catch (RequestException $e) {
-            $this->assertEquals($status, $e->getCode(), 'status');
-            $this->assertContains($response->getReasonPhrase(), $e->getMessage(), 'error text');
-        }
     }
 }

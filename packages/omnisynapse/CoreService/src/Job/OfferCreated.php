@@ -3,8 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Offer;
-use OmniSynapse\CoreService\CoreServiceClient;
-use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 
@@ -12,17 +11,20 @@ use OmniSynapse\CoreService\Response\Offer as OfferResponse;
  * Class OfferCreated
  * @package OmniSynapse\CoreService\Job
  */
-class OfferCreated extends Job
+class OfferCreated extends AbstractJob
 {
+    /** @var OfferRequest\ */
+    private $requestObject;
+
     /**
      * OfferCreated constructor.
      *
      * @param Offer $offer
-     * @param \GuzzleHttp\Client|null $client
+     * @param \GuzzleHttp\Client $client
      */
-    public function __construct(Offer $offer, \GuzzleHttp\Client $client=null)
+    public function __construct(Offer $offer, \GuzzleHttp\Client $client)
     {
-        $this->guzzleClient = $client;
+        parent::__construct($client);
 
         /** @var OfferRequest requestObject */
         $this->requestObject = new OfferRequest($offer);
@@ -31,15 +33,15 @@ class OfferCreated extends Job
     /**
      * @return string
      */
-    public function getHttpMethod(): string
+    protected function getHttpMethod(): string
     {
-        return CoreServiceClient::METHOD_POST;
+        return 'POST';
     }
 
     /**
      * @return string
      */
-    public function getHttpPath(): string
+    protected function getHttpPath(): string
     {
         return '/offers';
     }

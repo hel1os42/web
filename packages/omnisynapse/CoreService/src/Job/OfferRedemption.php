@@ -3,8 +3,7 @@
 namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Redemption;
-use OmniSynapse\CoreService\CoreServiceClient;
-use OmniSynapse\CoreService\Job;
+use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
 
@@ -12,17 +11,20 @@ use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionRes
  * Class OfferRedemption
  * @package OmniSynapse\CoreService\Job
  */
-class OfferRedemption extends Job
+class OfferRedemption extends AbstractJob
 {
+    /** @var OfferForRedemptionRequest */
+    private $requestObject;
+
     /**
      * OfferRedemption constructor.
      *
      * @param Redemption $redemption
      * @param \GuzzleHttp\Client $client
      */
-    public function __construct(Redemption $redemption, \GuzzleHttp\Client $client=null)
+    public function __construct(Redemption $redemption, \GuzzleHttp\Client $client)
     {
-        $this->guzzleClient = $client;
+        parent::__construct($client);
 
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = new OfferForRedemptionRequest($redemption);
@@ -31,15 +33,15 @@ class OfferRedemption extends Job
     /**
      * @return string
      */
-    public function getHttpMethod(): string
+    protected function getHttpMethod(): string
     {
-        return CoreServiceClient::METHOD_POST;
+        return 'POST';
     }
 
     /**
      * @return string
      */
-    public function getHttpPath(): string
+    protected function getHttpPath(): string
     {
         return '/offers/'.$this->requestObject->offerId.'/redemption';
     }

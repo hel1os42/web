@@ -11,50 +11,45 @@ use GuzzleHttp\Client;
 interface CoreService
 {
     /**
-     * @param Client $client
-     * @return CoreService
-     */
-    public function setClient(Client $client): CoreService;
-
-    /**
-     * @return Client
-     */
-    public function getClient(): Client;
-
-    /**
      * @param Offer $offer
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function offerCreated(Offer $offer): Job;
+    public function offerCreated(Offer $offer, Client $client): AbstractJob;
 
     /**
      * @param Redemption $redemption
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function offerRedemption(Redemption $redemption): Job;
+    public function offerRedemption(Redemption $redemption, Client $client): AbstractJob;
 
     /**
      * @param Offer $offer
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function offerUpdated(Offer $offer): Job;
+    public function offerUpdated(Offer $offer, Client $client): AbstractJob;
 
     /**
      * @param Transact $transaction
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function sendNau(Transact $transaction): Job;
+    public function sendNau(Transact $transaction, Client $client): AbstractJob;
 
     /**
      * @param User $user
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function userCreated(User $user): Job;
+    public function userCreated(User $user, Client $client): AbstractJob;
 
     /**
      * @param Transact $transaction
      * @param string $category
-     * @return Job
+     * @param Client $client
+     * @return AbstractJob
      */
-    public function transactionNotification(Transact $transaction, $category): Job;
+    public function transactionNotification(Transact $transaction, $category, Client $client): AbstractJob;
 }

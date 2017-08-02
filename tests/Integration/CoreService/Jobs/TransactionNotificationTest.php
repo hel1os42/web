@@ -104,8 +104,7 @@ class TransactionNotificationTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->setClient($clientMock)
-            ->transactionNotification($transactionMock, $transaction['category'])
+            ->transactionNotification($transactionMock, $transaction['category'], $clientMock)
             ->handle();
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen TransactionNotification response event.');
