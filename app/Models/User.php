@@ -216,16 +216,16 @@ class User extends Authenticatable
     }
 
     /**
-     * @param string $token
+     * @param Currency $currency
      * @return Account
      */
-    public function getAccountFor(string $token): Account
+    public function getAccountFor(Currency $currency): Account
     {
-        switch ($token) {
-            case 'NAU':
+        switch ($currency) {
+            case Currency::NAU:
                 return $this->account()->first();
             default:
-                throw new TokenException("unknown token " . $token);
+                throw new TokenException("unknown token " . $currency);
         }
     }
 

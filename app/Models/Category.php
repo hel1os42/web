@@ -21,8 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Category extends Model
 {
-    protected $connection = 'pgsql';
-
     /**
      * Category constructor.
      *

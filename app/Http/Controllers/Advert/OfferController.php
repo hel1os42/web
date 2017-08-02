@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Advert;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Currency;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\NauModels\Offer;
@@ -41,7 +42,7 @@ class OfferController extends Controller
     public function store(Advert\OfferRequest $request): Response
     {
         $newOffer = new Offer();
-        $newOffer->setAccountId((int)auth()->user()->getAccountFor('NAU')->getId());
+        $newOffer->account()->assign(auth()->user()->getAccountFor(Currency::NAU));
         $newOffer->fill($request->toArray());
         /*
         $newOffer->status = 'deactive';
