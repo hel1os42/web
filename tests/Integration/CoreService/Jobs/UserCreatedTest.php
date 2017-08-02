@@ -77,7 +77,8 @@ class UserCreatedTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->userCreated($userMock, $clientMock)
+            ->setClient($clientMock)
+            ->userCreated($userMock)
             ->handle();
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen User response event.');

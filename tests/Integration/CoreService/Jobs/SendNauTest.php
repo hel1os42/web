@@ -83,7 +83,8 @@ class SendNauTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->sendNau($sendNauMock, $clientMock)
+            ->setClient($clientMock)
+            ->sendNau($sendNauMock)
             ->handle();
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen SendNau response event.');

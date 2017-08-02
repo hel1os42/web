@@ -16,64 +16,107 @@ use OmniSynapse\CoreService\Job\UserCreated;
 
 class CoreServiceImpl implements CoreService
 {
+    /** @var Client $client */
+    private $client;
+
+    /** @var array $config */
+    private $config;
+
+    /**
+     * CoreServiceImpl constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @param Client $client
+     *
+     * @return CoreService
+     */
+    public function setClient(Client $client): CoreService
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return \GuzzleHttp\Client
+     */
+    public function getClient(): Client
+    {
+        if (null === $this->client) {
+            $this->client = $this->initClient();
+        }
+
+        return $this->client;
+    }
+
+    /**
+     * @return Client
+     */
+    private function initClient()
+    {
+        return new Client($this->config);
+    }
+
     /**
      * @param Offer $offer
-     * @param Client $client
      * @return AbstractJob
      */
-    public function offerCreated(Offer $offer, Client $client): AbstractJob
+    public function offerCreated(Offer $offer): AbstractJob
     {
-        return new OfferCreated($offer, $client);
+        return new OfferCreated($offer, $this->getClient());
     }
 
     /**
      * @param Redemption $redemption
-     * @param Client $client
      * @return AbstractJob
      */
-    public function offerRedemption(Redemption $redemption, Client $client): AbstractJob
+    public function offerRedemption(Redemption $redemption): AbstractJob
     {
-        return new OfferRedemption($redemption, $client);
+        return new OfferRedemption($redemption, $this->getClient());
     }
 
     /**
      * @param Offer $offer
-     * @param Client $client
      * @return AbstractJob
      */
-    public function offerUpdated(Offer $offer, Client $client): AbstractJob
+    public function offerUpdated(Offer $offer): AbstractJob
     {
-        return new OfferUpdated($offer, $client);
+        return new OfferUpdated($offer, $this->getClient());
     }
 
     /**
      * @param Transact $transaction
-     * @param Client $client
      * @return AbstractJob
      */
-    public function sendNau(Transact $transaction, Client $client): AbstractJob
+    public function sendNau(Transact $transaction): AbstractJob
     {
-        return new SendNau($transaction, $client);
+        return new SendNau($transaction, $this->getClient());
     }
 
     /**
      * @param User $user
-     * @param Client $client
      * @return AbstractJob
      */
-    public function userCreated(User $user, Client $client): AbstractJob
+    public function userCreated(User $user): AbstractJob
     {
-        return new UserCreated($user, $client);
+        return new UserCreated($user, $this->getClient());
     }
 
     /**
      * @param Transact $transaction
      * @param string   $category
-     * @param Client $client
+     *
      * @return AbstractJob
      */
-    public function transactionNotification(Transact $transaction, $category, Client $client): AbstractJob
+    public function transactionNotification(Transact $transaction, $category): AbstractJob
     {
-        return new TransactionNotification($transaction, $category, $client);
+        return new TransactionNotification($transaction, $category, $this->getClient());
     }
 }

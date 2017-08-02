@@ -67,7 +67,8 @@ class OfferRedemptionTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->offerRedemption($redemptionMock, $clientMock)
+            ->setClient($clientMock)
+            ->offerRedemption($redemptionMock)
             ->handle();
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen OfferForRedemption response event.');

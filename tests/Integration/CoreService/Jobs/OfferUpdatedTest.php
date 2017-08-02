@@ -142,7 +142,8 @@ class OfferUpdatedTest extends TestCase
         });
 
         $this->app->make(CoreService::class)
-            ->offerUpdated($offerMock, $clientMock)
+            ->setClient($clientMock)
+            ->offerUpdated($offerMock)
             ->handle();
 
         $this->assertEquals( 1, $eventCalled,  'Can not listen Offer event.');
