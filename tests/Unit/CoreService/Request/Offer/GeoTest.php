@@ -24,11 +24,11 @@ class GeoTest extends TestCase
         $geo     = new Geo($point, $radius, $city, $country);
         $expType = Geo::TYPE_POINT;
 
-        $this->assertTrue($point === $geo->getPoint(), 'point');
-        $this->assertTrue($radius === $geo->getRadius(), 'radius');
-        $this->assertTrue($city === $geo->getCity(), 'city');
-        $this->assertTrue($country === $geo->getCountry(), 'country');
-        $this->assertTrue($expType === $geo->getType(), 'type');
+        $this->assertEquals($point, $geo->getPoint(), 'point');
+        $this->assertEquals($radius, $geo->getRadius(), 'radius');
+        $this->assertEquals($city, $geo->getCity(), 'city');
+        $this->assertEquals($country, $geo->getCountry(), 'country');
+        $this->assertEquals($expType, $geo->getType(), 'type');
 
         $expected = [
             'type'      => $expType,

@@ -22,10 +22,10 @@ class LimitsTest extends TestCase
 
         $limits = new Limits($offers, $perDay, $perUser, $minLevel);
 
-        $this->assertTrue($offers === $limits->getOffers(), 'offers');
-        $this->assertTrue($perDay === $limits->getPerDay(), 'perDay');
-        $this->assertTrue($perUser === $limits->getPerUser(), 'perUser');
-        $this->assertTrue($minLevel === $limits->getMinLevel(), 'minLevel');
+        $this->assertEquals($offers, $limits->getOffers(), 'offers');
+        $this->assertEquals($perDay, $limits->getPerDay(), 'perDay');
+        $this->assertEquals($perUser, $limits->getPerUser(), 'perUser');
+        $this->assertEquals($minLevel, $limits->getMinLevel(), 'minLevel');
 
         $expected = [
             'offers'    => $offers,

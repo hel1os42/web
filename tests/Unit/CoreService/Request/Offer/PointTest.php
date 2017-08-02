@@ -18,7 +18,7 @@ class PointTest extends TestCase
         $lng   = $faker->longitude;
         $point = new Point($lat, $lng);
 
-        $this->assertTrue($lat === $point->getLat());
-        $this->assertTrue($lng === $point->getLon());
+        $this->assertEquals($lat, $point->getLat(), 'latitude');
+        $this->assertEquals($lng, $point->getLon(), 'longitude');
     }
 }
