@@ -41,27 +41,8 @@ class OfferController extends Controller
     public function store(Advert\OfferRequest $request): Response
     {
         $newOffer = new Offer();
-        $newOffer->fill([
-            'account_id'           => (int)auth()->user()->getAccountFor('NAU')->getId(),
-            'label'                => $request->label,
-            'description'          => $request->description,
-            'reward'               => $request->reward,
-            'start_date'           => Carbon::parse($request->start_date),
-            'start_time'           => Carbon::parse($request->start_time),
-            'finish_date'          => Carbon::parse($request->finish_date),
-            'finish_time'          => Carbon::parse($request->finish_time),
-            'country'              => $request->country,
-            'city'                 => $request->city,
-            'category_id'          => (new Category())->findOrFail($request->category),
-            'max_count'            => $request->max_count,
-            'max_for_user'         => $request->max_for_user,
-            'max_per_day'          => $request->max_per_day,
-            'max_for_user_per_day' => $request->max_for_user_per_day,
-            'user_level_min'       => $request->user_level_min,
-            'latitude'             => $request->latitude,
-            'longitude'            => $request->longitude,
-            'radius'               => $request->radius
-        ]);
+        $newOffer->setAccountId((int)auth()->user()->getAccountFor('NAU')->getId());
+        $newOffer->fill($request->toArray());
         /*
         $newOffer->status = 'deactive';
         $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';

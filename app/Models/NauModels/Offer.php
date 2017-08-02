@@ -145,44 +145,6 @@ class Offer extends NauModel
         'longitude'      => 'lng'
     ];
 
-    /**
-     * @var array
-     */
-    public static $visibleFields = [
-        'id',
-        'label',
-        'description',
-        'start_date',
-        'finish_date',
-        'start_time',
-        'finish_time',
-        'country',
-        'city',
-        'category_id',
-        'latitude',
-        'longitude',
-        'radius'
-    ];
-
-    /**
-     * @var array
-     */
-    public static $visibleDbFields = [
-        'id',
-        'name',
-        'descr',
-        'dt_start',
-        'dt_finish',
-        'tm_start',
-        'tm_finish',
-        'country',
-        'city',
-        'categ',
-        'lat',
-        'lng',
-        'radius'
-    ];
-
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
@@ -331,6 +293,16 @@ class Offer extends NauModel
     {
         $account = $this->account;
         return $account === null ? null : $account->owner;
+    }
+
+    /**
+     * @param int $accountId
+     * @return Offer
+     */
+    public function setAccountId(int $accountId): Offer
+    {
+        $this->account_id = $accountId;
+        return $this;
     }
 
     /**

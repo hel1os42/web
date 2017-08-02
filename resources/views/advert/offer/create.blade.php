@@ -93,7 +93,7 @@
                 <input name="finish_date" placeholder="finish_date" value="{{$data->date_finish}}">
                 <input name="finish_time" placeholder="finish_time"
                        value="{{$data->time_finish}}"><br>
-                <select id="offer-category" name="category">
+                <select id="offer-category" name="category_id">
                 </select><br>
                 <input name="max_count" placeholder="max_count" value="{{$data->max_count}}"><br>
                 <input name="max_for_user" placeholder="max_for_user" value="{{$data->max_for_user}}"><br>

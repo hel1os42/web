@@ -15,7 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property \Carbon\Carbon start_time
  * @property \Carbon\Carbon finish_date
  * @property \Carbon\Carbon finish_time
- * @property string category
+ * @property string category_id
  * @property int max_count
  * @property int max_for_user
  * @property int max_per_day
@@ -55,7 +55,7 @@ class OfferRequest extends FormRequest
             'start_time'           => 'required|string',
             'finish_date'          => 'required|nullable|string',
             'finish_time'          => 'required|nullable|string',
-            'category'             => 'required|string|exists:categories,id',
+            'category_id'             => 'required|string|exists:categories,id',
             'max_count'            => 'required|nullable|integer',
             'max_for_user'         => 'required|nullable|integer',
             'max_per_day'          => 'required|nullable|integer',

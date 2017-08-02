@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\NauModels\Offer;
 
-class OfferController extends Controller
+class OfferController extends UserController
 {
     /**
      * Get offer short info(for User) by it uuid
@@ -18,7 +17,7 @@ class OfferController extends Controller
         //check is this offer have active status
         $offer = Offer::findOrFail($offerUuid);
         return \response()->render('user.offer.show', [
-            'data' => $offer->isOwner(\auth()->user()) ? $offer : $offer->setVisible(Offer::$visibleFields)
+            'data' => $offer->isOwner(\auth()->user()) ? $offer : $offer->setVisible($this->forUserOnlyFields('Offer'))
         ]);
     }
 

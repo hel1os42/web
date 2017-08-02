@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
 use App\Models\NauModels\Offer;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\User\SearchOfferRequest;
 
-class SearchOfferController extends Controller
+class SearchOfferController extends UserController
 {
     /**
      * Create search request
@@ -34,8 +33,9 @@ class SearchOfferController extends Controller
     {
         $offers = Offer::filterByCategory($request->category)
             ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-            ->select(Offer::$visibleDbFields)
-            ->paginate();
+            ->select($this->forUserOnlyFields('Offer', true))
+            ->paginate()
+            ->makeVisible($this->forUserOnlyFields('Offer'));
         return response()->render('user.offer.search', [
             'data' => [
                 'latitude'  => $request->latitude,
