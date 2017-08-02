@@ -49,19 +49,20 @@ abstract class AbstractJob implements ShouldQueue
             throw new RequestException($this, $response);
         }
 
-        $responseClassName = $this->getResponseClass();
-
         try {
             $responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
         } catch (\InvalidArgumentException $e) {
             throw new RequestException($this, $response, $e);
         }
 
+        $responseClassName                         = $this->getResponseClass();
+
+        $jsonMapper                                = new \JsonMapper();
+        $jsonMapper->bExceptionOnMissingData       = true;
+        $jsonMapper->bExceptionOnUndefinedProperty = true;
+        $jsonMapper->bStrictObjectTypeChecking     = true;
+
         try {
-            $jsonMapper                                = new \JsonMapper();
-            $jsonMapper->bExceptionOnMissingData       = true;
-            $jsonMapper->bExceptionOnUndefinedProperty = true;
-            $jsonMapper->bStrictObjectTypeChecking     = true;
             $jsonMapper->map($responseContent, $responseObject = new $responseClassName);
         } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
             throw new RequestException($this, $response, $e);
