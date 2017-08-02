@@ -145,6 +145,25 @@ class Offer extends NauModel
         'longitude'      => 'lng'
     ];
 
+    /**
+     * @var array
+     */
+    public static $publicAttributes = [
+        'id',
+        'label',
+        'description',
+        'start_date',
+        'finish_date',
+        'start_time',
+        'finish_time',
+        'country',
+        'city',
+        'category_id',
+        'latitude',
+        'longitude',
+        'radius'
+    ];
+
     /** @return BelongsTo */
     public function account(): BelongsTo
     {

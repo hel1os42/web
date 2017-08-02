@@ -14,7 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property int radius
  *
  */
-class SearchOfferRequest extends FormRequest
+class OfferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,10 +34,10 @@ class SearchOfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'category'  => 'string|exists:categories,id',
-            'latitude'  => 'string|nullable',
-            'longitude' => 'string|nullable',
-            'radius'    => 'integer|nullable'
+            'category_id' => 'string|exists:categories,id',
+            'latitude'    => 'string|nullable',
+            'longitude'   => 'string|nullable',
+            'radius'      => 'integer|nullable'
         ];
     }
 } 

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProfileController extends UserController
+class ProfileController extends Controller
 {
 
     /**
@@ -30,6 +30,6 @@ class ProfileController extends UserController
         if ($uuid !== $userId) {
             return response()->error(Response::HTTP_FORBIDDEN);
         }
-        return response()->render('user.profile', ['data' => (new User)->findOrFail($userId)], Response::HTTP_CREATED);
+        return response()->render('profile', ['data' => (new User)->findOrFail($userId)], Response::HTTP_CREATED);
     }
 }

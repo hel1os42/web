@@ -20,7 +20,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        return \response()->render('advert.offer.list', auth()->user()->getAccountFor('NAU')->offers()->paginate());
+        return \response()->render('advert.offer.index', auth()->user()->getAccountFor('NAU')->offers()->paginate());
     }
 
     /**

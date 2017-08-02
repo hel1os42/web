@@ -13,18 +13,18 @@
 
 // Unauthorized users
 
-Route::get('/', '\App\Http\Controllers\User\ProfileController@index')->name('home');
+Route::get('/', 'User\ProfileController@index')->name('home');
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('loginForm');
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
-    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
-    Route::get('register/{invite}', '\App\Http\Controllers\Auth\RegisterController@getRegisterForm')
+    Route::get('login', 'Auth\LoginController@getLogin')->name('loginForm');
+    Route::post('login', 'Auth\LoginController@postLogin')->name('login');
+    Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+    Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
         ->where('invite', '[a-z0-9]+')
         ->name('registerForm');
 });
 
-Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
+Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 //---- Unauthorized users
 
@@ -33,30 +33,33 @@ Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('users/{id}', '\App\Http\Controllers\User\ProfileController@show')
+    Route::get('users/{id}', 'User\ProfileController@show')
         ->where('id', '[a-z0-9-]+')
         ->name('profile');
-    Route::resource('advert/offers', '\App\Http\Controllers\Advert\OfferController', [
-        'names' => [
-            'create' => 'advert.offerForm',
-            'store'  => 'advert.offer',
+
+    Route::resource('advert/offers', 'Advert\OfferController', [
+        'names'  => [
+            'index'  => 'advert.offer.list',
             'show'   => 'advert.offer.show',
-            'index'  => 'advert.offer.list'
+            'create' => 'advert.offerForm',
+            'store'  => 'advert.offer'
+        ],
+        'except' => [
+            'update',
+            'destroy'
         ]
     ]);
-    Route::get('offers', '\App\Http\Controllers\User\SearchOfferController@search')->name('offer.search');
-    Route::group(['prefix' => 'offers'], function () {
-        Route::get('search', '\App\Http\Controllers\User\SearchOfferController@index')->name('offer.searchForm');
 
-        Route::get('redemption/{id}', '\App\Http\Controllers\User\OfferController@redemption')
-            ->where('id', '[a-z0-9-]+')
-            ->name('offer.redemption');
-        Route::get('category', '\App\Http\Controllers\CategoryController@index')->name('offer.category');
+    Route::resource('offers', 'User\OfferController', [
+        'except' => [
+            'create',
+            'store',
+            'update',
+            'destroy'
+        ]
+    ]);
 
-        Route::get('{id}', '\App\Http\Controllers\User\OfferController@show')
-            ->where('id', '[a-z0-9-]+')
-            ->name('offer.show');
-    });
+    Route::get('category', 'CategoryController@index')->name('offer.category');
 
 });
 
