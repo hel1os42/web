@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class Currency
  * @package App
  */
-class Currency extends Model
+class Currency
 {
     const NAU = 'NAU';
 }
