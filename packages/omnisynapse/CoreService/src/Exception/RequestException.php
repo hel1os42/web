@@ -43,7 +43,7 @@ class RequestException extends Exception
             'request' => null !== $job->getRequestObject()
                 ? $job->getRequestObject()->jsonSerialize()
                 : null,
-            'response' => $job->responseContent
+            'response' => $contents
         ]);
 
         parent::__construct($message, $status, $previous);

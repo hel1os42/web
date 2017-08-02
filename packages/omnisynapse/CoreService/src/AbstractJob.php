@@ -15,13 +15,6 @@ abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Returns the remaining contents in a string
-     *
-     * @var object
-     */
-    public $responseContent = null;
-
     /** @var \GuzzleHttp\Client */
     private $client;
 
@@ -56,28 +49,26 @@ abstract class AbstractJob implements ShouldQueue
             throw new RequestException($this, $response);
         }
 
+        $responseClassName = $this->getResponseClass();
+
         try {
-            $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
+            $responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
         } catch (\InvalidArgumentException $e) {
             throw new RequestException($this, $response, $e);
         }
-
-        $responseClassName = $this->getResponseClass();
 
         try {
             $jsonMapper                                = new \JsonMapper();
             $jsonMapper->bExceptionOnMissingData       = true;
             $jsonMapper->bExceptionOnUndefinedProperty = true;
             $jsonMapper->bStrictObjectTypeChecking     = true;
-            $jsonMapper->map($this->responseContent, $responseObject = new $responseClassName);
-        } catch (\InvalidArgumentException $e) {
-            throw new RequestException($this, $response, $e);
-        } catch (\JsonMapper_Exception $e) {
+            $jsonMapper->map($responseContent, $responseObject = new $responseClassName);
+        } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
             throw new RequestException($this, $response, $e);
         }
 
-        logger()->info('Request to the Core', [
-            'response' => $this->responseContent
+        logger()->info('Response from Core', [
+            'response' => $responseContent
         ]);
 
         event($responseObject);
