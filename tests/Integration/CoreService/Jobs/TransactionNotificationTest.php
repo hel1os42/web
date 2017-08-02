@@ -9,7 +9,6 @@ use Faker\Factory as Faker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Response\FeeTransaction;
 use OmniSynapse\CoreService\Response\Transaction;
 use Tests\TestCase;
 
@@ -27,7 +26,7 @@ class TransactionNotificationTest extends TestCase
         /*
          * Prepare params
          */
-        $feeTransaction                         = new FeeTransaction();
+        $feeTransaction                         = new Transaction();
         $feeTransaction->transaction_id         = $faker->uuid;
         $feeTransaction->source_account_id      = $faker->randomDigitNotNull;
         $feeTransaction->destination_account_id = $faker->randomDigitNotNull;

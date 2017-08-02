@@ -11,7 +11,7 @@ use Carbon\Carbon;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Transaction
+class Transaction implements \JsonSerializable
 {
     /** @var string */
     public $transaction_id;
@@ -34,8 +34,25 @@ class Transaction
     /** @var string */
     public $type;
 
-    /** @var FeeTransaction[] */
+    /** @var Transaction[] */
     public $feeTransactions;
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'transaction_id'         => $this->getTransactionId(),
+            'source_account_id'      => $this->getSourceAccountId(),
+            'destination_account_id' => $this->getDestinationAccountId(),
+            'amount'                 => $this->getAmount(),
+            'status'                 => $this->getStatus(),
+            'created_at'             => $this->getCreatedAt()->format('Y-m-d H:i:sO'),
+            'type'                   => $this->getType(),
+            'feeTransactions'        => $this->getFeeTransactions(),
+        ];
+    }
 
     /**
      * @return string
@@ -94,7 +111,7 @@ class Transaction
     }
 
     /**
-     * @return FeeTransaction[]
+     * @return Transaction[]
      */
     public function getFeeTransactions(): array
     {
