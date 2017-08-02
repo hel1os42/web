@@ -296,16 +296,6 @@ class Offer extends NauModel
     }
 
     /**
-     * @param int $accountId
-     * @return Offer
-     */
-    public function setAccountId(int $accountId): Offer
-    {
-        $this->account_id = $accountId;
-        return $this;
-    }
-
-    /**
      * @param Builder $builder
      * @param int $accountId
      * @return Builder
