@@ -6,9 +6,16 @@ use App\Models\Offer;
 use App\Models\Redemption;
 use App\Models\Transact;
 use App\Models\User;
+use GuzzleHttp\Client;
 
 interface CoreService
 {
+    /**
+     * @param Client $client
+     * @return CoreService
+     */
+    public function setClient(Client $client): CoreService;
+
     /**
      * @param Offer $offer
      * @return AbstractJob
