@@ -24,13 +24,13 @@ class ExceptionsTest extends TestCase
             {
                 parent::__construct($client);
             }
-            protected function getHttpMethod(): string {
+            public function getHttpMethod(): string {
                 return 'GET';
             }
-            protected function getHttpPath(): string {
+            public function getHttpPath(): string {
                 return '';
             }
-            protected function getRequestObject(): \JsonSerializable
+            public function getRequestObject(): \JsonSerializable
             {
                 return (new class implements \JsonSerializable {
                     function jsonSerialize() {
@@ -38,7 +38,7 @@ class ExceptionsTest extends TestCase
                     }
                 });
             }
-            protected function getResponseClass(): string {
+            public function getResponseClass(): string {
                 return Point::class;
             }
         }))->handle();
@@ -62,7 +62,7 @@ class ExceptionsTest extends TestCase
 
     /**
      * @expectedException \OmniSynapse\CoreService\Exception\RequestException
-     * @expectedExceptionCode 417
+     * @expectedExceptionCode 500
      */
     public function testJsonDecodeException()
     {

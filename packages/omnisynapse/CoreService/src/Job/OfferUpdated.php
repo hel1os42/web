@@ -33,7 +33,7 @@ class OfferUpdated extends AbstractJob
     /**
      * @return string
      */
-    protected function getHttpMethod(): string
+    public function getHttpMethod(): string
     {
         return 'PUT';
     }
@@ -41,7 +41,7 @@ class OfferUpdated extends AbstractJob
     /**
      * @return string
      */
-    protected function getHttpPath(): string
+    public function getHttpPath(): string
     {
         return '/offers/'.$this->requestObject->offerId;
     }
@@ -49,7 +49,7 @@ class OfferUpdated extends AbstractJob
     /**
      * @return \JsonSerializable
      */
-    protected function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): \JsonSerializable
     {
         return $this->requestObject;
     }
@@ -57,7 +57,7 @@ class OfferUpdated extends AbstractJob
     /**
      * @return string
      */
-    protected function getResponseClass(): string
+    public function getResponseClass(): string
     {
         return OfferResponse::class;
     }

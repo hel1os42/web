@@ -20,7 +20,7 @@ abstract class AbstractJob implements ShouldQueue
      *
      * @var object
      */
-    protected $responseContent = null;
+    public $responseContent = null;
 
     /** @var \GuzzleHttp\Client */
     private $client;
@@ -52,28 +52,28 @@ abstract class AbstractJob implements ShouldQueue
             ]
         );
 
+        if (floor($response->getStatusCode() * 0.01) > 2) {
+            throw new RequestException($this, $response);
+        }
+
         try {
             $this->responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
         } catch (\InvalidArgumentException $e) {
-            $this->handleError($response, $e->getMessage(), \Illuminate\Http\Response::HTTP_EXPECTATION_FAILED);
-        }
-
-        if (floor($response->getStatusCode() * 0.01) > 2) {
-            $this->handleError($response);
+            throw new RequestException($this, $response, $e);
         }
 
         $responseClassName = $this->getResponseClass();
 
         try {
-            $jsonMapper = new \JsonMapper();
-            $jsonMapper->bExceptionOnMissingData = true;
+            $jsonMapper                                = new \JsonMapper();
+            $jsonMapper->bExceptionOnMissingData       = true;
             $jsonMapper->bExceptionOnUndefinedProperty = true;
-            $jsonMapper->bStrictObjectTypeChecking = true;
+            $jsonMapper->bStrictObjectTypeChecking     = true;
             $jsonMapper->map($this->responseContent, $responseObject = new $responseClassName);
         } catch (\InvalidArgumentException $e) {
-            $this->handleError($response, $e->getMessage(), \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
+            throw new RequestException($this, $response, $e);
         } catch (\JsonMapper_Exception $e) {
-            $this->handleError($response, $e->getMessage(), \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR);
+            throw new RequestException($this, $response, $e);
         }
 
         logger()->info('Request to the Core', [
@@ -84,46 +84,14 @@ abstract class AbstractJob implements ShouldQueue
     }
 
     /** @return string */
-    abstract protected function getHttpMethod(): string;
+    abstract public function getHttpMethod(): string;
 
     /** @return string */
-    abstract protected function getHttpPath(): string;
+    abstract public function getHttpPath(): string;
 
     /** @return \JsonSerializable */
-    abstract protected function getRequestObject(): \JsonSerializable;
+    abstract public function getRequestObject(): \JsonSerializable;
 
     /** @return string */
-    abstract protected function getResponseClass(): string;
-
-    /**
-     * @param Response $response
-     * @param string $message
-     * @param integer $status
-     * @throws RequestException
-     */
-    protected function handleError(Response $response, $message=null, $status=null)
-    {
-        if (null === $message) {
-            $message = isset($this->responseContent->message)
-                ? $this->responseContent->message
-                : $response->getReasonPhrase();
-        }
-
-        if (null === $status) {
-            $status = $response->getStatusCode();
-        }
-
-        logger()->error('Error while trying to send request to '.$this->getHttpMethod().' via method '.$this->getHttpMethod(), [
-            'statusCode' => $status,
-            'message' => $message
-        ]);
-        logger()->debug('Request and Response', [
-            'request' => null !== $this->getRequestObject()
-                ? $this->getRequestObject()->jsonSerialize()
-                : null,
-            'response' => $this->responseContent
-        ]);
-
-        throw new RequestException($message, $status);
-    }
+    abstract public function getResponseClass(): string;
 }

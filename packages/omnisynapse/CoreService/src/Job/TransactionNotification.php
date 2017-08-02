@@ -30,7 +30,7 @@ class TransactionNotification extends AbstractJob
     /**
      * @return string
      */
-    protected function getHttpMethod(): string
+    public function getHttpMethod(): string
     {
         return 'POST';
     }
@@ -38,7 +38,7 @@ class TransactionNotification extends AbstractJob
     /**
      * @return string
      */
-    protected function getHttpPath(): string
+    public function getHttpPath(): string
     {
         return '/transactions/incoming';
     }
@@ -46,7 +46,7 @@ class TransactionNotification extends AbstractJob
     /**
      * @return \JsonSerializable
      */
-    protected function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): \JsonSerializable
     {
         return $this->requestObject;
     }
@@ -54,7 +54,7 @@ class TransactionNotification extends AbstractJob
     /**
      * @return string
      */
-    protected function getResponseClass(): string
+    public function getResponseClass(): string
     {
         return Transaction::class;
     }

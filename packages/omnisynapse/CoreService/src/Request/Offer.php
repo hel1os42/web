@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService\Request;
 
 use Carbon\Carbon;
+use OmniSynapse\CoreService\Exception\Exception;
 use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\Offer\Geo;
 use OmniSynapse\CoreService\Request\Offer\Limits;
@@ -67,7 +68,7 @@ class Offer implements \JsonSerializable
         $account = $offer->getAccount();
 
         if (null === $account) {
-            throw new RequestException(printf('Offer %d without account.', [
+            throw new Exception(printf('Offer %d without account.', [
                 $offer->getId()
             ]));
         }
