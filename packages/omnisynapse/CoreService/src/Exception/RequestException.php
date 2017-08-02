@@ -35,7 +35,7 @@ class RequestException extends Exception
             ? $json->message
             : $response->getReasonPhrase();
 
-        logger()->error('Error while trying to send request to '.$job->getHttpMethod().' via method '.$job->getHttpMethod(), [
+        logger()->error('Error while trying to send request to '.config('core.base_uri').$job->getHttpPath().' via method '.$job->getHttpMethod(), [
             'statusCode' => $status,
             'message' => $message
         ]);
