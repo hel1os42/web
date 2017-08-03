@@ -48,14 +48,14 @@ class OfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'label'                => 'required|string|max:128',
+            'label'                => 'required|string|min:3|max:128',
             'description'          => 'required|nullable|string',
-            'reward'               => 'required|integer',
-            'start_date'           => 'required|string',
-            'start_time'           => 'required|string',
-            'finish_date'          => 'required|nullable|string',
-            'finish_time'          => 'required|nullable|string',
-            'category_id'             => 'required|string|exists:categories,id',
+            'reward'               => 'required|float',
+            'start_date'           => 'required|date|date_format:Y-m-d\TH:i:sO',
+            'finish_date'          => 'required|date|date_format:Y-m-d\TH:i:sO',
+            'start_time'           => 'required|nullable|date|date_format:H:i:sO',
+            'finish_time'          => 'required|nullable|date|date_format:H:i:sO',
+            'category_id'          => 'required|string|exists:categories,id',
             'max_count'            => 'required|nullable|integer',
             'max_for_user'         => 'required|nullable|integer',
             'max_per_day'          => 'required|nullable|integer',

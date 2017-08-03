@@ -128,7 +128,7 @@
             }
         };
 
-        xmlhttp.open("GET", "{{route('offer.category')}}", true);
+        xmlhttp.open("GET", "{{route('category')}}", true);
         xmlhttp.send();
 </script>
 

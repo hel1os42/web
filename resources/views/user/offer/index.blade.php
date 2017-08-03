@@ -82,13 +82,13 @@
             <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-            <form action="{{route('offer.search')}}" target="_top">
+            <form action="{{route('offers.index')}}" target="_top">
                 {{ csrf_field() }}
                 <select id="offer-category" name="category">
                 </select><br>
-                <input name="latitude" placeholder="latitude" value="{{$data['latitude']}}"><br>
-                <input name="longitude" placeholder="longitude" value="{{$data['longitude']}}"><br>
-                <input name="radius" placeholder="radius" value="{{$data['radius']}}"><br>
+                <input name="latitude" placeholder="latitude" value=""><br>
+                <input name="longitude" placeholder="longitude" value=""><br>
+                <input name="radius" placeholder="radius" value=""><br>
                 <input type="submit">
             </form>
             @if($data['results'])
@@ -118,7 +118,7 @@
         }
     };
 
-    xmlhttp.open("GET", "{{route('offer.category')}}", true);
+    xmlhttp.open("GET", "{{route('category')}}", true);
     xmlhttp.send();
 </script>
 </body>

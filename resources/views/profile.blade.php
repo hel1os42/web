@@ -73,12 +73,12 @@
         </div>
         <div class="profile">
             Your email: {{$data->email}}<br>
-            Your invite code: <a
+            Your invite link: <a
                     href="{{route('registerForm', $data->invite_code)}}">{{route('registerForm', $data->invite_code)}}</a><br>
             <br>Links:<br>
             <a href="{{route('advert.offerForm')}}">{{route('advert.offerForm')}}</a><br>
             <a href="{{route('advert.offer.list')}}">{{route('advert.offer.list')}}</a><br>
-            <a href="{{route('offer.searchForm')}}">{{route('offer.searchForm')}}</a><br>
+            <a href="{{route('offers.index')}}">{{route('offers.index')}}</a><br>
         </div>
         <div class="title">NAU</div>
     </div>

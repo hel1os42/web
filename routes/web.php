@@ -13,7 +13,7 @@
 
 // Unauthorized users
 
-Route::get('/', 'User\ProfileController@index')->name('home');
+Route::get('/', 'ProfileController@index')->name('home');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('login', 'Auth\LoginController@getLogin')->name('loginForm');
@@ -33,7 +33,7 @@ Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('users/{id}', 'User\ProfileController@show')
+    Route::get('users/{id}', 'ProfileController@show')
         ->where('id', '[a-z0-9-]+')
         ->name('profile');
 
@@ -59,7 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
-    Route::get('category', 'CategoryController@index')->name('offer.category');
+    Route::get('category', 'CategoryController@index')->name('category');
 
 });
 

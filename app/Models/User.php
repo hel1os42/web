@@ -216,10 +216,10 @@ class User extends Authenticatable
     }
 
     /**
-     * @param Currency $currency
+     * @param string $currency
      * @return Account
      */
-    public function getAccountFor(Currency $currency): Account
+    public function getAccountFor(string $currency): Account
     {
         switch ($currency) {
             case Currency::NAU:

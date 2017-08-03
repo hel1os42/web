@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Advert;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\Currency;
-use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\NauModels\Offer;
 use App\Http\Requests\Advert;
-use App\Models\User;
 
 class OfferController extends Controller
 {
@@ -42,15 +39,17 @@ class OfferController extends Controller
     public function store(Advert\OfferRequest $request): Response
     {
         $newOffer = new Offer();
-        $newOffer->account()->assign(auth()->user()->getAccountFor(Currency::NAU));
+        $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
         $newOffer->fill($request->toArray());
         /*
         $newOffer->status = 'deactive';
         $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';
         $newOffer->save();
         */
-
-        return \response()->render('empty', ['msg' => trans('msg.offer.creating')]);
+        return \response()->render('empty',
+            ['data' => $newOffer->toArray(), 'msg' => trans('msg.offer.creating')],
+            Response::HTTP_ACCEPTED,
+            route('advert.offer'));
     }
 
     /**
@@ -67,23 +66,6 @@ class OfferController extends Controller
                 'data' => $offer
             ]);
         }
-        return \response()->error('404', trans('errors.offer_not_found'));
-    }
-
-    /**
-     * @param Advert\OfferRedemptionRequest $request
-     * @return Response
-     */
-    public function redemption(Advert\OfferRedemptionRequest $request): Response
-    {
-
-        //check is current user owner of $request->offer_id and offer exist
-        //check is offer have active status, etc
-        (new Offer)->redeem(new User());//get user model(from code) and call Offer->redeem(User)
-
-        if ($request->code == 'AKS7') { //check is code valid from activation_codes table
-            return \response()->render('empty', ['msg' => trans('msg.offer.activating')]);
-        }
-        return \response()->error('404', trans('error.bad_activation_code'));
+        return \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
     }
 }

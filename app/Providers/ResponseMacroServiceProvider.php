@@ -15,10 +15,15 @@ class ResponseMacroServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Response::macro('render', function (string $view, $params = [], int $statusCode = HTTPResponse::HTTP_OK) {
-            return request()->wantsJson() ?
-                response()->json($params, $statusCode) :
-                response()->view($view, $params, $statusCode);
+        Response::macro('render', function (string $view, $params = [], int $statusCode = HTTPResponse::HTTP_OK, string $route = '') {
+            if(request()->wantsJson()){
+                if(($statusCode == HTTPResponse::HTTP_ACCEPTED || $statusCode == HTTPResponse::HTTP_CREATED) && !empty($route)){
+                    response()->header('Location', $route);
+                }
+                return response()->json($params, $statusCode);
+            }
+
+                return response()->view($view, $params, $statusCode);
         });
 
         Response::macro('error', function (int $statusCode, string $message = null) {

@@ -38,23 +38,4 @@ class OfferController extends Controller
             'data' => $offer->isOwner(\auth()->user()) ? $offer : $offer->setVisible(Offer::$publicAttributes)
         ]);
     }
-
-    /**
-     *  Get activation code for Offer
-     * @param string $offerUuid
-     */
-    public function getActivationCode(string $offerUuid)
-    {
-        $offer = new Offer();
-        $offer->findOrFail($offerUuid);
-        //If offer exist search or create activation code model obj and save it
-        // create table activation_codes with offer uuid, user uuid, expire_date
-
-        return \response()->render('empty', [
-            'data' =>
-                [
-                    'code' => 'AKS7'
-                ]
-        ], Response::HTTP_CREATED);
-    }
 }
