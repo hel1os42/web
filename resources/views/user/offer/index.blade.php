@@ -91,9 +91,9 @@
                 <input name="radius" placeholder="radius" value=""><br>
                 <input type="submit">
             </form>
-            @if($data['results'])
+            @if(isset($data))
                 <h2>Results</h2>
-                @foreach($data['results'] as $offer)
+                @foreach($data as $offer)
                     <a href="{{route('offer.show', $offer->id)}}">{{$offer->name}}</a><br>
                     @endforeach
                 @endif
