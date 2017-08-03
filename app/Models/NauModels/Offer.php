@@ -17,7 +17,7 @@ use Ramsey\Uuid\Uuid;
  * @property int account_id
  * @property string label
  * @property string description
- * @property Float reward
+ * @property float reward
  * @property string status
  * @property Carbon start_date
  * @property Carbon finish_date

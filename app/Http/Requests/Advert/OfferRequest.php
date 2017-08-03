@@ -10,7 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * @property string label
  * @property string description
- * @property int reward
+ * @property float reward
  * @property \Carbon\Carbon start_date
  * @property \Carbon\Carbon start_time
  * @property \Carbon\Carbon finish_date
@@ -50,7 +50,7 @@ class OfferRequest extends FormRequest
         return [
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'required|nullable|string',
-            'reward'               => 'required|float',
+            'reward'               => 'required|numeric',
             'start_date'           => 'required|date|date_format:Y-m-d\TH:i:sO',
             'finish_date'          => 'required|date|date_format:Y-m-d\TH:i:sO',
             'start_time'           => 'required|nullable|date|date_format:H:i:sO',

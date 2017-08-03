@@ -17,7 +17,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        return \response()->render('advert.offer.index', auth()->user()->getAccountFor('NAU')->offers()->paginate());
+        return \response()->render('advert.offer.index', auth()->user()->getAccountFor(Currency::NAU)->offers()->paginate());
     }
 
     /**
