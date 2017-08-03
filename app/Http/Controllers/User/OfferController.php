@@ -19,7 +19,7 @@ class OfferController extends Controller
     {
         $offers = Offer::filterByCategory($request->category)
             ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-            ->select('name','descr')
+            ->select('name', 'descr')
             ->paginate()
             ->makeVisible(Offer::$publicAttributes);
         return response()->render('user.offer.index', $offers);
