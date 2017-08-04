@@ -46,8 +46,8 @@ class OfferController extends Controller
         $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';
         $newOffer->save();
         */
-        return \response()->render('empty',
-            ['data' => $newOffer->toArray(), 'msg' => trans('msg.offer.creating')],
+        return \response()->render('advert.offer.store',
+            ['data' => $newOffer->toArray()],
             Response::HTTP_ACCEPTED,
             route('advert.offer'));
     }
@@ -63,7 +63,7 @@ class OfferController extends Controller
 
         if (auth()->user()->equals($offer->getOwner())) {
             return \response()->render('advert.offer.show', [
-                'data' => $offer
+                'data' => $offer->toArray()
             ]);
         }
         return \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
