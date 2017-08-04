@@ -82,7 +82,7 @@
             <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-            <form action="{{route('advert.offer')}}" method="post" target="_top">
+            <form action="{{route('advert.offers.store')}}" method="post" target="_top">
                 {{ csrf_field() }}
                 <input name="label" placeholder="label" value="{{$data->label}}"> <br>
                 <input name="description" placeholder="description"
@@ -128,7 +128,7 @@
             }
         };
 
-        xmlhttp.open("GET", "{{route('category')}}", true);
+        xmlhttp.open("GET", "{{route('categories')}}", true);
         xmlhttp.send();
 </script>
 
