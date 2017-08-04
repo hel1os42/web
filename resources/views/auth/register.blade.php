@@ -15,7 +15,7 @@
     <input type="email" name="email" placeholder="email"><br>
     <input type="password" name="password" placeholder="password"><br>
     <input type="password" name="password_confirm" placeholder="password_confirmation"><br>
-    <input type="hidden" name="referrer_id" value="{{$referrer_id}}"/><br>
+    <input type="hidden" name="referrer_id" value="{{$data['referrer_id']}}"/><br>
     <input type="submit">
 </form>
 

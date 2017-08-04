@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\NauModels;
 
-use App\Models\Traits\HasNau;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Carbon\Carbon;
-use MichaelAChrisco\ReadOnly\ReadOnlyTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -25,32 +23,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User rewardedUser
  * @property User user
  */
-class Redemption extends Model
+class Redemption extends NauModel
 {
-    use ReadOnlyTrait;
-    use HasNau;
 
-    /** @var string */
-    protected $connection = 'pgsql_nau';
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /** @var string */
-    protected $table = "redemption";
+        $this->table = "redemption";
 
-    /** @var string */
-    protected $primaryKey = 'id';
+        $this->primaryKey = 'id';
 
-    /** @var array */
-    protected $casts = [
-        'id'            => 'string',
-        'offer_id'      => 'string',
-        'user_id'       => 'string',
-        'points'        => 'integer',
-        'rewarded_id'   => 'string',
-        'amount'        => 'integer',
-        'fee'           => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
-    ];
+        $this->casts = [
+            'id'          => 'string',
+            'offer_id'    => 'string',
+            'user_id'     => 'string',
+            'points'      => 'integer',
+            'rewarded_id' => 'string',
+            'amount'      => 'integer',
+            'fee'         => 'integer'
+        ];
+    }
 
     /** @return string */
     public function getId(): string
@@ -110,18 +103,6 @@ class Redemption extends Model
     public function getFee(): float
     {
         return $this->fee;
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
     }
 
     /** @return BelongsTo */

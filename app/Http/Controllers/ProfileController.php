@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,9 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 class ProfileController extends Controller
 {
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|Response
+     */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home');
+        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home', []);
     }
 
     /**
@@ -24,10 +26,10 @@ class ProfileController extends Controller
      */
     public function show(string $uuid)
     {
-        $userId = Auth::id();
+        $userId = auth()->user()->getId();
         if ($uuid !== $userId) {
             return response()->error(Response::HTTP_FORBIDDEN);
         }
-        return response()->render('user.profile', User::find($userId)->fresh(), Response::HTTP_CREATED);
+        return response()->render('profile', ['data' => (new User)->findOrFail($userId)], Response::HTTP_CREATED);
     }
 }
