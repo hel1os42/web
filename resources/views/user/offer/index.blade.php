@@ -118,7 +118,7 @@
         }
     };
 
-    xmlhttp.open("GET", "{{route('category')}}", true);
+    xmlhttp.open("GET", "{{route('categories')}}", true);
     xmlhttp.send();
 </script>
 </body>
