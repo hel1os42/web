@@ -34,6 +34,19 @@ class User extends Authenticatable
         parent::__construct($attributes);
 
         $this->connection = config('database.default');
+
+        $this->fillable = [
+            'name',
+            'email',
+            'password',
+        ];
+
+        $this->hidden = [
+            'password',
+            'remember_token',
+            'referrer_id'
+        ];
+
     }
 
     /**
@@ -42,24 +55,6 @@ class User extends Authenticatable
      * @var bool
      */
     public $incrementing = false;
-
-    /**
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'referrer_id'
-    ];
 
     /**
      * Get the referrer record associated with the user.
