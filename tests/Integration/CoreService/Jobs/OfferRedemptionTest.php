@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\CoreService\Jobs;
+namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Redemption;
 use Carbon\Carbon;

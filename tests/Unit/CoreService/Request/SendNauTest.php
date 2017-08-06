@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService\Request;
+namespace OmniSynapse\CoreService\Request;
 
 use App\Models\Transact;
 use Faker\Factory as Faker;

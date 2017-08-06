@@ -1,8 +1,7 @@
 <?php
 
-namespace Tests\Unit\CoreService\Request\Offer;
+namespace OmniSynapse\CoreService\Request\Offer;
 
-use OmniSynapse\CoreService\Request\Offer\Limits;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 

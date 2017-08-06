@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService\Request;
+namespace OmniSynapse\CoreService\Request;
 
 use App\Models\Account;
 use App\Models\Offer;

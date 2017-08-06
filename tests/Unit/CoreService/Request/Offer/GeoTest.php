@@ -1,9 +1,7 @@
 <?php
 
-namespace Tests\Unit\CoreService\Request\Offer;
+namespace OmniSynapse\CoreService\Request\Offer;
 
-use OmniSynapse\CoreService\Request\Offer\Geo;
-use OmniSynapse\CoreService\Request\Offer\Point;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 

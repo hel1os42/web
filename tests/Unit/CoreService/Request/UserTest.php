@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\CoreService\Request;
+namespace OmniSynapse\CoreService\Request;
 
 use OmniSynapse\CoreService\Request\User;
 use Tests\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\CoreService\Jobs;
+namespace OmniSynapse\CoreService\Job;
 
 use Carbon\Carbon;
 use Faker\Factory as Faker;

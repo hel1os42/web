@@ -4,7 +4,6 @@ namespace OmniSynapse\CoreService\Request;
 
 use Carbon\Carbon;
 use OmniSynapse\CoreService\Exception\Exception;
-use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\Offer\Geo;
 use OmniSynapse\CoreService\Request\Offer\Limits;
 use OmniSynapse\CoreService\Request\Offer\Point;

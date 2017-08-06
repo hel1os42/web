@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\CoreService\Jobs;
+namespace OmniSynapse\CoreService\Job;
 
 use App\Models\Account;
 use App\Models\Transact;
