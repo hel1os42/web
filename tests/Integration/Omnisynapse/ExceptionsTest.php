@@ -87,4 +87,19 @@ class ExceptionsTest extends TestCase
         ]));
         $this->sendRequestAndTestExceptions($response);
     }
+
+    /**
+     * @expectedException \OmniSynapse\CoreService\Exception\RequestException
+     * @expectedExceptionCode 500
+     */
+    public function testWrongResponse()
+    {
+        $response = new Response(\Illuminate\Http\Response::HTTP_OK, [
+            'Content-Type' => 'application/json',
+        ], \GuzzleHttp\json_encode([
+            'error'   => true,
+            'message' => 'error message',
+        ]));
+        $this->sendRequestAndTestExceptions($response);
+    }
 }
