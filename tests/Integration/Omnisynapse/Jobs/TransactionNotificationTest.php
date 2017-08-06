@@ -32,7 +32,7 @@ class TransactionNotificationTest extends TestCase
         $feeTransaction->destination_account_id = $faker->randomDigitNotNull;
         $feeTransaction->amount                 = $faker->randomFloat();
         $feeTransaction->status                 = 'PAID';
-        $feeTransaction->created_at             = Carbon::parse($faker->time())->format('Y-m-d H:i:sO');
+        $feeTransaction->created_at             = Carbon::parse($faker->time())->format('Y-m-d\TH:i:sO');
         $feeTransaction->type                   = 'INCOMING';
         $feeTransaction->feeTransactions        = [];
 
@@ -82,7 +82,7 @@ class TransactionNotificationTest extends TestCase
             'destination_account_id' => $transaction['sendTo'],
             'amount'                 => $transaction['amount'],
             'status'                 => $transaction['status'],
-            'created_at'             => $transaction['createdAt']->format('Y-m-d H:i:sO'),
+            'created_at'             => $transaction['createdAt']->format('Y-m-d\TH:i:sO'),
             'type'                   => $transaction['type'],
             'feeTransactions'        => $transaction['feeTransactions']
         ]));

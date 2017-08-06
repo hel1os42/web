@@ -38,7 +38,7 @@ class UserCreatedTest extends TestCase
             'wallets'     => [
                 $wallet
             ],
-            'createdAt'   => $createdAt->format('Y-m-d H:i:sO'),
+            'createdAt'   => $createdAt->format('Y-m-d\TH:i:sO'),
         ];
 
         $referrerMock = \Mockery::mock(\App\Models\User::class);

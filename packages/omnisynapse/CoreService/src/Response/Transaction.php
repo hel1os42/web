@@ -48,7 +48,7 @@ class Transaction implements \JsonSerializable
             'destination_account_id' => $this->getDestinationAccountId(),
             'amount'                 => $this->getAmount(),
             'status'                 => $this->getStatus(),
-            'created_at'             => $this->getCreatedAt()->format('Y-m-d H:i:sO'),
+            'created_at'             => $this->getCreatedAt()->format('Y-m-d\TH:i:sO'),
             'type'                   => $this->getType(),
             'feeTransactions'        => $this->getFeeTransactions(),
         ];

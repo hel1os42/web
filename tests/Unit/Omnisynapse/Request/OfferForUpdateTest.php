@@ -72,14 +72,14 @@ class OfferForUpdateTest extends TestCase
         /*
          * Create Offer request and prepare jsonSerialize for comparing
          */
-        $offerCreatedRequest = new \OmniSynapse\CoreService\Request\OfferForUpdate($offer);
-        $expected            = [
+        $offerForUpdateRequest = new OfferForUpdate($offer);
+        $expected              = [
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,
             'description'       => $description,
             'category_id'       => $categoryId,
-            'geo'               => $offerCreatedRequest->geo->jsonSerialize(), // don't have to be checked
-            'limits'            => $offerCreatedRequest->limits->jsonSerialize(), // don't have to be checked
+            'geo'               => $offerForUpdateRequest->geo->jsonSerialize(), // don't have to be checked
+            'limits'            => $offerForUpdateRequest->limits->jsonSerialize(), // don't have to be checked
             'reward'            => $reward,
             'start_date'        => $startDate->toDateString(),
             'end_date'          => $endDate->toDateString(),
@@ -90,6 +90,6 @@ class OfferForUpdateTest extends TestCase
         /*
          * Compare arrays
          */
-        $this->assertEquals($expected, $offerCreatedRequest->jsonSerialize(), 'Expected array is not equals with offerCreated array');
+        $this->assertEquals($expected, $offerForUpdateRequest->jsonSerialize(), 'Expected array is not equals with offerCreated array');
     }
 }

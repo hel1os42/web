@@ -47,7 +47,7 @@ class OfferRedemptionTest extends TestCase
             'rewarded_id' => $redemption['rewardedId'],
             'amount'      => $redemption['amount'],
             'fee'         => $redemption['fee'],
-            'created_at'  => $redemption['createdAt']->format('Y-m-d H:i:sO')
+            'created_at'  => $redemption['createdAt']->format('Y-m-d\TH:i:sO')
         ]));
 
         $clientMock = \Mockery::mock(Client::class);

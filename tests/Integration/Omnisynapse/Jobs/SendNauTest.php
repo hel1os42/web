@@ -28,7 +28,7 @@ class SendNauTest extends TestCase
         $feeTransaction->destination_account_id = $faker->randomDigitNotNull;
         $feeTransaction->amount                 = $faker->randomFloat();
         $feeTransaction->status                 = 'PAID';
-        $feeTransaction->created_at             = Carbon::parse($faker->time())->format('Y-m-d H:i:sO');
+        $feeTransaction->created_at             = Carbon::parse($faker->time())->format('Y-m-d\TH:i:sO');
         $feeTransaction->type                   = 'INCOMING';
         $feeTransaction->feeTransactions        = [];
 
@@ -61,7 +61,7 @@ class SendNauTest extends TestCase
             'destination_account_id' => $sendNau['destinationAccountId'],
             'amount'                 => $sendNau['amount'],
             'status'                 => $sendNau['status'],
-            'created_at'             => $sendNau['createdAt']->format('Y-m-d H:i:sO'),
+            'created_at'             => $sendNau['createdAt']->format('Y-m-d\TH:i:sO'),
             'type'                   => $sendNau['type'],
             'feeTransactions'        => $sendNau['feeTransactions']
         ]));
