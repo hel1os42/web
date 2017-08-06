@@ -15,24 +15,35 @@ class RequestException extends Exception
     /** @var Response $response */
     private $response;
 
-    public function __construct(AbstractJob $job, Response $response, \Throwable $previous = null)
+    /**
+     * RequestException constructor.
+     * @param AbstractJob $job
+     * @param Response $response
+     * @param \Throwable|null $previous
+     * @param \stdClass|null $responseContent
+     */
+    public function __construct(AbstractJob $job, Response $response, \Throwable $previous = null, \stdClass $responseContent = null)
     {
         $this->job      = $job;
         $this->response = $response;
 
-        $contents       = $response->getBody()->getContents();
+        $contents       = null !== $responseContent
+            ? $responseContent
+            : $response->getBody()->getContents();
         $status         = 0 === $response->getStatusCode() || \Illuminate\Http\Response::HTTP_OK === $response->getStatusCode()
             ? $this->status
             : $response->getStatusCode();
 
-        try {
-            $json = \GuzzleHttp\json_decode($contents);
-        } catch (\InvalidArgumentException $e) {
-            $json = null;
+        if (null === $responseContent) {
+            try {
+                $contents = \GuzzleHttp\json_decode($contents);
+            } catch (\InvalidArgumentException $e) {
+                $contents = null;
+            }
         }
 
-        $message = null !== $json && isset($json->message)
-            ? $json->message
+        $message = null !== $contents && isset($contents->message)
+            ? $contents->message
             : $response->getReasonPhrase();
 
         logger()->error('Error while trying to send request to '.config('core.base_uri').$job->getHttpPath().' via method '.$job->getHttpMethod(), [
