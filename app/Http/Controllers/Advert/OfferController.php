@@ -26,9 +26,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('advert.offer.create', [
-            'data' => new Offer()
-        ]);
+        return \response()->render('advert.offer.create', (new Offer())->toArray());
     }
 
     /**
@@ -47,7 +45,7 @@ class OfferController extends Controller
         $newOffer->save();
         */
         return \response()->render('advert.offer.store',
-            ['data' => $newOffer->toArray()],
+            $newOffer->toArray(),
             Response::HTTP_ACCEPTED,
             route('advert.offer'));
     }
@@ -62,9 +60,7 @@ class OfferController extends Controller
         $offer = (new Offer())->findOrFail($offerUuid);
 
         if (auth()->user()->equals($offer->getOwner())) {
-            return \response()->render('advert.offer.show', [
-                'data' => $offer->toArray()
-            ]);
+            return \response()->render('advert.offer.show', $offer->toArray());
         }
         return \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
     }

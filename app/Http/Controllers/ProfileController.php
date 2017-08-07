@@ -30,6 +30,6 @@ class ProfileController extends Controller
         if ($uuid !== $userId) {
             return response()->error(Response::HTTP_FORBIDDEN);
         }
-        return response()->render('profile', ['data' => (new User)->findOrFail($userId)], Response::HTTP_CREATED);
+        return response()->render('profile', (new User)->findOrFail($userId)->toArray(), Response::HTTP_CREATED);
     }
 }
