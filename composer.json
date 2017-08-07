@@ -9,6 +9,7 @@
         "ext-mbstring": "*",
         "ext-pdo_pgsql": "*",
         "doctrine/dbal": "^2.5",
+        "hashids/hashids": "^2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "michaelachrisco/readonly": "^0.20.1",

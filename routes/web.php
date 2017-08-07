@@ -61,6 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('categories', 'CategoryController@index')->name('categories');
 
+    Route::get('offers/{id}/activation_code', 'RedemptionController@getActivationCode');
+
 });
 
 //---- Authorized users
