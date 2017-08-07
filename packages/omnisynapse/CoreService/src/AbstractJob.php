@@ -45,14 +45,16 @@ abstract class AbstractJob implements ShouldQueue
             ]
         );
 
+        $responseContent = $response->getBody()->getContents();
+
         if (floor($response->getStatusCode() * 0.01) > 2) {
-            throw new RequestException($this, $response);
+            throw new RequestException($this, $response, $responseContent);
         }
 
         try {
-            $responseContent = \GuzzleHttp\json_decode($response->getBody()->getContents());
+            $decodedContent = \GuzzleHttp\json_decode($responseContent);
         } catch (\InvalidArgumentException $e) {
-            throw new RequestException($this, $response, $e);
+            throw new RequestException($this, $response, $responseContent, $e);
         }
 
         $responseClassName                         = $this->getResponseClass();
@@ -63,9 +65,9 @@ abstract class AbstractJob implements ShouldQueue
         $jsonMapper->bStrictObjectTypeChecking     = true;
 
         try {
-            $jsonMapper->map($responseContent, $responseObject = new $responseClassName);
+            $jsonMapper->map($decodedContent, $responseObject = new $responseClassName);
         } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
-            throw new RequestException($this, $response, $e, $responseContent);
+            throw new RequestException($this, $response, $responseContent, $e);
         }
 
         logger()->info('Response from Core', [

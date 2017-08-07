@@ -19,27 +19,22 @@ class RequestException extends Exception
      * RequestException constructor.
      * @param AbstractJob $job
      * @param Response $response
+     * @param string $responseContent
      * @param \Throwable|null $previous
-     * @param \stdClass|null $responseContent
      */
-    public function __construct(AbstractJob $job, Response $response, \Throwable $previous = null, \stdClass $responseContent = null)
+    public function __construct(AbstractJob $job, Response $response, string $responseContent = null, \Throwable $previous = null)
     {
         $this->job      = $job;
         $this->response = $response;
 
-        $contents       = null !== $responseContent
-            ? $responseContent
-            : $response->getBody()->getContents();
         $status         = 0 === $response->getStatusCode() || \Illuminate\Http\Response::HTTP_OK === $response->getStatusCode()
             ? $this->status
             : $response->getStatusCode();
 
-        if (null === $responseContent) {
-            try {
-                $contents = \GuzzleHttp\json_decode($contents);
-            } catch (\InvalidArgumentException $e) {
-                $contents = null;
-            }
+        try {
+            $contents = \GuzzleHttp\json_decode($responseContent);
+        } catch (\InvalidArgumentException $e) {
+            $contents = null;
         }
 
         $message = null !== $contents && isset($contents->message)
