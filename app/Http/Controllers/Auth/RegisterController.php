@@ -53,12 +53,12 @@ class RegisterController extends Controller
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
-        $user = User::create($request->toArray());
-
-        $user->referrer()->associate($request->referrer_id);
+        $user = (new User)->fill($request->toArray())
+            ->referrer()->associate($request->referrer_id);
+        $user->save();
 
         return $request->wantsJson() ?
-            response()->render('', ['data' => $user->fresh()], Response::HTTP_CREATED,
+            response()->render('', ['data' => $user], Response::HTTP_CREATED,
                 route('profile', [$user->getId()])) :
             redirect()->route('loginForm');
     }

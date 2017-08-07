@@ -18,7 +18,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
         Response::macro('render', function (string $view, $params = [], int $statusCode = HTTPResponse::HTTP_OK, string $route = '') {
             if(request()->wantsJson()){
                 if(($statusCode == HTTPResponse::HTTP_ACCEPTED || $statusCode == HTTPResponse::HTTP_CREATED) && !empty($route)){
-                    response()->header('Location', $route);
+                    return response()->json($params, $statusCode)->header('Location', $route);
                 }
                 return response()->json($params, $statusCode);
             }

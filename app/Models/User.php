@@ -46,6 +46,7 @@ class User extends Authenticatable
             'remember_token',
             'referrer_id'
         ];
+
     }
 
     /**
@@ -54,7 +55,6 @@ class User extends Authenticatable
      * @var bool
      */
     public $incrementing = false;
-
 
     /**
      * Get the referrer record associated with the user.
