@@ -90,7 +90,7 @@ class Account extends NauModel
      * @param int $value
      * @return float
      */
-    public function getBalanceAttribute(int $value): float
+    public function getAmountAttribute(int $value): float
     {
         return $this->convertIntToFloat($value);
     }
@@ -99,5 +99,14 @@ class Account extends NauModel
     public function getBalance(): float
     {
         return $this->balance;
+    }
+
+    /**
+     * @param float $amount
+     * @return bool
+     */
+    public function enoughBalance(float $amount) : bool
+    {
+        return $this->getBalance() >= $amount;
     }
 }
