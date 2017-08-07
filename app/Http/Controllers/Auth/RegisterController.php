@@ -31,13 +31,11 @@ class RegisterController extends Controller
             redirect()->route('profile', Auth::id()) :
             response()->render('auth.register',
                 [
-                    'data' => [
-                        'name'             => null,
-                        'email'            => null,
-                        'password'         => null,
-                        'password_confirm' => null,
-                        'referrer_id'      => $referrerUser->getId()
-                    ]
+                    'name'             => null,
+                    'email'            => null,
+                    'password'         => null,
+                    'password_confirm' => null,
+                    'referrer_id'      => $referrerUser->getId()
                 ]);
     }
 
@@ -58,7 +56,7 @@ class RegisterController extends Controller
         $user->save();
 
         return $request->wantsJson() ?
-            response()->render('', ['data' => $user], Response::HTTP_CREATED,
+            response()->render('', $user, Response::HTTP_CREATED,
                 route('profile', [$user->getId()])) :
             redirect()->route('loginForm');
     }

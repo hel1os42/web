@@ -84,25 +84,25 @@
         </div>
         <div class="offer">
             <pre>
-                {{$data['label']}}
-                {{$data['description']}}
-                {{$data['reward']}}
-                {{$data['status']}}
-                {{$data['start_date']}} / {{$data['start_time']}}
-                {{$data['finish_date']}} / {{$data['finish_time']}}
-                {{$data['category_id']}}
-                {{$data['max_count']}}
-                {{$data['max_for_user']}}
-                {{$data['max_per_day']}}
-                {{$data['max_for_user_per_day']}}
-                {{$data['user_level_min']}}
+                {{$label}}
+                {{$description}}
+                {{$reward}}
+                {{$status}}
+                {{$start_date}} / {{$start_time}}
+                {{$finish_date}} / {{$finish_time}}
+                {{$category_id}}
+                {{$max_count}}
+                {{$max_for_user}}
+                {{$max_per_day}}
+                {{$max_for_user_per_day}}
+                {{$user_level_min}}
 
                 geo data:
-                {{$data['country']}}
-                {{$data['city']}}
-                {{$data['latitude']}}
-                {{$data['longitude']}}
-                {{$data['radius']}}
+                {{$country}}
+                {{$city}}
+                {{$latitude}}
+                {{$longitude}}
+                {{$radius}}
             </pre>
         </div>
         <div class="title">NAU</div>
