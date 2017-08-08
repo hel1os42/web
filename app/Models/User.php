@@ -46,6 +46,7 @@ class User extends Authenticatable
             'remember_token',
             'referrer_id'
         ];
+
     }
 
     /**
@@ -54,7 +55,6 @@ class User extends Authenticatable
      * @var bool
      */
     public $incrementing = false;
-
 
     /**
      * Get the referrer record associated with the user.
@@ -219,11 +219,15 @@ class User extends Authenticatable
      * @param string $currency
      * @return Account
      */
-    public function getAccountFor(string $currency): Account
+    public function getAccountFor(string $currency): ?Account
     {
         switch ($currency) {
             case Currency::NAU:
-                return $this->account()->first();
+                $account = $this->account()->first();
+                if($account){
+                    return $account;
+                }
+                throw new TokenException("no account " . $currency);
             default:
                 throw new TokenException("unknown token " . $currency);
         }

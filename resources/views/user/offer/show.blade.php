@@ -81,8 +81,8 @@
             <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="offer">
-            {{$data['label']}}<br>
-            {{$data['description']}}
+            {{$label}}<br>
+            {{$description}}
         </div>
         <div class="title">NAU</div>
     </div>

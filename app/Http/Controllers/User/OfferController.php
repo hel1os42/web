@@ -34,8 +34,6 @@ class OfferController extends Controller
     {
         //check is this offer have active status
         $offer = Offer::findOrFail($offerUuid);
-        return \response()->render('user.offer.show', [
-            'data' => $offer->isOwner(\auth()->user()) ? $offer : $offer->setVisible(Offer::$publicAttributes)
-        ]);
+        return \response()->render('user.offer.show', $offer->isOwner(\auth()->user()) ? $offer->toArray() : $offer->setVisible(Offer::$publicAttributes)->toArray());
     }
 }

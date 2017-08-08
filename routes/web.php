@@ -39,10 +39,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
-            'index'  => 'advert.offer.list',
-            'show'   => 'advert.offer.show',
-            'create' => 'advert.offerForm',
-            'store'  => 'advert.offer'
+            'index'  => 'advert.offers.index',
+            'show'   => 'advert.offers.show',
+            'create' => 'advert.offers.create',
+            'store'  => 'advert.offers.store'
         ],
         'except' => [
             'update',
@@ -59,7 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
-    Route::get('category', 'CategoryController@index')->name('category');
+    Route::get('categories', 'CategoryController@index')->name('categories');
 
     Route::get('transaction/create', '\App\Http\Controllers\TransactionController@createTransaction')->name('transCreate');
     Route::post('transaction/create', '\App\Http\Controllers\TransactionController@completeTransaction')->name('transComplete');

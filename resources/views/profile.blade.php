@@ -69,15 +69,15 @@
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$data->name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
         </div>
         <div class="profile">
-            Your email: {{$data->email}}<br>
+            Your email: {{$email}}<br>
             Your invite link: <a
-                    href="{{route('registerForm', $data->invite_code)}}">{{route('registerForm', $data->invite_code)}}</a><br>
+                    href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a><br>
             <br>Links:<br>
-            <a href="{{route('advert.offerForm')}}">{{route('advert.offerForm')}}</a><br>
-            <a href="{{route('advert.offer.list')}}">{{route('advert.offer.list')}}</a><br>
+            <a href="{{route('advert.offers.create')}}">{{route('advert.offers.create')}}</a><br>
+            <a href="{{route('advert.offers.index')}}">{{route('advert.offers.index')}}</a><br>
             <a href="{{route('offers.index')}}">{{route('offers.index')}}</a><br>
         </div>
         <div class="title">NAU</div>
