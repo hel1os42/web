@@ -3,6 +3,7 @@ namespace OmniSynapse\CoreService\Exception;
 
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\Response\Error;
 
 class RequestException extends Exception
 {
@@ -37,19 +38,34 @@ class RequestException extends Exception
             $contents = null;
         }
 
+        $jsonMapper                                = new \JsonMapper();
+        $jsonMapper->bExceptionOnMissingData       = true;
+        $jsonMapper->bExceptionOnUndefinedProperty = true;
+        $jsonMapper->bStrictObjectTypeChecking     = true;
+
+        if (null !== $contents) {
+            try {
+                $jsonMapper->map($contents, $contents = new Error());
+            } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
+                $contents = null;
+            }
+        }
+
         $message = null !== $contents && isset($contents->message)
             ? $contents->message
             : $response->getReasonPhrase();
 
         logger()->error('Error while trying to send request to '.config('core.base_uri').$job->getHttpPath().' via method '.$job->getHttpMethod(), [
             'statusCode' => $status,
-            'message' => $message
+            'message'    => $message
         ]);
         logger()->debug('Request and Response', [
-            'request' => null !== $job->getRequestObject()
+            'request'  => null !== $job->getRequestObject()
                 ? $job->getRequestObject()->jsonSerialize()
                 : null,
-            'response' => $contents
+            'response' => true === $contents instanceof Error
+                ? $contents->jsonSerialize()
+                : $contents,
         ]);
 
         parent::__construct($message, $status, $previous);
