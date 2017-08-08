@@ -70,8 +70,9 @@ abstract class AbstractJob implements ShouldQueue
             throw new RequestException($this, $response, $responseContent, $e);
         }
 
-        logger()->info('Response from Core', [
-            'response' => $responseContent
+        logger()->debug('Request and Response', [
+            'request'  => $this->getRequestObject()->jsonSerialize(),
+            'response' => $decodedContent,
         ]);
 
         event($responseObject);
