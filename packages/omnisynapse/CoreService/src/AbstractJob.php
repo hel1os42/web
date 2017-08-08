@@ -57,7 +57,7 @@ abstract class AbstractJob implements ShouldQueue
             throw new RequestException($this, $response, $responseContent, $e);
         }
 
-        $responseClassName                         = $this->getResponseClass();
+        $responseClassName = $this->getResponseClass();
 
         $jsonMapper                                = new \JsonMapper();
         $jsonMapper->bExceptionOnMissingData       = true;

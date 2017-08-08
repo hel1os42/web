@@ -28,11 +28,11 @@ class OfferCreatedTest extends TestCase
         /*
          * Account
          */
-        $account = [
+        $account     = [
             'id'       => $faker->uuid,
             'owner_id' => $faker->uuid,
         ];
-        $accountMock   = \Mockery::mock(Account::class);
+        $accountMock = \Mockery::mock(Account::class);
         $accountMock->shouldReceive('getId')->andReturn($account['id']);
         $accountMock->shouldReceive('getOwnerId')->once()->andReturn($account['owner_id']);
 
@@ -146,6 +146,6 @@ class OfferCreatedTest extends TestCase
             ->offerCreated($offerMock)
             ->handle();
 
-        $this->assertEquals( 1, $eventCalled,  'Can not listen Offer event.');
+        $this->assertEquals( 1, $eventCalled, 'Can not listen Offer event.');
     }
 }

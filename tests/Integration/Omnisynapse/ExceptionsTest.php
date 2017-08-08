@@ -20,16 +20,13 @@ class ExceptionsTest extends TestCase
         $errorClientMock->shouldReceive('request')->once()->andReturn($response);
 
         ((new class ($errorClientMock) extends AbstractJob {
-            public function __construct($client)
-            {
-                parent::__construct($client);
-            }
             public function getHttpMethod(): string {
                 return 'GET';
             }
             public function getHttpPath(): string {
                 return '';
             }
+            // @codingStandardsIgnoreStart
             public function getRequestObject(): \JsonSerializable
             {
                 return (new class implements \JsonSerializable {
@@ -38,6 +35,7 @@ class ExceptionsTest extends TestCase
                     }
                 });
             }
+            // @codingStandardsIgnoreEnd
             public function getResponseClass(): string {
                 return Point::class;
             }

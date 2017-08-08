@@ -18,8 +18,8 @@ class UserCreatedTest extends TestCase
      */
     public function testUserCreated()
     {
-        $faker            = Faker::create();
-        $referrer         = [
+        $faker = Faker::create();
+        $referrer = [
             'id' => $faker->uuid,
         ];
 
@@ -28,8 +28,8 @@ class UserCreatedTest extends TestCase
         $wallet->address  = $faker->uuid;
         $wallet->balance  = $faker->randomFloat();
 
-        $createdAt        = Carbon::parse($faker->time());
-        $user             = [
+        $createdAt = Carbon::parse($faker->time());
+        $user = [
             'id'          => $faker->uuid,
             'username'    => $faker->name,
             'referrerId'  => $referrer['id'],
