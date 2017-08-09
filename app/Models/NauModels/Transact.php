@@ -116,4 +116,12 @@ class Transact extends NauModel
     {
         return $this->belongsTo(Account::class, 'destination_account_id', 'id');
     }
+
+    /**
+     * @return Account
+     */
+    public function getDestination(): Account
+    {
+        return $this->destination;
+    }
 }

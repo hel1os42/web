@@ -2,9 +2,9 @@
 
 namespace OmniSynapse\CoreService;
 
-use App\Models\Offer;
-use App\Models\Redemption;
-use App\Models\Transact;
+use App\Models\NauModels\Offer;
+use App\Models\NauModels\Redemption;
+use App\Models\NauModels\Transact;
 use App\Models\User;
 use GuzzleHttp\Client;
 

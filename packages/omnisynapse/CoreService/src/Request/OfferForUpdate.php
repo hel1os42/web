@@ -14,9 +14,9 @@ class OfferForUpdate extends Offer implements \JsonSerializable
     /**
      * Offer constructor.
      *
-     * @param \App\Models\Offer $offer
+     * @param \App\Models\NauModels\Offer $offer
      */
-    public function __construct(\App\Models\Offer $offer)
+    public function __construct(\App\Models\NauModels\Offer $offer)
     {
         parent::__construct($offer);
         

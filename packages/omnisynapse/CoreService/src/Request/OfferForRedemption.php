@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Redemption;
+use App\Models\NauModels\Redemption;
 
 /**
  * Class OfferForRedemption

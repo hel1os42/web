@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Redemption;
+use App\Models\NauModels\Redemption;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;

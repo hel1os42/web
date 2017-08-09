@@ -67,6 +67,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return User
+     */
+    public function getReferrer(): User
+    {
+        return $this->referrer;
+    }
+
+    /**
      * Get the referrer record associated with the user.
      *
      * @return HasMany

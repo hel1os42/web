@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Offer;
+use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;

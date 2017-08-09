@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Transact;
+use App\Models\NauModels\Transact;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 use GuzzleHttp\Client;

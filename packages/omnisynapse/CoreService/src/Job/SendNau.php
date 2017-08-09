@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Transact;
+use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;

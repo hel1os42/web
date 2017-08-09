@@ -2,9 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Account;
-use App\Models\Transact;
-use OmniSynapse\CoreService\Request\TransactionNotification;
+use App\Models\NauModels\Account;
+use App\Models\NauModels\Transact;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 

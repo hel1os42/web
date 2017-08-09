@@ -2,9 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Transact;
+use App\Models\NauModels\Transact;
 use Faker\Factory as Faker;
-use OmniSynapse\CoreService\Request\SendNau;
 use Tests\TestCase;
 
 class SendNauTest extends TestCase

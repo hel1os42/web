@@ -2,8 +2,7 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Redemption;
-use OmniSynapse\CoreService\Request\OfferForRedemption;
+use App\Models\NauModels\Redemption;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 

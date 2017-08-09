@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Models\Redemption;
+use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 use GuzzleHttp\Client;

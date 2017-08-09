@@ -2,8 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Account;
-use App\Models\Offer;
+use App\Models\NauModels\Account;
+use App\Models\NauModels\Offer;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Faker\Factory as Faker;

@@ -2,7 +2,7 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use App\Models\Transact;
+use App\Models\NauModels\Transact;
 
 /**
  * Class SendNau

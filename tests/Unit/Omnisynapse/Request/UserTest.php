@@ -2,7 +2,6 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use OmniSynapse\CoreService\Request\User;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
