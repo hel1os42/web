@@ -2,6 +2,13 @@
 namespace App\Traits;
 
 use App\Exceptions\NauObjException;
+use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Job\OfferCreated;
+use OmniSynapse\CoreService\Job\OfferRedemption;
+use OmniSynapse\CoreService\Job\OfferUpdated;
+use OmniSynapse\CoreService\Job\SendNau;
+use OmniSynapse\CoreService\Job\TransactionNotification;
+use OmniSynapse\CoreService\Job\UserCreated;
 
 /**
  * Trait NauObj
@@ -10,25 +17,41 @@ use App\Exceptions\NauObjException;
 trait NauObj
 {
     /**
-     * @param array $attributes
+     * @param string $jobClassName
      */
-    static function create(array $attributes = []){
-        // TODO: call CoreService
-    }
+    public function save(string $jobClassName){
+        $coreService = app()->make(CoreService::class);
 
-    /**
-     * @param array $options
-     */
-    public function save(array $options = []){
-        // TODO: call CoreService
-    }
+        switch ($jobClassName) {
+            case OfferCreated::class;
+                $coreService->offerCreated($this);
+                break;
 
-    /**
-     * @param array $attributes
-     * @param array $options
-     */
-    public function update(array $attributes = [], array $options = []){
-        // TODO: call CoreService
+            case OfferRedemption::class;
+                $coreService->offerRedemption($this);
+                break;
+
+            case OfferUpdated::class;
+                $coreService->offerUpdated($this);
+                break;
+
+            case SendNau::class;
+                $coreService->sendNau($this);
+                break;
+
+            case TransactionNotification::class;
+                $coreService->userCreated($this);
+                break;
+
+            case UserCreated::class;
+                $coreService->transactionNotification($this);
+                break;
+
+            default:
+                $this->showException();
+        }
+
+        $coreService->handle();
     }
 
     private function showException()
@@ -39,6 +62,14 @@ trait NauObj
     private static function staticShowException()
     {
         throw new NauObjException(sprintf('Not allowed to persist changes in read-only model %d', get_called_class()));
+    }
+
+    static function create() {
+        self::staticShowException();
+    }
+
+    static function update() {
+        self::staticShowException();
     }
 
     static function forceCreate(){
