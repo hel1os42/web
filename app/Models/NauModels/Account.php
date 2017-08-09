@@ -56,7 +56,7 @@ class Account extends NauModel
     /** @var array */
     protected $maps = [
         'balance' => 'amount',
-        'address' => 'addr'
+        'address' => 'addr',
     ];
 
     /** @return BelongsTo */
@@ -122,5 +122,4 @@ class Account extends NauModel
     {
         return $builder->where('owner_id', $ownerId);
     }
-
 }
