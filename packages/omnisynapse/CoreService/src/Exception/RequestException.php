@@ -7,9 +7,6 @@ use OmniSynapse\CoreService\Response\Error as ErrorResponse;
 
 class RequestException extends Exception
 {
-    /** @var int $status */
-    private $status = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
-
     /** @var AbstractJob $job */
     private $job;
 
@@ -32,10 +29,6 @@ class RequestException extends Exception
         $this->response    = $response;
         $this->rawResponse = $rawResponse;
 
-        $status            = 0 === $response->getStatusCode() || \Illuminate\Http\Response::HTTP_OK === $response->getStatusCode()
-            ? $this->status
-            : $response->getStatusCode();
-
         $jsonMapper                                = new \JsonMapper();
         $jsonMapper->bExceptionOnMissingData       = true;
         $jsonMapper->bExceptionOnUndefinedProperty = true;
@@ -51,7 +44,7 @@ class RequestException extends Exception
             ? $contents->message
             : $response->getReasonPhrase();
 
-        parent::__construct($message, $status, $previous);
+        parent::__construct($message, $response->getStatusCode(), $previous);
     }
 
     /**
