@@ -13,17 +13,18 @@
 
 // Unauthorized users
 
-Route::get('/', '\App\Http\Controllers\User\ProfileController@index')->name('home');
+Route::get('/', 'ProfileController@index')->name('home');
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::get('login', '\App\Http\Controllers\Auth\LoginController@getLogin')->name('loginForm');
-    Route::post('login', '\App\Http\Controllers\Auth\LoginController@postLogin')->name('login');
-    Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
-    Route::get('register/{invite}', '\App\Http\Controllers\Auth\RegisterController@getRegisterForm')->where('invite', '[a-z0-9]+')->name('registerForm');
+    Route::get('login', 'Auth\LoginController@getLogin')->name('loginForm');
+    Route::post('login', 'Auth\LoginController@postLogin')->name('login');
+    Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+    Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
+        ->where('invite', '[a-z0-9]+')
+        ->name('registerForm');
 });
 
-
-Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->name('register');
+Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 //---- Unauthorized users
 
@@ -32,9 +33,33 @@ Route::post('users', '\App\Http\Controllers\Auth\RegisterController@register')->
 
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('users/{id}', '\App\Http\Controllers\User\ProfileController@show')->where('id', '[a-z0-9-]+')->name('profile');
-    Route::get('offers/create', '\App\Http\Controllers\OfferController@create');
-    Route::post('offers', '\App\Http\Controllers\OfferController@store');
+    Route::get('users/{id}', 'ProfileController@show')
+        ->where('id', '[a-z0-9-]+')
+        ->name('profile');
+
+    Route::resource('advert/offers', 'Advert\OfferController', [
+        'names'  => [
+            'index'  => 'advert.offers.index',
+            'show'   => 'advert.offers.show',
+            'create' => 'advert.offers.create',
+            'store'  => 'advert.offers.store'
+        ],
+        'except' => [
+            'update',
+            'destroy'
+        ]
+    ]);
+
+    Route::resource('offers', 'User\OfferController', [
+        'except' => [
+            'create',
+            'store',
+            'update',
+            'destroy'
+        ]
+    ]);
+
+    Route::get('categories', 'CategoryController@index')->name('categories');
 
 });
 

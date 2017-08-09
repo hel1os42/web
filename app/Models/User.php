@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\NauModels\Account;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use PDepend\Source\Parser\TokenException;
 use Webpatser\Uuid\Uuid;
 
 /**
@@ -16,37 +20,34 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
- * @property string referrer_id
+ * @property mixed referrer_id
  *
- * @property User   referrer
+ * @property User referrer
  */
 class User extends Authenticatable
 {
 
     use Notifiable;
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'referrer_id',
-    ];
+        $this->connection = config('database.default');
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+        $this->fillable = [
+            'name',
+            'email',
+            'password',
+        ];
+
+        $this->hidden = [
+            'password',
+            'remember_token',
+            'referrer_id'
+        ];
+
+    }
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -58,25 +59,27 @@ class User extends Authenticatable
     /**
      * Get the referrer record associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function referrer()
+    public function referrer(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * @return User
+     * Get the referrer record associated with the user.
+     *
+     * @return HasMany
      */
-    public function getReferrer() : User
+    public function account(): HasMany
     {
-        return $this->referrer;
+        return $this->hasMany(Account::class, 'owner_id', 'id');
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -84,9 +87,9 @@ class User extends Authenticatable
     /**
      * Get user name
      *
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -94,9 +97,9 @@ class User extends Authenticatable
     /**
      * Get user mail
      *
-     * @return mixed
+     * @return string
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -104,9 +107,9 @@ class User extends Authenticatable
     /**
      * Get user referrer id
      *
-     * @return mixed
+     * @return string
      */
-    public function getReferrerId()
+    public function getReferrerId(): string
     {
         return $this->referrer_id;
     }
@@ -115,11 +118,11 @@ class User extends Authenticatable
     /**
      * Set user name
      *
-     * @param $name
+     * @param string $name
      *
-     * @return $this
+     * @return User
      */
-    public function setName($name)
+    public function setName(string $name): User
     {
         $this->name = $name;
 
@@ -131,9 +134,9 @@ class User extends Authenticatable
      *
      * @param string $email
      *
-     * @return $this
+     * @return User
      */
-    public function setEmail($email)
+    public function setEmail(string $email): User
     {
         $this->email = $email;
 
@@ -145,16 +148,19 @@ class User extends Authenticatable
      *
      * @param string $password
      *
-     * @return $this
+     * @return User
      */
-    public function setPassword($password)
+    public function setPassword(string $password): User
     {
         $this->password = $password;
 
         return $this;
     }
 
-    public function setPasswordAttribute($value)
+    /**
+     * @param string $value
+     */
+    public function setPasswordAttribute(string $value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
@@ -174,12 +180,13 @@ class User extends Authenticatable
     /**
      * Set invite code
      *
-     * @param $invite
-     * @return $this
+     * @param string $invite
+     * @return User
      */
-    public function setInvite($invite)
+    public function setInvite(string $invite): User
     {
         $this->invite_code = $invite;
+
         return $this;
     }
 
@@ -188,10 +195,10 @@ class User extends Authenticatable
      *
      * @param string $invite
      *
-     * @return $this
+     * @return User|null
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite)
+    public function findByInvite(string $invite): ?User
     {
         return $this->where('invite_code', $invite)->first();
     }
@@ -201,10 +208,37 @@ class User extends Authenticatable
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function generateInvite()
+    public function generateInvite(): string
     {
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
         return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
+    }
+
+    /**
+     * @param string $currency
+     * @return Account
+     */
+    public function getAccountFor(string $currency): ?Account
+    {
+        switch ($currency) {
+            case Currency::NAU:
+                $account = $this->account()->first();
+                if($account){
+                    return $account;
+                }
+                throw new TokenException("no account " . $currency);
+            default:
+                throw new TokenException("unknown token " . $currency);
+        }
+    }
+
+    /**
+     * @param User|null $user
+     * @return bool
+     */
+    public function equals(User $user = null)
+    {
+        return null != $user && $this->id === $user->id;
     }
 }

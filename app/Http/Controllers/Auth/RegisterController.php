@@ -29,13 +29,14 @@ class RegisterController extends Controller
 
         return Auth::check() ?
             redirect()->route('profile', Auth::id()) :
-            response()->render('auth.register', [
-                'name' => null,
-                'email' => null,
-                'password' => null,
-                'password_confirm' => null,
-                'referrer_id' => $referrerUser->getId()
-            ]);
+            response()->render('auth.register',
+                [
+                    'name'             => null,
+                    'email'            => null,
+                    'password'         => null,
+                    'password_confirm' => null,
+                    'referrer_id'      => $referrerUser->getId()
+                ]);
     }
 
     /**
@@ -50,21 +51,13 @@ class RegisterController extends Controller
      */
     public function register(\App\Http\Requests\Auth\RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+        $user = (new User)->fill($request->toArray())
+            ->referrer()->associate($request->referrer_id);
+        $user->save();
 
-        $user->referrer()->associate($request->referrer_id);
-
-        if ($request->wantsJson()) {
-            return response()
-                ->render('', $user->fresh(), Response::HTTP_CREATED)
-                ->header('Location', sprintf('/users/%s', $user->id));
-        }
-
-        return redirect()->route('loginForm');
-
+        return $request->wantsJson() ?
+            response()->render('', $user, Response::HTTP_CREATED,
+                route('profile', [$user->getId()])) :
+            redirect()->route('loginForm');
     }
 }

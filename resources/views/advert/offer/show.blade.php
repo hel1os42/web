@@ -1,6 +1,6 @@
 {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
 
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html>
 <head>
     <title>NAU</title>
@@ -45,7 +45,7 @@
             border-bottom: 1px solid #38bdff;
             width: 96%;
             left: 0;
-            padding:2%;
+            padding: 2%;
         }
 
         .header-right {
@@ -56,7 +56,7 @@
             font-weight: bold;
         }
 
-        .profile {
+        .offer {
             color: black;
             font-size: 25px;
             text-align: left;
@@ -66,14 +66,44 @@
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right">
+                <a href="{{route('logout')}}">Logout</a>
+            </div>
         </div>
-        <div class="profile">
-        Your email: {{$email}}<br>
-        Your invite code: {{route('registerForm', $invite_code)}}<br>
+        <div class="offer">
+            <pre>
+                {{$label}}
+                {{$description}}
+                {{$reward}}
+                {{$status}}
+                {{$start_date}} / {{$start_time}}
+                {{$finish_date}} / {{$finish_time}}
+                {{$category_id}}
+                {{$max_count}}
+                {{$max_for_user}}
+                {{$max_per_day}}
+                {{$max_for_user_per_day}}
+                {{$user_level_min}}
+
+                geo data:
+                {{$country}}
+                {{$city}}
+                {{$latitude}}
+                {{$longitude}}
+                {{$radius}}
+            </pre>
         </div>
         <div class="title">NAU</div>
     </div>

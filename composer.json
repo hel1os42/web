@@ -6,17 +6,18 @@
     "type": "project",
     "require": {
       "php": ">=7.1.7",
-      "ext-pdo_pgsql": "*",
       "ext-mbstring": "*",
+      "ext-pdo_pgsql": "*",
       "doctrine/dbal": "^2.5",
       "laravel/framework": "5.4.*",
       "laravel/tinker": "~1.0",
       "michaelachrisco/readonly": "^0.20.1",
+      "sofa/eloquence": "^5.4",
       "tymon/jwt-auth": "0.5.*",
       "webpatser/laravel-uuid": "^2.0",
-      "netresearch/jsonmapper": "^1.2",
+      "guzzlehttp/guzzle": "^6.3",
       "pda/pheanstalk": "^3.1",
-      "guzzlehttp/guzzle": "^6.3"
+      "netresearch/jsonmapper": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

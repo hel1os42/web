@@ -1,6 +1,6 @@
 {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
 
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html>
 <head>
     <title>NAU</title>
@@ -45,7 +45,7 @@
             border-bottom: 1px solid #38bdff;
             width: 96%;
             left: 0;
-            padding:2%;
+            padding: 2%;
         }
 
         .header-right {
@@ -66,13 +66,29 @@
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="container">
     <div class="content">
         <div class="header">
-            <div class="header-right"> Hello {{$name}}! &nbsp; <a href="{{route('logout')}}">Logout</a></div>
+            <div class="header-right">
+                <a href="{{route('logout')}}">Logout</a>
+            </div>
         </div>
         <div class="offer">
-        Offer created!
+            @foreach ($data as $offer)
+                @foreach ($offer as $val)
+                <p>{{$val}}</p>
+                @endforeach
+                //-------------------------------------------
+            @endforeach
         </div>
         <div class="title">NAU</div>
     </div>

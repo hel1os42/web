@@ -30,15 +30,15 @@ class Category extends Model
     {
         parent::__construct($attributes);
 
+        $this->connection = config('database.default');
+
         $this->table      = 'categories';
         $this->primaryKey = 'id';
 
         $this->casts = [
-            'id'         => 'string',
-            'name'       => 'string',
-            'parent_id'  => 'string',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'id'        => 'string',
+            'name'      => 'string',
+            'parent_id' => 'string'
         ];
     }
 
@@ -72,26 +72,5 @@ class Category extends Model
     public function children(): hasMany
     {
         return $this->hasMany(Category::class, 'parent_id', 'id');
-    }
-
-    /** @return Carbon */
-    public function getCreatedAt(): Carbon
-    {
-        return $this->created_at;
-    }
-
-    /** @return Carbon */
-    public function getUpdatedAt(): Carbon
-    {
-        return $this->updated_at;
-    }
-
-    /**
-     * @param string $name
-     * @return Category
-     */
-    public function findByName(string $name): Category
-    {
-        return $this->where('name', $name)->first();
     }
 }
