@@ -2,6 +2,6 @@
 
 <p>The following data was successfully saved!</p> <br>
 
-sender - {{ $sender->getOwnerId() }} <br>
-destination - {{ $destination->getOwnerId() }} <br>
+sender acc id - {{ $source_account_id  }} <br>
+destination acc id - {{ $destination_account_id }} <br>
 amount - {{ $amount }}

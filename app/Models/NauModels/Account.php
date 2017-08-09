@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Account
@@ -20,6 +21,8 @@ use Illuminate\Support\Collection;
  * @property Carbon updated_at
  * @property Collection|Offer[] offers
  * @property User owner
+ * @property bool isEnoughBalanceFor
+ * @property Builder scopeWhereOwnerId
  */
 class Account extends NauModel
 {
@@ -105,8 +108,19 @@ class Account extends NauModel
      * @param float $amount
      * @return bool
      */
-    public function enoughBalance(float $amount) : bool
+    public function isEnoughBalanceFor(float $amount): bool
     {
         return $this->getBalance() >= $amount;
     }
+
+    /**
+     * @param Builder $builder
+     * @param $ownerId
+     * @return Builder
+     */
+    public function scopeWhereOwnerId(Builder $builder, string $ownerId): Builder
+    {
+        return $builder->where('owner_id', $ownerId);
+    }
+
 }

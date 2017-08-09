@@ -53,9 +53,9 @@ class Transact extends NauModel
 
     /** @var array */
     protected $maps = [
-        'txid'   => 'id',
-        'src_id' => 'source_account_id',
-        'dst_id' => 'destination_account_id',
+        'id'                     => 'txid',
+        'source_account_id'      => 'src_id',
+        'destination_account_id' => 'dst_id',
     ];
 
     /** @return string */

@@ -5,6 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class TransactRequest
+ * @package App\Http\Requests
+ *
+ * @property string sender
+ * @property string destination
+ * @property float amount
+ */
 class TransactRequest extends FormRequest
 {
     /**
@@ -12,9 +20,9 @@ class TransactRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        Auth::check();
+        return Auth::check();
     }
 
     /**
@@ -22,12 +30,12 @@ class TransactRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'sender'      => 'required|exists:pgsql_nau.users,id',
             'destination' => 'required|different:sender|exists:pgsql_nau.users,id|different:sender',
-            'amount'      => "required|numeric|min:0.0001",
+            'amount'      => 'required|numeric|min:0.0001',
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactRequest;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 
 /**
  * Class TransactionController
@@ -23,34 +23,33 @@ class TransactionController extends Controller
 
     /**
      * @param TransactRequest $request
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse|RedirectResponse
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public function completeTransaction (TransactRequest $request)
     {
-        $account     = Account::on('pgsql_nau')->where('owner_id', $request->input('sender'))->firstOrFail();
-        $destination = Account::on('pgsql_nau')->where('owner_id', $request->input('destination'))->firstOrFail();
-        $amount      = $request->input('amount');
 
-        if(false === $account->enoughBalance($amount)) {
-            return response()
-                ->redirectToRoute('transCreate')
-                ->withInput()
-                ->withErrors([
-                    'amount' => sprintf('Your balance %0.4f NAU !', $account->getBalance())
-                ]);
+        $senderAccount      = Account::whereOwnerId($request->sender)->firstOrFail();
+        $destinationAccount = Account::whereOwnerId($request->destination)->firstOrFail();
+        $amount             = $request->input('amount');
+
+        if (false === $senderAccount->isEnoughBalanceFor($amount)) {
+            return response()->error(
+                Response::HTTP_NOT_ACCEPTABLE,
+                trans('msg.your_balance', [
+                    'balance' => sprintf('%0.4f', $senderAccount->getBalance()),
+                ])
+            );
         }
 
         $transaction         = (new Transact());
         $transaction->amount = $amount;
-        $transaction->source()->associate($account);
-        $transaction->source()->associate($destination);
+        $transaction->source()->associate($senderAccount);
+        $transaction->destination()->associate($destinationAccount);
 
-        // TODO: core service send money
+        //$isCreated = $transaction->save();
 
-        return response()->render('transact.complete', [
-            'sender'      => $account,
-            'destination' => $destination,
-            'amount'      => $amount,
-        ]);
+        return response()
+            ->render('transact.complete', $transaction->toArray(), Response::HTTP_ACCEPTED)
+            ->header('Location: /transactions');
     }
 }
