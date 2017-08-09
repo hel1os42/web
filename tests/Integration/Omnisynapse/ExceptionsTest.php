@@ -19,23 +19,31 @@ class ExceptionsTest extends TestCase
         $errorClientMock = \Mockery::mock(Client::class);
         $errorClientMock->shouldReceive('request')->once()->andReturn($response);
 
-        ((new class ($errorClientMock) extends AbstractJob {
+        $requestObject = (new class implements \JsonSerializable {
+            function jsonSerialize() {
+                return [];
+            }
+        });
+
+        ((new class ($errorClientMock, $requestObject) extends AbstractJob {
+            private $requestObject;
+
+            public function __construct(Client $client, $requestObject)
+            {
+                parent::__construct($client);
+
+                $this->requestObject = $requestObject;
+            }
             public function getHttpMethod(): string {
                 return 'GET';
             }
             public function getHttpPath(): string {
                 return '';
             }
-            // @codingStandardsIgnoreStart
             public function getRequestObject(): \JsonSerializable
             {
-                return (new class implements \JsonSerializable {
-                    function jsonSerialize() {
-                        return [];
-                    }
-                });
+                return $this->requestObject;
             }
-            // @codingStandardsIgnoreEnd
             public function getResponseClass(): string {
                 return Point::class;
             }
@@ -60,7 +68,7 @@ class ExceptionsTest extends TestCase
 
     /**
      * @expectedException \OmniSynapse\CoreService\Exception\RequestException
-     * @expectedExceptionCode 500
+     * @expectedExceptionCode 200
      */
     public function testJsonDecodeException()
     {
@@ -72,7 +80,7 @@ class ExceptionsTest extends TestCase
 
     /**
      * @expectedException \OmniSynapse\CoreService\Exception\RequestException
-     * @expectedExceptionCode 500
+     * @expectedExceptionCode 200
      */
     public function testJsonMapperException()
     {
@@ -88,7 +96,7 @@ class ExceptionsTest extends TestCase
 
     /**
      * @expectedException \OmniSynapse\CoreService\Exception\RequestException
-     * @expectedExceptionCode 500
+     * @expectedExceptionCode 200
      */
     public function testWrongResponse()
     {

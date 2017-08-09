@@ -25,7 +25,7 @@ class RequestException extends Exception
      */
     public function __construct(AbstractJob $job, Response $response, string $rawResponse = null, \Throwable $previous = null)
     {
-        $this->job = $job;
+        $this->job         = $job;
         $this->response    = $response;
         $this->rawResponse = $rawResponse;
 

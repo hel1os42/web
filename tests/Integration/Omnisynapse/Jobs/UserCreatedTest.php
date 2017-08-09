@@ -18,7 +18,7 @@ class UserCreatedTest extends TestCase
      */
     public function testUserCreated()
     {
-        $faker = Faker::create();
+        $faker    = Faker::create();
         $referrer = [
             'id' => $faker->uuid,
         ];
@@ -29,7 +29,7 @@ class UserCreatedTest extends TestCase
         $wallet->balance  = $faker->randomFloat();
 
         $createdAt = Carbon::parse($faker->time());
-        $user = [
+        $user      = [
             'id'          => $faker->uuid,
             'username'    => $faker->name,
             'referrerId'  => $referrer['id'],
