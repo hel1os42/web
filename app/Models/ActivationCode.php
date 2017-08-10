@@ -100,13 +100,4 @@ class ActivationCode extends Model
     {
         return Hashids::connection('activation_code')->decode($code)[0];
     }
-
-    /**
-     * @param string $offerId
-     * @return bool
-     */
-    public function scopeCheckOffer(Builder $query, string $offerId): bool
-    {
-        return $query->where('offer_id', $offerId) instanceof ActivationCode;
-    }
 }
