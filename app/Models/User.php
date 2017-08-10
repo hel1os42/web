@@ -20,9 +20,11 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
- * @property mixed referrer_id
- * @property mixed account
- * @property mixed coreUser
+ * @property int level
+ * @property int points
+ * @property Relations\BelongsTo referrer_id
+ * @property Relations\HasMany account
+ * @property Relations\HasOne coreUser
  *
  * @property User referrer
  */
