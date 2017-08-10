@@ -21,6 +21,8 @@ use Webpatser\Uuid\Uuid;
  * @property string password
  * @property string invite_code
  * @property mixed referrer_id
+ * @property mixed account
+ * @property mixed coreUser
  *
  * @property User referrer
  */
@@ -128,24 +130,36 @@ class User extends Authenticatable
         return $this->referrer_id;
     }
 
-    public function getLevel()
+    /**
+     * @return int
+     */
+    public function getLevel(): int
     {
         return $this->level;
     }
 
-    public function getLevelAttribute()
+    /**
+     * @return int
+     */
+    public function getLevelAttribute(): int
     {
-        return $this->coreUser->level;
+        return $this->coreUser->level ?? 0;
     }
 
-    public function getPoints()
+    /**
+     * @return int
+     */
+    public function getPoints(): int
     {
         return $this->points;
     }
 
-    public function getPointsAttribute()
+    /**
+     * @return int
+     */
+    public function getPointsAttribute(): int
     {
-        return $this->coreUser->points;
+        return $this->coreUser->points ?? 0;
     }
 
     /**
