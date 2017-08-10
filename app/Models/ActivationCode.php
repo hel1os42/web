@@ -32,7 +32,9 @@ class ActivationCode extends Model
         $this->connection = config('database.default');
 
         $this->table = 'activation_codes';
+
         $this->timestamps = false;
+
         $this->appends = ['code'];
     }
 
