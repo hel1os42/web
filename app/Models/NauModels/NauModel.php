@@ -17,9 +17,9 @@ use Sofa\Eloquence\Mappable;
 class NauModel extends Model
 {
     use HasNau;
-    use ReadOnlyTrait, Eloquence, Mappable {
+    use /*ReadOnlyTrait,*/ Eloquence, Mappable; /*{
         ReadOnlyTrait::save insteadof Eloquence;
-    }
+    }*/
 
     /**
      * @var string

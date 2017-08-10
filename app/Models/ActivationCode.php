@@ -4,18 +4,21 @@ namespace App\Models;
 
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Hashids\Hashids;
+use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * Class ActivationCode
  * @package App
  *
+ * @property integer id
  * @property string code
  * @property string user_id
  * @property string offer_id
  * @property string redemption_id
+ * @method checkOffer(string $offerId)
  */
 class ActivationCode extends Model
 {
@@ -28,10 +31,15 @@ class ActivationCode extends Model
 
         $this->connection = config('database.default');
 
-        $this->table      = 'activation_codes';
-        $this->primaryKey = 'code';
-        $this->timestamps = ["created_at"];
+        $this->table = 'activation_codes';
+        $this->timestamps = false;
+        $this->appends = ['code'];
     }
+
+    protected $fillable = [
+        'offer_id',
+        'user_id'
+    ];
 
     /** @return string */
     public function getCode(): string
@@ -39,6 +47,21 @@ class ActivationCode extends Model
         return $this->code;
     }
 
+    /** @return string */
+    public function getCodeAttribute(): string
+    {
+        return Hashids::connection('activation_code')->encode($this->id);
+    }
+
+    /**
+     * @param string $uuid
+     * @return ActivationCode
+     */
+    public function setRedemptionId(string $uuid): ActivationCode
+    {
+        $this->redemption_id = $uuid;
+        return $this;
+    }
 
     /** @return BelongsTo */
     public function user(): BelongsTo
@@ -58,39 +81,30 @@ class ActivationCode extends Model
         return $this->belongsTo(Redemption::class, 'redemption_id', 'id');
     }
 
-//    protected static function boot()
-//    {
-//        parent::boot();
-//
-//        static::creating(function (ActivationCode $model) {
-//            //$model->code = $model->generateCode();
-//
-//
-//            $hashids = new Hashids('NAU', 3, 'abcdefghijklmnopqrstuvwxyz');
-//            $model->code = $hashids->encode($model->id);
-//        });
-//    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (ActivationCode $model) {
+            $model->created_at = $model->freshTimestamp();
+        });
+    }
 
     /**
-     * Generate pretty, readable, unique, random alpha-numeric string.
-     *
-     * @return string
+     * @param string $code
+     * @return int
      */
-    public function generateCode()
+    public function getIdByCode(string $code): int
     {
-        $hashids = new Hashids('NAU', 3, 'abcdefghijklmnopqrstuvwxyz');
-        return $hashids->encode(123);
-//        $length = rand(3, 5);
-//        $code = '';
-//
-//        while (($len = strlen($code)) < $length) {
-//            $size = $length - $len;
-//
-//            $bytes = random_bytes($size);
-//
-//            $code .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
-//        }
+        return Hashids::connection('activation_code')->decode($code)[0];
+    }
 
-        //return $this->find($code) ? $this->generateCode() : $code;
+    /**
+     * @param string $offerId
+     * @return bool
+     */
+    public function scopeCheckOffer(Builder $query, string $offerId): bool
+    {
+        return $query->where('offer_id', $offerId) instanceof ActivationCode;
     }
 }

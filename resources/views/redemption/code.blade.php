@@ -1,0 +1,1 @@
+<h1>{{$activation_code}}</h1>

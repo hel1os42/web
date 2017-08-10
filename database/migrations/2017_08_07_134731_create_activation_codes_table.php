@@ -16,7 +16,6 @@ class CreateActivationCodesTable extends Migration
         Schema::create('activation_codes', function (Blueprint $table)
         {
             $table->increments('id', 10)->unique()->unsigned();
-            $table->string('code')->unique()->index();
             $table->uuid('user_id');
             $table->uuid('offer_id');
             $table->uuid('redemption_id')->nullable();

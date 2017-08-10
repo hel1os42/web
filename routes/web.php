@@ -50,6 +50,14 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
+    Route::group(['prefix' => 'offers/{offerId}/redemption'], function () {
+        Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
+        Route::get('create', 'RedemptionController@create')->name('redemption.create');
+        Route::post('redemption', 'RedemptionController@redemption')->name('redemption.store');
+        Route::get('redemption/{rid}', 'RedemptionController@show')->where('rid',
+            '[a-z0-9-]+')->name('redemption.show');
+    });
+
     Route::resource('offers', 'User\OfferController', [
         'except' => [
             'create',
@@ -59,10 +67,9 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
+
+
     Route::get('categories', 'CategoryController@index')->name('categories');
-
-    Route::get('offers/{id}/activation_code', 'RedemptionController@getActivationCode');
-
 });
 
 //---- Authorized users

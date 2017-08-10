@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class OfferRequest
- * @package App\Http\Requests\Auth
+ * @package App\Http\Requests\User
  *
  * @property string category
  * @property string latitude

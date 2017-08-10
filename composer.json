@@ -9,12 +9,12 @@
         "ext-mbstring": "*",
         "ext-pdo_pgsql": "*",
         "doctrine/dbal": "^2.5",
-        "hashids/hashids": "^2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "michaelachrisco/readonly": "^0.20.1",
         "sofa/eloquence": "^5.4",
         "tymon/jwt-auth": "0.5.*",
+        "vinkla/hashids": "^3.2",
         "webpatser/laravel-uuid": "^2.0"
     },
     "require-dev": {

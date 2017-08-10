@@ -366,17 +366,6 @@ class Offer extends NauModel
      * @param User $user
      * @return bool
      */
-    public function redeem(User $user)
-    {
-        $user->get(); // just sample
-        //return $this->redemptions()->create(['user_id' => $user->id]);
-        return true;
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     */
     public function isOwner(User $user): bool
     {
         return $user->equals($this->getOwner());
