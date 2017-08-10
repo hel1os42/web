@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
  * @property string id
  * @property int level
  * @property int points
+ * @property WebUser owner
  */
 class User extends NauModel
 {

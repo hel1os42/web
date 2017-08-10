@@ -22,9 +22,9 @@ use Webpatser\Uuid\Uuid;
  * @property string invite_code
  * @property int level
  * @property int points
- * @property Relations\BelongsTo referrer_id
- * @property Relations\HasMany account
- * @property Relations\HasOne coreUser
+ * @property User referrer_id
+ * @property Account account
+ * @property CoreUser coreUser
  *
  * @property User referrer
  */
