@@ -135,7 +135,7 @@ class User extends Authenticatable
 
     public function getLevelAttribute()
     {
-        return $this->coreUser->level ;
+        return $this->coreUser->level;
     }
 
     public function getPoints()
@@ -145,7 +145,7 @@ class User extends Authenticatable
 
     public function getPointsAttribute()
     {
-        return $this->coreUser->points ;
+        return $this->coreUser->points;
     }
 
     /**
