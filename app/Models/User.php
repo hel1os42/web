@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\NauModels\User as CoreUser;
+use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -42,9 +42,15 @@ class User extends Authenticatable
         ];
 
         $this->hidden = [
+            'coreUser',
             'password',
             'remember_token',
             'referrer_id'
+        ];
+
+        $this->appends = [
+            'level',
+            'points'
         ];
 
     }
@@ -59,9 +65,9 @@ class User extends Authenticatable
     /**
      * Get the referrer record associated with the user.
      *
-     * @return BelongsTo
+     * @return Relations\BelongsTo
      */
-    public function referrer(): BelongsTo
+    public function referrer(): Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -69,11 +75,19 @@ class User extends Authenticatable
     /**
      * Get the referrer record associated with the user.
      *
-     * @return HasMany
+     * @return Relations\HasMany
      */
-    public function account(): HasMany
+    public function account(): Relations\HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return Relations\HasOne
+     */
+    public function coreUser(): Relations\HasOne
+    {
+        return $this->hasOne(CoreUser::class, 'id', 'id');
     }
 
     /**
@@ -114,6 +128,25 @@ class User extends Authenticatable
         return $this->referrer_id;
     }
 
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    public function getLevelAttribute()
+    {
+        return $this->coreUser->level ;
+    }
+
+    public function getPoints()
+    {
+        return $this->points;
+    }
+
+    public function getPointsAttribute()
+    {
+        return $this->coreUser->points ;
+    }
 
     /**
      * Set user name
