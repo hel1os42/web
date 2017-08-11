@@ -46,7 +46,7 @@ trait NauObj
             $this->updateTimestamps();
         }
 
-        $this->exists = true;
+        $this->exists             = true;
         $this->wasRecentlyCreated = true;
 
         $this->fireModelEvent('created', false);
