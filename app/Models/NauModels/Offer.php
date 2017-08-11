@@ -31,8 +31,8 @@ use Ramsey\Uuid\Uuid;
  * @property int max_per_day
  * @property int max_for_user_per_day
  * @property int user_level_min
- * @property double latitude
- * @property double longitude
+ * @property float latitude
+ * @property float longitude
  * @property int radius
  * @property Carbon created_at
  * @property Carbon updated_at
@@ -170,6 +170,14 @@ class Offer extends NauModel
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
+    /**
+     * @return Account
+     */
+    public function getAccount(): Account
+    {
+        return $this->account;
+    }
+
     /** @return string */
     public function getId(): string
     {
@@ -287,14 +295,14 @@ class Offer extends NauModel
         return $this->user_level_min;
     }
 
-    /** @return double */
-    public function getLatitude(): double
+    /** @return float */
+    public function getLatitude(): float
     {
         return $this->latitude;
     }
 
-    /** @return double */
-    public function getLongitude(): double
+    /** @return float */
+    public function getLongitude(): float
     {
         return $this->longitude;
     }
