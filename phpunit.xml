@@ -9,23 +9,24 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Feature Tests">
-            <directory suffix="Test.php">./tests/Feature</directory>
+        <testsuite name="CoreService REQUEST OFFER UNIT">
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService/Request/Offer</directory>
+        </testsuite>
+        <testsuite name="CoreService REQUEST UNIT">
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService/Request</directory>
+        </testsuite>
+        <testsuite name="CoreService UNIT">
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService</directory>
         </testsuite>
 
-        <testsuite name="Unit Tests">
-            <directory suffix="Test.php">./tests/Unit</directory>
+        <testsuite name="CoreService JOBS INTEGRATION">
+            <directory suffix="Test.php">./tests/Integration/OmniSynapse/CoreService/Jobs</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
+            <directory suffix=".php">./packages</directory>
         </whitelist>
     </filter>
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
-    </php>
 </phpunit>

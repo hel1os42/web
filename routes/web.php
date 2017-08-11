@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{id}', 'ProfileController@show')
         ->where('id', '[a-z0-9-]+')
         ->name('profile');
+    Route::get('profile', 'ProfileController@show');
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [

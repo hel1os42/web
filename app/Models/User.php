@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Redemption;
+use App\Models\NauModels\User as CoreUser;
 use Hashids\Hashids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -22,8 +22,11 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
- * @property mixed referrer_id
- *
+ * @property string referrer_id
+ * @property int level
+ * @property int points
+ * @property Account account
+ * @property CoreUser coreUser
  * @property User referrer
  */
 class User extends Authenticatable
@@ -44,9 +47,15 @@ class User extends Authenticatable
         ];
 
         $this->hidden = [
+            'coreUser',
             'password',
             'remember_token',
             'referrer_id'
+        ];
+
+        $this->appends = [
+            'level',
+            'points'
         ];
 
     }
@@ -61,29 +70,45 @@ class User extends Authenticatable
     /**
      * Get the referrer record associated with the user.
      *
-     * @return BelongsTo
+     * @return Relations\BelongsTo
      */
-    public function referrer(): BelongsTo
+    public function referrer(): Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
+     * @return User
+     */
+    public function getReferrer(): User
+    {
+        return $this->referrer;
+    }
+
+    /**
      * Get the user accounts relation
      *
-     * @return HasMany
+     * @return Relations\HasMany
      */
-    public function account(): HasMany
+    public function account(): Relations\HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
     }
 
     /**
-     * @return HasMany
+     * @return Relations\HasMany
      */
-    public function activationCodes(): HasMany
+    public function activationCodes(): Relations\HasMany
     {
         return $this->hasMany(ActivationCode::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return Relations\HasOne
+     */
+    public function coreUser(): Relations\HasOne
+    {
+        return $this->hasOne(CoreUser::class, 'id', 'id');
     }
 
     /**
@@ -124,6 +149,37 @@ class User extends Authenticatable
         return $this->referrer_id;
     }
 
+    /**
+     * @return int
+     */
+    public function getLevel(): int
+    {
+        return $this->level;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLevelAttribute(): int
+    {
+        return $this->coreUser->level ?? 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPoints(): int
+    {
+        return $this->points;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPointsAttribute(): int
+    {
+        return $this->coreUser->points ?? 0;
+    }
 
     /**
      * Set user name

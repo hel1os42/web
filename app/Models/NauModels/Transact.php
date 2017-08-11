@@ -103,9 +103,25 @@ class Transact extends NauModel
         return $this->belongsTo(Account::class, 'source_account_id', 'id');
     }
 
+    /**
+     * @return Account
+     */
+    public function getSource() : Account
+    {
+        return $this->source;
+    }
+
     /** @return BelongsTo */
     public function destination(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'destination_account_id', 'id');
+    }
+
+    /**
+     * @return Account
+     */
+    public function getDestination(): Account
+    {
+        return $this->destination;
     }
 }

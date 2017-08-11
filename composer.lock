@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf99bf6176e465966974232b1177733d",
+    "content-hash": "8bca57485e4476e6de3c57e383748ce3",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -558,39 +558,44 @@
             "time": "2017-05-14T14:47:48+00:00"
         },
         {
-            "name": "graham-campbell/manager",
-            "version": "v3.0.0",
+            "name": "guzzlehttp/guzzle",
+            "version": "6.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/GrahamCampbell/Laravel-Manager.git",
-                "reference": "bf9da58aa32676209961558eaac5d6625f6f1399"
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Manager/zipball/bf9da58aa32676209961558eaac5d6625f6f1399",
-                "reference": "bf9da58aa32676209961558eaac5d6625f6f1399",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f4db5a78a5ea468d4831de7f0bf9d9415e348699",
+                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*",
-                "php": "^7.0"
+                "guzzlehttp/promises": "^1.0",
+                "guzzlehttp/psr7": "^1.4",
+                "php": ">=5.5"
             },
             "require-dev": {
-                "graham-campbell/analyzer": "^1.1",
-                "graham-campbell/testbench-core": "^2.0",
-                "mockery/mockery": "dev-master#c90a17247147543081e4d00f46911e422b49e583",
-                "phpunit/phpunit": "^6.0"
+                "ext-curl": "*",
+                "phpunit/phpunit": "^4.0 || ^5.0",
+                "psr/log": "^1.0"
+            },
+            "suggest": {
+                "psr/log": "Required for using the Log middleware"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "6.2-dev"
                 }
             },
             "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
                 "psr-4": {
-                    "GrahamCampbell\\Manager\\": "src/"
+                    "GuzzleHttp\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -599,55 +604,57 @@
             ],
             "authors": [
                 {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com"
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "description": "Manager Provides Some Manager Functionality For Laravel 5",
+            "description": "Guzzle is a PHP HTTP client library",
+            "homepage": "http://guzzlephp.org/",
             "keywords": [
-                "Graham Campbell",
-                "GrahamCampbell",
-                "Laravel Manager",
-                "Laravel-Manager",
-                "connector",
+                "client",
+                "curl",
                 "framework",
-                "interface",
-                "laravel",
-                "manager"
+                "http",
+                "http client",
+                "rest",
+                "web service"
             ],
-            "time": "2017-08-06T17:54:13+00:00"
+            "time": "2017-06-22T18:50:49+00:00"
         },
         {
-            "name": "hashids/hashids",
-            "version": "2.0.3",
+            "name": "guzzlehttp/promises",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ivanakimov/hashids.php.git",
-                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e"
+                "url": "https://github.com/guzzle/promises.git",
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ivanakimov/hashids.php/zipball/28889ed83cdc91f4a55637daff0fb5c799eb324e",
-                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/a59da6cf61d80060647ff4d3eb2c03a2bc694646",
+                "reference": "a59da6cf61d80060647ff4d3eb2c03a2bc694646",
                 "shasum": ""
             },
             "require": {
-                "ext-bcmath": "*",
-                "php": "^5.6.4 || ^7.0"
+                "php": ">=5.5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.6"
+                "phpunit/phpunit": "^4.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "1.4-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Hashids\\": "src/"
-                }
+                    "GuzzleHttp\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -655,30 +662,81 @@
             ],
             "authors": [
                 {
-                    "name": "Ivan Akimov",
-                    "email": "ivan@barreleye.com",
-                    "homepage": "https://twitter.com/IvanAkimov"
-                },
-                {
-                    "name": "Vincent Klaiber",
-                    "email": "hello@vinkla.com",
-                    "homepage": "https://vinkla.com"
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "description": "Generate short, unique, non-sequential ids (like YouTube and Bitly) from numbers",
-            "homepage": "http://hashids.org/php",
+            "description": "Guzzle promises library",
             "keywords": [
-                "bitly",
-                "decode",
-                "encode",
-                "hash",
-                "hashid",
-                "hashids",
-                "ids",
-                "obfuscate",
-                "youtube"
+                "promise"
             ],
-            "time": "2017-01-01T13:33:33+00:00"
+            "time": "2016-12-20T10:07:11+00:00"
+        },
+        {
+            "name": "guzzlehttp/psr7",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/psr7.git",
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/http-message": "~1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "homepage": "https://github.com/Tobion"
+                }
+            ],
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "keywords": [
+                "http",
+                "message",
+                "request",
+                "response",
+                "stream",
+                "uri",
+                "url"
+            ],
+            "time": "2017-03-20T17:10:46+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -1318,6 +1376,45 @@
             "time": "2017-01-16T07:55:07+00:00"
         },
         {
+            "name": "netresearch/jsonmapper",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cweiske/jsonmapper.git",
+                "reference": "899cf21e40f35b664b5366f7710d20d9d8abf7b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cweiske/jsonmapper/zipball/899cf21e40f35b664b5366f7710d20d9d8abf7b0",
+                "reference": "899cf21e40f35b664b5366f7710d20d9d8abf7b0",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.2.*",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JsonMapper": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Weiske",
+                    "email": "cweiske@cweiske.de",
+                    "homepage": "http://github.com/cweiske/jsonmapper/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Map nested JSON structures onto PHP classes",
+            "time": "2017-07-13T19:08:45+00:00"
+        },
+        {
             "name": "nikic/php-parser",
             "version": "v3.0.6",
             "source": {
@@ -1415,6 +1512,106 @@
                 "random"
             ],
             "time": "2017-03-13T16:27:32+00:00"
+        },
+        {
+            "name": "pda/pheanstalk",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pda/pheanstalk.git",
+                "reference": "430e77c551479aad0c6ada0450ee844cf656a18b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/430e77c551479aad0c6ada0450ee844cf656a18b",
+                "reference": "430e77c551479aad0c6ada0450ee844cf656a18b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pheanstalk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Annesley",
+                    "email": "paul@annesley.cc",
+                    "homepage": "http://paul.annesley.cc/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP client for beanstalkd queue",
+            "homepage": "https://github.com/pda/pheanstalk",
+            "keywords": [
+                "beanstalkd"
+            ],
+            "time": "2015-08-07T21:42:41+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "psr/log",
@@ -1880,7 +2077,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-François Simon",
+                    "name": "Jean-Fran??ois Simon",
                     "email": "jeanfrancois.simon@sensiolabs.com"
                 },
                 {
@@ -2741,78 +2938,6 @@
             "time": "2017-06-07T21:32:02+00:00"
         },
         {
-            "name": "vinkla/hashids",
-            "version": "3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vinkla/laravel-hashids.git",
-                "reference": "2e00b90236742618e8ac55a0f31407a81b54ae70"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vinkla/laravel-hashids/zipball/2e00b90236742618e8ac55a0f31407a81b54ae70",
-                "reference": "2e00b90236742618e8ac55a0f31407a81b54ae70",
-                "shasum": ""
-            },
-            "require": {
-                "graham-campbell/manager": "^3.0",
-                "hashids/hashids": "^2.0",
-                "illuminate/contracts": "5.3.* || 5.4.* || 5.5.*",
-                "illuminate/support": "5.3.* || 5.4.* || 5.5.*",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "graham-campbell/analyzer": "^1.1",
-                "graham-campbell/testbench": "^4.0",
-                "mockery/mockery": "dev-master#c90a17247147543081e4d00f46911e422b49e583",
-                "phpunit/phpunit": "^6.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.2-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Vinkla\\Hashids\\HashidsServiceProvider"
-                    ],
-                    "aliases": {
-                        "Hashids": "Vinkla\\Hashids\\Facades\\Hashids"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Vinkla\\Hashids\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Vincent Klaiber",
-                    "email": "hello@vinkla.com",
-                    "homepage": "https://vinkla.com"
-                }
-            ],
-            "description": "A Hashids bridge for Laravel",
-            "keywords": [
-                "bitly",
-                "decrypt",
-                "encrypt",
-                "hash",
-                "hashid",
-                "hashids",
-                "ids",
-                "laravel",
-                "obfuscate",
-                "youtube"
-            ],
-            "time": "2017-08-07T13:01:20+00:00"
-        },
-        {
             "name": "vlucas/phpdotenv",
             "version": "v2.4.0",
             "source": {
@@ -3009,7 +3134,7 @@
             ],
             "authors": [
                 {
-                    "name": "François Zaninotto"
+                    "name": "Fran??ois Zaninotto"
                 }
             ],
             "description": "Faker is a PHP library that generates fake data for you.",
@@ -3104,7 +3229,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "P??draic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3407,7 +3532,7 @@
                     "role": "Contributors"
                 },
                 {
-                    "name": "Marc Würth",
+                    "name": "Marc W??rth",
                     "email": "ravage@bluewin.ch",
                     "homepage": "https://github.com/ravage84",
                     "role": "Project Maintainer"
