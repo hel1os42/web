@@ -18,9 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon updated_at
  * @property Account source
  * @property Account destination
+ * @property string type
  */
 class Transact extends NauModel
 {
+    const TYPE_REDEMPTION = 'redemption';
+    const TYPE_P2P        = 'p2p';
+    const TYPE_INCOMING   = 'incoming';
 
     public function __construct(array $attributes = [])
     {
@@ -31,31 +35,35 @@ class Transact extends NauModel
         $this->primaryKey = 'txid';
 
         $this->casts = [
-            'txid'   => 'string',
-            'src_id' => 'string',
-            'dst_id' => 'string',
-            'amount' => 'float',
-            'status' => 'string'
+            'txid'    => 'string',
+            'src_id'  => 'string',
+            'dst_id'  => 'string',
+            'amount'  => 'float',
+            'status'  => 'string',
+            'tx_type' => 'string',
         ];
 
         $this->appends = [
             'id',
             'source_account_id',
-            'destination_account_id'
+            'destination_account_id',
+            'type',
         ];
 
         $this->hidden = [
             'txid',
             'src_id',
-            'dst_id'
+            'dst_id',
+            'tx_type',
         ];
     }
 
     /** @var array */
     protected $maps = [
-        'txid'   => 'id',
-        'src_id' => 'source_account_id',
-        'dst_id' => 'destination_account_id',
+        'txid'    => 'id',
+        'src_id'  => 'source_account_id',
+        'dst_id'  => 'destination_account_id',
+        'tx_type' => 'type',
     ];
 
     /** @return string */
@@ -123,5 +131,37 @@ class Transact extends NauModel
     public function getDestination(): Account
     {
         return $this->destination;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeRedemption(): bool
+    {
+        return $this->getType() === self::TYPE_REDEMPTION;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeP2p(): bool
+    {
+        return $this->getType() === self::TYPE_P2P;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeIncoming(): bool
+    {
+        return $this->getType() === self::TYPE_INCOMING;
     }
 }
