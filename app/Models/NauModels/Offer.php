@@ -57,6 +57,8 @@ class Offer extends NauModel
 
         $this->primaryKey = 'id';
 
+        $this->incrementing = false;
+
         $this->attributes = array(
             'account_id'           => null,
             'label'                => null,
@@ -171,7 +173,7 @@ class Offer extends NauModel
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
+        return $this->belongsTo(Account::class);
     }
 
     /**
@@ -179,7 +181,7 @@ class Offer extends NauModel
      */
     public function activationCodes(): HasMany
     {
-        return $this->hasMany(ActivationCode::class, 'offer_id', 'id');
+        return $this->hasMany(ActivationCode::class);
     }
 
     /**
@@ -187,7 +189,7 @@ class Offer extends NauModel
      */
     public function redemptions(): HasMany
     {
-        return $this->hasMany(Redemption::class, 'offer_id', 'id');
+        return $this->hasMany(Redemption::class);
     }
 
     /**
@@ -401,11 +403,12 @@ class Offer extends NauModel
 
     /**
      * @param string $code
-     * @return mixed
+     * @return Redemption
      */
     public function redeem(string $code)
     {
         $activationCode = $this->activationCodes()->byCode($code)->firstOrFail();
+
         if (null == $activationCode) {
             throw new InvalidActivationCodeException($this, $code);
         }

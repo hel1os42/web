@@ -19,7 +19,7 @@ class CreateActivationCodesTable extends Migration
             $table->uuid('user_id');
             $table->uuid('offer_id');
             $table->uuid('redemption_id')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
 
         Schema::table('activation_codes', function(Blueprint $table)

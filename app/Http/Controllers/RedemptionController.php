@@ -13,6 +13,7 @@ use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use Symfony\Component\HttpFoundation\Response;
+use Vinkla\Hashids\Facades\Hashids;
 
 class RedemptionController extends Controller
 {
@@ -23,7 +24,7 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
-        return Offer::find($offerId) ?
+        return Offer::find($offerId)->first() ?
             \response()->render('redemption.code', auth()->user()->activationCodes()->create(['offer_id' => $offerId])->toArray()) :
             \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
     }
@@ -46,7 +47,9 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId): Response
     {
-        $offer = Offer::firstOrFail($offerId);
+        $offer = Offer::findOrFail($offerId);
+
+
         if($offer->isOwner(auth()->user())){
             $redemption = $offer->redeem($request->code);
             return \response()->render(
@@ -66,8 +69,9 @@ class RedemptionController extends Controller
      */
     public function show(string $offerId, string $rid): Response
     {
-        return Offer::findOrFail($offerId)->isOwner(auth()->user()) ?
-            \response()->render('redemption.show', Redemption::findOrFail($rid)->toArray()) :
+        $offer = Offer::findOrFail($offerId);
+        return $offer->isOwner(auth()->user()) ?
+            \response()->render('redemption.show', $offer->redemptions()->firstOrFail($rid)->toArray()) :
             \response()->error(Response::HTTP_UNAUTHORIZED);
     }
 }

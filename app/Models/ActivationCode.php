@@ -7,7 +7,7 @@ use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -81,19 +81,19 @@ class ActivationCode extends Model
     /** @return BelongsTo */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 
     /** @return BelongsTo */
     public function offer(): BelongsTo
     {
-        return $this->belongsTo(Offer::class, 'offer_id', 'id');
+        return $this->belongsTo(Offer::class);
     }
 
     /** @return BelongsTo */
     public function redemption(): BelongsTo
     {
-        return $this->belongsTo(Redemption::class, 'redemption_id', 'id');
+        return $this->belongsTo(Redemption::class);
     }
 
     /**
@@ -118,9 +118,9 @@ class ActivationCode extends Model
     /**
      * @param Redemption $redemption
      */
-    public function activate(Redemption $redemption)
+    public function activated(Redemption $redemption)
     {
-        $this->redemption()->assign($redemption)->update();
+        $this->setRedemptionId($redemption->getId())->update();
     }
 
 }
