@@ -15,13 +15,7 @@ class TransactObserver
         $coreService = app()->make(CoreService::class);
 
         if ($transact->isTypeP2p()) {
-            $coreService = $coreService->sendNau($transact);
+            dispatch($coreService->sendNau($transact));
         }
-
-        if ($transact->isTypeIncoming()) {
-            $coreService = $coreService->transactionNotification($transact);
-        }
-
-        $coreService->handle();
     }
 }

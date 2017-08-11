@@ -13,7 +13,6 @@ class UserObserver
     public function creating(User $user)
     {
         $coreService = app()->make(CoreService::class);
-        $coreService->userCreated($user)
-            ->handle();
+        dispatch($coreService->userCreated($user));
     }
 }
