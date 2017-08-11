@@ -1,14 +1,7 @@
 <?php
 namespace App\Traits;
 
-use App\Exceptions\NauObjException;
-use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Job\OfferCreated;
-use OmniSynapse\CoreService\Job\OfferRedemption;
-use OmniSynapse\CoreService\Job\OfferUpdated;
-use OmniSynapse\CoreService\Job\SendNau;
-use OmniSynapse\CoreService\Job\TransactionNotification;
-use OmniSynapse\CoreService\Job\UserCreated;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Trait NauObj
@@ -17,114 +10,47 @@ use OmniSynapse\CoreService\Job\UserCreated;
 trait NauObj
 {
     /**
-     * @param string $jobClassName
+     * @param Builder $query
+     * @return bool
      */
-    public function save(string $jobClassName){
-        $coreService = app()->make(CoreService::class);
-
-        switch ($jobClassName) {
-            case OfferCreated::class;
-                $coreService->offerCreated($this);
-                break;
-
-            case OfferRedemption::class;
-                $coreService->offerRedemption($this);
-                break;
-
-            case OfferUpdated::class;
-                $coreService->offerUpdated($this);
-                break;
-
-            case SendNau::class;
-                $coreService->sendNau($this);
-                break;
-
-            case TransactionNotification::class;
-                $coreService->userCreated($this);
-                break;
-
-            case UserCreated::class;
-                $coreService->transactionNotification($this);
-                break;
-
-            default:
-                $this->showException();
+    protected function performUpdate(Builder $query)
+    {
+        if ($this->fireModelEvent('updating') === false) {
+            return false;
         }
 
-        $coreService->handle();
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
+
+        $dirty = $this->getDirty();
+
+        if (count($dirty) > 0) {
+            $this->fireModelEvent('updated', false);
+        }
+
+        return true;
     }
 
-    private function showException()
+    /**
+     * @param Builder $query
+     * @return bool
+     */
+    protected function performInsert(Builder $query)
     {
-        throw new NauObjException(sprintf('Not allowed to persist changes in read-only model %d', get_called_class()));
-    }
+        if ($this->fireModelEvent('creating') === false) {
+            return false;
+        }
 
-    private static function staticShowException()
-    {
-        throw new NauObjException(sprintf('Not allowed to persist changes in read-only model %d', get_called_class()));
-    }
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
 
-    static function create() {
-        self::staticShowException();
-    }
+        $this->exists = true;
+        $this->wasRecentlyCreated = true;
 
-    static function update() {
-        self::staticShowException();
-    }
+        $this->fireModelEvent('created', false);
 
-    static function forceCreate(){
-        self::staticShowException();
-    }
-
-    static function firstOrCreate(){
-        self::staticShowException();
-    }
-
-    static function firstOrNew(){
-        self::staticShowException();
-    }
-
-    static function destroy(){
-        self::staticShowException();
-    }
-
-    public function delete(){
-        $this->showException();
-    }
-
-    public function restore(){
-        $this->showException();
-    }
-
-    public function forceDelete(){
-        $this->showException();
-    }
-
-    public function performDeleteOnModel(){
-        $this->showException();
-    }
-
-    public function push(){
-        $this->showException();
-    }
-
-    public function finishSave(){
-        $this->showException();
-    }
-
-    public function performUpdate(){
-        $this->showException();
-    }
-
-    public function touch(){
-        $this->showException();
-    }
-
-    public function insert(){
-        $this->showException();
-    }
-
-    public function truncate(){
-        $this->showException();
+        return true;
     }
 }

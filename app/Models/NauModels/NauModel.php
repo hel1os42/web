@@ -14,7 +14,8 @@ use Sofa\Eloquence\Mappable;
  */
 class NauModel extends Model
 {
-    use HasNau, NauObj, Eloquence, Mappable;
+    use HasNau;
+    use NauObj, Eloquence, Mappable;
 
     /**
      * @var string
