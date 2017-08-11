@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\NauModels\User as CoreUser;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +15,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile', Auth::id()) : response()->render('home', []);
+        return Auth::check() ? redirect()->route('profile', auth()->id()) : response()->render('home', []);
     }
 
     /**
@@ -24,12 +25,11 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function show(string $uuid)
+    public function show(string $uuid = null)
     {
-        $userId = auth()->user()->getId();
-        if ($uuid !== $userId) {
-            return response()->error(Response::HTTP_FORBIDDEN);
-        }
-        return response()->render('profile', (new User)->findOrFail($userId)->toArray(), Response::HTTP_CREATED);
+        $userId = auth()->id();
+        return (!empty($uuid) && $uuid !== $userId) ?
+            response()->error(Response::HTTP_FORBIDDEN) :
+            response()->render('profile', (new User)->findOrFail($userId)->toArray());
     }
 }
