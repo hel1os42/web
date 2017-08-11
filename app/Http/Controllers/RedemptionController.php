@@ -23,7 +23,7 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
-        return (new Offer())->find($offerId) ?
+        return Offer::find($offerId) ?
             \response()->render('redemption.code', auth()->user()->activationCodes()->create(['offer_id' => $offerId])->toArray()) :
             \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
     }
@@ -34,8 +34,8 @@ class RedemptionController extends Controller
      */
     public function create(string $offerId): Response
     {
-        return auth()->user()->equals(Offer::findOrFail($offerId)->getOwner()) ?
-            \response()->render('redemption.create', ['offer_id' => $offerId]) :
+        return Offer::findOrFail($offerId)->isOwner(auth()->user()) ?
+            \response()->render('redemption.create', ['offer_id' => $offerId, 'code' => null]) :
             \response()->error(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -46,22 +46,15 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId): Response
     {
-        $activationCode = new ActivationCode();
-        $activationCode = $activationCode->findOrFail($activationCode->getIdByCode($request->code));
-        if (auth()->user()->equals($activationCode->offer->getOwner()) && $activationCode->offer->getId() === $offerId) {
-            $redemption = (new Redemption())->create([
-                'offer_id' => $offerId,
-                'user_id'  => $activationCode->user->getId()
-            ]);
-            if ($redemption instanceof Redemption) {
-                $activationCode->setRedemptionId($redemption->getId())->update();
-                return \response()->render(
-                    'redemption.redeem',
-                    $redemption->toArray(),
-                    Response::HTTP_CREATED,
-                    route('redemption.show', ['offerId' => $offerId, 'rid' => $redemption->getId()]));
-            }
-            return \response()->error(Response::HTTP_BAD_REQUEST, 'Can\'t activate offer.');
+        $offer = Offer::firstOrFail($offerId);
+        if($offer->isOwner(auth()->user())){
+            $redemption = $offer->redeem($request->code);
+            return \response()->render(
+                'redemption.redeem',
+                $redemption->toArray(),
+                Response::HTTP_CREATED,
+                route('redemption.show', ['offerId' => $offer->getId(), 'rid' => $redemption->getId()])
+            );
         }
         return \response()->error(Response::HTTP_UNAUTHORIZED);
     }
@@ -73,8 +66,8 @@ class RedemptionController extends Controller
      */
     public function show(string $offerId, string $rid): Response
     {
-        return auth()->user()->equals((new Offer())->findOrFail($offerId)->getOwner()) ?
-            \response()->render('redemption.show', (new Redemption())->findOrFail($rid)->toArray()) :
+        return Offer::findOrFail($offerId)->isOwner(auth()->user()) ?
+            \response()->render('redemption.show', Redemption::findOrFail($rid)->toArray()) :
             \response()->error(Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -22,7 +23,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property Offer offer
  * @property User user
  * @property Redemption redemption
- * @method checkOffer(string $offerId)
+ * @method ActivationCode byCode(string $code)
  */
 class ActivationCode extends Model
 {
@@ -37,8 +38,6 @@ class ActivationCode extends Model
 
         $this->table = 'activation_codes';
 
-        $this->timestamps = false;
-
         $this->appends = ['code'];
     }
 
@@ -47,10 +46,20 @@ class ActivationCode extends Model
         'user_id'
     ];
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getCode(): string
     {
         return $this->code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId(): string
+    {
+        return $this->user_id;
     }
 
     /** @return string */
@@ -87,15 +96,6 @@ class ActivationCode extends Model
         return $this->belongsTo(Redemption::class, 'redemption_id', 'id');
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (ActivationCode $model) {
-            $model->created_at = $model->freshTimestamp();
-        });
-    }
-
     /**
      * @param string $code
      * @return int
@@ -104,4 +104,23 @@ class ActivationCode extends Model
     {
         return Hashids::connection('activation_code')->decode($code)[0];
     }
+
+    /**
+     * @param Builder $builder
+     * @param string $code
+     * @return Builder
+     */
+    public function scopeByCode(Builder $builder, string $code): Builder
+    {
+        return $builder->where('id', $this->getIdByCode($code));
+    }
+
+    /**
+     * @param Redemption $redemption
+     */
+    public function activate(Redemption $redemption)
+    {
+        $this->redemption()->assign($redemption)->update();
+    }
+
 }

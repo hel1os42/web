@@ -2,8 +2,10 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\ActivationCode;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sofa\Eloquence\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +39,8 @@ use Ramsey\Uuid\Uuid;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
+ * @property Collection|ActivationCode[] activationCodes
+ * @property Collection|Redemption[] redemptions
  * @method static accountOffers(int $accountId) : Offer
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
@@ -168,6 +172,22 @@ class Offer extends NauModel
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function activationCodes(): HasMany
+    {
+        return $this->hasMany(ActivationCode::class, 'offer_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function redemptions(): HasMany
+    {
+        return $this->hasMany(Redemption::class, 'offer_id', 'id');
     }
 
     /**
@@ -323,6 +343,15 @@ class Offer extends NauModel
     }
 
     /**
+     * @param User $user
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $user->equals($this->getOwner());
+    }
+
+    /**
      * @param Builder $builder
      * @param int $accountId
      * @return Builder
@@ -371,11 +400,24 @@ class Offer extends NauModel
     }
 
     /**
-     * @param User $user
-     * @return bool
+     * @param string $code
+     * @return mixed
      */
-    public function isOwner(User $user): bool
+    public function redeem(string $code)
     {
-        return $user->equals($this->getOwner());
+        $activationCode = $this->activationCodes()->byCode($code)->firstOrFail();
+        if (null == $activationCode) {
+            throw new InvalidActivationCodeException($this, $code);
+        }
+
+        $redemption = $this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
+        if (null === $redemption->getId()) { // how to check if it was created or not??
+            throw new CannotRedeemException($this);
+        }
+
+        $activationCode->activated($redemption);
+
+        return $redemption;
     }
+
 }
