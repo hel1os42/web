@@ -2,8 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request\Offer;
 
-use Tests\TestCase;
 use Faker\Factory as Faker;
+use Tests\TestCase;
 
 class PointTest extends TestCase
 {

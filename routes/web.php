@@ -59,6 +59,12 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
+    Route::get('profile', function(\Illuminate\Http\Request $request) {
+        return Route::dispatchToRoute($request->setRouteResolver(function() {
+            return route('profile', ['id' => auth()->id()]);
+        }));
+    });
+
     Route::get('categories', 'CategoryController@index')->name('categories');
 
 });

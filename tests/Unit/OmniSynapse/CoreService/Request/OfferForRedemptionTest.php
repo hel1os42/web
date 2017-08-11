@@ -3,8 +3,8 @@
 namespace OmniSynapse\CoreService\Request;
 
 use App\Models\NauModels\Redemption;
-use Tests\TestCase;
 use Faker\Factory as Faker;
+use Tests\TestCase;
 
 class OfferForRedemptionTest extends TestCase
 {
