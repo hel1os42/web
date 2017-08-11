@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Vinkla\Hashids\Facades\Hashids;
@@ -18,6 +18,10 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string user_id
  * @property string offer_id
  * @property string redemption_id
+ * @property Carbon created_at
+ * @property Offer offer
+ * @property User user
+ * @property Redemption redemption
  * @method checkOffer(string $offerId)
  */
 class ActivationCode extends Model

@@ -53,8 +53,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'offers/{offerId}/redemption'], function () {
         Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         Route::get('create', 'RedemptionController@create')->name('redemption.create');
-        Route::post('redemption', 'RedemptionController@redemption')->name('redemption.store');
-        Route::get('redemption/{rid}', 'RedemptionController@show')->where('rid',
+        Route::post('', 'RedemptionController@redemption')->name('redemption.store');
+        Route::get('{rid}', 'RedemptionController@show')->where('rid',
             '[a-z0-9-]+')->name('redemption.show');
     });
 

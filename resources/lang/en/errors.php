@@ -9,6 +9,6 @@ return [
     'jwt_exception' => 'Failed to create token. Error:',
     'token_expired' => 'Token expired. Error:',
     'token_invalid' => 'Token invalid. Error:',
-    'offer_not_found' => 'The offer you are looking for does not exist, or it is on moderation',
+    'offer_not_found' => 'The offer you are looking for, does not exist, or it is on moderation',
     'bad_activation_code' => 'Activation code invalid.'
 ];
