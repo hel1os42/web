@@ -100,7 +100,7 @@ class User extends Authenticatable
      */
     public function activationCodes(): Relations\HasMany
     {
-        return $this->hasMany(ActivationCode::class, 'user_id', 'id');
+        return $this->hasMany(ActivationCode::class);
     }
 
     /**

@@ -120,6 +120,6 @@ class ActivationCode extends Model
      */
     public function activated(Redemption $redemption)
     {
-        $this->setRedemptionId($redemption->getId())->update();
+        $this->redemption()->associate($redemption)->update();
     }
 }
