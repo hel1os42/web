@@ -20,12 +20,11 @@ use Webpatser\Uuid\Uuid;
  * @property string email
  * @property string password
  * @property string invite_code
+ * @property string referrer_id
  * @property int level
  * @property int points
- * @property User referrer_id
  * @property Account account
  * @property CoreUser coreUser
- *
  * @property User referrer
  */
 class User extends Authenticatable
