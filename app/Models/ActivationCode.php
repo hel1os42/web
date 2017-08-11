@@ -122,5 +122,4 @@ class ActivationCode extends Model
     {
         $this->setRedemptionId($redemption->getId())->update();
     }
-
 }

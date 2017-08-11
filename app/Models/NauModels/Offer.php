@@ -422,5 +422,4 @@ class Offer extends NauModel
 
         return $redemption;
     }
-
 }
