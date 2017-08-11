@@ -2,8 +2,8 @@
 
 namespace OmniSynapse\CoreService\Request;
 
-use Tests\TestCase;
 use Faker\Factory as Faker;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {

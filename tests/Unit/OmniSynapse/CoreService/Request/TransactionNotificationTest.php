@@ -4,8 +4,8 @@ namespace OmniSynapse\CoreService\Request;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
-use Tests\TestCase;
 use Faker\Factory as Faker;
+use Tests\TestCase;
 
 class TransactionNotificationTest extends TestCase
 {

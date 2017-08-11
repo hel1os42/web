@@ -5,10 +5,10 @@ namespace OmniSynapse\CoreService\Request;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use Carbon\Carbon;
-use Tests\TestCase;
 use Faker\Factory as Faker;
+use Tests\TestCase;
 
-class OfferTest extends TestCase
+class OfferForUpdateTest extends TestCase
 {
     /**
      * @return void
@@ -27,6 +27,7 @@ class OfferTest extends TestCase
          * Prepare Offer mock and params
          */
         $offer        = $this->createMock(Offer::class);
+        $offerId      = $faker->uuid;
         $name         = $faker->name;
         $description  = $faker->text();
         $categoryId   = $faker->uuid;
@@ -48,6 +49,7 @@ class OfferTest extends TestCase
         /*
          * Set Offer methods
          */
+        $offer->method('getId')->willReturn($offerId);
         $offer->method('getLabel')->willReturn($name);
         $offer->method('getDescription')->willReturn($description);
         $offer->method('getCategoryId')->willReturn($categoryId);
@@ -70,14 +72,14 @@ class OfferTest extends TestCase
         /*
          * Create Offer request and prepare jsonSerialize for comparing
          */
-        $offerRequest = new \OmniSynapse\CoreService\Request\Offer($offer);
-        $expected     = [
+        $offerForUpdateRequest = new OfferForUpdate($offer);
+        $expected              = [
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,
             'description'       => $description,
             'category_id'       => $categoryId,
-            'geo'               => $offerRequest->geo->jsonSerialize(), // don't have to be checked
-            'limits'            => $offerRequest->limits->jsonSerialize(), // don't have to be checked
+            'geo'               => $offerForUpdateRequest->geo->jsonSerialize(), // don't have to be checked
+            'limits'            => $offerForUpdateRequest->limits->jsonSerialize(), // don't have to be checked
             'reward'            => $reward,
             'start_date'        => $startDate->toDateString(),
             'end_date'          => $endDate->toDateString(),
@@ -88,6 +90,6 @@ class OfferTest extends TestCase
         /*
          * Compare arrays
          */
-        $this->assertEquals($expected, $offerRequest->jsonSerialize(), 'Expected array is not equals with offerCreated array');
+        $this->assertEquals($expected, $offerForUpdateRequest->jsonSerialize(), 'Expected array is not equals with offerCreated array');
     }
 }

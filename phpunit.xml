@@ -10,17 +10,17 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="CoreService REQUEST OFFER UNIT">
-            <directory suffix="Test.php">./tests/Unit/CoreService/Request/Offer</directory>
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService/Request/Offer</directory>
         </testsuite>
         <testsuite name="CoreService REQUEST UNIT">
-            <directory suffix="Test.php">./tests/Unit/CoreService/Request</directory>
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService/Request</directory>
         </testsuite>
         <testsuite name="CoreService UNIT">
-            <directory suffix="Test.php">./tests/Unit/CoreService</directory>
+            <directory suffix="Test.php">./tests/Unit/OmniSynapse/CoreService</directory>
         </testsuite>
 
         <testsuite name="CoreService JOBS INTEGRATION">
-            <directory suffix="Test.php">./tests/Integration/CoreService/Jobs</directory>
+            <directory suffix="Test.php">./tests/Integration/OmniSynapse/CoreService/Jobs</directory>
         </testsuite>
     </testsuites>
     <filter>
