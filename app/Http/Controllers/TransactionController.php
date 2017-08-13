@@ -6,6 +6,7 @@ use App\Http\Requests\TransactRequest;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 
 /**
  * Class TransactionController
@@ -16,26 +17,25 @@ class TransactionController extends Controller
     /**
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
-    public function createTransaction()
+    public function createTransaction(): Response
     {
-        return response()->render('transact.create');
+        return response()->render('transact.create', new Transact());
     }
 
     /**
      * @param TransactRequest $request
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
-    public function completeTransaction (TransactRequest $request)
+    public function completeTransaction (TransactRequest $request): Response
     {
 
-        $senderAccount      = Account::whereOwnerId($request->sender)->firstOrFail();
-        $destinationAccount = Account::whereOwnerId($request->destination)->firstOrFail();
-        $amount             = $request->input('amount');
+        $senderAccount      = Account::where('owner_id', $request->sender)->firstOrFail();
+        $destinationAccount = Account::where('owner_id', $request->destination)->firstOrFail();
+        $amount             = $request->amount;
 
-        if (false === $senderAccount->isEnoughBalanceFor($amount)) {
-            return response()->error(
-                Response::HTTP_NOT_ACCEPTABLE,
-                trans('msg.your_balance', [
+        if ($senderAccount->isNotEnoughBalanceFor($amount)) {
+            return response()->error(Response::HTTP_NOT_ACCEPTABLE,
+                trans('msg.transactions.balance', [
                     'balance' => sprintf('%0.4f', $senderAccount->getBalance()),
                 ])
             );
@@ -46,10 +46,22 @@ class TransactionController extends Controller
         $transaction->source()->associate($senderAccount);
         $transaction->destination()->associate($destinationAccount);
 
-        //$isCreated = $transaction->save();
+        //$isSaved = $transaction->save();
 
-        return response()
-            ->render('transact.complete', $transaction->toArray(), Response::HTTP_ACCEPTED)
-            ->header('Location: /transactions');
+        if ($transaction->id) {
+            Session::flash('message', trans('msg.transactions.saved'));
+            return response()->render('transact.complete',
+                $transaction->toArray(),
+                Response::HTTP_CREATED,
+                route('transComplete', $transaction->toArray())
+            );
+        }
+
+        Session::flash('message', trans('msg.transactions.accepted'));
+        return response()->render('transact.create',
+            $transaction->toArray(),
+            Response::HTTP_ACCEPTED,
+            route('transCreate')
+        );
     }
 }

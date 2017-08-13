@@ -11,5 +11,9 @@ return [
         'creating' => 'The offer was sent for moderation, in the near future it will appear in the list.',
         'activating' => 'During activation...'
     ],
-    'your_balance' => 'Your balance :balance NAU!',
+    'transactions' => [
+    'balance' => 'Your balance :balance NAU!',
+    'saved' => 'The following data was successfully saved!',
+    'accepted' => 'Transaction created and accepted to queue.',
+    ],
 ];
