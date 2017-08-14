@@ -34,9 +34,10 @@ class TransactionController extends Controller
         $amount             = $request->amount;
 
         if ($senderAccount->isNotEnoughBalanceFor($amount)) {
+            $multiplier = (int)config('nau.multiplier');
             return response()->error(Response::HTTP_NOT_ACCEPTABLE,
                 trans('msg.transactions.balance', [
-                    'balance' => sprintf('%0.4f', $senderAccount->getBalance()),
+                    'balance' => sprintf('%0.'.$multiplier.'f', $senderAccount->getBalance()),
                 ])
             );
         }
