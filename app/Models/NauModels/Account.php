@@ -108,9 +108,9 @@ class Account extends NauModel
      * @param float $amount
      * @return bool
      */
-    public function isNotEnoughBalanceFor(float $amount): bool
+    public function isEnoughBalanceFor(float $amount): bool
     {
-        return $this->getBalance() < $amount;
+        return $this->getBalance() >= $amount;
     }
 
     /**

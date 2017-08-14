@@ -33,7 +33,7 @@ class TransactionController extends Controller
         $destinationAccount = Account::where('owner_id', $request->destination)->firstOrFail();
         $amount             = $request->amount;
 
-        if ($senderAccount->isNotEnoughBalanceFor($amount)) {
+        if (false === $senderAccount->isEnoughBalanceFor($amount)) {
             $multiplier = (int)config('nau.multiplier');
             return response()->error(Response::HTTP_NOT_ACCEPTABLE,
                 trans('msg.transactions.balance', [
@@ -47,7 +47,7 @@ class TransactionController extends Controller
         $transaction->source()->associate($senderAccount);
         $transaction->destination()->associate($destinationAccount);
 
-        //$isSaved = $transaction->save();
+        $transaction->save();
 
         if ($transaction->id) {
             Session::flash('message', trans('msg.transactions.saved'));
