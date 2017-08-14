@@ -38,6 +38,14 @@ class Handler extends ExceptionHandler
             return response()->error($exception->getStatusCode(), $exception->getMessage());
         }
 
+        if ($exception instanceof InvalidActivationCodeException) {
+            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Invalid activstion code.');
+        }
+
+        if ($exception instanceof CannotRedeemException) {
+            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Offer redemption error.');
+        }
+
         return parent::render($request, $exception);
     }
 

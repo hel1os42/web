@@ -32,19 +32,19 @@ class ActivationCode extends Model
      */
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
+        $this->fillable = [
+            'offer_id',
+            'user_id'
+        ];
 
         $this->connection = config('database.default');
 
         $this->table = 'activation_codes';
 
         $this->appends = ['code'];
-    }
 
-    protected $fillable = [
-        'offer_id',
-        'user_id'
-    ];
+        parent::__construct($attributes);
+    }
 
     /**
      * @return string

@@ -51,8 +51,6 @@ class Offer extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = "offer";
 
         $this->primaryKey = 'id';
@@ -132,6 +130,8 @@ class Offer extends NauModel
             'latitude',
             'longitude'
         ];
+
+        parent::__construct($attributes);
     }
 
     /**

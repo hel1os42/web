@@ -50,13 +50,14 @@ Route::group(['middleware' => 'auth'], function () {
             'destroy'
         ]
     ]);
-
-    Route::group(['prefix' => 'offers/{offerId}/redemption'], function () {
+    Route::group(['prefix' => 'offers/{offerId}'], function () {
         Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
-        Route::get('create', 'RedemptionController@create')->name('redemption.create');
-        Route::post('', 'RedemptionController@redemption')->name('redemption.store');
-        Route::get('{rid}', 'RedemptionController@show')->where('rid',
-            '[a-z0-9-]+')->name('redemption.show');
+        Route::group(['prefix' => 'redemption'], function () {
+            Route::get('create', 'RedemptionController@create')->name('redemption.create');
+            Route::post('', 'RedemptionController@redemption')->name('redemption.store');
+            Route::get('{rid}', 'RedemptionController@show')->where('rid',
+                '[a-z0-9-]+')->name('redemption.show');
+        });
     });
 
     Route::resource('offers', 'User\OfferController', [
@@ -67,7 +68,6 @@ Route::group(['middleware' => 'auth'], function () {
             'destroy'
         ]
     ]);
-
 
 
     Route::get('categories', 'CategoryController@index')->name('categories');
