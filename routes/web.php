@@ -22,6 +22,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
         ->where('invite', '[a-z0-9]+')
         ->name('registerForm');
+    Route::get('token', 'Auth\LoginController@tokenRefresh');
 });
 
 Route::post('users', 'Auth\RegisterController@register')->name('register');
