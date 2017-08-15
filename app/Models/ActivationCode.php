@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\BadActivationCodeException;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
@@ -99,10 +100,16 @@ class ActivationCode extends Model
     /**
      * @param string $code
      * @return int
+     * @throws BadActivationCodeException
      */
     public function getIdByCode(string $code): int
     {
-        return Hashids::connection('activation_code')->decode($code)[0];
+        $id = Hashids::connection('activation_code')->decode($code);
+        if (!isset($id[0])) {
+            throw new BadActivationCodeException();
+        }
+        return $id[0];
+
     }
 
     /**

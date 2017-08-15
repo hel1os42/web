@@ -27,23 +27,22 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $exception
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Exception $exception)
     {
-        if ($this->isHttpException($exception) && $request->expectsJson())
-        {
+        if ($this->isHttpException($exception) && $request->expectsJson()) {
             return response()->error($exception->getStatusCode(), $exception->getMessage());
-        }
-
-        if ($exception instanceof InvalidActivationCodeException) {
-            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Invalid activstion code.');
         }
 
         if ($exception instanceof CannotRedeemException) {
             return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Offer redemption error.');
+        }
+
+        if ($exception instanceof BadActivationCodeException) {
+            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Wrong activation code.');
         }
 
         return parent::render($request, $exception);
@@ -52,7 +51,7 @@ class Handler extends ExceptionHandler
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     protected function unauthenticated($request)
