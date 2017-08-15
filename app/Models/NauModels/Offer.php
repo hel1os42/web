@@ -2,7 +2,8 @@
 
 namespace App\Models\NauModels;
 
-use App\Exceptions\CannotRedeemException;
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\User;
 use Carbon\Carbon;
@@ -405,15 +406,19 @@ class Offer extends NauModel
     /**
      * @param string $code
      * @return Redemption
-     * @throws CannotRedeemException
+     * @throws BadActivationCodeException|CannotRedeemException
      */
     public function redeem(string $code)
     {
-        $activationCode = $this->activationCodes()->byCode($code)->firstOrFail();
+        $activationCode = $this->activationCodes()->byCode($code)->first();
 
-        $redemption = $this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
+        if (null === $activationCode) {
+            throw new BadActivationCodeException($this, $code);
+        }
+
+        $redemption = new Redemption();//$this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
         if (null === $redemption->getId()) { // how to check if it was created or not??
-            throw new CannotRedeemException();
+            throw new CannotRedeemException($this);
         }
 
         $activationCode->activated($redemption);

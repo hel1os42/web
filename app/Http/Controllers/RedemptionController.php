@@ -50,7 +50,6 @@ class RedemptionController extends Controller
     {
         $offer = Offer::findOrFail($offerId);
 
-
         if ($offer->isOwner(auth()->user())) {
             $redemption = $offer->redeem($request->code);
             return \response()->render(

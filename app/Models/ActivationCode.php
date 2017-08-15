@@ -102,13 +102,10 @@ class ActivationCode extends Model
      * @return int
      * @throws BadActivationCodeException
      */
-    public function getIdByCode(string $code): int
+    public function getIdByCode(string $code): ?int
     {
         $activationId = Hashids::connection('activation_code')->decode($code);
-        if (!isset($activationId[0])) {
-            throw new BadActivationCodeException();
-        }
-        return $activationId[0];
+        return isset($activationId[0]) ? $activationId[0] : null;
 
     }
 

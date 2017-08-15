@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -29,23 +31,11 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Exception $exception
-     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Exception $exception): Response
     {
-        if ($this->isHttpException($exception) && $request->expectsJson()) {
-            return response()->error($exception->getStatusCode(), $exception->getMessage());
-        }
-
-        if ($exception instanceof CannotRedeemException) {
-            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Offer redemption error.');
-        }
-
-        if ($exception instanceof BadActivationCodeException) {
-            return response()->error(Response::HTTP_BAD_REQUEST, 'Wrong activation code.');
-        }
-
-        return parent::render($request, $exception);
+        return response()->error($exception->getStatusCode(), $exception->getMessage());
     }
 
     /**
