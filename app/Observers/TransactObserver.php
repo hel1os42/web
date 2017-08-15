@@ -12,10 +12,11 @@ class TransactObserver
      */
     public function creating(Transact $transact)
     {
-        $coreService = app()->make(CoreService::class);
-
-        if ($transact->isTypeP2p()) {
-            dispatch($coreService->sendNau($transact));
+        if (!$transact->isTypeP2p()) {
+            return;
         }
+
+        $coreService = app()->make(CoreService::class);
+        dispatch($coreService->sendNau($transact));
     }
 }

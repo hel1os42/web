@@ -15,8 +15,8 @@ abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var \GuzzleHttp\Client */
-    private $client;
+    /** @var Client */
+    protected $client;
 
     /**
      * AbstractJob constructor.
