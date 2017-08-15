@@ -42,7 +42,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof BadActivationCodeException) {
-            return response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, 'Wrong activation code.');
+            return response()->error(Response::HTTP_BAD_REQUEST, 'Wrong activation code.');
         }
 
         return parent::render($request, $exception);
