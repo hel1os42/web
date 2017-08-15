@@ -61,4 +61,9 @@ class UserCreated extends AbstractJob
     {
         return UserResponse::class;
     }
+
+    public function fail($exception = null)
+    {
+        //
+    }
 }

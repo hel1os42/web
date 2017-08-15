@@ -61,4 +61,9 @@ class SendNau extends AbstractJob
     {
         return Transaction::class;
     }
+
+    public function fail($exception = null)
+    {
+        //
+    }
 }

@@ -61,4 +61,9 @@ class OfferUpdated extends AbstractJob
     {
         return OfferResponse::class;
     }
+
+    public function fail($exception = null)
+    {
+        //
+    }
 }

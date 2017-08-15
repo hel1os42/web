@@ -58,4 +58,9 @@ class TransactionNotification extends AbstractJob
     {
         return Transaction::class;
     }
+
+    public function fail($exception = null)
+    {
+        //
+    }
 }
