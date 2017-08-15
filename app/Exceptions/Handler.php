@@ -31,11 +31,14 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Exception $exception
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\Response
      */
-    public function render($request, Exception $exception): Response
+    public function render($request, Exception $exception)
     {
-        return response()->error($exception->getStatusCode(), $exception->getMessage());
+        if($request->wantsJson()){
+            return response()->error($exception->getStatusCode(), $exception->getMessage());
+        }
+        return parent::render($request, $exception);
     }
 
     /**
