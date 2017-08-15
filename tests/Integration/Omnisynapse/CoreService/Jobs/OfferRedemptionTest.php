@@ -34,7 +34,7 @@ class OfferRedemptionTest extends TestCase
         ];
 
         $redemptionMock = \Mockery::mock(Redemption::class);
-        $redemptionMock->shouldReceive('getId')->once()->andReturn($redemption['id']);
+        $redemptionMock->shouldReceive('getOfferId')->once()->andReturn($redemption['offerId']);
         $redemptionMock->shouldReceive('getUserId')->once()->andReturn($redemption['userId']);
 
         $response = new Response(201, [
