@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Observers;
+namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\User;
 use OmniSynapse\CoreService\CoreService;

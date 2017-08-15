@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Observers;
+namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\CoreService;
