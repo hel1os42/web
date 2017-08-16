@@ -22,7 +22,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
         ->where('invite', '[a-z0-9]+')
         ->name('registerForm');
-    Route::get('token', 'Auth\LoginController@tokenRefresh');
 });
 
 Route::post('users', 'Auth\RegisterController@register')->name('register');
@@ -34,6 +33,7 @@ Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
     Route::get('users/{id}', 'ProfileController@show')
         ->where('id', '[a-z0-9-]+')
         ->name('profile');
