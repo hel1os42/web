@@ -8,15 +8,25 @@ use Throwable;
 class OfferException extends \Exception
 {
     /**
+     * @var Offer
+     */
+    public $offer;
+
+    /**
      * OfferException constructor.
-     * @param Offer|null $offer
+     * @param Offer $offer
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(Offer $offer = null, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(Offer $offer, $message = "", $code = 0, Throwable $previous = null)
     {
+        $this->offer = $offer;
         parent::__construct($message, $code, $previous);
+    }
+
+    public function getOffer()
+    {
+        return $this->offer;
     }
 }
