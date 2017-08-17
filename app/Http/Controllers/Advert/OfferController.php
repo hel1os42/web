@@ -47,7 +47,7 @@ class OfferController extends Controller
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
             Response::HTTP_ACCEPTED,
-            route('advert.offer'));
+            route('advert.offers.index'));
     }
 
     /**
