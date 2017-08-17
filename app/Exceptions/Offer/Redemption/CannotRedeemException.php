@@ -2,10 +2,10 @@
 
 namespace App\Exceptions\Offer\Redemption;
 
-use App\Exceptions\BaseException;
+use App\Exceptions\Offer\RedemptionException;
 use App\Models\NauModels\Offer;
 
-class CannotRedeemException extends BaseException
+class CannotRedeemException extends RedemptionException
 {
     /**
      * CannotRedeemException constructor.
@@ -15,6 +15,6 @@ class CannotRedeemException extends BaseException
     {
         $message = 'Offer redemption error. Offer id: ' . $offer->getId();
 
-        parent::__construct($message);
+        parent::__construct($offer, $message);
     }
 }

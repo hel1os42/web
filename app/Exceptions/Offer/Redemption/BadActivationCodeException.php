@@ -2,23 +2,21 @@
 
 namespace App\Exceptions\Offer\Redemption;
 
-use App\Exceptions\BaseException;
+use App\Exceptions\Offer\RedemptionException;
+use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
-use Symfony\Component\HttpFoundation\Response;
 
-class BadActivationCodeException extends BaseException
+class BadActivationCodeException extends RedemptionException
 {
     /**
      * BadActivationCodeException constructor.
      * @param Offer $offer
-     * @param string $code
+     * @param ActivationCode $activationCode
      */
-    public function __construct(Offer $offer, string $code)
+    public function __construct(Offer $offer, ActivationCode $activationCode)
     {
-        $message = 'Wrong activation code. Code: ' . $code . ' Offer id: ' . $offer->getId();
+        $message = 'Wrong activation code. Code: ' . $activationCode->getCode() . ' Offer id: ' . $offer->getId();
 
-        parent::__construct($message);
-
-        $this->statusCode = Response::HTTP_BAD_REQUEST;
+        parent::__construct($offer, $activationCode, $message);
     }
 }

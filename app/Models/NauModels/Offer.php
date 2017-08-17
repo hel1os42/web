@@ -413,7 +413,7 @@ class Offer extends NauModel
         $activationCode = $this->activationCodes()->byCode($code)->first();
 
         if (null === $activationCode) {
-            throw new BadActivationCodeException($this, $code);
+            throw new BadActivationCodeException($this, $activationCode);
         }
 
         $redemption = new Redemption();//$this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
