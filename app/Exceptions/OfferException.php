@@ -10,7 +10,7 @@ class OfferException extends \Exception
     /**
      * @var Offer
      */
-    public $offer;
+    private $offer;
 
     /**
      * OfferException constructor.
