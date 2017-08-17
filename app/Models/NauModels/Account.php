@@ -62,6 +62,12 @@ class Account extends NauModel
         return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
+    /** @return User */
+    public function getOwner(): User
+    {
+        return $this->owner;
+    }
+
     /** @return HasMany */
     public function offers(): HasMany
     {

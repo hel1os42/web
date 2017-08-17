@@ -2,8 +2,10 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Mail\UserCreatedFail;
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
 
@@ -16,6 +18,9 @@ class UserCreated extends AbstractJob
     /** @var UserRequest */
     private $requestObject;
 
+    /** @var User */
+    private $user;
+
     /**
      * UserCreated constructor.
      *
@@ -25,6 +30,8 @@ class UserCreated extends AbstractJob
     public function __construct(User $user, \GuzzleHttp\Client $client)
     {
         parent::__construct($client);
+
+        $this->user = $user;
 
         /** @var UserRequest requestObject */
         $this->requestObject = new UserRequest($user);
@@ -62,8 +69,12 @@ class UserCreated extends AbstractJob
         return UserResponse::class;
     }
 
+    /**
+     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     */
     public function fail($exception = null)
     {
-        //
+        Mail::to($this->user->getEmail())
+            ->queue(new UserCreatedFail($this->user));
     }
 }

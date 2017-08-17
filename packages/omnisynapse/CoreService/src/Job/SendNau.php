@@ -2,8 +2,10 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Mail\SendNauFail;
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
 
@@ -16,6 +18,9 @@ class SendNau extends AbstractJob
     /** @var SendNauRequest */
     private $requestObject;
 
+    /** @var Transact */
+    private $transaction;
+
     /**
      * SendNau constructor.
      *
@@ -25,6 +30,8 @@ class SendNau extends AbstractJob
     public function __construct(Transact $transaction, \GuzzleHttp\Client $client)
     {
         parent::__construct($client);
+
+        $this->transaction = $transaction;
 
         /** @var SendNau requestObject */
         $this->requestObject = (new SendNauRequest($transaction));
@@ -62,8 +69,12 @@ class SendNau extends AbstractJob
         return Transaction::class;
     }
 
+    /**
+     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     */
     public function fail($exception = null)
     {
-        //
+        Mail::to($this->transaction->getSource()->getOwner()->getEmail())
+            ->queue(new SendNauFail($this->transaction));
     }
 }

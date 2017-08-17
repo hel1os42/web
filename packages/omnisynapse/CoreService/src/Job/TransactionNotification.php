@@ -2,8 +2,10 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Mail\TransactionNotificationFail;
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\TransactionNotification as TransactionNotificationRequest;
 use OmniSynapse\CoreService\Response\Transaction;
 
@@ -11,6 +13,9 @@ class TransactionNotification extends AbstractJob
 {
     /** @var TransactionNotificationRequest */
     private $requestObject;
+
+    /** @var Transact */
+    private $transaction;
 
     /**
      * TransactionNotification constructor.
@@ -22,6 +27,8 @@ class TransactionNotification extends AbstractJob
     public function __construct(Transact $transaction, $category, \GuzzleHttp\Client $client)
     {
         parent::__construct($client);
+
+        $this->transaction = $transaction;
 
         /** @var SendNau requestObject */
         $this->requestObject = (new TransactionNotificationRequest($transaction, $category));
@@ -59,8 +66,12 @@ class TransactionNotification extends AbstractJob
         return Transaction::class;
     }
 
+    /**
+     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     */
     public function fail($exception = null)
     {
-        //
+        Mail::to($this->transaction->getSource()->getOwner()->getEmail())
+            ->queue(new TransactionNotificationFail($this->transaction));
     }
 }

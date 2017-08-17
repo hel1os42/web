@@ -2,8 +2,10 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Mail\OfferCreatedFail;
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 
@@ -16,6 +18,9 @@ class OfferCreated extends AbstractJob
     /** @var OfferRequest\ */
     private $requestObject;
 
+    /** @var Offer */
+    private $offer;
+
     /**
      * OfferCreated constructor.
      *
@@ -25,6 +30,8 @@ class OfferCreated extends AbstractJob
     public function __construct(Offer $offer, \GuzzleHttp\Client $client)
     {
         parent::__construct($client);
+
+        $this->offer = $offer;
 
         /** @var OfferRequest requestObject */
         $this->requestObject = new OfferRequest($offer);
@@ -62,8 +69,12 @@ class OfferCreated extends AbstractJob
         return OfferResponse::class;
     }
 
+    /**
+     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     */
     public function fail($exception = null)
     {
-        //
+        Mail::to($this->offer->getOwner()->getEmail())
+            ->queue(new OfferCreatedFail($this->offer));
     }
 }
