@@ -47,7 +47,7 @@ trait NauObj
         }
 
         if (null !== $this->getKey()) {
-            $this->exists = true;
+            $this->exists             = true;
             $this->wasRecentlyCreated = true;
         }
 
