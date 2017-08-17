@@ -25,6 +25,9 @@ class OfferException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * @return Offer
+     */
     public function getOffer()
     {
         return $this->offer;
