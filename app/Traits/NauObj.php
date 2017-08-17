@@ -12,6 +12,7 @@ trait NauObj
     /**
      * @param Builder $query
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function performUpdate(Builder $query)
     {
@@ -35,6 +36,7 @@ trait NauObj
     /**
      * @param Builder $query
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function performInsert(Builder $query)
     {

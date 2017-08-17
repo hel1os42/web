@@ -36,7 +36,9 @@ class RequestException extends Exception
 
         try {
             $jsonMapper->map(\GuzzleHttp\json_decode($rawResponse), $contents = new ErrorResponse());
-        } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
+        } catch (\InvalidArgumentException $e) {
+            $contents = null;
+        } catch (\JsonMapper_Exception $e) {
             $contents = null;
         }
 

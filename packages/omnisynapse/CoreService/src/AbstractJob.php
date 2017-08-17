@@ -66,7 +66,9 @@ abstract class AbstractJob implements ShouldQueue
 
         try {
             $jsonMapper->map($decodedContent, $responseObject = new $responseClassName);
-        } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
+        } catch (\InvalidArgumentException $e) {
+            throw new RequestException($this, $response, $responseContent, $e);
+        } catch (\JsonMapper_Exception $e) {
             throw new RequestException($this, $response, $responseContent, $e);
         }
 
