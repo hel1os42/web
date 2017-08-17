@@ -15,6 +15,6 @@ class CannotRedeemException extends RedemptionException
     {
         $message = 'Offer redemption error. Offer id: ' . $offer->getId();
 
-        parent::__construct($offer, $message);
+        parent::__construct($offer, null, $message);
     }
 }
