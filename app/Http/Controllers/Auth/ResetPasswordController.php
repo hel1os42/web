@@ -6,16 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Contracts\Auth\CanResetPassword;
 
+/**
+ * Class ResetPasswordController
+ * @package App\Http\Controllers\Auth
+ */
 class ResetPasswordController extends Controller
 {
     use ResetsPasswords;
 
     /**
-     * Create a new controller instance.
-     *
      * @return void
      */
     public function __construct()
@@ -24,15 +28,11 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Display the password reset view for the given token.
-     *
-     * If no token is present, display the link request form.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string|null  $token
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param  Request $request
+     * @param  string|null $token
+     * @return Response
      */
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm(Request $request, string $token = null)
     {
         return response()->render('auth.passwords.reset', [
             'token' => $token,
@@ -41,27 +41,22 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Get the response for a successful password reset.
-     *
-     * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse
+     * @param string $response
+     * @return Response
      */
-    protected function sendResetResponse($response)
+    protected function sendResetResponse(Response $response)
     {
-        //return response()->render('auth.login', [
-        return response()->render('home', [
+        return response()->render('auth.login', [
             'status' => trans($response),
         ]);
     }
 
     /**
-     * Get the response for a failed password reset.
-     *
-     * @param  \Illuminate\Http\Request
-     * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @param  string $response
+     * @return Response
      */
-    protected function sendResetFailedResponse(Request $request, $response)
+    protected function sendResetFailedResponse(Request $request, Response $response)
     {
         return response()->render('auth.passwords.reset', [
             'email' => $request->email,
@@ -69,19 +64,30 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Reset the given user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @return Response
      */
     public function reset(Request $request)
     {
-        $this->validate($request, $this->rules(), $this->validationErrorMessages());
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->render('auth.passwords.reset', [
+                'errors'   => $validator->errors(),
+                'token'    => $request->token,
+                'email'    => $request->email,
+                'password' => $request->password,
+            ]);
+        }
 
         $response = $this->broker()->reset(
             $this->credentials($request), function ($user, $password) {
-            $this->resetPassword($user, $password);
-        }
+                $this->resetPassword($user, $password);
+            }
         );
 
         return $response == Password::PASSWORD_RESET
@@ -90,19 +96,15 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Reset the given user's password.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @param  string  $password
+     * @param  CanResetPassword $user
+     * @param  string $password
      * @return void
      */
     protected function resetPassword($user, $password)
     {
-        $user->forceFill([
-            'password' => Hash::make($password),
+        $user->fill([
+            'password' => $password,
             'remember_token' => Str::random(60),
         ])->save();
-
-        $this->guard()->login($user);
     }
 }

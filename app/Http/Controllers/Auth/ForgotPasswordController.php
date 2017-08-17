@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class ForgotPasswordController
+ * @package App\Http\Controllers\Auth
+ */
 class ForgotPasswordController extends Controller
 {
     use SendsPasswordResetEmails;
 
     /**
-     * Create a new controller instance.
-     *
      * @return void
      */
     public function __construct()
@@ -22,12 +26,10 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Get the response for a successful password reset link.
-     *
-     * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string   $response
+     * @return Response
      */
-    protected function sendResetLinkResponse($response)
+    protected function sendResetLinkResponse(Response $response)
     {
         return response()->render('auth.passwords.email', [
             'message' => trans($response)
@@ -35,13 +37,11 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Get the response for a failed password reset link.
-     *
-     * @param  \Illuminate\Http\Request
-     * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request  $request
+     * @param  string   $response
+     * @return Response
      */
-    protected function sendResetLinkFailedResponse(Request $request, $response)
+    protected function sendResetLinkFailedResponse(Request $request, Response $response)
     {
         return response()->render('auth.passwords.email', [
             'message' => trans($response),
@@ -49,16 +49,22 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Send a reset link to the given user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  Request $request
+     * @return Response
      */
     public function sendResetLinkEmail(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255'
         ]);
+
+        if ($validator->fails()) {
+            return response()->render('auth.passwords.email', [
+                'errors'   => $validator->errors(),
+                'email'    => $request->email,
+            ]);
+        }
+
         $response = $this->broker()->sendResetLink($request->only('email'));
         return $response == Password::RESET_LINK_SENT
             ? $this->sendResetLinkResponse($response)
