@@ -26,10 +26,10 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * @param  string   $response
+     * @param  string $response
      * @return Response
      */
-    protected function sendResetLinkResponse(Response $response)
+    protected function sendResetLinkResponse(string $response)
     {
         return response()->render('auth.passwords.email', [
             'message' => trans($response)
@@ -37,8 +37,8 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  string   $response
+     * @param  Request $request
+     * @param  string $response
      * @return Response
      */
     protected function sendResetLinkFailedResponse(Request $request, Response $response)
@@ -49,7 +49,7 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * @param  Request $request
+     * @param Request $request
      * @return Response
      */
     public function sendResetLinkEmail(Request $request)
