@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use \Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
@@ -16,8 +20,8 @@ class LoginController extends Controller
     public function getLogin()
     {
         return response()->render('auth.login', [
-                'email'    => null,
-                'password' => null
+            'email'    => null,
+            'password' => null
         ]);
     }
 
@@ -79,5 +83,25 @@ class LoginController extends Controller
 
         auth()->logout();
         return redirect()->route('home');
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function tokenRefresh()
+    {
+        $token = JWTAuth::getToken();
+
+        if (!$token) {
+            throw new BadRequestHttpException('Token not provided');
+        }
+
+        try {
+            $token = JWTAuth::refresh($token);
+        } catch (TokenInvalidException $e) {
+            throw new AccessDeniedHttpException('The token is invalid');
+        }
+
+        return response()->json(compact('token'));
     }
 }
