@@ -418,7 +418,7 @@ class Offer extends NauModel
 
         $redemption = new Redemption();//$this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
         if (null === $redemption->getId()) { // how to check if it was created or not??
-            throw new CannotRedeemException($this);
+            throw new CannotRedeemException($this, $activationCode);
         }
 
         $activationCode->activated($redemption);

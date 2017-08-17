@@ -17,14 +17,14 @@ class RedemptionException extends OfferException
     /**
      * RedemptionException constructor.
      * @param Offer $offer
-     * @param ActivationCode|null $activationCode
+     * @param ActivationCode $activationCode
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
     public function __construct(
         Offer $offer,
-        ActivationCode $activationCode = null,
+        ActivationCode $activationCode,
         $message = "",
         $code = 0,
         Throwable $previous = null
