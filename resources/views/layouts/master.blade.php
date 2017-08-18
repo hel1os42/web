@@ -93,7 +93,7 @@
             <div class="header-logo">NAU</div>
             <div class="header-right">
                 @if (\Auth::check())
-                    <a href="{{route('profile.show')}}">Profile</a> | <a href="{{route('logout')}}">Logout</a>
+                    <a href="{{route('profile')}}">Profile</a> | <a href="{{route('logout')}}">Logout</a>
                 @else
                     Hello guest! &nbsp; <a href="{{route('loginForm')}}">login</a>
                 @endif
