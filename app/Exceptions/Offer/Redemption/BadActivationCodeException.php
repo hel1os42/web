@@ -11,11 +11,11 @@ class BadActivationCodeException extends RedemptionException
     /**
      * BadActivationCodeException constructor.
      * @param Offer $offer
-     * @param ActivationCode $activationCode
+     * @param string $activationCode
      */
-    public function __construct(Offer $offer, ActivationCode $activationCode)
+    public function __construct(Offer $offer, string $activationCode)
     {
-        $message = 'Wrong activation code. Code: ' . $activationCode->getCode() . ' Offer id: ' . $offer->getId();
+        $message = 'Wrong activation code. Code: ' . $activationCode . ' Offer id: ' . $offer->getId();
 
         parent::__construct($offer, $activationCode, $message);
     }

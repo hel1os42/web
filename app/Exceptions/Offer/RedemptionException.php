@@ -10,21 +10,21 @@ use Throwable;
 class RedemptionException extends OfferException
 {
     /**
-     * @var ActivationCode|null
+     * @var string
      */
     private $activationCode;
 
     /**
      * RedemptionException constructor.
      * @param Offer $offer
-     * @param ActivationCode $activationCode
+     * @param string $activationCode
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
     public function __construct(
         Offer $offer,
-        ActivationCode $activationCode,
+        string $activationCode,
         $message = "",
         $code = 0,
         Throwable $previous = null
@@ -34,9 +34,9 @@ class RedemptionException extends OfferException
     }
 
     /**
-     * @return ActivationCode|null
+     * @return string
      */
-    public function getActivationCode()
+    public function getActivationCode(): string
     {
         return $this->activationCode;
     }

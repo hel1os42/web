@@ -11,9 +11,9 @@ class CannotRedeemException extends RedemptionException
     /**
      * CannotRedeemException constructor.
      * @param Offer $offer
-     * @param ActivationCode $activationCode
+     * @param string $activationCode
      */
-    public function __construct(Offer $offer, ActivationCode $activationCode)
+    public function __construct(Offer $offer, string $activationCode)
     {
         $message = 'Offer redemption error. Offer id: ' . $offer->getId();
 

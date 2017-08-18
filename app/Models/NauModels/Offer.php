@@ -413,12 +413,12 @@ class Offer extends NauModel
         $activationCode = $this->activationCodes()->byCode($code)->first();
 
         if (null === $activationCode) {
-            throw new BadActivationCodeException($this, $activationCode);
+            throw new BadActivationCodeException($this, $code);
         }
 
-        $redemption = new Redemption();//$this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
-        if (null === $redemption->getId()) { // how to check if it was created or not??
-            throw new CannotRedeemException($this, $activationCode);
+        $redemption = $this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
+        if (null === $redemption->getId()) {
+            throw new CannotRedeemException($this, $activationCode->getCode());
         }
 
         $activationCode->activated($redemption);
