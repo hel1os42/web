@@ -8,7 +8,6 @@
 
 return [
     'offer' => [
-        'creating' => 'The offer was sent for moderation, in the near future it will appear in the list.',
         'activating' => 'During activation...'
     ]
 ];

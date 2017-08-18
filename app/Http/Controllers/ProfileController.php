@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile', auth()->id()) : response()->render('home', []);
+        return Auth::check() ? redirect()->route('profile') : response()->render('home', []);
     }
 
     /**
