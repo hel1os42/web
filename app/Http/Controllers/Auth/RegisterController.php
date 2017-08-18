@@ -57,7 +57,7 @@ class RegisterController extends Controller
 
         return $request->wantsJson() ?
             response()->render('', $user, Response::HTTP_CREATED,
-                route('users.shoe', [$user->getId()])) :
+                route('users.show', [$user->getId()])) :
             redirect()->route('loginForm');
     }
 }
