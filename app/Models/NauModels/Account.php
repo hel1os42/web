@@ -84,7 +84,7 @@ class Account extends NauModel
     }
 
     /** @return string */
-    public function getaddress(): string
+    public function getAddress(): string
     {
         return $this->address;
     }

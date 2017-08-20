@@ -1,22 +1,12 @@
-{!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-<form action="{{route('register')}}" method="post" target="_top">
-    {{ csrf_field() }}
-    <input type="name" name="name" placeholder="name"> <br>
-    <input type="email" name="email" placeholder="email"><br>
-    <input type="password" name="password" placeholder="password"><br>
-    <input type="password" name="password_confirm" placeholder="password_confirmation"><br>
-    <input type="hidden" name="referrer_id" value="{{$referrer_id}}"/><br>
-    <input type="submit">
-</form>
-
-
+@extends('layouts.ajax')
+@section('content')
+    <form action="{{route('register')}}" method="post" target="_top">
+        {{ csrf_field() }}
+        <input type="name" name="name" placeholder="name" value="{{old('name')}}"> <br>
+        <input type="email" name="email" placeholder="email" value="{{old('email')}}><br>
+    <input type=" password" name="password" placeholder="password"><br>
+        <input type="password" name="password_confirm" placeholder="password_confirmation"><br>
+        <input type="hidden" name="referrer_id" value="{{$referrer_id}}"/><br>
+        <input type="submit">
+    </form>
+@stop

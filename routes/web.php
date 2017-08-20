@@ -33,9 +33,11 @@ Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 Route::group(['middleware' => 'auth'], function () {
 
+    Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
     Route::get('users/{id}', 'ProfileController@show')
         ->where('id', '[a-z0-9-]+')
-        ->name('profile');
+        ->name('users.show');
+    Route::get('profile', 'ProfileController@show')->name('profile');
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
