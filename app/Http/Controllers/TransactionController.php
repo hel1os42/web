@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactRequest;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -15,28 +15,27 @@ use Illuminate\Support\Facades\Session;
 class TransactionController extends Controller
 {
     /**
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function createTransaction(): Response
     {
-        return response()->render('transact.create', new Transact());
+        return response()->render('transaction.create', new Transact());
     }
 
     /**
      * @param TransactRequest $request
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function completeTransaction (TransactRequest $request): Response
     {
-
-        $senderAccount      = Account::where('owner_id', $request->sender)->firstOrFail();
-        $destinationAccount = Account::where('owner_id', $request->destination)->firstOrFail();
+        $senderAccount      = Account::whereAddress($request->sender)->firstOrFail();
+        $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
         $amount             = $request->amount;
 
         if (false === $senderAccount->isEnoughBalanceFor($amount)) {
             $multiplier = (int)config('nau.multiplier');
             return response()->error(Response::HTTP_NOT_ACCEPTABLE,
-                trans('msg.transactions.balance', [
+                trans('msg.transaction.balance', [
                     'balance' => sprintf('%0.'.$multiplier.'f', $senderAccount->getBalance()),
                 ])
             );
@@ -50,19 +49,19 @@ class TransactionController extends Controller
         $transaction->save();
 
         if ($transaction->id) {
-            Session::flash('message', trans('msg.transactions.saved'));
-            return response()->render('transact.complete',
+            Session::flash('message', trans('msg.transaction.saved'));
+            return response()->render('transaction.complete',
                 $transaction->toArray(),
                 Response::HTTP_CREATED,
-                route('transComplete', $transaction->toArray())
+                route('transactionComplete')
             );
         }
 
-        Session::flash('message', trans('msg.transactions.accepted'));
-        return response()->render('transact.create',
+        Session::flash('message', trans('msg.transaction.accepted'));
+        return response()->render('transaction.complete',
             $transaction->toArray(),
             Response::HTTP_ACCEPTED,
-            route('transCreate')
+            route('transactionComplete')
         );
     }
 }

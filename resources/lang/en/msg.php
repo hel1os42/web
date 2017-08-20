@@ -10,7 +10,7 @@ return [
     'offer' => [
         'activating' => 'During activation...'
     ],
-    'transactions' => [
+    'transaction' => [
     'balance' => 'Your balance :balance NAU!',
     'saved' => 'The following data was successfully saved!',
     'accepted' => 'Transaction created and accepted to queue.',

@@ -6,7 +6,7 @@
     @endforeach
 @endif
 
-<form action="{{ route('transComplete') }}" method="post" target="_top">
+<form action="{{ route('transactionComplete') }}" method="post" target="_top">
     {{ csrf_field() }}
 
     <label>sender</label><input type="text" name="sender" value="{{ old('sender') }}"> <br>

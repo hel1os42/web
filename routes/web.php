@@ -63,8 +63,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('categories', 'CategoryController@index')->name('categories');
 
-    Route::get('transactions', '\App\Http\Controllers\TransactionController@createTransaction')->name('transCreate');
-    Route::post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')->name('transComplete');
+    Route::get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')->name('transactionCreate');
+    Route::post('transactions/create', '\App\Http\Controllers\TransactionController@completeTransaction')->name('transactionComplete');
 });
 
 //---- Authorized users

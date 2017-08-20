@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @property Carbon updated_at
  * @property Collection|Offer[] offers
  * @property User owner
- * @property bool isEnoughBalanceFor
- * @property Builder scopeWhereOwnerId
+ *
+ * @method static Account whereAddress
  */
 class Account extends NauModel
 {
@@ -115,11 +115,11 @@ class Account extends NauModel
 
     /**
      * @param Builder $builder
-     * @param $ownerId
+     * @param string $address
      * @return Builder
      */
-    public function scopeWhereOwnerId(Builder $builder, string $ownerId): Builder
+    public function scopeWhereAddress(Builder $builder, string $address): Builder
     {
-        return $builder->where('owner_id', $ownerId);
+        return $builder->where('address', $address);
     }
 }

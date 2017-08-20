@@ -33,8 +33,8 @@ class TransactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sender'      => 'required|exists:pgsql_nau.users,id',
-            'destination' => 'required|different:sender|exists:pgsql_nau.users,id|different:sender',
+            'sender'      => 'required',
+            'destination' => 'required|different:sender',
             'amount'      => 'required|numeric|min:0.0001',
         ];
     }
