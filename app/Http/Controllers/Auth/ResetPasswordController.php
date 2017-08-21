@@ -32,7 +32,7 @@ class ResetPasswordController extends Controller
      * @param  string|null $token
      * @return Response
      */
-    public function showResetForm(Request $request, string $token = null)
+    public function showResetForm(Request $request, string $token = null): Response
     {
         return response()->render('auth.passwords.reset', [
             'token' => $token,
@@ -44,7 +44,7 @@ class ResetPasswordController extends Controller
      * @param string $response
      * @return Response
      */
-    protected function sendResetResponse(string $response)
+    protected function sendResetResponse(string $response): Response
     {
         return response()->render('auth.login', [
             'status' => trans($response),
@@ -54,9 +54,10 @@ class ResetPasswordController extends Controller
     /**
      * @param  Request $request
      * @param  string $response
+     * @SuppressWarnings("unused")
      * @return Response
      */
-    protected function sendResetFailedResponse(Request $request, string $response)
+    protected function sendResetFailedResponse(Request $request, string $response): Response
     {
         return response()->render('auth.passwords.reset', [
             'email' => $request->email,

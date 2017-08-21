@@ -29,7 +29,7 @@ class ForgotPasswordController extends Controller
      * @param  string $response
      * @return Response
      */
-    protected function sendResetLinkResponse(string $response)
+    protected function sendResetLinkResponse(string $response): Response
     {
         return response()->render('auth.passwords.email', [
             'message' => trans($response)
@@ -39,9 +39,10 @@ class ForgotPasswordController extends Controller
     /**
      * @param  Request $request
      * @param  string $response
+     * @SuppressWarnings("unused")
      * @return Response
      */
-    protected function sendResetLinkFailedResponse(Request $request, Response $response)
+    protected function sendResetLinkFailedResponse(Request $request, Response $response): Response
     {
         return response()->render('auth.passwords.email', [
             'message' => trans($response),
@@ -52,7 +53,7 @@ class ForgotPasswordController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function sendResetLinkEmail(Request $request)
+    public function sendResetLinkEmail(Request $request): Response
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255'
