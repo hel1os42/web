@@ -4,6 +4,7 @@
 
 @section('content')
     <div class="profile">
+        {{$id}}<br>
         Your email: {{$email}}<br>
         Your invite link: <a
                 href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a><br>

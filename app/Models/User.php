@@ -76,6 +76,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user referrals.
+     *
+     * @return Relations\HasMany
+     */
+    public function referrals(): Relations\HasMany
+    {
+        return $this->hasMany(User::class, 'referrer_id', 'id');
+    }
+
+    /**
      * @return User
      */
     public function getReferrer(): User
