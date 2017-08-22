@@ -4,6 +4,10 @@
 
 @section('content')
     <div class="profile">
-        <pre>{{print_r($data)}}</pre>
+        <h3>Slaves(: </h3>
+        @foreach($data as $user)
+            {{$user['name']}} | {{$user['id']}}<br>
+            /---------------------------------<br>
+        @endforeach
     </div>
 @stop

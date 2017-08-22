@@ -290,7 +290,7 @@ class User extends Authenticatable
         switch ($currency) {
             case Currency::NAU:
                 $account = $this->account()->first();
-                if($account){
+                if ($account) {
                     return $account;
                 }
                 throw new TokenException("no account " . $currency);
