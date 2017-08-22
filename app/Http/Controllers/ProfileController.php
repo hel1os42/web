@@ -45,6 +45,4 @@ class ProfileController extends Controller
             response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate()) :
             response()->error(Response::HTTP_FORBIDDEN);
     }
-
-
 }
