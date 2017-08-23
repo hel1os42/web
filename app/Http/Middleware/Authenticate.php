@@ -42,9 +42,9 @@ class Authenticate
         try {
             \JWTAuth::parseToken()->authenticate();
         } catch (TokenExpiredException $e) {
-            return response()->error($e->getStatusCode(), trans('errors.token_expired') . $e->getMessage());
+            return response()->error($e->getStatusCode(), $e->getMessage());
         } catch (TokenInvalidException $e) {
-            return response()->error($e->getStatusCode(), trans('errors.token_invalid') . $e->getMessage());
+            return response()->error($e->getStatusCode(), $e->getMessage());
         } catch (JWTException $e) {
             return response()->error($e->getStatusCode(), trans('errors.jwt_exception') . $e->getMessage());
         }
