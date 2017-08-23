@@ -43,10 +43,16 @@ class Redemption extends NauModel
             'amount'      => 'integer',
             'fee'         => 'integer'
         ];
+
     }
 
+    protected $fillable = [
+        'offer_id',
+        'user_id'
+    ];
+
     /** @return string */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }

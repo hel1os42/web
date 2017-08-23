@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile', auth()->id()) : response()->render('home', []);
+        return Auth::check() ? redirect()->route('profile') : response()->render('home', []);
     }
 
     /**
@@ -31,5 +31,18 @@ class ProfileController extends Controller
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
             response()->render('profile', (new User)->findOrFail($userId)->toArray());
+    }
+
+    /**
+     * @param string|null $uuid
+     *
+     * @return Response
+     */
+    public function referrals(string $uuid = null)
+    {
+        $userId = auth()->id();
+        return ($uuid === null || $uuid === $userId) ?
+            response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate()) :
+            response()->error(Response::HTTP_FORBIDDEN);
     }
 }

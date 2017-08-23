@@ -40,10 +40,16 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
-    Route::get('users/{id}', 'ProfileController@show')
-        ->where('id', '[a-z0-9-]+')
-        ->name('profile');
-    Route::get('profile', 'ProfileController@show');
+
+    Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
+        Route::get('', 'ProfileController@show')->name('users.show');
+        Route::get('referrals', 'ProfileController@referrals');
+    });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('', 'ProfileController@show')->name('profile');
+        Route::get('referrals', 'ProfileController@referrals')->name('referrals');
+    });
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
@@ -57,6 +63,15 @@ Route::group(['middleware' => 'auth'], function () {
             'destroy'
         ]
     ]);
+    Route::group(['prefix' => 'offers/{offerId}'], function () {
+        Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
+        Route::group(['prefix' => 'redemption'], function () {
+            Route::get('create', 'RedemptionController@create')->name('redemption.create');
+            Route::post('', 'RedemptionController@redemption')->name('redemption.store');
+            Route::get('{rid}', 'RedemptionController@show')->where('rid',
+                '[a-z0-9-]+')->name('redemption.show');
+        });
+    });
 
     Route::resource('offers', 'User\OfferController', [
         'except' => [
@@ -67,8 +82,8 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
-    Route::get('categories', 'CategoryController@index')->name('categories');
 
+    Route::get('categories', 'CategoryController@index')->name('categories');
 });
 
 //---- Authorized users

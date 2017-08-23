@@ -2,8 +2,12 @@
 
 namespace App\Models\NauModels;
 
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\CannotRedeemException;
+use App\Models\ActivationCode;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Sofa\Eloquence\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +41,8 @@ use Ramsey\Uuid\Uuid;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Account account
+ * @property Collection|ActivationCode[] activationCodes
+ * @property Collection|Redemption[] redemptions
  * @method static accountOffers(int $accountId) : Offer
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
@@ -47,11 +53,11 @@ class Offer extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = "offer";
 
         $this->primaryKey = 'id';
+
+        $this->incrementing = false;
 
         $this->attributes = array(
             'account_id'           => null,
@@ -126,6 +132,8 @@ class Offer extends NauModel
             'latitude',
             'longitude'
         ];
+
+        parent::__construct($attributes);
     }
 
     /**
@@ -167,7 +175,23 @@ class Offer extends NauModel
     /** @return BelongsTo */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
+        return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function activationCodes(): HasMany
+    {
+        return $this->hasMany(ActivationCode::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function redemptions(): HasMany
+    {
+        return $this->hasMany(Redemption::class);
     }
 
     /**
@@ -323,6 +347,15 @@ class Offer extends NauModel
     }
 
     /**
+     * @param User $user
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $user->equals($this->getOwner());
+    }
+
+    /**
      * @param Builder $builder
      * @param int $accountId
      * @return Builder
@@ -371,22 +404,25 @@ class Offer extends NauModel
     }
 
     /**
-     * @param User $user
-     * @return bool
+     * @param string $code
+     * @return Redemption
+     * @throws BadActivationCodeException|CannotRedeemException
      */
-    public function redeem(User $user)
+    public function redeem(string $code)
     {
-        $user->get(); // just sample
-        //return $this->redemptions()->create(['user_id' => $user->id]);
-        return true;
-    }
+        $activationCode = $this->activationCodes()->byCode($code)->first();
 
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function isOwner(User $user): bool
-    {
-        return $user->equals($this->getOwner());
+        if (null === $activationCode) {
+            throw new BadActivationCodeException($this, $code);
+        }
+
+        $redemption = $this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
+        if (null === $redemption->getId()) {
+            throw new CannotRedeemException($this, $activationCode->getCode());
+        }
+
+        $activationCode->activated($redemption);
+
+        return $redemption;
     }
 }

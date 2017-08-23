@@ -28,7 +28,7 @@ class RegisterController extends Controller
         }
 
         return Auth::check() ?
-            redirect()->route('profile', Auth::id()) :
+            redirect()->route('users.show', Auth::id()) :
             response()->render('auth.register',
                 [
                     'name'             => null,
@@ -57,7 +57,7 @@ class RegisterController extends Controller
 
         return $request->wantsJson() ?
             response()->render('', $user, Response::HTTP_CREATED,
-                route('profile', [$user->getId()])) :
+                route('users.show', [$user->getId()])) :
             redirect()->route('loginForm');
     }
 }
