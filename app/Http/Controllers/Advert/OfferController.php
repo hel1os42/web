@@ -38,16 +38,12 @@ class OfferController extends Controller
     {
         $newOffer = new Offer();
         $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
-        $newOffer->fill($request->toArray());
-        /*
-        $newOffer->status = 'deactive';
-        $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';
-        $newOffer->save();
-        */
+        $newOffer->create($request->toArray());
+
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
             Response::HTTP_ACCEPTED,
-            route('advert.offer'));
+            route('advert.offers.index'));
     }
 
     /**
