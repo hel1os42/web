@@ -34,10 +34,16 @@ Route::post('users', 'Auth\RegisterController@register')->name('register');
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
-    Route::get('users/{id}', 'ProfileController@show')
-        ->where('id', '[a-z0-9-]+')
-        ->name('users.show');
-    Route::get('profile', 'ProfileController@show')->name('profile');
+
+    Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
+        Route::get('', 'ProfileController@show')->name('users.show');
+        Route::get('referrals', 'ProfileController@referrals');
+    });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('', 'ProfileController@show')->name('profile');
+        Route::get('referrals', 'ProfileController@referrals')->name('referrals');
+    });
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
