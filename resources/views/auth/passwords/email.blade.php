@@ -1,6 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.master')
+
+@section('title', 'Reset password')
 
 @section('content')
+
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -13,7 +16,7 @@
                         </div>
                     @endif
 
-                    <form class="form-horizontal" method="POST" action="{{ route('password.email') }}">
+                    <form class="form-horizontal" method="POST" action="{{ url('auth/password/email') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -42,4 +45,4 @@
         </div>
     </div>
 </div>
-@endsection
+@stop

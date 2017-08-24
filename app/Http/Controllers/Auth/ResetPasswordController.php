@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PasswordFormRequest;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -47,7 +47,7 @@ class ResetPasswordController extends Controller
     protected function sendResetResponse(string $response): Response
     {
         return response()->render('auth.login', [
-            'status' => trans($response),
+            'errors' => trans($response),
         ]);
     }
 
@@ -60,31 +60,17 @@ class ResetPasswordController extends Controller
     protected function sendResetFailedResponse(Request $request, string $response): Response
     {
         return response()->render('auth.passwords.reset', [
-            'email' => $request->email,
+            'email'  => $request->email,
+            'errors' => trans($response),
         ]);
     }
 
     /**
-     * @param  Request $request
+     * @param  PasswordFormRequest $request
      * @return Response
      */
-    public function reset(Request $request)
+    public function reset(PasswordFormRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|confirmed|min:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->render('auth.passwords.reset', [
-                'errors'   => $validator->errors(),
-                'token'    => $request->token,
-                'email'    => $request->email,
-                'password' => $request->password,
-            ]);
-        }
-
         $response = $this->broker()->reset(
             $this->credentials($request), function ($user, $password) {
                 $this->resetPassword($user, $password);
