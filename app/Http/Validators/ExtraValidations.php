@@ -6,9 +6,20 @@ use App\Models\NauModels\Account;
 use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class ExtraValidations
+ * @package App\Http\Validators
+ */
 class ExtraValidations extends Validator
 {
-    public function validateItself($attribute, $value, $parameters)
+    /**
+     * @param $attribute
+     * @param $value
+     * @param $parameters
+     * @SuppressWarnings("unused")
+     * @return bool
+     */
+    public function validateItself($attribute, $value, $parameters): bool
     {
         return Account::where('owner_id', Auth::id())
                 ->firstOrFail()
