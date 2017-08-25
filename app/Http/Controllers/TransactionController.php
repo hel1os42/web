@@ -20,7 +20,7 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $transaction = new Transact;
+        $transaction     = new Transact;
         $transaction->id = Account::where('owner_id', Auth::id())->firstOrFail()->getAddress();
         return response()->render('transaction.create', $transaction);
     }
