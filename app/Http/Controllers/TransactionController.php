@@ -7,6 +7,7 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class TransactionController
@@ -19,7 +20,9 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        return response()->render('transaction.create', new Transact());
+        $transaction = new Transact;
+        $transaction->id = Account::where('owner_id', Auth::id())->firstOrFail()->getAddress();
+        return response()->render('transaction.create', $transaction);
     }
 
     /**
@@ -48,19 +51,15 @@ class TransactionController extends Controller
 
         $transaction->save();
 
-        if ($transaction->id) {
-            Session::flash('message', trans('msg.transaction.saved'));
-            return response()->render('transaction.complete',
-                $transaction->toArray(),
-                Response::HTTP_CREATED,
-                route('transactionComplete')
-            );
-        }
+        Session::flash('message',
+            null === $transaction->id ?
+                trans('msg.transaction.accepted') :
+                trans('msg.transaction.saved'));
 
-        Session::flash('message', trans('msg.transaction.accepted'));
-        return response()->render('transaction.complete',
-            $transaction->toArray(),
-            Response::HTTP_ACCEPTED,
+        return response()->render('transaction.complete', $transaction->toArray(),
+            null === $transaction->id ?
+                Response::HTTP_ACCEPTED :
+                Response::HTTP_CREATED,
             route('transactionComplete')
         );
     }
