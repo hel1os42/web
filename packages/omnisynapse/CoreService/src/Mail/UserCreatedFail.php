@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace OmniSynapse\CoreService\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;

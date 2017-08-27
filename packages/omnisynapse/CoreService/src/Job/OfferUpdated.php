@@ -2,10 +2,9 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Mail\OfferUpdatedFail;
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\Mail\OfferUpdatedFail;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 
@@ -74,7 +73,7 @@ class OfferUpdated extends AbstractJob
      */
     public function failed(): void
     {
-        Mail::to($this->offer->getOwner()->getEmail())
+        \Mail::to($this->offer->getOwner()->getEmail())
             ->queue(new OfferUpdatedFail($this->offer));
     }
 }

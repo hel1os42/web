@@ -2,10 +2,9 @@
 
 namespace OmniSynapse\CoreService\Job;
 
-use App\Mail\TransactionNotificationFail;
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\Mail\TransactionNotificationFail;
 use OmniSynapse\CoreService\Request\TransactionNotification as TransactionNotificationRequest;
 use OmniSynapse\CoreService\Response\Transaction;
 
@@ -71,7 +70,7 @@ class TransactionNotification extends AbstractJob
      */
     public function failed(): void
     {
-        Mail::to($this->transaction->getSource()->getOwner()->getEmail())
+        \Mail::to($this->transaction->getSource()->getOwner()->getEmail())
             ->queue(new TransactionNotificationFail($this->transaction));
     }
 }
