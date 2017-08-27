@@ -49,7 +49,7 @@ class UserCreated extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return '/users';
+        return '/user';
     }
 
     /**
