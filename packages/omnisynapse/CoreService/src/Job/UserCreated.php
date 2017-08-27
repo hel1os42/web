@@ -70,9 +70,9 @@ class UserCreated extends AbstractJob
     }
 
     /**
-     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     * @return void
      */
-    public function fail($exception = null)
+    public function failed(): void
     {
         Mail::to($this->user->getEmail())
             ->queue(new UserCreatedFail($this->user));

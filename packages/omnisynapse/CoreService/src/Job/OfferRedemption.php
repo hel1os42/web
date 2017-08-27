@@ -61,4 +61,12 @@ class OfferRedemption extends AbstractJob
     {
         return OfferForRedemptionResponse::class;
     }
+
+    /**
+     * @return void
+     */
+    public function failed(): void
+    {
+        //
+    }
 }

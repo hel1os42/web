@@ -17,6 +17,8 @@ class OfferUpdatedFail extends Mailable
 
     /**
      * Create a new message instance.
+     *
+     * @param Offer $offer
      */
     public function __construct(Offer $offer)
     {

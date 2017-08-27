@@ -17,6 +17,8 @@ class TransactionNotificationFail extends Mailable
 
     /**
      * Create a new message instance.
+     *
+     * @param Transact $transaction
      */
     public function __construct(Transact $transaction)
     {

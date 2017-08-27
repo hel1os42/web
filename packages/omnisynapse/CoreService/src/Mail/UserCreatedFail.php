@@ -17,6 +17,8 @@ class UserCreatedFail extends Mailable
 
     /**
      * Create a new message instance.
+     *
+     * @param User $user
      */
     public function __construct(User $user)
     {

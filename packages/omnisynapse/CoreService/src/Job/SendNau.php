@@ -70,9 +70,9 @@ class SendNau extends AbstractJob
     }
 
     /**
-     * @param RequestException|\InvalidArgumentException|\JsonMapper_Exception|null $exception
+     * @return void
      */
-    public function fail($exception = null)
+    public function failed(): void
     {
         Mail::to($this->transaction->getSource()->getOwner()->getEmail())
             ->queue(new SendNauFail($this->transaction));

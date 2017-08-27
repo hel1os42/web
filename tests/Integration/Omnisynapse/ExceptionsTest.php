@@ -47,6 +47,10 @@ class ExceptionsTest extends TestCase
             public function getResponseClass(): string {
                 return Point::class;
             }
+            public function failed(): void
+            {
+                //
+            }
         }))->handle();
     }
 

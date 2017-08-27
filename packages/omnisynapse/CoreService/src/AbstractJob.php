@@ -91,4 +91,7 @@ abstract class AbstractJob implements ShouldQueue
 
     /** @return string */
     abstract public function getResponseClass(): string;
+
+    /** @return void */
+    abstract public function failed(): void;
 }
