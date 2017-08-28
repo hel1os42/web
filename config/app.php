@@ -168,6 +168,7 @@ return [
          */
         Laravel\Tinker\TinkerServiceProvider::class,
         Sofa\Eloquence\ServiceProvider::class,
+        Vinkla\Hashids\HashidsServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -232,6 +233,7 @@ return [
         'Uuid' => Webpatser\Uuid\Uuid::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'Hashids' => Vinkla\Hashids\Facades\Hashids::class,
     ],
 
 ];

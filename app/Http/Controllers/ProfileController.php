@@ -32,4 +32,17 @@ class ProfileController extends Controller
             response()->error(Response::HTTP_FORBIDDEN) :
             response()->render('profile', (new User)->findOrFail($userId)->toArray());
     }
+
+    /**
+     * @param string|null $uuid
+     *
+     * @return Response
+     */
+    public function referrals(string $uuid = null)
+    {
+        $userId = auth()->id();
+        return ($uuid === null || $uuid === $userId) ?
+            response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate()) :
+            response()->error(Response::HTTP_FORBIDDEN);
+    }
 }

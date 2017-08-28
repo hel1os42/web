@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
+use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
+use Hashids\Hashids;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -76,6 +78,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user referrals.
+     *
+     * @return Relations\HasMany
+     */
+    public function referrals(): Relations\HasMany
+    {
+        return $this->hasMany(User::class, 'referrer_id', 'id');
+    }
+
+    /**
      * @return User
      */
     public function getReferrer(): User
@@ -84,13 +96,21 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the referrer record associated with the user.
+     * Get the user accounts relation
      *
      * @return Relations\HasMany
      */
     public function account(): Relations\HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return Relations\HasMany
+     */
+    public function activationCodes(): Relations\HasMany
+    {
+        return $this->hasMany(ActivationCode::class);
     }
 
     /**
@@ -280,7 +300,7 @@ class User extends Authenticatable
         switch ($currency) {
             case Currency::NAU:
                 $account = $this->account()->first();
-                if($account){
+                if ($account) {
                     return $account;
                 }
                 throw new TokenException("no account " . $currency);

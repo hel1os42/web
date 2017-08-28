@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -27,24 +29,22 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $exception
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
     {
-        if ($this->isHttpException($exception) && $request->expectsJson())
-        {
+        if ($request->wantsJson()) {
             return response()->error($exception->getStatusCode(), $exception->getMessage());
         }
-
         return parent::render($request, $exception);
     }
 
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     protected function unauthenticated($request)
