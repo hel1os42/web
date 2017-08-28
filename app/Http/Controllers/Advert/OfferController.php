@@ -38,16 +38,12 @@ class OfferController extends Controller
     {
         $newOffer = new Offer();
         $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
-        $newOffer->fill($request->toArray());
-        /*
-        $newOffer->status = 'deactive';
-        $newOffer->id = 'e60834c2-844e-42d5-84e4-d7136e511ff9';
-        $newOffer->save();
-        */
+        $newOffer->create($request->toArray());
+
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
             Response::HTTP_ACCEPTED,
-            route('advert.offer'));
+            route('advert.offers.index'));
     }
 
     /**
@@ -57,9 +53,9 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = (new Offer())->findOrFail($offerUuid);
+        $offer = Offer::firstOrFail($offerUuid);
 
-        if (auth()->user()->equals($offer->getOwner())) {
+        if ($offer->isOwner(auth()->user())) {
             return \response()->render('advert.offer.show', $offer->toArray());
         }
         return \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));

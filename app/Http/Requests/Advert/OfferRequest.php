@@ -49,23 +49,23 @@ class OfferRequest extends FormRequest
     {
         return [
             'label'                => 'required|string|min:3|max:128',
-            'description'          => 'required|nullable|string',
+            'description'          => 'string',
             'reward'               => 'required|numeric',
             'start_date'           => 'required|date|date_format:Y-m-d\TH:i:sO',
-            'finish_date'          => 'required|date|date_format:Y-m-d\TH:i:sO',
-            'start_time'           => 'required|nullable|date|date_format:H:i:sO',
-            'finish_time'          => 'required|nullable|date|date_format:H:i:sO',
+            'finish_date'          => 'date|date_format:Y-m-d\TH:i:sO',
+            'start_time'           => 'required|date_format:H:i:sO',
+            'finish_time'          => 'date_format:H:i:sO',
             'category_id'          => 'required|string|exists:categories,id',
-            'max_count'            => 'required|nullable|integer',
-            'max_for_user'         => 'required|nullable|integer',
-            'max_per_day'          => 'required|nullable|integer',
-            'max_for_user_per_day' => 'required|nullable|integer',
-            'user_level_min'       => 'required|nullable|integer',
-            'latitude'             => 'required|nullable|string',
-            'longitude'            => 'required|nullable|string',
-            'radius'               => 'required|nullable|integer',
-            'country'              => 'required|nullable|string',
-            'city'                 => 'required|nullable|string'
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'user_level_min'       => 'integer',
+            'latitude'             => 'numeric',
+            'longitude'            => 'numeric',
+            'radius'               => 'integer',
+            'country'              => 'string',
+            'city'                 => 'string'
         ];
     }
 } 
