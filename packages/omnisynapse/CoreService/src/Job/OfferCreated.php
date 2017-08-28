@@ -4,9 +4,9 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Mail\OfferCreatedFail;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
+use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
  * Class OfferCreated
@@ -69,11 +69,11 @@ class OfferCreated extends AbstractJob
     }
 
     /**
-     * @return void
+     * @param \Exception $exception
+     * @return Failed
      */
-    public function failed(): void
+    protected function getFailedResponseObject(\Exception $exception): Failed
     {
-        \Mail::to($this->offer->getOwner()->getEmail())
-            ->queue(new OfferCreatedFail($this->offer));
+        return new \OmniSynapse\CoreService\Failed\OfferCreated($exception, $this->offer);
     }
 }

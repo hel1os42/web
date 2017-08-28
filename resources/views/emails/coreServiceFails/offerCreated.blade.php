@@ -1,1 +1,0 @@
-offerCreated fail

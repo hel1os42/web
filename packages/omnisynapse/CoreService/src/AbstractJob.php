@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreServise\Failed\Failed;
 
 abstract class AbstractJob implements ShouldQueue
 {
@@ -92,6 +93,19 @@ abstract class AbstractJob implements ShouldQueue
     /** @return string */
     abstract public function getResponseClass(): string;
 
-    /** @return void */
-    abstract public function failed(): void;
+    /**
+     * @param \Exception $exception
+     * @return Failed
+     */
+    abstract protected function getFailedResponseObject(\Exception $exception): Failed;
+
+    /**
+     * @param \Exception $exception
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+        $failedResponse = $this->getFailedResponseObject($exception);
+        event($failedResponse);
+    }
 }

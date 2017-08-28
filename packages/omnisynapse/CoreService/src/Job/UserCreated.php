@@ -4,9 +4,9 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Mail\UserCreatedFail;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
+use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
  * Class UserCreated
@@ -69,11 +69,11 @@ class UserCreated extends AbstractJob
     }
 
     /**
-     * @return void
+     * @param \Exception $exception
+     * @return Failed
      */
-    public function failed(): void
+    protected function getFailedResponseObject(\Exception $exception): Failed
     {
-        \Mail::to($this->user->getEmail())
-            ->queue(new UserCreatedFail($this->user));
+        return new \OmniSynapse\CoreService\Failed\UserCreated($exception, $this->user);
     }
 }

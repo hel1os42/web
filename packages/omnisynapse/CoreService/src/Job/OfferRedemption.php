@@ -6,6 +6,7 @@ use App\Models\NauModels\Redemption;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
+use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
  * Class OfferRedemption
@@ -16,6 +17,9 @@ class OfferRedemption extends AbstractJob
     /** @var OfferForRedemptionRequest */
     private $requestObject;
 
+    /** @var Redemption */
+    private $redemption;
+
     /**
      * OfferRedemption constructor.
      *
@@ -25,6 +29,8 @@ class OfferRedemption extends AbstractJob
     public function __construct(Redemption $redemption, \GuzzleHttp\Client $client)
     {
         parent::__construct($client);
+
+        $this->redemption = $redemption;
 
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = new OfferForRedemptionRequest($redemption);
@@ -63,10 +69,11 @@ class OfferRedemption extends AbstractJob
     }
 
     /**
-     * @return void
+     * @param \Exception $exception
+     * @return Failed
      */
-    public function failed(): void
+    protected function getFailedResponseObject(\Exception $exception): Failed
     {
-        //
+        return new \OmniSynapse\CoreService\Failed\OfferRedemption($exception, $this->redemption);
     }
 }

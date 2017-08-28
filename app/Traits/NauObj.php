@@ -16,21 +16,7 @@ trait NauObj
      */
     protected function performUpdate(Builder $query)
     {
-        if ($this->fireModelEvent('updating') === false) {
-            return false;
-        }
-
-        if ($this->usesTimestamps()) {
-            $this->updateTimestamps();
-        }
-
-        $dirty = $this->getDirty();
-
-        if (count($dirty) > 0) {
-            $this->fireModelEvent('updated', false);
-        }
-
-        return true;
+        return $this->fireModelEvent('updated') !== false;
     }
 
     /**
@@ -40,21 +26,6 @@ trait NauObj
      */
     protected function performInsert(Builder $query)
     {
-        if ($this->fireModelEvent('creating') === false) {
-            return false;
-        }
-
-        if ($this->usesTimestamps()) {
-            $this->updateTimestamps();
-        }
-
-        if (null !== $this->getKey()) {
-            $this->exists             = true;
-            $this->wasRecentlyCreated = true;
-        }
-
-        $this->fireModelEvent('created', false);
-
-        return true;
+        return $this->fireModelEvent('creating') !== false;
     }
 }

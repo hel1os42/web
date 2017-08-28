@@ -4,9 +4,9 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Mail\SendNauFail;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
+use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
  * Class SendNau
@@ -69,11 +69,11 @@ class SendNau extends AbstractJob
     }
 
     /**
-     * @return void
+     * @param \Exception $exception
+     * @return Failed
      */
-    public function failed(): void
+    protected function getFailedResponseObject(\Exception $exception): Failed
     {
-        \Mail::to($this->transaction->getSource()->getOwner()->getEmail())
-            ->queue(new SendNauFail($this->transaction));
+        return new \OmniSynapse\CoreService\Failed\SendNau($exception, $this->transaction);
     }
 }
