@@ -19,7 +19,7 @@ class ExtraValidations extends Validator
      * @SuppressWarnings("unused")
      * @return bool
      */
-    public function validateItself($attribute, $value, $parameters): bool
+    public function validateOwnAddress($attribute, $value): bool
     {
         $account = Account::whereAddress($value ?? null)
             ->whereOwnerId(auth()->user()->id)

@@ -33,7 +33,7 @@ class TransactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sender'      => 'required|itself',
+            'sender'      => 'required|ownAddress',
             'destination' => 'required|different:sender',
             'amount'      => 'required|numeric|min:0.0001',
         ];

@@ -63,4 +63,15 @@ class TransactionController extends Controller
             route('transactionComplete')
         );
     }
+
+    /**
+     * @return Response
+     */
+    public function listTransaction()
+    {
+        $transactions = Transact::getListForId(
+            Account::whereOwnerId(Auth::id())->first()->id
+        )->get();
+        return response()->render('transaction.list', ['transactions' => $transactions]);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models\NauModels;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Sofa\Eloquence\Builder;
 
 /**
  * Class Transact
@@ -123,5 +124,16 @@ class Transact extends NauModel
     public function getDestination(): Account
     {
         return $this->destination;
+    }
+
+    /**
+     * @param Builder $query
+     * @param int $id
+     * @return Builder
+     */
+    public function scopeGetListForId(Builder $query, int $id): Builder
+    {
+        return $query->where('source_account_id', $id)
+            ->orWhere('destination_account_id', $id);
     }
 }
