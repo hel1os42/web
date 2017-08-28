@@ -21,8 +21,9 @@ class ExtraValidations extends Validator
      */
     public function validateItself($attribute, $value, $parameters): bool
     {
-        return Account::where('owner_id', Auth::id())
-                ->firstOrFail()
-                ->getAddress() === $value;
+        $account = Account::whereAddress($value ?? null)
+            ->whereOwnerId(auth()->user()->id)
+            ->first();
+        return null !== $account;
     }
 }
