@@ -5,6 +5,7 @@ namespace App\Exceptions\Offer\Redemption;
 use App\Exceptions\Offer\RedemptionException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
+use Symfony\Component\HttpFoundation\Response;
 
 class CannotRedeemException extends RedemptionException
 {
@@ -17,6 +18,6 @@ class CannotRedeemException extends RedemptionException
     {
         $message = 'Offer redemption error. Offer id: ' . $offer->getId();
 
-        parent::__construct($offer, $activationCode, $message);
+        parent::__construct($offer, $activationCode, $message, Response::HTTP_NOT_ACCEPTABLE);
     }
 }
