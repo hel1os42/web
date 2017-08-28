@@ -128,12 +128,12 @@ class Transact extends NauModel
 
     /**
      * @param Builder $query
-     * @param int $id
+     * @param int $user_id
      * @return Builder
      */
-    public function scopeGetListForId(Builder $query, int $id): Builder
+    public function scopeGetListForId(Builder $query, int $user_id): Builder
     {
-        return $query->where('source_account_id', $id)
-            ->orWhere('destination_account_id', $id);
+        return $query->where('source_account_id', $user_id)
+            ->orWhere('destination_account_id', $user_id);
     }
 }
