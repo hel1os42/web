@@ -4,7 +4,7 @@ namespace App\Models\NauModels;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Sofa\Eloquence\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Transact
@@ -19,6 +19,9 @@ use Sofa\Eloquence\Builder;
  * @property Carbon updated_at
  * @property Account source
  * @property Account destination
+ *
+ * @method static Transact forAccount(Account $account)
+ * @method static Transact forUser(User $user)
  */
 class Transact extends NauModel
 {
@@ -128,12 +131,26 @@ class Transact extends NauModel
 
     /**
      * @param Builder $query
-     * @param int $user_id
+     * @param Account $account
      * @return Builder
      */
-    public function scopeGetListForId(Builder $query, int $userId): Builder
+    public function scopeForAccount(Builder $query, Account $account): Builder
     {
-        return $query->where('source_account_id', $userId)
-            ->orWhere('destination_account_id', $userId);
+        return $query->where('source_account_id', $account->getId())
+            ->orWhere('destination_account_id', $account->getId());
+    }
+
+    /**
+     * @param Builder $query
+     * @param User $user
+     * @return Builder
+     */
+    public function scopeForUser(Builder $query, \App\Models\User $user): Builder
+    {
+        $accountIds = $user->account()
+            ->pluck('id');
+
+        return $query->whereIn('source_account_id', $accountIds)
+            ->orWhereIn('destination_account_id', $accountIds);
     }
 }

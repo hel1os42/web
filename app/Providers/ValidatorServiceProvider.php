@@ -20,14 +20,4 @@ class ValidatorServiceProvider extends ServiceProvider
             return new ExtraValidations($translator, $data, $rules, $messages);
         });
     }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
-    }
 }

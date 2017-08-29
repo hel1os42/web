@@ -4,7 +4,6 @@ namespace App\Http\Validators;
 
 use App\Models\NauModels\Account;
 use Illuminate\Validation\Validator;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class ExtraValidations

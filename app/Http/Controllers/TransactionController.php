@@ -56,7 +56,9 @@ class TransactionController extends Controller
                 trans('msg.transaction.accepted') :
                 trans('msg.transaction.saved'));
 
-        return response()->render('transaction.complete', $transaction->toArray(),
+        return response()->render('transaction.complete', [
+            'transaction' => $transaction
+        ],
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
@@ -67,11 +69,12 @@ class TransactionController extends Controller
     /**
      * @return Response
      */
-    public function listTransaction()
+    public function listTransaction($id = null)
     {
-        $transactions = Transact::getListForId(
-            Account::whereOwnerId(Auth::id())->first()->id
-        )->get();
-        return response()->render('transaction.list', ['transactions' => $transactions]);
+        $user = auth()->user();
+        $transactions = Transact::forUser($user)->get();
+        return response()->render('transaction.list', [
+            'transactions' => $transactions
+        ]);
     }
 }
