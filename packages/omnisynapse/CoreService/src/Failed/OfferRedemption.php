@@ -3,11 +3,10 @@
 namespace OmniSynapse\CoreService\Failed;
 
 use App\Models\NauModels\Redemption;
-use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
- * Class OfferRedemptionFailed
- * @package OmniSynapse\CoreService\Job
+ * Class OfferRedemption
+ * @package OmniSynapse\CoreService\Failed;
  */
 class OfferRedemption extends Failed
 {

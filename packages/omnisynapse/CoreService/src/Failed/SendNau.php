@@ -3,11 +3,10 @@
 namespace OmniSynapse\CoreService\Failed;
 
 use App\Models\NauModels\Transact;
-use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
- * Class SendNauFailed
- * @package OmniSynapse\CoreService\Job
+ * Class SendNau
+ * @package OmniSynapse\CoreService\Failed;
  */
 class SendNau extends Failed
 {

@@ -6,7 +6,7 @@ use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
-use OmniSynapse\CoreServise\Failed\Failed;
+use OmniSynapse\CoreService\Failed\Failed;
 
 /**
  * Class UserCreated

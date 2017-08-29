@@ -10,7 +10,7 @@ class UserObserver
     /**
      * @param User $user
      */
-    public function creating(User $user)
+    public function created(User $user)
     {
         $coreService = app()->make(CoreService::class);
         dispatch($coreService->userCreated($user));

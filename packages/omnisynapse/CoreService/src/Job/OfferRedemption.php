@@ -6,7 +6,7 @@ use App\Models\NauModels\Redemption;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
-use OmniSynapse\CoreServise\Failed\Failed;
+use OmniSynapse\CoreService\Failed\Failed;
 
 /**
  * Class OfferRedemption

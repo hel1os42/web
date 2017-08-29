@@ -11,7 +11,7 @@ class RedemptionObserver
     /**
      * @param Redemption $redemption
      */
-    public function creating(Redemption $redemption)
+    public function created(Redemption $redemption)
     {
         $coreService = app()->make(CoreService::class);
 

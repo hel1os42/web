@@ -10,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use OmniSynapse\CoreService\Exception\RequestException;
-use OmniSynapse\CoreServise\Failed\Failed;
+use OmniSynapse\CoreService\Failed\Failed;
 
 abstract class AbstractJob implements ShouldQueue
 {

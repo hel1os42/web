@@ -10,7 +10,7 @@ class TransactObserver
     /**
      * @param Transact $transact
      */
-    public function creating(Transact $transact)
+    public function created(Transact $transact)
     {
         if (!$transact->isTypeP2p()) {
             return;

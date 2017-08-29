@@ -1,10 +1,10 @@
 <?php
 
-namespace OmniSynapse\CoreServise\Failed;
+namespace OmniSynapse\CoreService\Failed;
 
 /**
- * Class FailedResponse
- * @package OmniSynapse\CoreService\Failed
+ * Class Failed
+ * @package OmniSynapse\CoreService\Failed;
  */
 class Failed
 {

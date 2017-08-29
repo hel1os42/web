@@ -6,7 +6,7 @@ use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
-use OmniSynapse\CoreServise\Failed\Failed;
+use OmniSynapse\CoreService\Failed\Failed;
 
 /**
  * Class OfferUpdated

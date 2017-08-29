@@ -3,11 +3,10 @@
 namespace OmniSynapse\CoreService\Failed;
 
 use App\Models\User;
-use OmniSynapse\CoreServise\Failed\Failed;
 
 /**
- * Class UserCreatedFailed
- * @package OmniSynapse\CoreService\Job
+ * Class UserCreated
+ * @package OmniSynapse\CoreService\Failed;
  */
 class UserCreated extends Failed
 {

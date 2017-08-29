@@ -6,7 +6,7 @@ use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Request\TransactionNotification as TransactionNotificationRequest;
 use OmniSynapse\CoreService\Response\Transaction;
-use OmniSynapse\CoreServise\Failed\Failed;
+use OmniSynapse\CoreService\Failed\Failed;
 
 class TransactionNotification extends AbstractJob
 {
