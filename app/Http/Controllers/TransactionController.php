@@ -7,7 +7,7 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Currency;
 
 /**
  * Class TransactionController
@@ -20,8 +20,11 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $transaction          = new Transact;
-        $transaction->address = Account::where('owner_id', Auth::id())->firstOrFail()->getAddress();
+        $transaction                    = new Transact;
+        $transaction->source_account_id = auth()
+            ->user()
+            ->getAccountFor(Currency::NAU)
+            ->getAddress();
         return response()->render('transaction.create', $transaction);
     }
 
