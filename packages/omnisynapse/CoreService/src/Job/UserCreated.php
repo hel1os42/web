@@ -7,7 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
-use OmniSynapse\CoreService\Failed\Failed;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class UserCreated
@@ -80,10 +80,10 @@ class UserCreated extends AbstractJob
 
     /**
      * @param \Exception $exception
-     * @return Failed
+     * @return FailedJob
      */
-    protected function getFailedResponseObject(\Exception $exception): Failed
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new \OmniSynapse\CoreService\Failed\UserCreated($exception, $this->user);
+        return new FailedJob\UserCreated($exception, $this->user);
     }
 }

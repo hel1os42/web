@@ -1,14 +1,15 @@
 <?php
 
-namespace OmniSynapse\CoreService\Failed;
+namespace OmniSynapse\CoreService\FailedJob;
 
 use App\Models\NauModels\Redemption;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferRedemption
- * @package OmniSynapse\CoreService\Failed;
+ * @package OmniSynapse\CoreService\FailedJob
  */
-class OfferRedemption extends Failed
+class OfferRedemption extends FailedJob
 {
     /** @var Redemption */
     private $redemption;

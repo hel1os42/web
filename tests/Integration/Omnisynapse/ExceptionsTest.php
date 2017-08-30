@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Failed\Failed;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Response\Point;
 use Tests\TestCase;
 use Faker\Factory as Faker;
@@ -52,9 +52,9 @@ class ExceptionsTest extends TestCase
             public function getResponseClass(): string {
                 return Point::class;
             }
-            public function getFailedResponseObject(\Exception $exception): Failed
+            public function getFailedResponseObject(\Exception $exception): FailedJob
             {
-                return new Failed($exception);
+                return new FailedJob($exception);
             }
         }))->handle();
     }

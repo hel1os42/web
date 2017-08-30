@@ -1,12 +1,12 @@
 <?php
 
-namespace OmniSynapse\CoreService\Failed;
+namespace OmniSynapse\CoreService;
 
 /**
- * Class Failed
- * @package OmniSynapse\CoreService\Failed;
+ * Class FailedJob
+ * @package OmniSynapse\CoreService;
  */
-class Failed
+class FailedJob
 {
     /** @var \Exception */
     private $exception;

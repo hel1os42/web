@@ -1,14 +1,15 @@
 <?php
 
-namespace OmniSynapse\CoreService\Failed;
+namespace OmniSynapse\CoreService\FailedJob;
 
 use App\Models\NauModels\Offer;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferUpdated
- * @package OmniSynapse\CoreService\Failed;
+ * @package OmniSynapse\CoreService\FailedJob
  */
-class OfferUpdated extends Failed
+class OfferUpdated extends FailedJob
 {
     /** @var Offer */
     private $offer;

@@ -1,14 +1,15 @@
 <?php
 
-namespace OmniSynapse\CoreService\Failed;
+namespace OmniSynapse\CoreService\FailedJob;
 
 use App\Models\User;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class UserCreated
- * @package OmniSynapse\CoreService\Failed;
+ * @package OmniSynapse\CoreService\FailedJob
  */
-class UserCreated extends Failed
+class UserCreated extends FailedJob
 {
     /** @var User */
     private $user;

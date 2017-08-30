@@ -1,14 +1,15 @@
 <?php
 
-namespace OmniSynapse\CoreService\Failed;
+namespace OmniSynapse\CoreService\FailedJob;
 
 use App\Models\NauModels\Transact;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
- * Class SendNau
- * @package OmniSynapse\CoreService\Failed;
+ * Class TransactionNotification
+ * @package OmniSynapse\CoreService\FailedJob
  */
-class SendNau extends Failed
+class TransactionNotification extends FailedJob
 {
     /** @var Transact */
     private $transaction;

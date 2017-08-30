@@ -7,7 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
-use OmniSynapse\CoreService\Failed\Failed;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferCreated
@@ -80,10 +80,10 @@ class OfferCreated extends AbstractJob
 
     /**
      * @param \Exception $exception
-     * @return Failed
+     * @return FailedJob
      */
-    protected function getFailedResponseObject(\Exception $exception): Failed
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new \OmniSynapse\CoreService\Failed\OfferCreated($exception, $this->offer);
+        return new FailedJob\OfferCreated($exception, $this->offer);
     }
 }

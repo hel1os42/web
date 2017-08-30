@@ -7,7 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
-use OmniSynapse\CoreService\Failed\Failed;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class SendNau
@@ -80,10 +80,10 @@ class SendNau extends AbstractJob
 
     /**
      * @param \Exception $exception
-     * @return Failed
+     * @return FailedJob
      */
-    protected function getFailedResponseObject(\Exception $exception): Failed
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new \OmniSynapse\CoreService\Failed\SendNau($exception, $this->transaction);
+        return new FailedJob\SendNau($exception, $this->transaction);
     }
 }

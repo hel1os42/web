@@ -7,7 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
-use OmniSynapse\CoreService\Failed\Failed;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferRedemption
@@ -80,10 +80,10 @@ class OfferRedemption extends AbstractJob
 
     /**
      * @param \Exception $exception
-     * @return Failed
+     * @return FailedJob
      */
-    protected function getFailedResponseObject(\Exception $exception): Failed
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new \OmniSynapse\CoreService\Failed\OfferRedemption($exception, $this->redemption);
+        return new FailedJob\OfferRedemption($exception, $this->redemption);
     }
 }
