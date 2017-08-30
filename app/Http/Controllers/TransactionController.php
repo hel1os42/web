@@ -20,8 +20,8 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $transaction     = new Transact;
-        $transaction->id = Account::where('owner_id', Auth::id())->firstOrFail()->getAddress();
+        $transaction          = new Transact;
+        $transaction->address = Account::where('owner_id', Auth::id())->firstOrFail()->getAddress();
         return response()->render('transaction.create', $transaction);
     }
 
@@ -29,7 +29,7 @@ class TransactionController extends Controller
      * @param TransactRequest $request
      * @return Response
      */
-    public function completeTransaction (TransactRequest $request): Response
+    public function completeTransaction(TransactRequest $request): Response
     {
         $senderAccount      = Account::whereAddress($request->sender)->firstOrFail();
         $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
@@ -70,25 +70,24 @@ class TransactionController extends Controller
      * @param int $transactionId|null
      * @return Response
      */
-    public function listTransaction($transactionId = null)
+    public function listTransactions($transactionId = null): Response
     {
         $user         = auth()->user();
-        $transactions = Transact::forUser($user)->get();
+        $transactions = Transact::forUser($user);
 
         if (null === $transactionId) {
+            if (request()->wantsJson()) {
+                $transactions = $transactions->get();
+            }
+
             return response()->render('transaction.list', [
                 'transactions' => $transactions
             ]);
         }
 
-        $transactions = $transactions->where('id', $transactionId);
-
-        if (0 === count($transactions)) {
-            return response()->error(Response::HTTP_NOT_FOUND, trans('errors.transaction_not_found'));
-        }
-
-        return response()->render('transaction.list', [
-            'transactions' => $transactions
+        $transaction = $transactions->findOrFail($transactionId);
+        return response()->render('transaction.transactionInfo', [
+            'transaction' => $transaction
         ]);
     }
 }

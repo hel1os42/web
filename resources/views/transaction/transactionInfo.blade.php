@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Created transactions')
+@section('title', 'Info about transaction')
 
 @section('content')
 
