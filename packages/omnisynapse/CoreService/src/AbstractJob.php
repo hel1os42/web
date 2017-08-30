@@ -15,7 +15,7 @@ abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var CoreServiceImpl */
+    /** @var CoreService */
     protected $coreService;
 
     /**
