@@ -10,7 +10,7 @@ class OfferObserver
     /**
      * @param Offer $offer
      */
-    public function created(Offer $offer)
+    public function creating(Offer $offer)
     {
         $coreService = app()->make(CoreService::class);
         dispatch($coreService->offerCreated($offer));
@@ -19,7 +19,7 @@ class OfferObserver
     /**
      * @param Offer $offer
      */
-    public function updated(Offer $offer)
+    public function updating(Offer $offer)
     {
         $coreService = app()->make(CoreService::class);
         dispatch($coreService->offerUpdated($offer));
