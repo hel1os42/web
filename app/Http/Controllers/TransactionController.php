@@ -69,10 +69,23 @@ class TransactionController extends Controller
     /**
      * @return Response
      */
-    public function listTransaction($id = null)
+    public function listTransaction($transactionId = null)
     {
         $user = auth()->user();
         $transactions = Transact::forUser($user)->get();
+
+        if (null === $transactionId) {
+            return response()->render('transaction.list', [
+                'transactions' => $transactions
+            ]);
+        }
+
+        $transactions = $transactions->where('id', $transactionId);
+
+        if (0 === count($transactions)) {
+            return response()->error(Response::HTTP_NOT_FOUND, trans('errors.transaction_not_found'));
+        }
+
         return response()->render('transaction.list', [
             'transactions' => $transactions
         ]);
