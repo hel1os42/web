@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService;
 
 /**
  * Class FailedJob
- * @package OmniSynapse\CoreService;
+ * @package OmniSynapse\CoreService
  */
 class FailedJob
 {
