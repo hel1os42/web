@@ -22,9 +22,9 @@ abstract class AbstractJob implements ShouldQueue
     /**
      * AbstractJob constructor.
      *
-     * @param CoreServiceImpl $coreService
+     * @param CoreService $coreService
      */
-    public function __construct(CoreServiceImpl $coreService)
+    public function __construct(CoreService $coreService)
     {
         $this->coreService = $coreService;
     }
