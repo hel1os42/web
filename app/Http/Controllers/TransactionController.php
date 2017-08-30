@@ -67,11 +67,12 @@ class TransactionController extends Controller
     }
 
     /**
+     * @param int $transactionId|null
      * @return Response
      */
     public function listTransaction($transactionId = null)
     {
-        $user = auth()->user();
+        $user         = auth()->user();
         $transactions = Transact::forUser($user)->get();
 
         if (null === $transactionId) {
