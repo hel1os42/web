@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\TransactionNotification as TransactionNotificationRequest;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Failed\Failed;
@@ -22,9 +22,9 @@ class TransactionNotification extends AbstractJob
      *
      * @param Transact $transaction
      * @param string $category
-     * @param CoreServiceImpl $coreService
+     * @param CoreService $coreService
      */
-    public function __construct(Transact $transaction, $category, CoreServiceImpl $coreService)
+    public function __construct(Transact $transaction, $category, CoreService $coreService)
     {
         parent::__construct($coreService);
 

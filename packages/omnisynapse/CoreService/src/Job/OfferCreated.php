@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 use OmniSynapse\CoreService\Failed\Failed;
@@ -25,9 +25,9 @@ class OfferCreated extends AbstractJob
      * OfferCreated constructor.
      *
      * @param Offer $offer
-     * @param CoreServiceImpl $coreService
+     * @param CoreService $coreService
      */
-    public function __construct(Offer $offer, CoreServiceImpl $coreService)
+    public function __construct(Offer $offer, CoreService $coreService)
     {
         parent::__construct($coreService);
 

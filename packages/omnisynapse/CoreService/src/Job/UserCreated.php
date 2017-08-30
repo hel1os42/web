@@ -4,7 +4,7 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\CoreServiceImpl;
+use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
 use OmniSynapse\CoreService\Failed\Failed;
@@ -25,9 +25,9 @@ class UserCreated extends AbstractJob
      * UserCreated constructor.
      *
      * @param User $user
-     * @param CoreServiceImpl $coreService
+     * @param CoreService $coreService
      */
-    public function __construct(User $user, CoreServiceImpl $coreService)
+    public function __construct(User $user, CoreService $coreService)
     {
         parent::__construct($coreService);
 

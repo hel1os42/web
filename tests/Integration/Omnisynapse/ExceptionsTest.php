@@ -5,8 +5,9 @@ namespace Tests\Integration\CoreService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Failed\Failed;
 use OmniSynapse\CoreService\Response\Point;
-use OmniSynapse\CoreServise\Failed\Failed;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 
@@ -26,12 +27,15 @@ class ExceptionsTest extends TestCase
             }
         });
 
-        ((new class ($errorClientMock, $requestObject) extends AbstractJob {
+        $coreService = (app()->make(CoreService::class))
+            ->setClient($errorClientMock);
+
+        ((new class ($coreService, $requestObject) extends AbstractJob {
             private $requestObject;
 
-            public function __construct(Client $client, $requestObject)
+            public function __construct(CoreService $coreService, $requestObject)
             {
-                parent::__construct($client);
+                parent::__construct($coreService);
 
                 $this->requestObject = $requestObject;
             }
