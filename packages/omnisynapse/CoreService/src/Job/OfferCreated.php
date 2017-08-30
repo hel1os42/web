@@ -4,6 +4,7 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreServiceImpl;
 use OmniSynapse\CoreService\Request\Offer as OfferRequest;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 use OmniSynapse\CoreService\Failed\Failed;
@@ -24,16 +25,25 @@ class OfferCreated extends AbstractJob
      * OfferCreated constructor.
      *
      * @param Offer $offer
-     * @param \GuzzleHttp\Client $client
+     * @param CoreServiceImpl $coreService
      */
-    public function __construct(Offer $offer, \GuzzleHttp\Client $client)
+    public function __construct(Offer $offer, CoreServiceImpl $coreService)
     {
-        parent::__construct($client);
+        parent::__construct($coreService);
 
         $this->offer = $offer;
 
         /** @var OfferRequest requestObject */
         $this->requestObject = new OfferRequest($offer);
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentProperties = parent::__sleep();
+        return array_merge($parentProperties, ['requestObject', 'offer']);
     }
 
     /**

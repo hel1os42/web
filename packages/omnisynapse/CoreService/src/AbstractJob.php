@@ -16,17 +16,33 @@ abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var Client */
-    private $client;
+    /** @var CoreServiceImpl */
+    protected $coreService;
 
     /**
      * AbstractJob constructor.
      *
-     * @param Client $client
+     * @param CoreServiceImpl $coreService
      */
-    public function __construct(Client $client)
+    public function __construct(CoreServiceImpl $coreService)
     {
-        $this->client = $client;
+        $this->coreService = $coreService;
+    }
+
+    /**
+     * @return Client
+     */
+    final protected function getClient()
+    {
+        return $this->coreService->getClient();
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        return ['coreService'];
     }
 
     /**
@@ -38,7 +54,7 @@ abstract class AbstractJob implements ShouldQueue
     public function handle()
     {
         /** @var Response $response */
-        $response = $this->client->request($this->getHttpMethod(), $this->getHttpPath(),
+        $response = $this->coreService->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
             [
                 'json' => null !== $this->getRequestObject()
                     ? $this->getRequestObject()->jsonSerialize()

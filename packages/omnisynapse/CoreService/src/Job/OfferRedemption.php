@@ -4,6 +4,7 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Redemption;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreServiceImpl;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
 use OmniSynapse\CoreService\Failed\Failed;
@@ -24,16 +25,25 @@ class OfferRedemption extends AbstractJob
      * OfferRedemption constructor.
      *
      * @param Redemption $redemption
-     * @param \GuzzleHttp\Client $client
+     * @param CoreServiceImpl $coreService
      */
-    public function __construct(Redemption $redemption, \GuzzleHttp\Client $client)
+    public function __construct(Redemption $redemption, CoreServiceImpl $coreService)
     {
-        parent::__construct($client);
+        parent::__construct($coreService);
 
         $this->redemption = $redemption;
 
         /** @var OfferForRedemptionRequest requestObject */
         $this->requestObject = new OfferForRedemptionRequest($redemption);
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentProperties = parent::__sleep();
+        return array_merge($parentProperties, ['requestObject', 'redemption']);
     }
 
     /**
