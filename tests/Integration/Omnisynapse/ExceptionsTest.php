@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Response\Point;
 use Tests\TestCase;
@@ -30,7 +31,7 @@ class ExceptionsTest extends TestCase
         $coreService = (app()->make(CoreService::class))
             ->setClient($errorClientMock);
 
-        ((new class ($coreService, $requestObject) extends AbstractJob {
+        return ((new class ($coreService, $requestObject) extends AbstractJob {
             private $requestObject;
 
             public function __construct(CoreService $coreService, $requestObject)
@@ -116,5 +117,30 @@ class ExceptionsTest extends TestCase
             'message' => 'error message',
         ]));
         $this->sendRequestAndTestExceptions($response);
+    }
+
+    public function testErrorResponseObject()
+    {
+        $error   = 'error name';
+        $message = 'error message';
+
+        $response = new Response(\Illuminate\Http\Response::HTTP_NOT_FOUND, [
+            'Content-Type' => 'application/json',
+        ], \GuzzleHttp\json_encode([
+            'error'   => $error,
+            'message' => $message,
+        ]));
+
+        try {
+            $this->sendRequestAndTestExceptions($response);
+        } catch (RequestException $e) {
+            $this->assertNotNull($e->getErrorResponse());
+            $this->assertEquals($error, $e->getErrorResponse()->getError());
+            $this->assertEquals($message, $e->getErrorResponse()->getMessage());
+            $this->assertEquals([
+                'error' => $error,
+                'message' => $message,
+            ], $e->getErrorResponse()->jsonSerialize());
+        }
     }
 }
