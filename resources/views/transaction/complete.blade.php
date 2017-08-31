@@ -3,13 +3,17 @@
 @section('title', 'Created transactions')
 
 @section('content')
-
-    @if (isset ($transaction))
+    <div>
         <h2>
-            sender acc id - {{ $transaction['source_account_id']  }} <br>
-            destination acc id - {{ $transaction['destination_account_id']  }} <br>
-            amount - {{ $transaction['amount']  }} <br>
+            <pre>
+                sender: {{$source_account_id}}
+                destination: {{$destination_account_id}}
+                amount: {{$amount}}
+                created: {{$created_at}}
+                updated: {{$updated_at}}
+            </pre>
         </h2>
+    </div>
     @endif
 
 @stop

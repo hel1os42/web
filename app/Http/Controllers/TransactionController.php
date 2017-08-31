@@ -81,17 +81,10 @@ class TransactionController extends Controller
         $transactions = Transact::forUser($user);
 
         if (null === $transactionId) {
-            if (request()->wantsJson()) {
-                $transactions = $transactions->get()->toArray();
-            }
-            return response()->render('transaction.list', [
-                'transactions' => $transactions
-            ]);
+            return response()->render('transaction.list', $transactions -> paginate());
         }
 
         $transaction = $transactions->findOrFail($transactionId);
-        return response()->render('transaction.transactionInfo', [
-            'transaction' => $transaction
-        ]);
+        return response()->render('transaction.transactionInfo', $transaction -> toArray());
     }
 }
