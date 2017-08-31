@@ -26,7 +26,7 @@ class RedemptionException extends OfferException
         Offer $offer,
         string $activationCode,
         $message = "",
-        $code = 0,
+        $code = 500,
         Throwable $previous = null
     ) {
         $this->activationCode = $activationCode;
