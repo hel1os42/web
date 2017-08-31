@@ -82,7 +82,7 @@ class TransactionController extends Controller
 
         if (null === $transactionId) {
             if (request()->wantsJson()) {
-                $transactions = $transactions->get();
+                $transactions = $transactions->get()->toArray();
             }
             return response()->render('transaction.list', [
                 'transactions' => $transactions
