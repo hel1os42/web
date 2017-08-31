@@ -61,9 +61,7 @@ class TransactionController extends Controller
                 trans('msg.transaction.accepted') :
                 trans('msg.transaction.saved'));
 
-        return response()->render('transaction.complete', [
-            'transaction' => $transaction
-        ],
+        return response()->render('transaction.complete', $transaction->toArray(),
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
