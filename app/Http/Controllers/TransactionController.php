@@ -20,8 +20,10 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $transaction                    = new Transact;
-        $transaction->source_account_id = auth()
+        $transaction                         = new Transact;
+        $transaction->amount                 = 0.0001;
+        $transaction->destination_account_id = null;
+        $transaction->source_account_id      = auth()
             ->user()
             ->getAccountFor(Currency::NAU)
             ->getAddress();
@@ -82,7 +84,6 @@ class TransactionController extends Controller
             if (request()->wantsJson()) {
                 $transactions = $transactions->get();
             }
-
             return response()->render('transaction.list', [
                 'transactions' => $transactions
             ]);
