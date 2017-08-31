@@ -81,10 +81,10 @@ class TransactionController extends Controller
         $transactions = Transact::forUser($user);
 
         if (null === $transactionId) {
-            return response()->render('transaction.list', $transactions -> paginate());
+            return response()->render('transaction.list', $transactions->paginate());
         }
 
         $transaction = $transactions->findOrFail($transactionId);
-        return response()->render('transaction.transactionInfo', $transaction -> toArray());
+        return response()->render('transaction.transactionInfo', $transaction->toArray());
     }
 }
