@@ -66,11 +66,25 @@ class OfferRedemptionTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(\OmniSynapse\CoreService\FailedJob\OfferRedemption::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $offerRedemption = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->offerRedemption($redemptionMock)
-            ->handle();
+            ->offerRedemption($redemptionMock);
+
+        $offerRedemption->handle();
+        $offerRedemption->failed((new \Exception));
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen OfferForRedemption response event.');
+        $this->assertEquals(1, $exceptionEventCalled, 'Can not listen OfferRedemption failed job.');
+
+        $this->assertEquals([
+            'coreService',
+            'requestObject',
+            'redemption',
+        ], $offerRedemption->__sleep());
     }
 }

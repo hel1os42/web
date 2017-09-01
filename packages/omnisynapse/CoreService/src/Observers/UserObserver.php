@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\User;
+use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 
 class UserObserver
