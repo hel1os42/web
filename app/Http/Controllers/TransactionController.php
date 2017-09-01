@@ -36,22 +36,22 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $senderAccount      = Account::whereAddress($request->sender)->firstOrFail();
+        $sourceAccount      = Account::whereAddress($request->source)->firstOrFail();
         $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
         $amount             = $request->amount;
 
-        if (false === $senderAccount->isEnoughBalanceFor($amount)) {
+        if (false === $sourceAccount->isEnoughBalanceFor($amount)) {
             $multiplier = (int)config('nau.multiplier');
             return response()->error(Response::HTTP_NOT_ACCEPTABLE,
                 trans('msg.transaction.balance', [
-                    'balance' => sprintf('%0.'.$multiplier.'f', $senderAccount->getBalance()),
+                    'balance' => sprintf('%0.'.$multiplier.'f', $sourceAccount->getBalance()),
                 ])
             );
         }
 
         $transaction         = new Transact();
         $transaction->amount = $amount;
-        $transaction->source()->associate($senderAccount);
+        $transaction->source()->associate($sourceAccount);
         $transaction->destination()->associate($destinationAccount);
 
         $transaction->save();
