@@ -20,14 +20,14 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $transaction                         = new Transact;
-        $transaction->amount                 = 0.0001;
-        $transaction->destination_account_id = null;
-        $transaction->source_account_id      = auth()
-            ->user()
-            ->getAccountFor(Currency::NAU)
-            ->getAddress();
-        return response()->render('transaction.create', $transaction);
+        return response()->render('transaction.create', [
+            'amount'      => 0.0001,
+            'destination' => null,
+            'source'      => auth()
+                ->user()
+                ->getAccountFor(Currency::NAU)
+                ->getAddress()
+        ]);
     }
 
     /**
@@ -49,7 +49,7 @@ class TransactionController extends Controller
             );
         }
 
-        $transaction         = (new Transact());
+        $transaction         = new Transact();
         $transaction->amount = $amount;
         $transaction->source()->associate($senderAccount);
         $transaction->destination()->associate($destinationAccount);

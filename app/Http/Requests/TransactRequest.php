@@ -34,7 +34,7 @@ class TransactRequest extends FormRequest
     {
         return [
             'sender'      => 'required|ownAddress',
-            'destination' => 'required|different:sender',
+            'destination' => 'required|different:sender|exists:pgsql_nau.account,addr',
             'amount'      => 'required|numeric|min:0.0001',
         ];
     }
