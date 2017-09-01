@@ -141,6 +141,9 @@ class ExceptionsTest extends TestCase
                 'error' => $error,
                 'message' => $message,
             ], $e->getErrorResponse()->jsonSerialize());
+
+            $this->assertNotEmpty($e->getRawResponse());
+            $this->assertNotEmpty($e->getResponse());
         }
     }
 }
