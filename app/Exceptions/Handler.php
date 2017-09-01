@@ -7,8 +7,6 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -25,21 +23,6 @@ class Handler extends ExceptionHandler
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
     ];
-
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $exception
-     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\Response
-     */
-    public function render($request, Exception $exception)
-    {
-        if ($request->wantsJson()) {
-            return response()->error($exception->getStatusCode(), $exception->getMessage());
-        }
-        return parent::render($request, $exception);
-    }
 
     /**
      * Convert an authentication exception into an unauthenticated response.

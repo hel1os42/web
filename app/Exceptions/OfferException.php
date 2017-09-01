@@ -3,9 +3,10 @@
 namespace App\Exceptions;
 
 use App\Models\NauModels\Offer;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-class OfferException extends \Exception
+class OfferException extends HttpException
 {
     /**
      * @var Offer
@@ -19,10 +20,10 @@ class OfferException extends \Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(Offer $offer, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(Offer $offer, $message = "", $code = 500, Throwable $previous = null)
     {
         $this->offer = $offer;
-        parent::__construct($message, $code, $previous);
+        parent::__construct($code, $message, $previous);
     }
 
     /**
