@@ -5,6 +5,7 @@ namespace App\Exceptions\Offer\Redemption;
 use App\Exceptions\Offer\RedemptionException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
+use Symfony\Component\HttpFoundation\Response;
 
 class BadActivationCodeException extends RedemptionException
 {
@@ -17,6 +18,6 @@ class BadActivationCodeException extends RedemptionException
     {
         $message = 'Wrong activation code. Code: ' . $activationCode . ' Offer id: ' . $offer->getId();
 
-        parent::__construct($offer, $activationCode, $message);
+        parent::__construct($offer, $activationCode, $message, Response::HTTP_BAD_REQUEST);
     }
 }

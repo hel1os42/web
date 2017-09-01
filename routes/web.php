@@ -83,6 +83,13 @@ Route::group(['middleware' => 'auth'], function () {
         ]
     ]);
 
+    Route::get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
+        ->name('transactionCreate');
+    Route::post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
+        ->name('transactionComplete');
+    Route::get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
+        ->where('reansactionId', '[0-9]+')
+        ->name('transactionList');
 
     Route::get('categories', 'CategoryController@index')->name('categories');
 });
