@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Account
@@ -20,6 +21,8 @@ use Illuminate\Support\Collection;
  * @property Carbon updated_at
  * @property Collection|Offer[] offers
  * @property User owner
+ *
+ * @method static Account whereAddress
  */
 class Account extends NauModel
 {
@@ -53,7 +56,7 @@ class Account extends NauModel
     /** @var array */
     protected $maps = [
         'balance' => 'amount',
-        'address' => 'addr'
+        'address' => 'addr',
     ];
 
     /** @return BelongsTo */
@@ -90,7 +93,7 @@ class Account extends NauModel
      * @param int $value
      * @return float
      */
-    public function getBalanceAttribute(int $value): float
+    public function getAmountAttribute(int $value): float
     {
         return $this->convertIntToFloat($value);
     }
@@ -99,5 +102,24 @@ class Account extends NauModel
     public function getBalance(): float
     {
         return $this->balance;
+    }
+
+    /**
+     * @param float $amount
+     * @return bool
+     */
+    public function isEnoughBalanceFor(float $amount): bool
+    {
+        return $this->getBalance() >= $amount;
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string $address
+     * @return Builder
+     */
+    public function scopeWhereAddress(Builder $builder, string $address): Builder
+    {
+        return $builder->where('address', $address);
     }
 }

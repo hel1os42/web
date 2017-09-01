@@ -4,6 +4,7 @@ namespace App\Models\NauModels;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Transact
@@ -18,6 +19,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon updated_at
  * @property Account source
  * @property Account destination
+ *
+ * @method static Transact forAccount(Account $account)
+ * @method static Transact forUser(User $user)
  */
 class Transact extends NauModel
 {
@@ -53,9 +57,9 @@ class Transact extends NauModel
 
     /** @var array */
     protected $maps = [
-        'txid'   => 'id',
-        'src_id' => 'source_account_id',
-        'dst_id' => 'destination_account_id',
+        'id'                     => 'txid',
+        'source_account_id'      => 'src_id',
+        'destination_account_id' => 'dst_id',
     ];
 
     /** @return string */
@@ -123,5 +127,30 @@ class Transact extends NauModel
     public function getDestination(): Account
     {
         return $this->destination;
+    }
+
+    /**
+     * @param Builder $query
+     * @param Account $account
+     * @return Builder
+     */
+    public function scopeForAccount(Builder $query, Account $account): Builder
+    {
+        return $query->where('source_account_id', $account->getId())
+            ->orWhere('destination_account_id', $account->getId());
+    }
+
+    /**
+     * @param Builder $query
+     * @param User $user
+     * @return Builder
+     */
+    public function scopeForUser(Builder $query, \App\Models\User $user): Builder
+    {
+        $accountIds = $user->account()
+            ->pluck('id');
+
+        return $query->whereIn('source_account_id', $accountIds)
+            ->orWhereIn('destination_account_id', $accountIds);
     }
 }
