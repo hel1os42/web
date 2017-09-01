@@ -13,7 +13,7 @@ class OfferCreatedTest extends TestCase
         $faker = Faker::create();
 
         $exception = new \Exception;
-        $offer = [
+        $offer     = [
             'id' => $faker->uuid,
         ];
 

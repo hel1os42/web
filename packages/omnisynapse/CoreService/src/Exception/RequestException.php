@@ -18,7 +18,7 @@ class RequestException extends Exception
     private $rawResponse;
 
     /** @var Error|null $errorResponse */
-    private $errorResponse=null;
+    private $errorResponse = null;
 
     /**
      * RequestException constructor.

@@ -12,7 +12,7 @@ class TransactionNotificationTest extends TestCase
     {
         $faker = Faker::create();
 
-        $exception = new \Exception;
+        $exception   = new \Exception;
         $transaction = [
             'id' => $faker->uuid,
         ];

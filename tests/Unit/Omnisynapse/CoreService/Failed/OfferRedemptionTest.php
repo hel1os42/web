@@ -12,7 +12,7 @@ class OfferRedemptionTest extends TestCase
     {
         $faker = Faker::create();
 
-        $exception = new \Exception;
+        $exception  = new \Exception;
         $redemption = [
             'id' => $faker->uuid,
         ];

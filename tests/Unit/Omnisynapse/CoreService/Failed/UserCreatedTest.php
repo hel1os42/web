@@ -13,7 +13,7 @@ class UserCreatedTest extends TestCase
         $faker = Faker::create();
 
         $exception = new \Exception;
-        $user = [
+        $user      = [
             'id' => $faker->uuid,
         ];
 
