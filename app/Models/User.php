@@ -303,9 +303,8 @@ class User extends Authenticatable
                 if ($account) {
                     return $account;
                 }
-                throw new TokenException("no account " . $currency);
             default:
-                throw new TokenException("unknown token " . $currency);
+                return response()->error(404, 'You do not have ' . $currency . ' account');
         }
     }
 
