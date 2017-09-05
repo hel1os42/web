@@ -13,7 +13,7 @@ trait HasNau
      */
     protected function convertIntToFloat(int $value): float
     {
-        return $this->convertBase($value, 0.1);
+        return $this->convertBase((float)$value, 0.1);
     }
 
     /**
