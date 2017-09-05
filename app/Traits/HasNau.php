@@ -21,4 +21,19 @@ trait HasNau
 
         return round($value * pow(0.1, $multiplier), $multiplier);
     }
+
+    /**
+     * @param float $value
+     * @return int
+     */
+    protected function convertFloatToInt(float $value): int
+    {
+        $multiplier = $this->multiplier;
+
+        if (null === $multiplier) {
+            $multiplier = $this->multiplier = (int)config('nau.multiplier');
+        }
+
+        return round($value * pow(10, $multiplier), $multiplier);
+    }
 }
