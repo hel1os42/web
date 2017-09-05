@@ -22,7 +22,7 @@ trait HasNau
      */
     protected function convertFloatToInt(float $value): int
     {
-        return (int)$this->convertBase($value, 10);
+        return (int)$this->convertBase($value, 10.0);
     }
 
     /**
