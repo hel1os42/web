@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\AdditionalField\AdditionalFieldType;
 use Hashids\Hashids;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -85,6 +86,11 @@ class User extends Authenticatable
     public function referrals(): Relations\HasMany
     {
         return $this->hasMany(User::class, 'referrer_id', 'id');
+    }
+
+    public function additionalFields()
+    {
+        return $this->morphToMany(AdditionalFieldType::class, 'additional_field');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdditionalField;
 use App\Models\User;
 use App\Models\NauModels\User as CoreUser;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,9 @@ class ProfileController extends Controller
     public function show(string $uuid = null)
     {
         $userId = auth()->id();
+
+        dd((new User)->findOrFail($userId)->additionalFields);
+
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
             response()->render('profile', (new User)->findOrFail($userId)->toArray());
