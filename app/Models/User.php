@@ -296,7 +296,7 @@ class User extends Authenticatable
      * @param string $currency
      * @return Account
      */
-    public function getAccountFor(string $currency): ?Account
+    public function getAccountFor(string $currency)
     {
         switch ($currency) {
             case Currency::NAU:
@@ -304,8 +304,9 @@ class User extends Authenticatable
                 if ($account) {
                     return $account;
                 }
+                // no break
             default:
-                return response()->error(Response::HTTP_NOT_FOUND, 'You do not have ' . $currency . ' account');
+                throw new TokenException($currency);
         }
     }
 
