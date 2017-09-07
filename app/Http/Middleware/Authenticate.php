@@ -40,22 +40,12 @@ class Authenticate
 
     private function jwtAuth($request, Closure $next)
     {
-//        try {
-//            \JWTAuth::parseToken()->authenticate();
-//        } catch (TokenExpiredException $e) {
-//            return response()->error($e->getStatusCode(), $e->getMessage());
-//        } catch (TokenInvalidException $e) {
-//            return response()->error(Response::HTTP_FORBIDDEN, $e->getMessage());
-//        } catch (JWTException $e) {
-//            return response()->error($e->getStatusCode(), $e->getMessage());
-//        }
-
-        $token = null;
+        $token   = null;
         $message = '';
         try {
             $token = \JWTAuth::parseToken();
         } catch (JWTException $e) {
-            $token = null;
+            $token   = null;
             $message = $e->getMessage();
         }
 

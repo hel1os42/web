@@ -28,14 +28,14 @@ class Handler extends ExceptionHandler
 
 
     /**
-     * @param Exception $e
+     * @param Exception $exception
      * @return Response
      */
-    protected function convertExceptionToResponse(Exception $e): Response
+    protected function convertExceptionToResponse(Exception $exception): Response
     {
-        $e = FlattenException::create($e);
+        $exception = FlattenException::create($exception);
 
-        return response()->error($e->getStatusCode(), $e->getMessage());
+        return response()->error($exception->getStatusCode(), $exception->getMessage());
     }
 
     /**
