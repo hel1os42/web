@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use PDepend\Source\Parser\TokenException;
+use App\Exceptions\TokenException;
 use Symfony\Component\HttpFoundation\Response;
 use Webpatser\Uuid\Uuid;
 
