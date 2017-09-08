@@ -81,5 +81,4 @@ class AdditionalFieldValues extends Model
         $this->value = $value;
         return $this;
     }
-
 }
