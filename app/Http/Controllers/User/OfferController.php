@@ -17,12 +17,11 @@ class OfferController extends Controller
      */
     public function index(OfferRequest $request): Response
     {
-        $offers = Offer::filterByCategory($request->category)
+
+        return response()->render('user.offer.index', (new Offer)->filterByCategory($request->category)
             ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-            ->select('name', 'descr')
-            ->paginate()
-            ->makeVisible(Offer::$publicAttributes);
-        return response()->render('user.offer.index', $offers);
+            ->select(Offer::$publicAttributes)
+            ->paginate());
     }
 
     /**
