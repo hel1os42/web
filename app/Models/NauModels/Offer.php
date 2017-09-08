@@ -60,8 +60,8 @@ class Offer extends NauModel
         $this->incrementing = false;
 
         $this->attributes = array(
-            'account_id'           => null,
-            'label'                => null,
+            'acc_id'               => null,
+            'name'                 => null,
             'descr'                => null,
             'reward'               => '10000',
             'status'               => null,
