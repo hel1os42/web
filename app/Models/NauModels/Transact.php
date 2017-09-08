@@ -96,6 +96,15 @@ class Transact extends NauModel
         return $this->convertIntToFloat($value);
     }
 
+    /**
+     * @param float $value
+     * @return int
+     */
+    public function setAmountAttribute(float $value): int
+    {
+        return $this->attributes['amount'] = $this->convertFloatToInt($value);
+    }
+
     /** @return float */
     public function getAmount(): float
     {
@@ -117,7 +126,7 @@ class Transact extends NauModel
     /**
      * @return Account
      */
-    public function getSource() : Account
+    public function getSource(): Account
     {
         return $this->source;
     }
