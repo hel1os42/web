@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
+use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
-use Hashids\Hashids;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,17 +18,22 @@ use Webpatser\Uuid\Uuid;
  * Class User
  * @package App
  *
- * @property string id
- * @property string name
- * @property string email
- * @property string password
- * @property string invite_code
- * @property string referrer_id
- * @property int level
- * @property int points
- * @property Account account
- * @property CoreUser coreUser
- * @property User referrer
+ * @property string     id
+ * @property string     name
+ * @property string     email
+ * @property string     password
+ * @property string     invite_code
+ * @property string     referrer_id
+ * @property int        level
+ * @property int        points
+ * @property Collection offers
+ * @property Collection accounts
+ * @property CoreUser   coreUser
+ * @property User       referrer
+ * @property int        offers_count
+ * @property int        referrals_count
+ * @property int        accounts_count
+ * @property int        activation_codes_count
  */
 class User extends Authenticatable
 {
@@ -55,7 +61,11 @@ class User extends Authenticatable
 
         $this->appends = [
             'level',
-            'points'
+            'points',
+            'offers_count',
+            'referrals_count',
+            'accounts_count',
+            'activation_codes_count',
         ];
 
     }
@@ -100,7 +110,7 @@ class User extends Authenticatable
      *
      * @return Relations\HasMany
      */
-    public function account(): Relations\HasMany
+    public function accounts(): Relations\HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
     }
@@ -111,6 +121,19 @@ class User extends Authenticatable
     public function activationCodes(): Relations\HasMany
     {
         return $this->hasMany(ActivationCode::class);
+    }
+
+    /**
+     * @return Relations\BelongsToMany
+     * @todo add created_at into pivot(fix wrong format)
+     */
+    public function offers(): Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
+                    ->withPivot([
+//                        'created_at',
+                        'points',
+                    ]);
     }
 
     /**
@@ -257,6 +280,7 @@ class User extends Authenticatable
      * Set invite code
      *
      * @param string $invite
+     *
      * @return User
      */
     public function setInvite(string $invite): User
@@ -293,13 +317,14 @@ class User extends Authenticatable
 
     /**
      * @param string $currency
+     *
      * @return Account
      */
     public function getAccountFor(string $currency): ?Account
     {
         switch ($currency) {
             case Currency::NAU:
-                $account = $this->account()->first();
+                $account = $this->accounts()->first();
                 if ($account) {
                     return $account;
                 }
@@ -311,10 +336,43 @@ class User extends Authenticatable
 
     /**
      * @param User|null $user
+     *
      * @return bool
      */
     public function equals(User $user = null)
     {
         return null != $user && $this->id === $user->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffersCountAttribute(): int
+    {
+        return $this->offers()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getReferralsCountAttribute(): int
+    {
+        return $this->referrals()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getAccountsCountAttribute(): int
+    {
+        return $this->accounts()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getActivationCodesCountAttribute(): int
+    {
+        return $this->activationCodes()->count();
     }
 }

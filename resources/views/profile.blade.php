@@ -16,5 +16,6 @@
         <br>Operations:<br>
         <a href="{{ route('transactionList') }}">route(transactionList)</a><br>
         <a href="{{ route('transactionCreate') }}">route(transactionCreate)</a><br>
+        {{ dump($__data) }}
     </div>
 @stop
