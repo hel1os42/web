@@ -30,8 +30,6 @@ class ProfileController extends Controller
     {
         $userId = auth()->id();
 
-        dd((new User)->findOrFail($userId)->additionalFields);
-
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
             response()->render('profile', (new User)->findOrFail($userId)->toArray());

@@ -2,12 +2,12 @@
 
 namespace App\Models\AdditionalField;
 
-use App\Models\AdditionalField;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class AdditionalFieldType
+ * Class AdditionalField
  * @package App
  *
  * @property int id
@@ -15,8 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string short_name
  * @property string parent_type
  * @property int reward
+ * @method AdditionalField findByShortName(string $shortName)
+ * @method Builder forParent(string $parent)
  */
-class AdditionalFieldType extends Model
+class AdditionalField extends Model
 {
     public function __construct(array $attributes = [])
     {
@@ -24,31 +26,23 @@ class AdditionalFieldType extends Model
 
         $this->connection = config('database.default');
 
-        $this->table = 'additional_field_types';
+        $this->table = 'additional_fields';
 
         $this->primaryKey = 'id';
 
         $this->casts = [
-            'name'       => 'string',
-            'short_name' => 'string',
-            'reward'     => 'integer'
+            'name'        => 'string',
+            'short_name'  => 'string',
+            'parent_type' => 'string',
+            'reward'      => 'integer'
         ];
 
         $this->fillable = [
             'name',
             'short_name',
+            'parent_type',
             'reward'
         ];
-    }
-
-    public function users()
-    {
-        return $this->morphedByMany(User::class, 'parent');
-    }
-
-    public function fields()
-    {
-        return $this->hasMany(AdditionalField::class, 'type_id', 'id');
     }
 
     /**
@@ -86,9 +80,9 @@ class AdditionalFieldType extends Model
 
     /**
      * @param string $name
-     * @return AdditionalFieldType
+     * @return AdditionalField
      */
-    public function setName(string $name): AdditionalFieldType
+    public function setName(string $name): AdditionalField
     {
         $this->name = $name;
         return $this;
@@ -96,9 +90,9 @@ class AdditionalFieldType extends Model
 
     /**
      * @param string $shortName
-     * @return AdditionalFieldType
+     * @return AdditionalField
      */
-    public function setShortName(string $shortName): AdditionalFieldType
+    public function setShortName(string $shortName): AdditionalField
     {
         $this->short_name = $shortName;
         return $this;
@@ -106,11 +100,21 @@ class AdditionalFieldType extends Model
 
     /**
      * @param int $reward
-     * @return AdditionalFieldType
+     * @return AdditionalField
      */
-    public function setReward(int $reward): AdditionalFieldType
+    public function setReward(int $reward): AdditionalField
     {
         $this->reward = $reward;
         return $this;
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string $parent
+     * @return Builder
+     */
+    public function scopeForParent(Builder $builder, string $parent): Builder
+    {
+        return $builder->where('parent_type', $parent);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\AdditionalField\AdditionalField;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
-use App\Models\AdditionalField\AdditionalFieldType;
 use Hashids\Hashids;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -90,7 +90,7 @@ class User extends Authenticatable
 
     public function additionalFields()
     {
-        return $this->morphToMany(AdditionalFieldType::class, 'additional_field');
+        return $this->morphToMany(AdditionalField::class, 'parent', 'additional_field_values')->withPivot('value');
     }
 
     /**
