@@ -13,8 +13,10 @@ class TransactObserverTest extends TestCase
 {
     public function testCreating()
     {
+        $sendNauMock = \Mockery::mock(SendNau::class);
+
         $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('sendNau')->once()->andReturn(\Mockery::mock(SendNau::class));
+        $coreServiceImplMock->shouldReceive('sendNau')->once()->andReturn($sendNauMock);
 
         $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
             return $coreServiceImplMock;
@@ -30,6 +32,6 @@ class TransactObserverTest extends TestCase
         (new TransactObserver())
             ->creating($transactionMock);
 
-        Bus::assertDispatched(get_class(\Mockery::mock(SendNau::class)));
+        Bus::assertDispatched(get_class($sendNauMock));
     }
 }

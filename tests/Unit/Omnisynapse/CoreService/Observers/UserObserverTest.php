@@ -13,8 +13,10 @@ class UserObserverTest extends TestCase
 {
     public function testCreating()
     {
+        $userCreatedMock = \Mockery::mock(UserCreated::class);
+
         $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('userCreated')->once()->andReturn(\Mockery::mock(UserCreated::class));
+        $coreServiceImplMock->shouldReceive('userCreated')->once()->andReturn($userCreatedMock);
 
         $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
             return $coreServiceImplMock;
@@ -27,6 +29,6 @@ class UserObserverTest extends TestCase
         (new UserObserver())
             ->created(\Mockery::mock(User::class));
 
-        Bus::assertDispatched(get_class(\Mockery::mock(UserCreated::class)));
+        Bus::assertDispatched(get_class($userCreatedMock));
     }
 }
