@@ -50,7 +50,6 @@ class Transact extends NauModel
             'id',
             'source_account_id',
             'destination_account_id',
-            'type',
         ];
 
         $this->hidden = [
