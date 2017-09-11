@@ -60,8 +60,8 @@ class Offer extends NauModel
         $this->incrementing = false;
 
         $this->attributes = array(
-            'account_id'           => null,
-            'label'                => null,
+            'acc_id'               => null,
+            'name'                 => null,
             'descr'                => null,
             'reward'               => '10000',
             'status'               => null,
@@ -197,7 +197,7 @@ class Offer extends NauModel
     /**
      * @return Account
      */
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
@@ -381,7 +381,6 @@ class Offer extends NauModel
         if (empty($lat) || empty($lng) || $radius < 1) {
             return $builder;
         }
-        $radius = $radius * 1000; //kilometers
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
         ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
         PI()/180 / 2), 2) + COS(lat * PI()/180) * 

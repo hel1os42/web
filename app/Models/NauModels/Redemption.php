@@ -34,6 +34,15 @@ class Redemption extends NauModel
 
         $this->primaryKey = 'id';
 
+        $this->fillable = [
+            'offer_id',
+            'user_id',
+            'points',
+            'rewarded_id',
+            'amount',
+            'fee',
+        ];
+
         $this->casts = [
             'id'          => 'string',
             'offer_id'    => 'string',

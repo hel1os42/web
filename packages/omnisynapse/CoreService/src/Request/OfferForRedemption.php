@@ -23,7 +23,7 @@ class OfferForRedemption implements \JsonSerializable
      */
     public function __construct(Redemption $redemption)
     {
-        $this->setOfferId($redemption->getId())
+        $this->setOfferId($redemption->getOfferId())
             ->setUserId($redemption->getUserId());
     }
 

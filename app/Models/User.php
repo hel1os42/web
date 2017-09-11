@@ -78,7 +78,7 @@ class User extends Authenticatable
     /**
      * @return User
      */
-    public function getReferrer(): User
+    public function getReferrer(): ?User
     {
         return $this->referrer;
     }
