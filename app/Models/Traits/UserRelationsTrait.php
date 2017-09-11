@@ -52,13 +52,11 @@ trait UserRelationsTrait
 
     /**
      * @return Relations\BelongsToMany
-     * @todo add created_at into pivot(fix wrong format)
      */
     public function offers(): Relations\BelongsToMany
     {
         return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
                     ->withPivot([
-//                        'created_at',
                         'points',
                     ]);
     }
