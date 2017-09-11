@@ -8,8 +8,15 @@ use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User;
+use App\Models\UserOfferPivot;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations;
 
+/**
+ * Trait UserRelationsTrait
+ *
+ * @package App\Models\Traits
+ */
 trait UserRelationsTrait
 {
     /**
@@ -57,6 +64,7 @@ trait UserRelationsTrait
     {
         return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
                     ->withPivot([
+                        'created_at',
                         'points',
                     ]);
     }
