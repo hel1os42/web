@@ -19,12 +19,15 @@ use Illuminate\Database\Eloquent\Builder;
  * @property Carbon updated_at
  * @property Account source
  * @property Account destination
- *
+ * @property string type
  * @method static Transact forAccount(Account $account)
  * @method static Transact forUser(User $user)
  */
 class Transact extends NauModel
 {
+    const TYPE_REDEMPTION = 'redemption';
+    const TYPE_P2P        = 'p2p';
+    const TYPE_INCOMING   = 'incoming';
 
     public function __construct(array $attributes = [])
     {
@@ -35,23 +38,26 @@ class Transact extends NauModel
         $this->primaryKey = 'txid';
 
         $this->casts = [
-            'txid'   => 'string',
-            'src_id' => 'string',
-            'dst_id' => 'string',
-            'amount' => 'float',
-            'status' => 'string'
+            'txid'    => 'string',
+            'src_id'  => 'string',
+            'dst_id'  => 'string',
+            'amount'  => 'float',
+            'status'  => 'string',
+            'tx_type' => 'string',
         ];
 
         $this->appends = [
             'id',
             'source_account_id',
-            'destination_account_id'
+            'destination_account_id',
+            'type',
         ];
 
         $this->hidden = [
             'txid',
             'src_id',
-            'dst_id'
+            'dst_id',
+            'tx_type',
         ];
     }
 
@@ -60,6 +66,7 @@ class Transact extends NauModel
         'id'                     => 'txid',
         'source_account_id'      => 'src_id',
         'destination_account_id' => 'dst_id',
+        'tx_type'                => 'type'
     ];
 
     /** @return string */
@@ -139,6 +146,38 @@ class Transact extends NauModel
     }
 
     /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeRedemption(): bool
+    {
+        return $this->getType() === self::TYPE_REDEMPTION;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeP2p(): bool
+    {
+        return $this->getType() === self::TYPE_P2P;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeIncoming(): bool
+    {
+        return $this->getType() === self::TYPE_INCOMING;
+    }
+
+    /**
      * @param Builder $query
      * @param Account $account
      * @return Builder
@@ -151,7 +190,7 @@ class Transact extends NauModel
 
     /**
      * @param Builder $query
-     * @param User $user
+     * @param \App\Models\User $user
      * @return Builder
      */
     public function scopeForUser(Builder $query, \App\Models\User $user): Builder
