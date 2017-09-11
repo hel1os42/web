@@ -195,7 +195,7 @@ class Transact extends NauModel
      */
     public function scopeForUser(Builder $query, \App\Models\User $user): Builder
     {
-        $accountIds = $user->account()
+        $accountIds = $user->accounts()
             ->pluck('id');
 
         return $query->whereIn('source_account_id', $accountIds)

@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
-use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
-use Hashids\Hashids;
-use Illuminate\Database\Eloquent\Relations;
+use App\Models\Traits\UserRelationsTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -17,22 +16,27 @@ use Webpatser\Uuid\Uuid;
  * Class User
  * @package App
  *
- * @property string id
- * @property string name
- * @property string email
- * @property string password
- * @property string invite_code
- * @property string referrer_id
- * @property int level
- * @property int points
- * @property Account account
- * @property CoreUser coreUser
- * @property User referrer
+ * @property string     id
+ * @property string     name
+ * @property string     email
+ * @property string     password
+ * @property string     invite_code
+ * @property string     referrer_id
+ * @property int        level
+ * @property int        points
+ * @property Collection offers
+ * @property Collection accounts
+ * @property CoreUser   coreUser
+ * @property User       referrer
+ * @property int        offers_count
+ * @property int        referrals_count
+ * @property int        accounts_count
+ * @property int        activation_codes_count
  */
 class User extends Authenticatable
 {
 
-    use Notifiable;
+    use Notifiable, UserRelationsTrait;
 
     public function __construct(array $attributes = [])
     {
@@ -55,7 +59,11 @@ class User extends Authenticatable
 
         $this->appends = [
             'level',
-            'points'
+            'points',
+            'offers_count',
+            'referrals_count',
+            'accounts_count',
+            'activation_codes_count',
         ];
 
     }
@@ -68,57 +76,11 @@ class User extends Authenticatable
     public $incrementing = false;
 
     /**
-     * Get the referrer record associated with the user.
-     *
-     * @return Relations\BelongsTo
-     */
-    public function referrer(): Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the user referrals.
-     *
-     * @return Relations\HasMany
-     */
-    public function referrals(): Relations\HasMany
-    {
-        return $this->hasMany(User::class, 'referrer_id', 'id');
-    }
-
-    /**
      * @return User
      */
     public function getReferrer(): ?User
     {
         return $this->referrer;
-    }
-
-    /**
-     * Get the user accounts relation
-     *
-     * @return Relations\HasMany
-     */
-    public function account(): Relations\HasMany
-    {
-        return $this->hasMany(Account::class, 'owner_id', 'id');
-    }
-
-    /**
-     * @return Relations\HasMany
-     */
-    public function activationCodes(): Relations\HasMany
-    {
-        return $this->hasMany(ActivationCode::class);
-    }
-
-    /**
-     * @return Relations\HasOne
-     */
-    public function coreUser(): Relations\HasOne
-    {
-        return $this->hasOne(CoreUser::class, 'id', 'id');
     }
 
     /**
@@ -257,6 +219,7 @@ class User extends Authenticatable
      * Set invite code
      *
      * @param string $invite
+     *
      * @return User
      */
     public function setInvite(string $invite): User
@@ -293,13 +256,14 @@ class User extends Authenticatable
 
     /**
      * @param string $currency
+     *
      * @return Account
      */
     public function getAccountFor(string $currency): ?Account
     {
         switch ($currency) {
             case Currency::NAU:
-                $account = $this->account()->first();
+                $account = $this->accounts()->first();
                 if ($account) {
                     return $account;
                 }
@@ -311,10 +275,43 @@ class User extends Authenticatable
 
     /**
      * @param User|null $user
+     *
      * @return bool
      */
     public function equals(User $user = null)
     {
         return null != $user && $this->id === $user->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffersCountAttribute(): int
+    {
+        return $this->offers()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getReferralsCountAttribute(): int
+    {
+        return $this->referrals()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getAccountsCountAttribute(): int
+    {
+        return $this->accounts()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getActivationCodesCountAttribute(): int
+    {
+        return $this->activationCodes()->count();
     }
 }
