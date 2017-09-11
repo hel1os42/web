@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
-use App\Models\NauModels\Offer;
-use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\Traits\UserRelationsTrait;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +36,7 @@ use Webpatser\Uuid\Uuid;
 class User extends Authenticatable
 {
 
-    use Notifiable;
+    use Notifiable, UserRelationsTrait;
 
     public function __construct(array $attributes = [])
     {
@@ -78,70 +76,11 @@ class User extends Authenticatable
     public $incrementing = false;
 
     /**
-     * Get the referrer record associated with the user.
-     *
-     * @return Relations\BelongsTo
-     */
-    public function referrer(): Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the user referrals.
-     *
-     * @return Relations\HasMany
-     */
-    public function referrals(): Relations\HasMany
-    {
-        return $this->hasMany(User::class, 'referrer_id', 'id');
-    }
-
-    /**
      * @return User
      */
     public function getReferrer(): User
     {
         return $this->referrer;
-    }
-
-    /**
-     * Get the user accounts relation
-     *
-     * @return Relations\HasMany
-     */
-    public function accounts(): Relations\HasMany
-    {
-        return $this->hasMany(Account::class, 'owner_id', 'id');
-    }
-
-    /**
-     * @return Relations\HasMany
-     */
-    public function activationCodes(): Relations\HasMany
-    {
-        return $this->hasMany(ActivationCode::class);
-    }
-
-    /**
-     * @return Relations\BelongsToMany
-     * @todo add created_at into pivot(fix wrong format)
-     */
-    public function offers(): Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
-                    ->withPivot([
-//                        'created_at',
-                        'points',
-                    ]);
-    }
-
-    /**
-     * @return Relations\HasOne
-     */
-    public function coreUser(): Relations\HasOne
-    {
-        return $this->hasOne(CoreUser::class, 'id', 'id');
     }
 
     /**
