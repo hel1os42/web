@@ -37,6 +37,9 @@ class ProfileController extends Controller
         if (count($with) === 1 && $with[0] === '') {
             $with = [];
         }
+        if (count($with) !== 0) {
+            $with = array_intersect(['accounts', 'offers', 'referrals', 'activationCodes'], $with);
+        }
 
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
