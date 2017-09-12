@@ -6,7 +6,7 @@
  * Time: 19:06
  */
 
-namespace App\Models\NauModels;
+namespace App\Models\NauModels\Offer;
 
 use App\Models\ActivationCode;
 use App\Models\UserOfferPivot;
@@ -15,7 +15,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use \App\Models\User;
 
-trait OfferRelationsTrait
+/**
+ * Trait RelationsTrait
+ * @package App\Models\NauModels\Offer
+ */
+trait RelationsTrait
 {
     /**
      * @return BelongsTo

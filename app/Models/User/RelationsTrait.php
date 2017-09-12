@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Traits;
+namespace App\Models\User;
 
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
@@ -8,16 +8,14 @@ use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User;
-use App\Models\UserOfferPivot;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations;
 
 /**
- * Trait UserRelationsTrait
+ * Trait RelationsTrait
  *
- * @package App\Models\Traits
+ * @package App\Models\User
  */
-trait UserRelationsTrait
+trait RelationsTrait
 {
     /**
      * Get the referrer record associated with the user.

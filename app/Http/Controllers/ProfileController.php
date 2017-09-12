@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\NauModels\User as CoreUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,12 +33,7 @@ class ProfileController extends Controller
         $userId = auth()->id();
 
         $with = explode(',', $request->get('with', ''));
-        if (count($with) === 1 && $with[0] === '') {
-            $with = [];
-        }
-        if (count($with) !== 0) {
-            $with = array_intersect(['accounts', 'offers', 'referrals', 'activationCodes'], $with);
-        }
+        $with = array_intersect(['accounts', 'offers', 'referrals', 'activationCodes'], $with);
 
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :

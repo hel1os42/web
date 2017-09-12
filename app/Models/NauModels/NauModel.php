@@ -17,6 +17,8 @@ class NauModel extends Model
     use HasNau;
     use NauObj, Eloquence, Mappable;
 
+    const DATE_FORMAT = 'Y-m-d H:i:s.uO';
+
     /**
      * @var string
      */
@@ -25,5 +27,5 @@ class NauModel extends Model
     /**
      * @var string
      */
-    protected $dateFormat = 'Y-m-d H:i:s.uO';
+    protected $dateFormat = self::DATE_FORMAT;
 }

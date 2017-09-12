@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
-use App\Models\Traits\UserRelationsTrait;
+use App\Models\User\RelationsTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -36,7 +36,7 @@ use Webpatser\Uuid\Uuid;
 class User extends Authenticatable
 {
 
-    use Notifiable, UserRelationsTrait;
+    use Notifiable, RelationsTrait;
 
     public function __construct(array $attributes = [])
     {
