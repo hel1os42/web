@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\ActivationCode;
+use App\Models\AdditionalField;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Account;
@@ -73,5 +74,13 @@ trait RelationsTrait
     public function coreUser(): Relations\HasOne
     {
         return $this->hasOne(CoreUser::class, 'id', 'id');
+    }
+
+    /**
+     * @return $this
+     */
+    public function additionalFields()
+    {
+        return $this->morphToMany(AdditionalField::class, 'parent', 'additional_field_values')->withPivot('value');
     }
 }

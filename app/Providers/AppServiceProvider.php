@@ -10,6 +10,7 @@ use App\Observers\OfferObserver;
 use App\Observers\RedemptionObserver;
 use App\Observers\TransactObserver;
 use App\Observers\UserObserver;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap([
+            'users' => \App\Models\User::class
+        ]);
     }
 
     /**

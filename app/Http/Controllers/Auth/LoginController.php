@@ -46,7 +46,7 @@ class LoginController extends Controller
             } catch (JWTException $e) {
                 return response()->error(
                     Response::HTTP_INTERNAL_SERVER_ERROR,
-                    trans('errors.jwt_exception') . $e->getMessage()
+                    $e->getMessage()
                 );
             }
 
@@ -75,7 +75,7 @@ class LoginController extends Controller
             } catch (JWTException $e) {
                 return response()->error(
                     Response::HTTP_INTERNAL_SERVER_ERROR,
-                    trans('errors.jwt_exception') . $e->getMessage()
+                    $e->getMessage()
                 );
             }
             return response()->render('', compact('logout'));

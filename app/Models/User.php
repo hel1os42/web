@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use PDepend\Source\Parser\TokenException;
+use App\Exceptions\TokenException;
 use Webpatser\Uuid\Uuid;
 
 /**
  * Class User
- * @package App
+ * @package App\Models
  *
  * @property string     id
  * @property string     name
@@ -40,8 +40,6 @@ class User extends Authenticatable
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->connection = config('database.default');
 
         $this->fillable = [
@@ -66,6 +64,7 @@ class User extends Authenticatable
             'activation_codes_count',
         ];
 
+        parent::__construct($attributes);
     }
 
     /**
@@ -264,12 +263,12 @@ class User extends Authenticatable
         switch ($currency) {
             case Currency::NAU:
                 $account = $this->accounts()->first();
-                if ($account) {
+                if ($account instanceof Account) {
                     return $account;
                 }
-                throw new TokenException("no account " . $currency);
+                // no break
             default:
-                throw new TokenException("unknown token " . $currency);
+                throw new TokenException($currency);
         }
     }
 

@@ -3,5 +3,7 @@
 @section('title', trans('errors.404'))
 
 @section('content')
-    <div class="title">{{$exception->getMessage() ?: trans('errors.404')}}</div>
+    <div class="title">500</div>
+
+    <h1>{{$exception->getMessage()}}</h1>
 @stop

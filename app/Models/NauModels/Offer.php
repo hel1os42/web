@@ -16,34 +16,34 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * Class Offer
- * @package App
+ * @package App\Models\NauModels
  *
- * @property string id
- * @property int account_id
- * @property string label
- * @property string description
- * @property float reward
- * @property string status
- * @property Carbon start_date
- * @property Carbon finish_date
- * @property Carbon start_time
- * @property Carbon finish_time
- * @property string country
- * @property string city
- * @property string category_id
- * @property int max_count
- * @property int max_for_user
- * @property int max_per_day
- * @property int max_for_user_per_day
- * @property int user_level_min
- * @property float latitude
- * @property float longitude
- * @property int radius
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property Account account
+ * @property string                      id
+ * @property int                         account_id
+ * @property string                      label
+ * @property string                      description
+ * @property float                       reward
+ * @property string                      status
+ * @property Carbon                      start_date
+ * @property Carbon                      finish_date
+ * @property Carbon                      start_time
+ * @property Carbon                      finish_time
+ * @property string                      country
+ * @property string                      city
+ * @property string                      category_id
+ * @property int                         max_count
+ * @property int                         max_for_user
+ * @property int                         max_per_day
+ * @property int                         max_for_user_per_day
+ * @property int                         user_level_min
+ * @property float                       latitude
+ * @property float                       longitude
+ * @property int                         radius
+ * @property Carbon                      created_at
+ * @property Carbon                      updated_at
+ * @property Account                     account
  * @property Collection|ActivationCode[] activationCodes
- * @property Collection|Redemption[] redemptions
+ * @property Collection|Redemption[]     redemptions
  * @method static accountOffers(int $accountId) : Offer
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
@@ -61,7 +61,7 @@ class Offer extends NauModel
 
         $this->incrementing = false;
 
-        $this->attributes = array(
+        $this->attributes = [
             'acc_id'               => null,
             'name'                 => null,
             'descr'                => null,
@@ -82,7 +82,7 @@ class Offer extends NauModel
             'lat'                  => null,
             'lng'                  => null,
             'radius'               => null
-        );
+        ];
 
         $this->fillable = [
             'account_id',
@@ -105,7 +105,6 @@ class Offer extends NauModel
             'longitude',
             'radius'
         ];
-
 
         $this->hidden = [
             'acc_id',
@@ -135,25 +134,22 @@ class Offer extends NauModel
             'longitude'
         ];
 
+        $this->maps = [
+            'account_id'     => 'acc_id',
+            'label'          => 'name',
+            'description'    => 'descr',
+            'start_date'     => 'dt_start',
+            'finish_date'    => 'dt_finish',
+            'start_time'     => 'tm_start',
+            'finish_time'    => 'tm_finish',
+            'category_id'    => 'categ',
+            'user_level_min' => 'min_level',
+            'latitude'       => 'lat',
+            'longitude'      => 'lng'
+        ];
+
         parent::__construct($attributes);
     }
-
-    /**
-     * @var array
-     */
-    protected $maps = [
-        'account_id'     => 'acc_id',
-        'label'          => 'name',
-        'description'    => 'descr',
-        'start_date'     => 'dt_start',
-        'finish_date'    => 'dt_finish',
-        'start_time'     => 'tm_start',
-        'finish_time'    => 'tm_finish',
-        'category_id'    => 'categ',
-        'user_level_min' => 'min_level',
-        'latitude'       => 'lat',
-        'longitude'      => 'lng'
-    ];
 
     /**
      * @var array
@@ -208,6 +204,7 @@ class Offer extends NauModel
 
     /**
      * @param int $value
+     *
      * @return float
      */
     public function getRewardAttribute(int $value): float
@@ -323,11 +320,13 @@ class Offer extends NauModel
     public function getOwner()
     {
         $account = $this->account;
+
         return $account === null ? null : $account->owner;
     }
 
     /**
      * @param User $user
+     *
      * @return bool
      */
     public function isOwner(User $user): bool
@@ -337,7 +336,8 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param int $accountId
+     * @param int     $accountId
+     *
      * @return Builder
      */
     public function scopeAccountOffers(Builder $builder, int $accountId): Builder
@@ -347,9 +347,10 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string $lat
-     * @param string $lng
-     * @param int $radius
+     * @param string  $lat
+     * @param string  $lng
+     * @param int     $radius
+     *
      * @return Builder
      */
     public function scopeFilterByPosition(
@@ -361,6 +362,7 @@ class Offer extends NauModel
         if (empty($lat) || empty($lng) || $radius < 1) {
             return $builder;
         }
+
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
         ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
         PI()/180 / 2), 2) + COS(lat * PI()/180) * 
@@ -374,7 +376,8 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string $categoryId
+     * @param string  $categoryId
+     *
      * @return Builder
      */
     public function scopeFilterByCategory(Builder $builder, string $categoryId = null): Builder
@@ -384,6 +387,7 @@ class Offer extends NauModel
 
     /**
      * @param string $code
+     *
      * @return Redemption
      * @throws BadActivationCodeException|CannotRedeemException
      */

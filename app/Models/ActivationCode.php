@@ -13,7 +13,7 @@ use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * Class ActivationCode
- * @package App
+ * @package App\Models
  *
  * @property integer id
  * @property string code

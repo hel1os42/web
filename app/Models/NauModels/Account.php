@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Account
- * @package App
+ * @package App\Models\NauModels
  *
  * @property int id
  * @property string owner_id
@@ -31,8 +31,6 @@ class Account extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = 'account';
 
         $this->primaryKey = 'id';
@@ -53,13 +51,14 @@ class Account extends NauModel
             'amount',
             'addr'
         ];
-    }
 
-    /** @var array */
-    protected $maps = [
-        'balance' => 'amount',
-        'address' => 'addr',
-    ];
+        $this->maps = [
+            'balance' => 'amount',
+            'address' => 'addr',
+        ];
+
+        parent::__construct($attributes);
+    }
 
     /** @return BelongsTo */
     public function owner(): BelongsTo
@@ -123,8 +122,10 @@ class Account extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string $address
+     * @param string  $address
+     *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
     public function scopeWhereAddress(Builder $builder, string $address): Builder
     {
