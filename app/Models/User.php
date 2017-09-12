@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use PDepend\Source\Parser\TokenException;
+use App\Exceptions\TokenException;
 use Webpatser\Uuid\Uuid;
 
 /**
@@ -263,12 +263,12 @@ class User extends Authenticatable
         switch ($currency) {
             case Currency::NAU:
                 $account = $this->accounts()->first();
-                if ($account) {
+                if ($account instanceof Account) {
                     return $account;
                 }
-                throw new TokenException("no account " . $currency);
+                // no break
             default:
-                throw new TokenException("unknown token " . $currency);
+                throw new TokenException($currency);
         }
     }
 

@@ -34,10 +34,10 @@ class ResponseMacroServiceProvider extends ServiceProvider
 
             if (!request()->wantsJson()) {
                 session()->flash('error', $message);
-                abort($statusCode);
+                abort($statusCode, $message);
             }
 
-            return response()->json(['error' => $message], $statusCode);
+            return response()->json(['error' => true, 'message' => $message], $statusCode);
         });
 
 
