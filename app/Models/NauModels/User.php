@@ -3,18 +3,15 @@
 namespace App\Models\NauModels;
 
 use App\Models\User as WebUser;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
 
 /**
  * Class User
- * @package App
+ * @package App\Models\NauModels
  *
- * @property string id
- * @property int level
- * @property int points
+ * @property string  id
+ * @property int     level
+ * @property int     points
  * @property WebUser owner
  */
 class User extends NauModel
@@ -22,8 +19,6 @@ class User extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = 'users';
 
         $this->primaryKey = 'id';
@@ -35,6 +30,7 @@ class User extends NauModel
             'points'
         ]);
 
+        parent::__construct($attributes);
     }
 
     /** @return BelongsTo */
@@ -60,6 +56,6 @@ class User extends NauModel
      */
     public function getPointsAttribute(): int
     {
-        return $this->getLevel()*100;
+        return $this->getLevel() * 100;
     }
 }

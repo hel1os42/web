@@ -4,7 +4,7 @@ namespace App\Models;
 
 /**
  * Class Currency
- * @package App
+ * @package App\Models
  */
 class Currency
 {

@@ -14,7 +14,7 @@ use Webpatser\Uuid\Uuid;
 
 /**
  * Class User
- * @package App
+ * @package App\Models
  *
  * @property string     id
  * @property string     name
@@ -40,8 +40,6 @@ class User extends Authenticatable
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->connection = config('database.default');
 
         $this->fillable = [
@@ -66,6 +64,7 @@ class User extends Authenticatable
             'activation_codes_count',
         ];
 
+        parent::__construct($attributes);
     }
 
     /**

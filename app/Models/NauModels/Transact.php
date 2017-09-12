@@ -9,18 +9,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Transact
- * @package App
+ * @package App\Models\NauModels
  *
- * @property string id
- * @property int source_account_id
- * @property int destination_account_id
- * @property float amount
- * @property string status
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string  id
+ * @property int     source_account_id
+ * @property int     destination_account_id
+ * @property float   amount
+ * @property string  status
+ * @property Carbon  created_at
+ * @property Carbon  updated_at
  * @property Account source
  * @property Account destination
- * @property string type
+ * @property string  type
  * @method static Transact forAccount(Account $account)
  * @method static Transact forUser(User $user)
  */
@@ -34,8 +34,6 @@ class Transact extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = "transact";
 
         $this->primaryKey = 'txid';
@@ -61,15 +59,15 @@ class Transact extends NauModel
             'dst_id',
             'tx_type',
         ];
-    }
+        $this->maps   = [
+            'id'                     => 'txid',
+            'source_account_id'      => 'src_id',
+            'destination_account_id' => 'dst_id',
+            'tx_type'                => 'type'
+        ];
 
-    /** @var array */
-    protected $maps = [
-        'id'                     => 'txid',
-        'source_account_id'      => 'src_id',
-        'destination_account_id' => 'dst_id',
-        'tx_type'                => 'type'
-    ];
+        parent::__construct($attributes);
+    }
 
     /** @return string */
     public function getId(): string
@@ -91,6 +89,7 @@ class Transact extends NauModel
 
     /**
      * @param int $value
+     *
      * @return float
      */
     public function getAmountAttribute(int $value): float
@@ -100,6 +99,7 @@ class Transact extends NauModel
 
     /**
      * @param float $value
+     *
      * @return int
      */
     public function setAmountAttribute(float $value): int
@@ -182,25 +182,27 @@ class Transact extends NauModel
     /**
      * @param Builder $query
      * @param Account $account
+     *
      * @return Builder
      */
     public function scopeForAccount(Builder $query, Account $account): Builder
     {
         return $query->where('source_account_id', $account->getId())
-            ->orWhere('destination_account_id', $account->getId());
+                     ->orWhere('destination_account_id', $account->getId());
     }
 
     /**
-     * @param Builder $query
+     * @param Builder          $query
      * @param \App\Models\User $user
+     *
      * @return Builder
      */
     public function scopeForUser(Builder $query, \App\Models\User $user): Builder
     {
         $accountIds = $user->accounts()
-            ->pluck('id');
+                           ->pluck('id');
 
         return $query->whereIn('source_account_id', $accountIds)
-            ->orWhereIn('destination_account_id', $accountIds);
+                     ->orWhereIn('destination_account_id', $accountIds);
     }
 }
