@@ -18,6 +18,13 @@ class NauModel extends Model
     const DATE_FORMAT = 'Y-m-d H:i:s.uO';
 
     /**
+     * Mapped attributes
+     *
+     * @var array
+     */
+    protected $maps = [];
+
+    /**
      * NauModel constructor.
      *
      * @param array $attributes

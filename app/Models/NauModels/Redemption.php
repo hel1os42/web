@@ -9,20 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Redemption
- * @package App
+ * @package App\Models\NauModels
  *
  * @property string id
  * @property string offer_id
  * @property string user_id
- * @property int points
+ * @property int    points
  * @property string rewarded_id
- * @property int amount
- * @property int fee
+ * @property int    amount
+ * @property int    fee
  * @property Carbon created_at
  * @property Carbon updated_at
- * @property Offer offer
- * @property User rewardedUser
- * @property User user
+ * @property Offer  offer
+ * @property User   rewardedUser
+ * @property User   user
  */
 class Redemption extends NauModel
 {
@@ -30,8 +30,6 @@ class Redemption extends NauModel
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = "redemption";
 
         $this->primaryKey = 'id';
@@ -55,12 +53,8 @@ class Redemption extends NauModel
             'fee'         => 'integer'
         ];
 
+        parent::__construct($attributes);
     }
-
-    protected $fillable = [
-        'offer_id',
-        'user_id'
-    ];
 
     /** @return string */
     public function getId(): ?string
@@ -94,6 +88,7 @@ class Redemption extends NauModel
 
     /**
      * @param int $value
+     *
      * @return float
      */
     public function getAmountAttribute(int $value): float
@@ -109,6 +104,7 @@ class Redemption extends NauModel
 
     /**
      * @param int $value
+     *
      * @return float
      */
     public function getFeeAttribute(int $value): float

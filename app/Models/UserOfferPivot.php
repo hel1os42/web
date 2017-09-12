@@ -27,8 +27,7 @@ class UserOfferPivot extends Pivot
         array $attributes,
         $table,
         $exists = false
-    )
-    {
+    ) {
         $this->dateFormat = NauModel::DATE_FORMAT;
 
         parent::__construct($parent, $attributes, $table, $exists);
