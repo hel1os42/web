@@ -22,8 +22,6 @@ class AdditionalField extends Model
 {
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->connection = config('database.default');
 
         $this->table = 'additional_fields';
@@ -43,6 +41,8 @@ class AdditionalField extends Model
             'parent_type',
             'reward'
         ];
+
+        parent::__construct($attributes);
     }
 
     /**
