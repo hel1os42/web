@@ -35,7 +35,7 @@ class CreateAdditionalFieldsTables extends Migration
 
         DB::table('additional_fields')->insert([
             $this->createFieldData('Age', 'age', 'users', 5),
-            $this->createFieldData('Male', 'male', 'users', 5),
+            $this->createFieldData('Gender', 'gender', 'users', 5),
             $this->createFieldData('Income', 'income', 'users', 9),
             $this->createFieldData('Facebook', 'social_fb', 'users', 3),
             $this->createFieldData('Twitter', 'social_twitter', 'users', 3),
