@@ -301,7 +301,7 @@ class User extends Authenticatable
         switch ($currency) {
             case Currency::NAU:
                 $account = $this->account()->first();
-                if ($account) {
+                if ($account instanceof Account) {
                     return $account;
                 }
                 // no break
