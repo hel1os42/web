@@ -70,7 +70,7 @@ class CoreServiceImpl implements CoreService
      */
     public function offerCreated(Offer $offer): AbstractJob
     {
-        return new OfferCreated($offer, $this->getClient());
+        return new OfferCreated($offer, $this);
     }
 
     /**
@@ -79,7 +79,7 @@ class CoreServiceImpl implements CoreService
      */
     public function offerRedemption(Redemption $redemption): AbstractJob
     {
-        return new OfferRedemption($redemption, $this->getClient());
+        return new OfferRedemption($redemption, $this);
     }
 
     /**
@@ -88,7 +88,7 @@ class CoreServiceImpl implements CoreService
      */
     public function offerUpdated(Offer $offer): AbstractJob
     {
-        return new OfferUpdated($offer, $this->getClient());
+        return new OfferUpdated($offer, $this);
     }
 
     /**
@@ -97,7 +97,7 @@ class CoreServiceImpl implements CoreService
      */
     public function sendNau(Transact $transaction): AbstractJob
     {
-        return new SendNau($transaction, $this->getClient());
+        return new SendNau($transaction, $this);
     }
 
     /**
@@ -106,7 +106,7 @@ class CoreServiceImpl implements CoreService
      */
     public function userCreated(User $user): AbstractJob
     {
-        return new UserCreated($user, $this->getClient());
+        return new UserCreated($user, $this);
     }
 
     /**
@@ -117,6 +117,6 @@ class CoreServiceImpl implements CoreService
      */
     public function transactionNotification(Transact $transaction, $category): AbstractJob
     {
-        return new TransactionNotification($transaction, $category, $this->getClient());
+        return new TransactionNotification($transaction, $category, $this);
     }
 }

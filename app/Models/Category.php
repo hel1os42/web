@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Category
- * @package App
+ * @package App\Models
  *
- * @property string id
- * @property string name
- * @property string parent_id
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string   id
+ * @property string   name
+ * @property string   parent_id
+ * @property Carbon   created_at
+ * @property Carbon   updated_at
  * @property Category parent
  * @property Category findByName
  */
@@ -28,8 +28,6 @@ class Category extends Model
      */
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->connection = config('database.default');
 
         $this->table      = 'categories';
@@ -40,6 +38,8 @@ class Category extends Model
             'name'      => 'string',
             'parent_id' => 'string'
         ];
+
+        parent::__construct($attributes);
     }
 
     /** @return string */

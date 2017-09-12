@@ -2,15 +2,17 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Account
- * @package App
+ * @package App\Models\NauModels
  *
  * @property int id
  * @property string owner_id
@@ -20,14 +22,15 @@ use Illuminate\Support\Collection;
  * @property Carbon updated_at
  * @property Collection|Offer[] offers
  * @property User owner
+ *
+ * @method static Account whereAddress
  */
 class Account extends NauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = 'account';
 
         $this->primaryKey = 'id';
@@ -48,18 +51,25 @@ class Account extends NauModel
             'amount',
             'addr'
         ];
-    }
 
-    /** @var array */
-    protected $maps = [
-        'balance' => 'amount',
-        'address' => 'addr'
-    ];
+        $this->maps = [
+            'balance' => 'amount',
+            'address' => 'addr',
+        ];
+
+        parent::__construct($attributes);
+    }
 
     /** @return BelongsTo */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /** @return User */
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 
     /** @return HasMany */
@@ -90,7 +100,7 @@ class Account extends NauModel
      * @param int $value
      * @return float
      */
-    public function getBalanceAttribute(int $value): float
+    public function getAmountAttribute(int $value): float
     {
         return $this->convertIntToFloat($value);
     }
@@ -99,5 +109,26 @@ class Account extends NauModel
     public function getBalance(): float
     {
         return $this->balance;
+    }
+
+    /**
+     * @param float $amount
+     * @return bool
+     */
+    public function isEnoughBalanceFor(float $amount): bool
+    {
+        return $this->getBalance() >= $amount;
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $address
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeWhereAddress(Builder $builder, string $address): Builder
+    {
+        return $builder->where('address', $address);
     }
 }

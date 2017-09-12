@@ -9,6 +9,7 @@ use Faker\Factory as Faker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\Offer\Geo;
 use OmniSynapse\CoreService\Request\Offer\Limits;
 use OmniSynapse\CoreService\Request\Offer\Point;
@@ -141,11 +142,25 @@ class OfferCreatedTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(FailedJob\OfferCreated::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $offerCreated = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->offerCreated($offerMock)
-            ->handle();
+            ->offerCreated($offerMock);
+
+        $offerCreated->handle();
+        $offerCreated->failed((new \Exception));
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen Offer event.');
+        $this->assertEquals(1, $exceptionEventCalled, 'Can not listen OfferCreated failed job.');
+
+        $this->assertEquals([
+            'coreService',
+            'requestObject',
+            'offer',
+        ], $offerCreated->__sleep());
     }
 }

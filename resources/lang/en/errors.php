@@ -8,4 +8,5 @@ return [
     'invalid_email_or_password' => 'Invalid email or password.',
     'jwt_exception' => 'Failed to create token. Error:',
     'offer_not_found' => 'The offer you are looking for, does not exist, or it is on moderation',
+    'transaction_not_found' => 'You don\'t have permission to access this transaction.',
 ];

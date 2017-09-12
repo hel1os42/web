@@ -181,6 +181,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
+        App\Providers\ValidatorServiceProvider::class,
     ],
 
     /*
