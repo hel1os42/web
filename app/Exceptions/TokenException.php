@@ -16,6 +16,6 @@ class TokenException extends HttpException
     {
         $message = 'You do not have ' . $currency . ' account.';
 
-        parent::__construct(Response::HTTP_NOT_FOUND, $message);
+        parent::__construct(Response::HTTP_FORBIDDEN, $message);
     }
 }
