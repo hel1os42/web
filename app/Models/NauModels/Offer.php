@@ -6,6 +6,7 @@ use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer\RelationsTrait;
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,7 +51,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Offer extends NauModel
 {
-    use RelationsTrait;
+    use RelationsTrait, HasNau;
 
     public function __construct(array $attributes = [])
     {

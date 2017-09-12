@@ -2,6 +2,7 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Transact extends NauModel
 {
+    use HasNau;
+
     const TYPE_REDEMPTION = 'redemption';
     const TYPE_P2P        = 'p2p';
     const TYPE_INCOMING   = 'incoming';

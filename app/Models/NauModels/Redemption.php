@@ -2,6 +2,7 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Redemption extends NauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {

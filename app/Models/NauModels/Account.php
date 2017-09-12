@@ -2,6 +2,7 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Account extends NauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {
