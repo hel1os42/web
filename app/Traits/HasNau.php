@@ -11,7 +11,36 @@ trait HasNau
      * @param int $value
      * @return float
      */
-    protected function convertIntToFloat(int $value): float
+    private function convertIntToFloat(int $value): float
+    {
+        return $this->convertBase((float)$value, 0.1);
+    }
+
+    /**
+     * @param float $value
+     * @return int
+     */
+    private function convertFloatToInt(float $value): int
+    {
+        return (int)$this->convertBase($value, 10.0);
+    }
+
+    /**
+     * @param float $value
+     * @param float $base
+     * @return float
+     */
+    private function convertBase(float $value, float $base): float
+    {
+        $multiplier = $this->getNauMultiplier();
+
+        return round($value * pow($base, $multiplier), $multiplier);
+    }
+
+    /**
+     * @return int
+     */
+    public function getNauMultiplier(): int
     {
         $multiplier = $this->multiplier;
 
@@ -19,6 +48,6 @@ trait HasNau
             $multiplier = $this->multiplier = (int)config('nau.multiplier');
         }
 
-        return round($value * pow(0.1, $multiplier), $multiplier);
+        return $multiplier;
     }
 }

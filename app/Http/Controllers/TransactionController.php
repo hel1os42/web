@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TransactRequest;
+use App\Models\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Session;
-use App\Models\Currency;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class TransactionController
@@ -32,6 +32,7 @@ class TransactionController extends Controller
 
     /**
      * @param TransactRequest $request
+     *
      * @return Response
      */
     public function completeTransaction(TransactRequest $request): Response
@@ -39,17 +40,18 @@ class TransactionController extends Controller
         $sourceAccount      = Account::whereAddress($request->source)->firstOrFail();
         $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
         $amount             = $request->amount;
+        $transaction        = new Transact();
 
         if (false === $sourceAccount->isEnoughBalanceFor($amount)) {
-            $multiplier = (int)config('nau.multiplier');
+            $multiplier = $transaction->getNauMultiplier();
+
             return response()->error(Response::HTTP_NOT_ACCEPTABLE,
                 trans('msg.transaction.balance', [
-                    'balance' => sprintf('%0.'.$multiplier.'f', $sourceAccount->getBalance()),
+                    'balance' => sprintf('%0.' . $multiplier . 'f', $sourceAccount->getBalance()),
                 ])
             );
         }
 
-        $transaction         = new Transact();
         $transaction->amount = $amount;
         $transaction->source()->associate($sourceAccount);
         $transaction->destination()->associate($destinationAccount);
@@ -70,7 +72,8 @@ class TransactionController extends Controller
     }
 
     /**
-     * @param int $transactionId|null
+     * @param int $transactionId |null
+     *
      * @return Response
      */
     public function listTransactions($transactionId = null): Response
@@ -83,6 +86,7 @@ class TransactionController extends Controller
         }
 
         $transaction = $transactions->findOrFail($transactionId);
+
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }
 }

@@ -67,9 +67,7 @@ class Offer implements \JsonSerializable
         $account = $offer->getAccount();
 
         if (null === $account) {
-            throw new Exception(printf('Offer %d without account.', [
-                $offer->getId()
-            ]));
+            throw new Exception('Offer do not have relation with account.');
         }
 
         $this->setOwnerId($account->getOwnerId())

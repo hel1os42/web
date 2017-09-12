@@ -141,11 +141,25 @@ class OfferUpdatedTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(\OmniSynapse\CoreService\FailedJob\OfferUpdated::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $offerUpdated = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->offerUpdated($offerMock)
-            ->handle();
+            ->offerUpdated($offerMock);
+
+        $offerUpdated->handle();
+        $offerUpdated->failed((new \Exception));
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen Offer event.');
+        $this->assertEquals(1, $exceptionEventCalled, 'Can not listen OfferUpdated failed job.');
+
+        $this->assertEquals([
+            'coreService',
+            'requestObject',
+            'offer',
+        ], $offerUpdated->__sleep());
     }
 }

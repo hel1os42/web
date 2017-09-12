@@ -4,8 +4,10 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Response\Transaction;
 use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class SendNau
@@ -16,18 +18,32 @@ class SendNau extends AbstractJob
     /** @var SendNauRequest */
     private $requestObject;
 
+    /** @var Transact */
+    private $transaction;
+
     /**
      * SendNau constructor.
      *
      * @param Transact $transaction
-     * @param \GuzzleHttp\Client $client
+     * @param CoreService $coreService
      */
-    public function __construct(Transact $transaction, \GuzzleHttp\Client $client)
+    public function __construct(Transact $transaction, CoreService $coreService)
     {
-        parent::__construct($client);
+        parent::__construct($coreService);
+
+        $this->transaction = $transaction;
 
         /** @var SendNau requestObject */
         $this->requestObject = (new SendNauRequest($transaction));
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentProperties = parent::__sleep();
+        return array_merge($parentProperties, ['requestObject', 'transaction']);
     }
 
     /**
@@ -60,5 +76,14 @@ class SendNau extends AbstractJob
     public function getResponseClass(): string
     {
         return Transaction::class;
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return FailedJob
+     */
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
+    {
+        return new FailedJob\SendNau($exception, $this->transaction);
     }
 }

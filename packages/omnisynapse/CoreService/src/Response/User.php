@@ -17,8 +17,8 @@ class User
     /** @var string */
     public $id;
 
-    /** @var string */
-    public $username;
+    /** @var string|null */
+    public $username = null;
 
     /** @var string|null */
     public $referrer_id = null;

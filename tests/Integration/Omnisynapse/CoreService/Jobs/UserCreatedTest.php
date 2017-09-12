@@ -76,10 +76,17 @@ class UserCreatedTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(\OmniSynapse\CoreService\FailedJob\UserCreated::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $userCreated = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->userCreated($userMock)
-            ->handle();
+            ->userCreated($userMock);
+
+        $userCreated->handle();
+
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen User response event.');
     }
