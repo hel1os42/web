@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\AdditionalField\AdditionalField;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
