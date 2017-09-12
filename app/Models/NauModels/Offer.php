@@ -5,11 +5,11 @@ namespace App\Models\NauModels;
 use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
+use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
 use Sofa\Eloquence\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
@@ -50,6 +50,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Offer extends NauModel
 {
+    use RelationsTrait;
 
     public function __construct(array $attributes = [])
     {
@@ -171,28 +172,6 @@ class Offer extends NauModel
         'longitude',
         'radius'
     ];
-
-    /** @return BelongsTo */
-    public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function activationCodes(): HasMany
-    {
-        return $this->hasMany(ActivationCode::class);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function redemptions(): HasMany
-    {
-        return $this->hasMany(Redemption::class);
-    }
 
     /**
      * @return Account

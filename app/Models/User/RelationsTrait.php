@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Traits;
+namespace App\Models\User;
 
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
@@ -10,7 +10,12 @@ use App\Models\NauModels\User as CoreUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations;
 
-trait UserRelationsTrait
+/**
+ * Trait RelationsTrait
+ *
+ * @package App\Models\User
+ */
+trait RelationsTrait
 {
     /**
      * Get the referrer record associated with the user.
@@ -57,6 +62,7 @@ trait UserRelationsTrait
     {
         return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
                     ->withPivot([
+                        'created_at',
                         'points',
                     ]);
     }
