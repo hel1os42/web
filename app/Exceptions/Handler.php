@@ -4,9 +4,11 @@ namespace App\Exceptions;
 
 use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
+use App\Exceptions\TokenException;
 use Exception;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\Debug\Exception\FlattenException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -23,6 +25,18 @@ class Handler extends ExceptionHandler
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
     ];
+
+
+    /**
+     * @param Exception $exception
+     * @return Response
+     */
+    protected function convertExceptionToResponse(Exception $exception): Response
+    {
+        $exception = FlattenException::create($exception);
+
+        return response()->error($exception->getStatusCode(), $exception->getMessage());
+    }
 
     /**
      * Convert an authentication exception into an unauthenticated response.
