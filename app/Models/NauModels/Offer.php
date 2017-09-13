@@ -18,32 +18,32 @@ use Ramsey\Uuid\Uuid;
  * Class Offer
  * @package App\Models\NauModels
  *
- * @property string                      id
- * @property int                         account_id
- * @property string                      label
- * @property string                      description
- * @property float                       reward
- * @property string                      status
- * @property Carbon                      start_date
- * @property Carbon                      finish_date
- * @property Carbon                      start_time
- * @property Carbon                      finish_time
- * @property string                      country
- * @property string                      city
- * @property string                      category_id
- * @property int                         max_count
- * @property int                         max_for_user
- * @property int                         max_per_day
- * @property int                         max_for_user_per_day
- * @property int                         user_level_min
- * @property float                       latitude
- * @property float                       longitude
- * @property int                         radius
- * @property Carbon                      created_at
- * @property Carbon                      updated_at
- * @property Account                     account
+ * @property string id
+ * @property int account_id
+ * @property string label
+ * @property string description
+ * @property float reward
+ * @property string status
+ * @property Carbon start_date
+ * @property Carbon finish_date
+ * @property Carbon start_time
+ * @property Carbon finish_time
+ * @property string country
+ * @property string city
+ * @property string category_id
+ * @property int max_count
+ * @property int max_for_user
+ * @property int max_per_day
+ * @property int max_for_user_per_day
+ * @property int user_level_min
+ * @property float latitude
+ * @property float longitude
+ * @property int radius
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Account account
  * @property Collection|ActivationCode[] activationCodes
- * @property Collection|Redemption[]     redemptions
+ * @property Collection|Redemption[] redemptions
  * @method static accountOffers(int $accountId) : Offer
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
@@ -106,6 +106,27 @@ class Offer extends NauModel
             'radius'
         ];
 
+        $this->casts = [
+            'id'                   => 'string',
+            'acc_id'               => 'integer',
+            'name'                 => 'string',
+            'descr'                => 'string',
+            'status'               => 'string',
+            'dt_start'             => 'datetime',
+            'dt_finish'            => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'categ'                => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'min_level'            => 'integer',
+            'lat'                  => 'double',
+            'lng'                  => 'double',
+            'radius'               => 'integer'
+        ];
+
         $this->hidden = [
             'acc_id',
             'name',
@@ -133,6 +154,7 @@ class Offer extends NauModel
             'latitude',
             'longitude'
         ];
+
 
         $this->maps = [
             'account_id'     => 'acc_id',
@@ -236,10 +258,20 @@ class Offer extends NauModel
         return $this->finish_date;
     }
 
+    public function getTmStartAttribute($value): Carbon
+    {
+        return $this->getCarbodDateByTime($value);
+    }
+
     /** @return Carbon */
     public function getStartTime(): Carbon
     {
         return $this->start_time;
+    }
+
+    public function getTmFinishAttribute($value): Carbon
+    {
+        return $this->getCarbodDateByTime($value);
     }
 
     /** @return Carbon */
@@ -336,7 +368,7 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param int     $accountId
+     * @param int $accountId
      *
      * @return Builder
      */
@@ -347,9 +379,9 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string  $lat
-     * @param string  $lng
-     * @param int     $radius
+     * @param string $lat
+     * @param string $lng
+     * @param int $radius
      *
      * @return Builder
      */
@@ -376,7 +408,7 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string  $categoryId
+     * @param string $categoryId
      *
      * @return Builder
      */
@@ -407,5 +439,17 @@ class Offer extends NauModel
         $activationCode->activated($redemption);
 
         return $redemption;
+    }
+
+    /**
+     * @param string $value
+     * @return Carbon
+     */
+    public function getCarbodDateByTime(string $value): Carbon
+    {
+        return Carbon::createFromFormat(
+            $this->getDateFormat(),
+            date('Y-m-d ', mktime(0, 0, 0, 01, 01, 1970)) . $value
+        );
     }
 }
