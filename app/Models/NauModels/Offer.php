@@ -85,53 +85,45 @@ class Offer extends NauModel
         ];
 
         $this->fillable = [
-            'account_id',
-            'label',
-            'description',
-            'reward',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'country',
-            'city',
-            'category_id',
-            'max_count',
-            'max_for_user',
-            'max_per_day',
-            'max_for_user_per_day',
-            'user_level_min',
-            'latitude',
-            'longitude',
-            'radius'
+            'account_id', 'label', 'description', 'reward',
+            'start_date', 'finish_date', 'start_time', 'finish_time',
+            'country', 'city', 'category_id', 'max_count', 'max_for_user',
+            'max_per_day', 'max_for_user_per_day', 'user_level_min', 'latitude',
+            'longitude', 'radius'
         ];
 
         $this->hidden = [
-            'acc_id',
-            'name',
-            'descr',
-            'dt_start',
-            'dt_finish',
-            'tm_start',
-            'tm_finish',
-            'categ',
-            'min_level',
-            'lat',
-            'lng'
+            'acc_id', 'name', 'descr', 'dt_start', 'dt_finish',
+            'tm_start', 'tm_finish', 'categ', 'min_level', 'lat', 'lng'
         ];
 
         $this->appends = [
-            'account_id',
-            'label',
-            'description',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'category_id',
-            'user_level_min',
-            'latitude',
-            'longitude'
+            'account_id', 'label', 'description', 'start_date',
+            'finish_date', 'start_time', 'finish_time', 'category_id',
+            'user_level_min', 'latitude', 'longitude'
+        ];
+
+        $this->casts = [
+            'id'                   => 'string',
+            'acc_id'               => 'integer',
+            'name'                 => 'string',
+            'descr'                => 'string',
+            'status'               => 'string',
+            'dt_start'             => 'datetime',
+            'dt_finish'            => 'datetime',
+            'tm_start'             => 'datetime',
+            'tm_finish'            => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'categ'                => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'min_level'            => 'integer',
+            'lat'                  => 'double',
+            'lng'                  => 'double',
+            'radius'               => 'integer'
         ];
 
         $this->maps = [
@@ -150,27 +142,6 @@ class Offer extends NauModel
 
         parent::__construct($attributes);
     }
-
-    protected $casts = [
-        'id'                   => 'string',
-        'acc_id'               => 'integer',
-        'name'                 => 'string',
-        'descr'                => 'string',
-        'status'               => 'string',
-        'dt_start'             => 'datetime',
-        'dt_finish'            => 'datetime',
-        'country'              => 'string',
-        'city'                 => 'string',
-        'categ'                => 'string',
-        'max_count'            => 'integer',
-        'max_for_user'         => 'integer',
-        'max_per_day'          => 'integer',
-        'max_for_user_per_day' => 'integer',
-        'min_level'            => 'integer',
-        'lat'                  => 'double',
-        'lng'                  => 'double',
-        'radius'               => 'integer'
-    ];
 
     /**
      * @var array
@@ -260,29 +231,11 @@ class Offer extends NauModel
     }
 
     /**
-     * @param $value
-     * @return Carbon
-     */
-    public function getTmStartAttribute($value): Carbon
-    {
-        return Carbon::parse($value);
-    }
-
-    /**
      * @return Carbon
      */
     public function getStartTime(): Carbon
     {
         return $this->start_time;
-    }
-
-    /**
-     * @param $value
-     * @return Carbon|null
-     */
-    public function getTmFinishAttribute($value): ?Carbon
-    {
-        return Carbon::parse($value);
     }
 
     /**
@@ -367,6 +320,23 @@ class Offer extends NauModel
         $account = $this->account;
 
         return $account === null ? null : $account->owner;
+    }
+
+
+    /**
+     * @param string $value
+     */
+    public function setTmStartAttribute(string $value)
+    {
+        $this->tm_start = Carbon::parse($value)->year(1970)->month(01)->day(01);
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setTmFinishAttribute(string $value)
+    {
+        $this->tm_finish = Carbon::parse($value)->year(1970)->month(01)->day(01);
     }
 
     /**
