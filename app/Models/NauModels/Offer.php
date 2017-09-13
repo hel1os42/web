@@ -252,30 +252,44 @@ class Offer extends NauModel
         return $this->start_date;
     }
 
-    /** @return Carbon */
-    public function getFinishDate(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishDate(): ?Carbon
     {
         return $this->finish_date;
     }
 
+    /**
+     * @param $value
+     * @return Carbon
+     */
     public function getTmStartAttribute($value): Carbon
     {
-        return $this->getCarbodDateByTime($value);
+        return Carbon::parse($value);
     }
 
-    /** @return Carbon */
+    /**
+     * @return Carbon
+     */
     public function getStartTime(): Carbon
     {
         return $this->start_time;
     }
 
-    public function getTmFinishAttribute($value): Carbon
+    /**
+     * @param $value
+     * @return Carbon|null
+     */
+    public function getTmFinishAttribute($value): ?Carbon
     {
-        return $this->getCarbodDateByTime($value);
+        return Carbon::parse($value);
     }
 
-    /** @return Carbon */
-    public function getFinishTime(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishTime(): ?Carbon
     {
         return $this->finish_time;
     }
@@ -439,17 +453,5 @@ class Offer extends NauModel
         $activationCode->activated($redemption);
 
         return $redemption;
-    }
-
-    /**
-     * @param string $value
-     * @return Carbon
-     */
-    public function getCarbodDateByTime(string $value): Carbon
-    {
-        return Carbon::createFromFormat(
-            $this->getDateFormat(),
-            date('Y-m-d ', mktime(0, 0, 0, 01, 01, 1970)) . $value
-        );
     }
 }
