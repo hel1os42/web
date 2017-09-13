@@ -106,27 +106,6 @@ class Offer extends NauModel
             'radius'
         ];
 
-        $this->casts = [
-            'id'                   => 'string',
-            'acc_id'               => 'integer',
-            'name'                 => 'string',
-            'descr'                => 'string',
-            'status'               => 'string',
-            'dt_start'             => 'datetime',
-            'dt_finish'            => 'datetime',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'categ'                => 'string',
-            'max_count'            => 'integer',
-            'max_for_user'         => 'integer',
-            'max_per_day'          => 'integer',
-            'max_for_user_per_day' => 'integer',
-            'min_level'            => 'integer',
-            'lat'                  => 'double',
-            'lng'                  => 'double',
-            'radius'               => 'integer'
-        ];
-
         $this->hidden = [
             'acc_id',
             'name',
@@ -155,7 +134,6 @@ class Offer extends NauModel
             'longitude'
         ];
 
-
         $this->maps = [
             'account_id'     => 'acc_id',
             'label'          => 'name',
@@ -172,6 +150,27 @@ class Offer extends NauModel
 
         parent::__construct($attributes);
     }
+
+    protected $casts = [
+        'id'                   => 'string',
+        'acc_id'               => 'integer',
+        'name'                 => 'string',
+        'descr'                => 'string',
+        'status'               => 'string',
+        'dt_start'             => 'datetime',
+        'dt_finish'            => 'datetime',
+        'country'              => 'string',
+        'city'                 => 'string',
+        'categ'                => 'string',
+        'max_count'            => 'integer',
+        'max_for_user'         => 'integer',
+        'max_per_day'          => 'integer',
+        'max_for_user_per_day' => 'integer',
+        'min_level'            => 'integer',
+        'lat'                  => 'double',
+        'lng'                  => 'double',
+        'radius'               => 'integer'
+    ];
 
     /**
      * @var array
