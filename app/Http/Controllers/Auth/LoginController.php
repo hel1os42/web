@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\SmsAuth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
@@ -79,9 +80,15 @@ class LoginController extends Controller
     public function sendSMSCode(string $phone): Response
     {
         $user = User::findByPhone($phone);
-        app(SmsAuth::class)->getCode($user->phone);
 
+        if($user === null){
+            \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . 'not found.');
+        }
 
+        $user->setCode(app(SmsAuth::class)->getCode($user->phone));
+        $user->update();
+
+        return response()->render('auth.success', ['phone_number' => $user->phone]);
     }
 
     /**

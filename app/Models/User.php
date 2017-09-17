@@ -230,6 +230,15 @@ class User extends Authenticatable
         return $this;
     }
 
+    public function setCode(int $code): User
+    {
+        $this->code = $code;
+
+        //add code_ttl here now() + 10 minutes
+
+        return $this;
+    }
+
     /**
      * Find User by invite code
      *
@@ -246,11 +255,11 @@ class User extends Authenticatable
     /**
      * @param Builder $builder
      * @param string $phone
-     * @return Builder
+     * @return Builder|null
      */
-    public function scopeFindByPhone(Builder $builder, string $phone): Builder
+    public function scopeFindByPhone(Builder $builder, string $phone): ?Builder
     {
-        return $builder->where('phone', $phone)->firstOrFail();
+        return $builder->where('phone', $phone)->first();
     }
 
     /**
