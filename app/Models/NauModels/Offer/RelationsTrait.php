@@ -26,7 +26,7 @@ trait RelationsTrait
      */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(\App\Models\NauModels\Account::class);
     }
 
     /**
@@ -42,7 +42,7 @@ trait RelationsTrait
      */
     public function redemptions(): HasMany
     {
-        return $this->hasMany(Redemption::class);
+        return $this->hasMany(\App\Models\NauModels\Redemption::class);
     }
 
     /**
