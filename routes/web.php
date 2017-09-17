@@ -23,6 +23,10 @@ Route::group(['prefix' => 'auth'], function () {
         ->where('invite', '[a-z0-9]+')
         ->name('registerForm');
 
+    Route::get('login/{phone_number}/code', 'Auth\LoginController@getSMSCode')->name('getSMSCode');
+    Route::get('register/{invite}/{phone_number}/code', 'Auth\LoginController@getSMSCode')->name('getSMSCode');
+
+
     Route::group(['prefix' => 'password'], function () {
         Route::get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
         Route::post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,6 +33,7 @@ use Webpatser\Uuid\Uuid;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @method   User       findByPhone(string $phone)
  */
 class User extends Authenticatable
 {
@@ -239,6 +241,16 @@ class User extends Authenticatable
     public function findByInvite(string $invite): ?User
     {
         return $this->where('invite_code', $invite)->first();
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string $phone
+     * @return Builder
+     */
+    public function scopeFindByPhone(Builder $builder, string $phone): Builder
+    {
+        return $builder->where('phone', $phone)->firstOrFail();
     }
 
     /**

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use \Tymon\JWTAuth\Exceptions\JWTException;
@@ -14,6 +17,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
+
+    use ThrottlesLogins;
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -26,12 +31,16 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param LoginRequest $request
      * @return \Illuminate\Http\JsonResponse|Redirect
      */
-    public function postLogin(Request $request)
+    public function postLogin(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
+
+        if(isset($request->phone) === true){
+            $credentials = $request->only('phone', 'code');
+        }
 
         if ($request->wantsJson()) {
             $token = null;
@@ -61,6 +70,18 @@ class LoginController extends Controller
         }
 
         return redirect(request()->get('redirect_to', '/'));
+    }
+
+    /**
+     * @param string $phone
+     * @return Response
+     */
+    public function sendSMSCode(string $phone): Response
+    {
+        $user = User::findByPhone($phone);
+        app(SmsAuth::class)->getCode($user->phone);
+
+
     }
 
     /**
