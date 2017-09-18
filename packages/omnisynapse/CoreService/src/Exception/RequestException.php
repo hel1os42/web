@@ -4,6 +4,7 @@ namespace OmniSynapse\CoreService\Exception;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\Response\Error as ErrorResponse;
+use OmniSynapse\CoreService\Response\Error;
 
 class RequestException extends Exception
 {
@@ -15,6 +16,9 @@ class RequestException extends Exception
 
     /** @var string $rawResponse */
     private $rawResponse;
+
+    /** @var Error|null $errorResponse */
+    private $errorResponse = null;
 
     /**
      * RequestException constructor.
@@ -36,9 +40,13 @@ class RequestException extends Exception
 
         try {
             $jsonMapper->map(\GuzzleHttp\json_decode($rawResponse), $contents = new ErrorResponse());
-        } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
+        } catch (\InvalidArgumentException $e) {
+            $contents = null;
+        } catch (\JsonMapper_Exception $e) {
             $contents = null;
         }
+
+        $this->errorResponse = $contents;
 
         $message = null !== $contents && isset($contents->message)
             ? $contents->message
@@ -69,5 +77,13 @@ class RequestException extends Exception
     public function getRawResponse()
     {
         return $this->rawResponse;
+    }
+
+    /**
+     * @return Error|null
+     */
+    public function getErrorResponse()
+    {
+        return $this->errorResponse;
     }
 }

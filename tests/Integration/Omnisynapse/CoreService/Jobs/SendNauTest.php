@@ -82,11 +82,25 @@ class SendNauTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(\OmniSynapse\CoreService\FailedJob\SendNau::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $sendNau = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->sendNau($sendNauMock)
-            ->handle();
+            ->sendNau($sendNauMock);
+
+        $sendNau->handle();
+        $sendNau->failed((new \Exception));
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen SendNau response event.');
+        $this->assertEquals(1, $exceptionEventCalled, 'Can not listen SendNau failed job.');
+
+        $this->assertEquals([
+            'coreService',
+            'requestObject',
+            'transaction',
+        ], $sendNau->__sleep());
     }
 }

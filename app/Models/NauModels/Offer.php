@@ -5,17 +5,18 @@ namespace App\Models\NauModels;
 use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
+use App\Models\NauModels\Offer\RelationsTrait;
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
 use Sofa\Eloquence\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 /**
  * Class Offer
- * @package App
+ * @package App\Models\NauModels
  *
  * @property string id
  * @property int account_id
@@ -50,6 +51,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Offer extends NauModel
 {
+    use RelationsTrait, HasNau;
 
     public function __construct(array $attributes = [])
     {
@@ -59,7 +61,7 @@ class Offer extends NauModel
 
         $this->incrementing = false;
 
-        $this->attributes = array(
+        $this->attributes = [
             'acc_id'               => null,
             'name'                 => null,
             'descr'                => null,
@@ -80,78 +82,66 @@ class Offer extends NauModel
             'lat'                  => null,
             'lng'                  => null,
             'radius'               => null
-        );
-
-        $this->fillable = [
-            'account_id',
-            'label',
-            'description',
-            'reward',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'country',
-            'city',
-            'category_id',
-            'max_count',
-            'max_for_user',
-            'max_per_day',
-            'max_for_user_per_day',
-            'user_level_min',
-            'latitude',
-            'longitude',
-            'radius'
         ];
 
+        $this->fillable = [
+            'account_id', 'label', 'description', 'reward',
+            'start_date', 'finish_date', 'start_time', 'finish_time',
+            'country', 'city', 'category_id', 'max_count', 'max_for_user',
+            'max_per_day', 'max_for_user_per_day', 'user_level_min', 'latitude',
+            'longitude', 'radius'
+        ];
 
         $this->hidden = [
-            'acc_id',
-            'name',
-            'descr',
-            'dt_start',
-            'dt_finish',
-            'tm_start',
-            'tm_finish',
-            'categ',
-            'min_level',
-            'lat',
-            'lng'
+            'acc_id', 'name', 'descr', 'dt_start', 'dt_finish',
+            'tm_start', 'tm_finish', 'categ', 'min_level', 'lat', 'lng'
         ];
 
         $this->appends = [
-            'account_id',
-            'label',
-            'description',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'category_id',
-            'user_level_min',
-            'latitude',
-            'longitude'
+            'account_id', 'label', 'description', 'start_date',
+            'finish_date', 'start_time', 'finish_time', 'category_id',
+            'user_level_min', 'latitude', 'longitude'
+        ];
+
+        $this->casts = [
+            'id'                   => 'string',
+            'acc_id'               => 'integer',
+            'name'                 => 'string',
+            'descr'                => 'string',
+            'status'               => 'string',
+            'dt_start'             => 'datetime',
+            'dt_finish'            => 'datetime',
+            'tm_start'             => 'datetime',
+            'tm_finish'            => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'categ'                => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'min_level'            => 'integer',
+            'lat'                  => 'double',
+            'lng'                  => 'double',
+            'radius'               => 'integer'
+        ];
+
+        $this->maps = [
+            'account_id'     => 'acc_id',
+            'label'          => 'name',
+            'description'    => 'descr',
+            'start_date'     => 'dt_start',
+            'finish_date'    => 'dt_finish',
+            'start_time'     => 'tm_start',
+            'finish_time'    => 'tm_finish',
+            'category_id'    => 'categ',
+            'user_level_min' => 'min_level',
+            'latitude'       => 'lat',
+            'longitude'      => 'lng'
         ];
 
         parent::__construct($attributes);
     }
-
-    /**
-     * @var array
-     */
-    protected $maps = [
-        'account_id'     => 'acc_id',
-        'label'          => 'name',
-        'description'    => 'descr',
-        'start_date'     => 'dt_start',
-        'finish_date'    => 'dt_finish',
-        'start_time'     => 'tm_start',
-        'finish_time'    => 'tm_finish',
-        'category_id'    => 'categ',
-        'user_level_min' => 'min_level',
-        'latitude'       => 'lat',
-        'longitude'      => 'lng'
-    ];
 
     /**
      * @var array
@@ -172,32 +162,10 @@ class Offer extends NauModel
         'radius'
     ];
 
-    /** @return BelongsTo */
-    public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function activationCodes(): HasMany
-    {
-        return $this->hasMany(ActivationCode::class);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function redemptions(): HasMany
-    {
-        return $this->hasMany(Redemption::class);
-    }
-
     /**
      * @return Account
      */
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
@@ -228,6 +196,7 @@ class Offer extends NauModel
 
     /**
      * @param int $value
+     *
      * @return float
      */
     public function getRewardAttribute(int $value): float
@@ -253,20 +222,26 @@ class Offer extends NauModel
         return $this->start_date;
     }
 
-    /** @return Carbon */
-    public function getFinishDate(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishDate(): ?Carbon
     {
         return $this->finish_date;
     }
 
-    /** @return Carbon */
+    /**
+     * @return Carbon
+     */
     public function getStartTime(): Carbon
     {
         return $this->start_time;
     }
 
-    /** @return Carbon */
-    public function getFinishTime(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishTime(): ?Carbon
     {
         return $this->finish_time;
     }
@@ -343,11 +318,30 @@ class Offer extends NauModel
     public function getOwner()
     {
         $account = $this->account;
+
         return $account === null ? null : $account->owner;
+    }
+
+
+    /**
+     * @param string $value
+     */
+    public function setTmStartAttribute(string $value)
+    {
+        $this->tm_start = Carbon::parse($value)->year(1970)->month(01)->day(01);
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setTmFinishAttribute(string $value)
+    {
+        $this->tm_finish = Carbon::parse($value)->year(1970)->month(01)->day(01);
     }
 
     /**
      * @param User $user
+     *
      * @return bool
      */
     public function isOwner(User $user): bool
@@ -358,6 +352,7 @@ class Offer extends NauModel
     /**
      * @param Builder $builder
      * @param int $accountId
+     *
      * @return Builder
      */
     public function scopeAccountOffers(Builder $builder, int $accountId): Builder
@@ -370,6 +365,7 @@ class Offer extends NauModel
      * @param string $lat
      * @param string $lng
      * @param int $radius
+     *
      * @return Builder
      */
     public function scopeFilterByPosition(
@@ -381,7 +377,7 @@ class Offer extends NauModel
         if (empty($lat) || empty($lng) || $radius < 1) {
             return $builder;
         }
-        $radius = $radius * 1000; //kilometers
+
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
         ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
         PI()/180 / 2), 2) + COS(lat * PI()/180) * 
@@ -396,6 +392,7 @@ class Offer extends NauModel
     /**
      * @param Builder $builder
      * @param string $categoryId
+     *
      * @return Builder
      */
     public function scopeFilterByCategory(Builder $builder, string $categoryId = null): Builder
@@ -405,6 +402,7 @@ class Offer extends NauModel
 
     /**
      * @param string $code
+     *
      * @return Redemption
      * @throws BadActivationCodeException|CannotRedeemException
      */

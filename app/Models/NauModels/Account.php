@@ -2,6 +2,7 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Account
- * @package App
+ * @package App\Models\NauModels
  *
  * @property int id
  * @property string owner_id
@@ -26,11 +27,10 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Account extends NauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = 'account';
 
         $this->primaryKey = 'id';
@@ -51,18 +51,25 @@ class Account extends NauModel
             'amount',
             'addr'
         ];
-    }
 
-    /** @var array */
-    protected $maps = [
-        'balance' => 'amount',
-        'address' => 'addr',
-    ];
+        $this->maps = [
+            'balance' => 'amount',
+            'address' => 'addr',
+        ];
+
+        parent::__construct($attributes);
+    }
 
     /** @return BelongsTo */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /** @return User */
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 
     /** @return HasMany */
@@ -115,8 +122,10 @@ class Account extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string $address
+     * @param string  $address
+     *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
     public function scopeWhereAddress(Builder $builder, string $address): Builder
     {

@@ -37,8 +37,9 @@ class OfferController extends Controller
     public function store(Advert\OfferRequest $request): Response
     {
         $newOffer = new Offer();
+        $newOffer->fill($request->toArray());
         $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
-        $newOffer->create($request->toArray());
+        $newOffer->save();
 
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
