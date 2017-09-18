@@ -10,6 +10,8 @@ class SmsAuthProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(SmsAuth::class, function() { return new StubSmsAuth(); });
+        $this->app->singleton(SmsAuth::class, function () {
+            return new StubSmsAuth();
+        });
     }
 }

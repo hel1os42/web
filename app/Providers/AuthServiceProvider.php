@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use App\Services\Auth\SmsGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -25,6 +25,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        \Auth::extend('session', function ($app, $name, array $config) {
+            return new SmsGuard($name,
+                \Auth::createUserProvider($config['provider']),
+                $app['session.store']
+            );
+        });
     }
 }

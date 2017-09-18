@@ -2,24 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Helpers\SmsAuth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use \Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
 
     use ThrottlesLogins;
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -33,36 +28,46 @@ class LoginController extends Controller
 
     /**
      * @param LoginRequest $request
-     * @return \Illuminate\Http\JsonResponse|Redirect
+     * @return Response|\Illuminate\Http\RedirectResponse
      */
     public function postLogin(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password', 'phone', 'code');
 
-        if(isset($request->phone) === true){
-            $credentials = $request->only('phone', 'code');
-        }
+        return $request->wantsJson() ? $this->loginJwt($credentials) : $this->loginSession($credentials);
+    }
 
-        if ($request->wantsJson()) {
-            $token = null;
+    /**
+     * @param array $credentials
+     * @return Response
+     */
+    private function loginJwt(array $credentials): Response
+    {
+        $token = null;
 
-            try {
-                if (false === $token = \JWTAuth::attempt($credentials)) {
-                    return response()->error(
-                        Response::HTTP_UNPROCESSABLE_ENTITY,
-                        trans('errors.invalid_email_or_password')
-                    );
-                }
-            } catch (JWTException $e) {
+        try {
+            if (false === $token = \JWTAuth::attempt($credentials)) {
                 return response()->error(
-                    Response::HTTP_INTERNAL_SERVER_ERROR,
-                    $e->getMessage()
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                    $credentials['phone'] ? trans('errors.invalid_code') : trans('errors.invalid_email_or_password')
                 );
             }
-
-            return response()->render('', compact('token'));
+        } catch (JWTException $e) {
+            return response()->error(
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+                $e->getMessage()
+            );
         }
 
+        return response()->render('', compact('token'));
+    }
+
+    /**
+     * @param array $credentials
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function loginSession(array $credentials)
+    {
         $attempt = \Auth::attempt($credentials, false);
 
         if (false === $attempt) {
@@ -77,25 +82,24 @@ class LoginController extends Controller
      * @param string $phone
      * @return Response
      */
-    public function sendSMSCode(string $phone): Response
+    public function sendSmsCode(string $phone): Response
     {
         $user = User::findByPhone($phone);
 
         if($user === null){
-            \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . 'not found.');
+            return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
-        $user->setCode(app(SmsAuth::class)->getCode($user->phone));
-        $user->update();
+        cache()->put($user->phone, app(\App\Helpers\SmsAuth::class)->getCode($user->phone), 5);
 
-        return response()->render('auth.success', ['phone_number' => $user->phone]);
+        return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null], Response::HTTP_ACCEPTED, route('register'));
     }
 
     /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse|Redirect
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function logout(Request $request)
+    public function logout(\Illuminate\Http\Request $request)
     {
         if ($request->wantsJson()) {
             try {
@@ -118,16 +122,16 @@ class LoginController extends Controller
      */
     public function tokenRefresh()
     {
-        $token = JWTAuth::getToken();
+        $token = \JWTAuth::getToken();
 
         if (!$token) {
-            throw new BadRequestHttpException('Token not provided');
+            return \response()->error(Response::HTTP_BAD_REQUEST, 'Token not provided');
         }
 
         try {
-            $token = JWTAuth::refresh($token);
+            $token = \JWTAuth::refresh($token);
         } catch (TokenInvalidException $e) {
-            throw new AccessDeniedHttpException('The token is invalid');
+            return \response()->error(Response::HTTP_UNAUTHORIZED, 'The token is invalid');
         }
 
         return response()->json(compact('token'));

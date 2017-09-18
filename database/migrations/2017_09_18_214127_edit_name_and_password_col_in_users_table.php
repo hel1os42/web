@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCodeAndCodeTtlColToUsersTable extends Migration
+class EditNameAndPasswordColInUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,9 @@ class AddCodeAndCodeTtlColToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('code')->nullable();
-            $table->dateTimeTz('code_ttl')->nullable();
+            $table->string('name')->nullable()->change();
+            $table->string('password')->nullable()->change();
+            $table->string('email')->nullable()->change();
         });
     }
 
@@ -26,9 +27,6 @@ class AddCodeAndCodeTtlColToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('code');
-            $table->dropColumn('code_ttl');
-        });
+        //
     }
 }

@@ -18,14 +18,19 @@ Route::get('/', 'ProfileController@index')->name('home');
 Route::group(['prefix' => 'auth'], function () {
     Route::get('login', 'Auth\LoginController@getLogin')->name('loginForm');
     Route::post('login', 'Auth\LoginController@postLogin')->name('login');
+    Route::post('session', 'Auth\LoginController@postLogin');
     Route::get('logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
         ->where('invite', '[a-z0-9]+')
         ->name('registerForm');
 
-    Route::get('login/{phone_number}/code', 'Auth\LoginController@getSMSCode')->name('getSMSCode');
-    Route::get('register/{invite}/{phone_number}/code', 'Auth\LoginController@getSMSCode')->name('getSMSCode');
-
+    Route::get('login/{phone_number}/code', 'Auth\LoginController@sendSmsCode')
+        ->where('phone_number', '\+[0-9]+')
+        ->name('sendSmsCode');
+    Route::get('register/{invite}/{phone_number}/code', 'Auth\RegisterController@sendSmsCode')
+        ->middleware('throttle:1')
+        ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
+        ->name('sendSmsCodeRegister');
 
     Route::group(['prefix' => 'password'], function () {
         Route::get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
