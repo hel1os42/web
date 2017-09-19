@@ -57,16 +57,16 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $e
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exception)
     {
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
-            return response()->json(trans($e->getMessage()), $e->getStatusCode());
-        } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-            return response()->json(trans($e->getMessage()), $e->getStatusCode());
-        } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-            return response()->json(trans($e->getMessage()), $e->getStatusCode());
+        if ($exception instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
+        } elseif ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
+        } elseif ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
         }
 
-        return parent::render($request, $e);
+        return parent::render($request, $exception);
     }
 }

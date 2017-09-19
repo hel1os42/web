@@ -20,14 +20,15 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * Register any authentication / authorization services.
      *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      * @return void
      */
     public function boot()
     {
         $this->registerPolicies();
 
-        Auth::extend('jwt-driver', function($app, $name, array $config) {
-            return new JwtGuard(Auth::createUserProvider($config['provider']), $app->request);
+        Auth::extend('jwt-driver', function ($app, $name, array $config) {
+            return new JwtGuard(Auth::createUserProvider($config['provider']));
         });
     }
 }
