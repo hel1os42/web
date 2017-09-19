@@ -64,14 +64,13 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse|Redirect
      */
-    public function logout(Request $request)
+    public function logout()
     {
-        if ($request->wantsJson()) {
+        if (\JWTAuth::getToken() !== false) {
             try {
-                $logout = \JWTAuth::parseToken()->invalidate();
+                $logout = \JWTAuth::invalidate();
             } catch (JWTException $e) {
                 return response()->error(
                     Response::HTTP_INTERNAL_SERVER_ERROR,
