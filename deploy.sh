@@ -19,7 +19,7 @@ function deploy_and_check() {
     docker rm $CONTAINER || true
 
     printf "[Starting] container $CONTAINER... ID: "
-    docker run --name $CONTAINER -d -p $PORT:8181 --net $NETWORK -v$WEB_PATH/storage:/app/storage -v$WEB_PATH/.env:/app/.env $IMAGE:$TAG
+    docker run --name $CONTAINER -d -p $PORT:8181 --restart always --net $NETWORK -v$WEB_PATH/storage:/app/storage -v$WEB_PATH/.env:/app/.env $IMAGE:$TAG
 
     printf "Waiting container $CONTAINER to be up"
     until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT/); do
