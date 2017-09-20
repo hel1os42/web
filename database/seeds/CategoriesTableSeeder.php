@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Seeder;
 use Webpatser\Uuid\Uuid;
 
@@ -29,6 +30,17 @@ class CategoriesTableSeeder extends Seeder
     ];
 
     /**
+     * @var DatabaseManager
+     */
+    private $db;
+
+    public function __construct(DatabaseManager $database)
+    {
+        $this->db = $database;
+    }
+
+
+    /**
      * Run the database seeds.
      *
      * @return void
@@ -36,8 +48,16 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         $categories = $this->getCategories();
+
+        $connection = $this->db->connection();
+
         foreach ($categories as $category) {
-            \Illuminate\Support\Facades\DB::table('categories')->insert($category);
+            if ($connection->table('categories')->where('name', $category['name'])->exists()) {
+                printf('Category %s already exists. Skipping...'.PHP_EOL, $category['name']);
+                continue;
+            }
+
+            $connection->table('categories')->insert($category);
         }
     }
 
