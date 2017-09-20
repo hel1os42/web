@@ -18,32 +18,32 @@ use Ramsey\Uuid\Uuid;
  * Class Offer
  * @package App\Models\NauModels
  *
- * @property string                      id
- * @property int                         account_id
- * @property string                      label
- * @property string                      description
- * @property float                       reward
- * @property string                      status
- * @property Carbon                      start_date
- * @property Carbon                      finish_date
- * @property Carbon                      start_time
- * @property Carbon                      finish_time
- * @property string                      country
- * @property string                      city
- * @property string                      category_id
- * @property int                         max_count
- * @property int                         max_for_user
- * @property int                         max_per_day
- * @property int                         max_for_user_per_day
- * @property int                         user_level_min
- * @property float                       latitude
- * @property float                       longitude
- * @property int                         radius
- * @property Carbon                      created_at
- * @property Carbon                      updated_at
- * @property Account                     account
+ * @property string id
+ * @property int account_id
+ * @property string label
+ * @property string description
+ * @property float reward
+ * @property string status
+ * @property Carbon start_date
+ * @property Carbon finish_date
+ * @property Carbon start_time
+ * @property Carbon finish_time
+ * @property string country
+ * @property string city
+ * @property string category_id
+ * @property int max_count
+ * @property int max_for_user
+ * @property int max_per_day
+ * @property int max_for_user_per_day
+ * @property int user_level_min
+ * @property float latitude
+ * @property float longitude
+ * @property int radius
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Account account
  * @property Collection|ActivationCode[] activationCodes
- * @property Collection|Redemption[]     redemptions
+ * @property Collection|Redemption[] redemptions
  * @method static accountOffers(int $accountId) : Offer
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
@@ -85,53 +85,45 @@ class Offer extends NauModel
         ];
 
         $this->fillable = [
-            'account_id',
-            'label',
-            'description',
-            'reward',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'country',
-            'city',
-            'category_id',
-            'max_count',
-            'max_for_user',
-            'max_per_day',
-            'max_for_user_per_day',
-            'user_level_min',
-            'latitude',
-            'longitude',
-            'radius'
+            'account_id', 'label', 'description', 'reward',
+            'start_date', 'finish_date', 'start_time', 'finish_time',
+            'country', 'city', 'category_id', 'max_count', 'max_for_user',
+            'max_per_day', 'max_for_user_per_day', 'user_level_min', 'latitude',
+            'longitude', 'radius'
         ];
 
         $this->hidden = [
-            'acc_id',
-            'name',
-            'descr',
-            'dt_start',
-            'dt_finish',
-            'tm_start',
-            'tm_finish',
-            'categ',
-            'min_level',
-            'lat',
-            'lng'
+            'acc_id', 'name', 'descr', 'dt_start', 'dt_finish',
+            'tm_start', 'tm_finish', 'categ', 'min_level', 'lat', 'lng'
         ];
 
         $this->appends = [
-            'account_id',
-            'label',
-            'description',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'category_id',
-            'user_level_min',
-            'latitude',
-            'longitude'
+            'account_id', 'label', 'description', 'start_date',
+            'finish_date', 'start_time', 'finish_time', 'category_id',
+            'user_level_min', 'latitude', 'longitude'
+        ];
+
+        $this->casts = [
+            'id'                   => 'string',
+            'account_id'           => 'integer',
+            'label'                => 'string',
+            'description'          => 'string',
+            'status'               => 'string',
+            'start_date'           => 'datetime',
+            'finish_date'          => 'datetime',
+            'start_time'           => 'datetime',
+            'finish_time'          => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'category_id'          => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'user_level_min'       => 'integer',
+            'latitude'             => 'double',
+            'longitude'            => 'double',
+            'radius'               => 'integer'
         ];
 
         $this->maps = [
@@ -230,20 +222,26 @@ class Offer extends NauModel
         return $this->start_date;
     }
 
-    /** @return Carbon */
-    public function getFinishDate(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishDate(): ?Carbon
     {
         return $this->finish_date;
     }
 
-    /** @return Carbon */
+    /**
+     * @return Carbon
+     */
     public function getStartTime(): Carbon
     {
         return $this->start_time;
     }
 
-    /** @return Carbon */
-    public function getFinishTime(): Carbon
+    /**
+     * @return Carbon|null
+     */
+    public function getFinishTime(): ?Carbon
     {
         return $this->finish_time;
     }
@@ -325,6 +323,39 @@ class Offer extends NauModel
     }
 
     /**
+     * @param string $value
+     */
+    public function setDtStartAttribute(string $value)
+    {
+        $this->dt_start = Carbon::parse($value);
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setDtFinishAttribute(string $value)
+    {
+        $this->dt_finish = Carbon::parse($value);
+    }
+
+
+    /**
+     * @param string $value
+     */
+    public function setTmStartAttribute(string $value)
+    {
+        $this->tm_start = Carbon::parse($value)->year(1970)->month(01)->day(01);
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setTmFinishAttribute(string $value)
+    {
+        $this->tm_finish = Carbon::parse($value)->year(1970)->month(01)->day(01);
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -336,7 +367,7 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param int     $accountId
+     * @param int $accountId
      *
      * @return Builder
      */
@@ -347,9 +378,9 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string  $lat
-     * @param string  $lng
-     * @param int     $radius
+     * @param string $lat
+     * @param string $lng
+     * @param int $radius
      *
      * @return Builder
      */
@@ -376,7 +407,7 @@ class Offer extends NauModel
 
     /**
      * @param Builder $builder
-     * @param string  $categoryId
+     * @param string $categoryId
      *
      * @return Builder
      */
