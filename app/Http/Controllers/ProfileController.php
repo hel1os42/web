@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\AdditionalField;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,14 +23,14 @@ class ProfileController extends Controller
     /**
      * User profile show
      *
-     * @param Request     $request
+     * @param Request $request
      * @param string|null $uuid
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return Response
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid = null)
+    public function show(Request $request, string $uuid = null): Response
     {
         $userId = auth()->id();
 
@@ -39,6 +40,16 @@ class ProfileController extends Controller
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
             response()->render('profile', (new User)->with($with)->findOrFail($userId)->toArray());
+    }
+
+    public function update(ProfileUpdateRequest $request, string $uuid = null): Response
+    {
+        $user = auth()->user();
+        if (!is_null($uuid) && $user->id() != $uuid) {
+            return \response()->error(Response::HTTP_UNAUTHORIZED);
+        }
+        $user = $user->update($request->toArray());
+        response()->render('profile', $user->toArray());
     }
 
     /**

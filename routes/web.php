@@ -44,11 +44,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
         Route::get('', 'ProfileController@show')->name('users.show');
+        Route::put('', 'ProfileController@show')->name('users.update');
         Route::get('referrals', 'ProfileController@referrals');
     });
 
     Route::group(['prefix' => 'profile'], function () {
         Route::get('', 'ProfileController@show')->name('profile');
+        Route::put('', 'ProfileController@update')->name('profile.update');
         Route::get('referrals', 'ProfileController@referrals')->name('referrals');
     });
 
