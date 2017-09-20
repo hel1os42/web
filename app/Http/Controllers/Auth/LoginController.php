@@ -49,7 +49,7 @@ class LoginController extends Controller
             if (false === $token = \JWTAuth::attempt($credentials)) {
                 return response()->error(
                     Response::HTTP_UNPROCESSABLE_ENTITY,
-                    $credentials['phone'] ? trans('errors.invalid_code') : trans('errors.invalid_email_or_password')
+                    isset($credentials['phone']) === true ? trans('errors.invalid_code') : trans('errors.invalid_email_or_password')
                 );
             }
         } catch (JWTException $e) {
@@ -86,13 +86,14 @@ class LoginController extends Controller
     {
         $user = User::findByPhone($phone);
 
-        if($user === null){
+        if ($user === null) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
         cache()->put($user->phone, app(\App\Helpers\SmsAuth::class)->getCode($user->phone), 5);
 
-        return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null], Response::HTTP_ACCEPTED, route('register'));
+        return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
+            Response::HTTP_ACCEPTED, route('register'));
     }
 
     /**
