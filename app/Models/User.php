@@ -16,22 +16,22 @@ use Webpatser\Uuid\Uuid;
  * Class User
  * @package App\Models
  *
- * @property string     id
- * @property string     name
- * @property string     email
- * @property string     password
- * @property string     invite_code
- * @property string     referrer_id
- * @property int        level
- * @property int        points
+ * @property string id
+ * @property string name
+ * @property string email
+ * @property string password
+ * @property string invite_code
+ * @property string referrer_id
+ * @property int level
+ * @property int points
  * @property Collection offers
  * @property Collection accounts
- * @property CoreUser   coreUser
- * @property User       referrer
- * @property int        offers_count
- * @property int        referrals_count
- * @property int        accounts_count
- * @property int        activation_codes_count
+ * @property CoreUser coreUser
+ * @property User referrer
+ * @property int offers_count
+ * @property int referrals_count
+ * @property int accounts_count
+ * @property int activation_codes_count
  */
 class User extends Authenticatable
 {
@@ -42,10 +42,29 @@ class User extends Authenticatable
     {
         $this->connection = config('database.default');
 
+        $this->casts = [
+            'name'      => 'string',
+            'email'     => 'string',
+            'phone'     => 'string',
+            'latitude'  => 'double',
+            'longitude' => 'double'
+        ];
+
+        $this->attributes = [
+            'name'      => null,
+            'email'     => null,
+            'phone'     => null,
+            'latitude'  => 0,
+            'longitude' => 0
+        ];
+
         $this->fillable = [
             'name',
             'email',
             'password',
+            'phone',
+            'latitude',
+            'longitude'
         ];
 
         $this->hidden = [
@@ -209,7 +228,8 @@ class User extends Authenticatable
         static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-                $model->id          = Uuid::generate(4)->__toString();
+
+                $model->id = Uuid::generate(4)->__toString();
             }
         });
     }
@@ -266,7 +286,7 @@ class User extends Authenticatable
                 if ($account instanceof Account) {
                     return $account;
                 }
-                // no break
+            // no break
             default:
                 throw new TokenException($currency);
         }

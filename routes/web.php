@@ -42,17 +42,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
 
-    Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
-        Route::get('', 'ProfileController@show')->name('users.show');
-        Route::put('', 'ProfileController@show')->name('users.update');
-        Route::get('referrals', 'ProfileController@referrals');
-    });
-
-    Route::group(['prefix' => 'profile'], function () {
+    $profile = function () {
         Route::get('', 'ProfileController@show')->name('profile');
-        Route::put('', 'ProfileController@update')->name('profile.update');
+        Route::put('', 'ProfileController@update');
+        Route::patch('', 'ProfileController@update')->name('profile.update');
         Route::get('referrals', 'ProfileController@referrals')->name('referrals');
-    });
+        Route::get('photo', 'Profile\PhotoController@show')->name('profile.photo.show');
+        Route::post('photo', 'Profile\PhotoController@store')->name('profile.photo.show');
+    };
+
+    Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], $profile);
+    Route::group(['prefix' => 'profile'], $profile);
 
     Route::resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
@@ -66,6 +66,7 @@ Route::group(['middleware' => 'auth'], function () {
             'destroy'
         ]
     ]);
+
     Route::group(['prefix' => 'offers/{offerId}'], function () {
         Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         Route::group(['prefix' => 'redemption'], function () {

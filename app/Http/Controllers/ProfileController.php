@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\AdditionalField;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,14 +41,26 @@ class ProfileController extends Controller
             response()->render('profile', (new User)->with($with)->findOrFail($userId)->toArray());
     }
 
+    /**
+     * @param ProfileUpdateRequest $request
+     * @param string|null $uuid
+     * @return Response
+     */
     public function update(ProfileUpdateRequest $request, string $uuid = null): Response
     {
         $user = auth()->user();
-        if (!is_null($uuid) && $user->id() != $uuid) {
+        if (!is_null($uuid) && auth()->id() != $uuid) {
             return \response()->error(Response::HTTP_UNAUTHORIZED);
         }
-        $user = $user->update($request->toArray());
-        response()->render('profile', $user->toArray());
+
+        $success = request()->isMethod('put') ?
+            $user->update(array_merge((new User)->toArray(), $request->all())) :
+            $user->update($request->all());
+
+        if ($success) {
+            return \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED, route('profile'));
+        }
+        return \response()->error(Response::HTTP_NOT_ACCEPTABLE);
     }
 
     /**
