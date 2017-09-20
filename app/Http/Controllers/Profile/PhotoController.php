@@ -40,7 +40,9 @@ class PhotoController extends Controller
         if(is_null($userUuid)){
             $userUuid = \auth()->id();
         }
+
         $file = 'profile/photos/' . $userUuid;
+
         $extension = (new Filesystem())->extension($file);
 
         if (false === Storage::has($file)) {
@@ -63,5 +65,4 @@ class PhotoController extends Controller
 
         return \response($file, 200)->header('Content-Type', $contentType);
     }
-
 }
