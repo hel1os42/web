@@ -115,7 +115,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->where('reansactionId', '[0-9]+')
            ->name('transactionList');
 
-    $router->get('categories', 'CategoryController@index')->name('categories');
+    /**
+     * Categories
+     */
+    $router->get('categories', 'CategoryController@index')
+           ->name('categories');
+    $router->get('categories/{uuid}', 'CategoryController@show')
+           ->name('categories.show');
 });
 
 //---- Authorized users

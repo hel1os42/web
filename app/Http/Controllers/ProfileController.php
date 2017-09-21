@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
+    use HandlesRequestData;
+
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
      */
@@ -30,8 +32,10 @@ class ProfileController extends Controller
     {
         $userId = auth()->id();
 
-        $with = explode(',', $request->get('with', ''));
-        $with = array_intersect(['accounts', 'offers', 'referrals', 'activationCodes'], $with);
+        $with = $this->handleWith(
+            ['accounts', 'offers', 'referrals', 'activationCodes'],
+            $request
+        );
 
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :
