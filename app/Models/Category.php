@@ -42,7 +42,6 @@ class Category extends Model
         $this->hidden = [
             'created_at',
             'updated_at',
-            'parent_id',
         ];
 
         $this->appends = [
