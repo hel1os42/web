@@ -54,8 +54,8 @@ class ProfileController extends Controller
         }
 
         $success = request()->isMethod('put') ?
-            $user->update(array_merge((new User)->toArray(), $request->all())) :
-            $user->update($request->all());
+            $user->update(array_merge((new User)->toArray(), $request->except('password'))) :
+            $user->update($request->except('password'));
 
         if ($success) {
             return \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED, route('profile'));

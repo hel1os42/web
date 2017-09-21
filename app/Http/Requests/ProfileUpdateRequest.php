@@ -33,7 +33,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name'      => 'string|min:2',
             'email'     => 'required_without:phone|email|max:255|unique:users,email',
-            'phone'     => 'required_without:email|regex:/\+[0-9]{10,15}/',
+            'phone'     => 'required_without:email|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'latitude'  => 'numeric',
             'longitude' => 'numeric',
         ];
