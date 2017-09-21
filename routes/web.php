@@ -105,8 +105,13 @@ Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
     Route::get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
         ->where('reansactionId', '[0-9]+')
         ->name('transactionList');
-
-    Route::get('categories', 'CategoryController@index')->name('categories');
+    /**
+     * Categories
+     */
+    Route::get('categories', 'CategoryController@index')
+        ->name('categories');
+    Route::get('categories/{uuid}', 'CategoryController@show')
+        ->name('categories.show');
 });
 
 //---- Authorized users
