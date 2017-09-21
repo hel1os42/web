@@ -18,4 +18,4 @@ php artisan config:cache
 
 # Run database migrations.
 echo "Run migration"
-php artisan migrate
+php artisan migrate --seed
