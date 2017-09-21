@@ -3,23 +3,38 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Redemption;
+use Illuminate\Events\Dispatcher;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Response\OfferForRedemption;
 
-class RedemptionObserver
+class RedemptionObserver extends AbstractJobObserver
 {
+    private $eventsDispatcher;
+
+    /**
+     * RedemptionObserver constructor.
+     *
+     * @param Dispatcher  $events Injected
+     * @param CoreService $coreService Injected
+     */
+    public function __construct(Dispatcher $events, CoreService $coreService)
+    {
+        parent::__construct($coreService);
+        $this->eventsDispatcher = $events;
+    }
+
     /**
      * @param Redemption $redemption
+     *
+     * @return bool
      */
     public function creating(Redemption $redemption)
     {
-        $coreService = app()->make(CoreService::class);
+        $this->eventsDispatcher->listen(OfferForRedemption::class,
+            function (OfferForRedemption $response) use ($redemption) {
+                $redemption->id = $response->getId();
+            });
 
-        \Event::listen(OfferForRedemption::class, function ($response) use($redemption) {
-            $redemption['id'] = $response->getId();
-        });
-
-        $coreService->offerRedemption($redemption)
-            ->handle();
+        return $this->execute($this->getCoreService()->offerRedemption($redemption));
     }
 }

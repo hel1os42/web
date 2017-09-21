@@ -3,17 +3,24 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\User;
-use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\CoreService;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UserObserver
+class UserObserver extends AbstractJobObserver
 {
     /**
      * @param User $user
+     *
+     * @throws ServiceUnavailableHttpException
      */
     public function created(User $user)
     {
-        $coreService = app()->make(CoreService::class);
-        dispatch($coreService->userCreated($user));
+        if (false === $this->queue($this->getCoreService()->userCreated($user))) {
+            try {
+                $user->delete();
+            } catch (\Exception $ignored) {
+            }
+
+            throw new ServiceUnavailableHttpException(5);
+        }
     }
 }
