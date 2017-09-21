@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    use HandlesRequestWith;
+    use HandlesRequestData;
 
     /**
      * @return Response
@@ -30,9 +30,9 @@ class CategoryController extends Controller
      */
     public function show(Request $request, string $uuid)
     {
-        $with     = $this->handleRequestWith(
+        $with     = $this->handleWith(
             ['children'],
-            $request->get('with', ''),
+            $request,
             ['parent']
         );
         $category = Category::with($with)->findOrFail($uuid);

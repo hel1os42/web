@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
-    use HandlesRequestWith;
+    use HandlesRequestData;
 
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
@@ -34,9 +34,9 @@ class ProfileController extends Controller
     {
         $userId = auth()->id();
 
-        $with = $this->handleRequestWith(
+        $with = $this->handleWith(
             ['accounts', 'offers', 'referrals', 'activationCodes'],
-            $request->get('with', '')
+            $request
         );
 
         return (!empty($uuid) && $uuid !== $userId) ?
