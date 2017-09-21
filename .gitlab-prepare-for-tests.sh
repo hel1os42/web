@@ -17,5 +17,5 @@ php artisan optimize
 php artisan config:cache
 
 # Run database migrations.
-echo "Run migration & Seeds"
+echo "Run migration"
 php artisan migrate --seed

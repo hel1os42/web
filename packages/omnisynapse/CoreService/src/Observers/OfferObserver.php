@@ -3,17 +3,15 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Offer;
-use OmniSynapse\CoreService\CoreService;
 
-class OfferObserver
+class OfferObserver extends AbstractJobObserver
 {
     /**
      * @param Offer $offer
      */
     public function creating(Offer $offer)
     {
-        $coreService = app()->make(CoreService::class);
-        dispatch($coreService->offerCreated($offer));
+        return $this->queue($this->getCoreService()->offerCreated($offer));
     }
 
     /**
@@ -21,7 +19,6 @@ class OfferObserver
      */
     public function updating(Offer $offer)
     {
-        $coreService = app()->make(CoreService::class);
-        dispatch($coreService->offerUpdated($offer));
+        return $this->queue($this->getCoreService()->offerUpdated($offer));
     }
 }

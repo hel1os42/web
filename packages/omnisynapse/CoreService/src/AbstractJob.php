@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -48,18 +49,23 @@ abstract class AbstractJob implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws RequestException
      * @throws \InvalidArgumentException
      */
     public function handle()
     {
         /** @var Response $response */
-        $response = $this->coreService->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
-            [
-                'json' => null !== $this->getRequestObject()
-                    ? $this->getRequestObject()->jsonSerialize()
-                    : null
-            ]
-        );
+        try {
+            $response = $this->coreService->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
+                [
+                    'json' => null !== $this->getRequestObject()
+                        ? $this->getRequestObject()->jsonSerialize()
+                        : null
+                ]
+            );
+        } catch (TransferException $exception) {
+            throw new RequestException($this, new Response(0), null, $exception);
+        }
 
         $responseContent = $response->getBody()->getContents();
 
