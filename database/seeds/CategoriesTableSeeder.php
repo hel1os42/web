@@ -9,19 +9,34 @@ class CategoriesTableSeeder extends Seeder
 {
     private $categories = [
         'Food & Drinks' => [
-            'Food'   => [
-                'Healthy food',
-                'Meal food',
-                'Vegetarian cuisine',
-                'Italian cuisine',
-                'Indian cuisine',
-                'Mexican cuisine',
-                'BBQ Grill',
-            ],
-            'Drinks' => [
-                'Alcoholic',
-                'Non alcoholic',
-            ]
+            'American',
+            'Arabic',
+            'African',
+            'Asian',
+            'Bar food',
+            'Brazilian',
+            'Burgers',
+            'Chinese',
+            'Desserts',
+            'Indian',
+            'European',
+            'Fast food',
+            'French',
+            'Ice cream',
+            'International',
+            'Japanese',
+            'Mediterranean',
+            'Mexican',
+            'Middle Eastern',
+            'Organic',
+            'Pizza',
+            'Russian',
+            'Seafood',
+            'Steaks',
+            'Thai',
+            'Vegan',
+            'Vegetarian',
+            'Yogurt',
         ],
         'Beauty & Fitness',
         'Retail & Services',
@@ -53,7 +68,7 @@ class CategoriesTableSeeder extends Seeder
 
         foreach ($categories as $category) {
             if ($connection->table('categories')->where('name', $category['name'])->exists()) {
-                printf('Category %s already exists. Skipping...'.PHP_EOL, $category['name']);
+                printf('Category %s already exists. Skipping...' . PHP_EOL, $category['name']);
                 continue;
             }
 
