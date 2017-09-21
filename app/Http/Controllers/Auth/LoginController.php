@@ -33,21 +33,27 @@ class LoginController extends Controller
      */
     public function postLogin(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password', 'phone', 'code');
+        $guard = 'web';
+        $credentials = $request->only('email', 'password');
+        if ($request->has(['phone', 'code'])) {
+            $guard = 'sms-guard';
+            $credentials = $request->only('phone', 'code');
+        }
 
-        return $request->wantsJson() ? $this->loginJwt($credentials) : $this->loginSession($credentials);
+        return $request->wantsJson() ? $this->loginJwt($credentials, $guard) : $this->loginSession($credentials, $guard);
     }
 
     /**
      * @param array $credentials
+     * @param string $guard
      * @return Response
      */
-    private function loginJwt(array $credentials): Response
+    private function loginJwt(array $credentials, string $guard): Response
     {
         $token = null;
 
         try {
-            if (false === $token = \JWTAuth::attempt($credentials)) {
+            if (false === $token = \JWTAuth::guard($guard)->attempt($credentials)) {
                 return response()->error(
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                     isset($credentials['phone']) === true ? trans('errors.invalid_code') : trans('errors.invalid_email_or_password')
@@ -65,11 +71,12 @@ class LoginController extends Controller
 
     /**
      * @param array $credentials
-     * @return \Illuminate\Http\RedirectResponse
+     * @param string $guard
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    private function loginSession(array $credentials)
+    private function loginSession(array $credentials, string $guard)
     {
-        $attempt = \Auth::attempt($credentials, false);
+        $attempt = \Auth::guard($guard)->attempt($credentials, false);
 
         if (false === $attempt) {
             session()->flash('message', trans('auth.failed'));
@@ -87,7 +94,7 @@ class LoginController extends Controller
     {
         $user = User::findByPhone($phone);
 
-        if ($user === null) {
+        if (!$user instanceof User) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 

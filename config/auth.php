@@ -49,6 +49,11 @@ return [
         'jwt-guard' => [
             'driver'   => 'jwt-driver',
             'provider' => 'users',
+        ],
+
+        'sms-guard' => [
+            'driver'   => 'session',
+            'provider' => 'phone-users'
         ]
     ],
 
@@ -72,6 +77,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
+            'model'  => App\Models\User::class,
+        ],
+
+        'phone-users' => [
+            'driver' => 'eloquent-phone-user-provider',
             'model'  => App\Models\User::class,
         ],
 

@@ -35,7 +35,7 @@ use Webpatser\Uuid\Uuid;
  * @property int referrals_count
  * @property int accounts_count
  * @property int activation_codes_count
- * @method static User       findByPhone(string $phone)
+ * @method static User|null       findByPhone(string $phone)
  */
 class User extends Authenticatable
 {

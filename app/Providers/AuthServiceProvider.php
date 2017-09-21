@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Auth\SmsGuard;
-use App\Http\Auth\JwtGuard;
+use App\Services\Auth\JwtGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,15 +27,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Auth::extend('jwt-driver', function ($app, $name, array $config) {
-            return new JwtGuard(Auth::createUserProvider($config['provider']));
+        Auth::provider('eloquent-phone-user-provider', function($app, array $config) {
+            return new EloquentSmsUserProvider($app['hash'], $config['model']);
         });
 
-        Auth::extend('sms-driver', function ($app, $name, array $config) {
-            return new SmsGuard($name,
-                \Auth::createUserProvider($config['provider']),
-                $app['session.store']
-            );
+        Auth::extend('jwt-driver', function ($app, $name, array $config) {
+            return new JwtGuard(Auth::createUserProvider($config['provider']));
         });
     }
 }

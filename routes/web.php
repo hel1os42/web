@@ -13,7 +13,7 @@
 
 // Unauthorized users
 
-Route::group(['middleware' => 'guest'], function () {
+Route::group(['middleware' => 'guest:sms-guard,web'], function () {
 
     Route::get('/', 'ProfileController@index')->name('home');
 
@@ -25,7 +25,6 @@ Route::group(['middleware' => 'guest'], function () {
             ->name('loginForm');
         Route::post('login', 'Auth\LoginController@postLogin')
             ->name('login');
-        Route::post('session', 'Auth\LoginController@postLogin');
 
         /**
          * send sms code
@@ -65,7 +64,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 // Authorized users
 
-Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
+Route::group(['middleware' => 'auth:jwt-guard,sms-guard,web'], function () {
 
     Route::get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
