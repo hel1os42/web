@@ -2,48 +2,58 @@
 
 namespace App\Models;
 
+use App\Exceptions\TokenException;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\Auth\Contracts\PhoneAuthenticable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use App\Exceptions\TokenException;
-use Illuminate\Support\Facades\Cache;
 use Webpatser\Uuid\Uuid;
 
 /**
  * Class User
  * @package App\Models
  *
- * @property string id
- * @property string name
- * @property string email
- * @property string password
- * @property string phone
- * @property string invite_code
- * @property string referrer_id
- * @property int level
- * @property int points
+ * @property string     id
+ * @property string     name
+ * @property string     email
+ * @property string     password
+ * @property string     phone
+ * @property string     invite_code
+ * @property string     referrer_id
+ * @property int        level
+ * @property int        points
  * @property Collection offers
  * @property Collection accounts
- * @property CoreUser coreUser
- * @property User referrer
- * @property int offers_count
- * @property int referrals_count
- * @property int accounts_count
- * @property int activation_codes_count
- * @method static User|null       findByPhone(string $phone)
+ * @property CoreUser   coreUser
+ * @property User       referrer
+ * @property int        offers_count
+ * @property int        referrals_count
+ * @property int        accounts_count
+ * @property int        activation_codes_count
  */
-class User extends Authenticatable
+class User extends Authenticatable implements PhoneAuthenticable
 {
 
     use Notifiable, RelationsTrait;
 
     public function __construct(array $attributes = [])
     {
+        $this->attributes = [
+            'id'             => null,
+            'name'           => '',
+            'email'          => null,
+            'password'       => null,
+            'remember_token' => null,
+            'created_at'     => null,
+            'updated_at'     => null,
+            'referrer_id'    => null,
+            'invite_code'    => null,
+        ];
+
         $this->connection = config('database.default');
 
         $this->fillable = [
@@ -102,7 +112,7 @@ class User extends Authenticatable
      */
     public function getName(): ?string
     {
-        return $this->name?: "Anonymous";
+        return $this->name;
     }
 
     /**
@@ -228,7 +238,7 @@ class User extends Authenticatable
      */
     public function setPasswordAttribute(?string $value)
     {
-        if($value !== null){
+        if ($value !== null) {
             $this->attributes['password'] = Hash::make($value);
         }
     }
@@ -264,22 +274,23 @@ class User extends Authenticatable
      *
      * @param string $invite
      *
-     * @return User|null
+     * @return User|\Illuminate\Database\Eloquent\Model|null
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite): ?User
+    public static function findByInvite(string $invite): ?User
     {
-        return $this->where('invite_code', $invite)->first();
+        return self::query()->where('invite_code', $invite)->first();
     }
 
     /**
-     * @param Builder $builder
      * @param string $phone
-     * @return User|null
+     *
+     * @return User|\Illuminate\Database\Eloquent\Model|null
+     * @throws \InvalidArgumentException
      */
-    public function scopeFindByPhone(Builder $builder, string $phone): ?User
+    public static function findByPhone(string $phone): ?User
     {
-        return $builder->where('phone', $phone)->first();
+        return self::query()->where('phone', $phone)->first();
     }
 
     /**
@@ -291,7 +302,7 @@ class User extends Authenticatable
     {
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
-        return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
+        return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
     }
 
     /**
@@ -302,12 +313,13 @@ class User extends Authenticatable
     public function getAccountFor(string $currency): ?Account
     {
         switch ($currency) {
+            /** @noinspection PhpMissingBreakStatementInspection */
             case Currency::NAU:
                 $account = $this->accounts()->first();
                 if ($account instanceof Account) {
                     return $account;
                 }
-                // no break
+            // no break
             default:
                 throw new TokenException($currency);
         }

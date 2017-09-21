@@ -182,7 +182,7 @@ return [
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
-        App\Providers\SmsAuthProvider::class,
+        App\Services\Auth\Otp\Stub\OtpAuthProvider::class,
     ],
 
     /*

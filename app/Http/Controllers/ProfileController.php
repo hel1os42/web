@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdditionalField;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
-
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
      */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile') : response()->render('home', []);
+        return redirect()->route('profile');
     }
 
     /**

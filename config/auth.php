@@ -41,19 +41,14 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
-            'driver'   => 'token',
+        'jwt' => [
+            'driver'   => 'jwt',
             'provider' => 'users',
         ],
 
-        'jwt-guard' => [
-            'driver'   => 'jwt-driver',
-            'provider' => 'users',
-        ],
-
-        'sms-guard' => [
-            'driver'   => 'session',
-            'provider' => 'phone-users'
+        'otp' => [
+            'driver'   => 'otp',
+            'provider' => 'otp-users'
         ]
     ],
 
@@ -80,15 +75,10 @@ return [
             'model'  => App\Models\User::class,
         ],
 
-        'phone-users' => [
-            'driver' => 'eloquent-phone-user-provider',
+        'otp-users' => [
+            'driver' => 'otp-eloquent',
             'model'  => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*

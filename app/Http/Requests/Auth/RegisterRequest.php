@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class RegisterRequest
  * @package App\Http\Requests\Auth
  *
- * @property int code
+ * @property int    code
  * @property string phone
  * @property string email
  * @property string password
@@ -25,7 +26,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return !\Auth::check();
+        return !auth()->check();
     }
 
     /**
@@ -36,12 +37,17 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'            => 'required_with:password,password_confirm|email|max:255|unique:users,email',
+            'email'            => 'required_without:phone|email|max:255|unique:users,email',
             'password'         => 'required_with:email|min:6|max:255',
             'password_confirm' => 'required_with:email|same:password',
-            'phone'            => 'required_with:code|regex:/\+[0-9]{10,15}/',
+            'phone'            => 'required_without:email|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'code'             => 'required_with:phone|digits:6',
             'referrer_id'      => 'required|string|exists:users,id'
         ];
+    }
+
+    public function fillUser(User $user)
+    {
+        return $user->fill($this->all());
     }
 } 

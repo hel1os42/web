@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Symfony\Component\HttpFoundation\Response;
+use App\Services\Auth\Otp\OtpAuth;
+use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class RegisterController extends Controller
 {
@@ -22,7 +26,7 @@ class RegisterController extends Controller
      */
     public function getRegisterForm(string $invite)
     {
-        $referrerUser = (new User())->findByInvite($invite);
+        $referrerUser = User::findByInvite($invite);
         if (!$referrerUser instanceof User) {
             return response()->error(Response::HTTP_BAD_REQUEST, 'Bad user referrer link.');
         }
@@ -39,65 +43,86 @@ class RegisterController extends Controller
     }
 
     /**
-     * @param string $invite
-     * @param string $phone
+     * @param string          $invite
+     * @param string          $phone
+     * @param ResponseFactory $response
+     *
      * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function sendSmsCode(string $invite, string $phone): Response
+    public function getOtpCode(string $invite, string $phone, ResponseFactory $response): Response
     {
-        $referrerUser = (new User())->findByInvite($invite);
-        if (!$referrerUser instanceof User) {
+        $referrerUser = User::findByInvite($invite);
+        if (null === $referrerUser) {
             return \response()->error(Response::HTTP_BAD_REQUEST, 'Bad user referrer link.');
         }
 
         $user = User::findByPhone($phone);
 
         if ($user instanceof User) {
-            return \response()->error(Response::HTTP_BAD_REQUEST,
-                'User with phone number ' . $phone . ' already registered.');
+            throw new BadRequestHttpException('User with phone number ' . $phone . ' already registered.');
         }
 
-        cache()->put($phone, app(\App\Helpers\SmsAuth::class)->getCode($phone), 5);
+        /** @var OtpAuth $otpAuth */
+        $otpAuth = app(OtpAuth::class);
+        $otpAuth->generateCode($phone);
 
-        return Auth::check() ?
-            \response()->error(Response::HTTP_BAD_REQUEST, 'User already login.') :
-            \response()->render('auth.sms.success',
-                [
-                    'phone_number' => $phone,
-                    'code'         => null,
-                    'referrer_id'  => $referrerUser->getId()
-                ], Response::HTTP_ACCEPTED, route('register'));
+        return $response->render('auth.sms.success',
+            [
+                'phone'       => $phone,
+                'code'        => null,
+                'referrer_id' => $referrerUser->getId()
+            ], Response::HTTP_ACCEPTED, route('register'));
     }
 
     /**
      * User registration
      *
-     * @param \App\Http\Requests\Auth\RegisterRequest $request
+     * @param RegisterRequest $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
-     * @throws \InvalidArgumentException
+     * @return Response
+     *
+     * @throws \RuntimeException
      * @throws \LogicException
      */
-    public function register(\App\Http\Requests\Auth\RegisterRequest $request)
+    public function register(RegisterRequest $request)
     {
-        if ($request->phone !== null) {
-            $code = cache()->get($request->phone);
+        $user = $request->phone === null
+            ? $request->fillUser(new User)
+            : $this->registerByPhone($request->phone, $request->code);
 
-            $newCode = $request->code;
+        $user->referrer()->associate($request->referrer_id);
 
-            if ($code === null || $newCode !== $code) {
-                return response()->error(Response::HTTP_BAD_REQUEST, trans('errors.invalid_code'));
-            }
+        $success = $user->save();
+
+        if (!$success) {
+            throw new UnprocessableEntityHttpException();
         }
 
-        $user = (new User)->fill($request->toArray())
-            ->referrer()->associate($request->referrer_id);
-        $user->save();
+        $user->refresh();
 
-        return $request->wantsJson() ?
-            response()->render('', $user, Response::HTTP_CREATED,
-                route('users.show', [$user->getId()])) :
-            redirect()->route('loginForm');
+        return request()->wantsJson()
+            ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))
+            : redirect()->route('loginForm');
+    }
+
+    private function registerByPhone(string $phone, string $code): User
+    {
+        $user = User::findByPhone($phone);
+        if (null !== $user) {
+            throw new BadRequestHttpException('User with phone number ' . $phone . ' already registered.');
+        }
+
+        /** @var OtpAuth $otpAuth */
+        $otpAuth = app(OtpAuth::class);
+
+        if (!$otpAuth->validateCode($phone, $code)) {
+            throw new BadRequestHttpException(trans('errors.invalid_code'));
+        }
+
+        $user = new User(['phone' => $phone]);
+
+        return $user;
     }
 }
