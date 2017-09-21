@@ -27,7 +27,7 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
         $router->group(['prefix' => 'register'], function () use ($router) {
             $router->get('{invite}/{phone_number}/code', 'Auth\RegisterController@getOtpCode')
-                //->middleware('throttle:1')
+                   ->middleware('throttle:1')
                    ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
                    ->name('get-register-otp-code');
 

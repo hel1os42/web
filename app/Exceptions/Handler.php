@@ -5,24 +5,11 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
-use Symfony\Component\Debug\Exception\FlattenException;
+use Illuminate\Session\TokenMismatchException;
 use Tymon\JWTAuth\Exceptions as JwtException;
 
 class Handler extends ExceptionHandler
 {
-
-    /**
-     * @param Exception $exception
-     *
-     * @return Response
-     * @throws \LogicException
-     */
-    protected function convertExceptionToResponse(Exception $exception)
-    {
-        $exception = FlattenException::create($exception);
-
-        return response()->error($exception->getStatusCode(), $exception->getMessage());
-    }
 
     /**
      * Convert an authentication exception into an unauthenticated response.
@@ -74,6 +61,10 @@ class Handler extends ExceptionHandler
     {
         if (request()->expectsJson()) {
             return response()->error($response->getStatusCode(), $exception->getMessage());
+        }
+
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()->back()->withErrors(['msg', $exception->getMessage()]);
         }
 
         return parent::toIlluminateResponse($response, $exception);
