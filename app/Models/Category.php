@@ -39,6 +39,16 @@ class Category extends Model
             'parent_id' => 'string'
         ];
 
+        $this->hidden = [
+            'created_at',
+            'updated_at',
+            'parent_id',
+        ];
+
+        $this->appends = [
+            'children_count',
+        ];
+
         parent::__construct($attributes);
     }
 
@@ -72,5 +82,13 @@ class Category extends Model
     public function children(): hasMany
     {
         return $this->hasMany(Category::class, 'parent_id', 'id');
+    }
+
+    /**
+     * @return int
+     */
+    public function getChildrenCountAttribute(): int
+    {
+        return $this->children()->count();
     }
 }
