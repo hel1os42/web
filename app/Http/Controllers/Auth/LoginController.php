@@ -33,10 +33,10 @@ class LoginController extends Controller
      */
     public function postLogin(LoginRequest $request)
     {
-        $guard = 'web';
+        $guard       = 'web';
         $credentials = $request->only('email', 'password');
         if ($request->has(['phone', 'code'])) {
-            $guard = 'sms-guard';
+            $guard       = 'sms-guard';
             $credentials = $request->only('phone', 'code');
         }
 

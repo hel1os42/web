@@ -18,7 +18,7 @@ class EloquentSmsUserProvider extends EloquentUserProvider
      */
     public function __construct(HasherContract $hasher, $model)
     {
-        $this->model = $model;
+        $this->model  = $model;
         $this->hasher = $hasher;
     }
 
@@ -57,6 +57,7 @@ class EloquentSmsUserProvider extends EloquentUserProvider
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array  $credentials
+     * @SuppressWarnings("unused")
      * @return bool
      */
     public function validateCredentials(UserContract $user, array $credentials)
