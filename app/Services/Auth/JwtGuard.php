@@ -6,7 +6,7 @@
  * Time: 4:45
  */
 
-namespace App\Http\Auth;
+namespace App\Services\Auth;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;

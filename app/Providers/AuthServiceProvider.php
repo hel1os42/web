@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Http\Auth\JwtGuard;
+use App\Services\Auth\JwtGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
