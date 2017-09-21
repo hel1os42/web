@@ -75,6 +75,7 @@ class User extends Authenticatable
         ];
 
         $this->appends = [
+            'photo',
             'level',
             'points',
             'offers_count',
@@ -145,6 +146,14 @@ class User extends Authenticatable
     public function getLevel(): int
     {
         return $this->level;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhotoAttribute(): string
+    {
+        return env('APP_URL') . '/users/' . $this->getId() . '/photo';
     }
 
     /**
