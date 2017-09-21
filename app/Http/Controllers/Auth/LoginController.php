@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use \Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginController extends Controller
 {
@@ -100,11 +101,11 @@ class LoginController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function logout(\Illuminate\Http\Request $request)
+    public function logout()
     {
-        if ($request->wantsJson()) {
+        if (\JWTAuth::getToken() !== false) {
             try {
-                $logout = \JWTAuth::parseToken()->invalidate();
+                $logout = \JWTAuth::invalidate();
             } catch (JWTException $e) {
                 return response()->error(
                     Response::HTTP_INTERNAL_SERVER_ERROR,

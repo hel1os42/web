@@ -13,43 +13,62 @@
 
 // Unauthorized users
 
-Route::get('/', 'ProfileController@index')->name('home');
+Route::group(['middleware' => 'guest'], function () {
 
-Route::group(['prefix' => 'auth'], function () {
-    Route::get('login', 'Auth\LoginController@getLogin')->name('loginForm');
-    Route::post('login', 'Auth\LoginController@postLogin')->name('login');
-    Route::post('session', 'Auth\LoginController@postLogin');
-    Route::get('logout', 'Auth\LoginController@logout')->name('logout');
-    Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
-        ->where('invite', '[a-z0-9]+')
-        ->name('registerForm');
+    Route::get('/', 'ProfileController@index')->name('home');
 
-    Route::get('login/{phone_number}/code', 'Auth\LoginController@sendSmsCode')
-        ->where('phone_number', '\+[0-9]+')
-        ->name('sendSmsCode');
-    Route::get('register/{invite}/{phone_number}/code', 'Auth\RegisterController@sendSmsCode')
-        ->middleware('throttle:1')
-        ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
-        ->name('sendSmsCodeRegister');
+    Route::group(['prefix' => 'auth'], function () {
+        /**
+         * login
+         */
+        Route::get('login', 'Auth\LoginController@getLogin')
+            ->name('loginForm');
+        Route::post('login', 'Auth\LoginController@postLogin')
+            ->name('login');
+        Route::post('session', 'Auth\LoginController@postLogin');
 
-    Route::group(['prefix' => 'password'], function () {
-        Route::get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-        Route::post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-        Route::get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-        Route::post('reset', 'Auth\ResetPasswordController@reset');
+        /**
+         * send sms code
+         */
+        Route::get('login/{phone_number}/code', 'Auth\LoginController@sendSmsCode')
+            ->where('phone_number', '\+[0-9]+')
+            ->name('sendSmsCode');
+        Route::get('register/{invite}/{phone_number}/code', 'Auth\RegisterController@sendSmsCode')
+            ->middleware('throttle:1')
+            ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
+            ->name('sendSmsCodeRegister');
+
+        /**
+         * register with invite code
+         */
+        Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
+             ->where('invite', '[a-z0-9]+')
+             ->name('registerForm');
+        /**
+         * reset password
+         */
+        Route::group(['prefix' => 'password'], function () {
+            Route::get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+            Route::post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+            Route::get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+            Route::post('reset', 'Auth\ResetPasswordController@reset');
+        });
     });
+    /**
+     * register
+     */
+    Route::post('users', 'Auth\RegisterController@register')->name('register');
 });
-
-Route::post('users', 'Auth\RegisterController@register')->name('register');
 
 //---- Unauthorized users
 
 
 // Authorized users
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
 
-    Route::get('auth/token', 'Auth\LoginController@tokenRefresh');
+    Route::get('auth/logout', 'Auth\LoginController@logout')->name('logout');
+    Route::get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
     Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
         Route::get('', 'ProfileController@show')->name('users.show');

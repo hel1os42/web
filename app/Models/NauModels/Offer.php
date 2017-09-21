@@ -105,24 +105,24 @@ class Offer extends NauModel
 
         $this->casts = [
             'id'                   => 'string',
-            'acc_id'               => 'integer',
-            'name'                 => 'string',
-            'descr'                => 'string',
+            'account_id'           => 'integer',
+            'label'                => 'string',
+            'description'          => 'string',
             'status'               => 'string',
-            'dt_start'             => 'datetime',
-            'dt_finish'            => 'datetime',
-            'tm_start'             => 'datetime',
-            'tm_finish'            => 'datetime',
+            'start_date'           => 'datetime',
+            'finish_date'          => 'datetime',
+            'start_time'           => 'datetime',
+            'finish_time'          => 'datetime',
             'country'              => 'string',
             'city'                 => 'string',
-            'categ'                => 'string',
+            'category_id'          => 'string',
             'max_count'            => 'integer',
             'max_for_user'         => 'integer',
             'max_per_day'          => 'integer',
             'max_for_user_per_day' => 'integer',
-            'min_level'            => 'integer',
-            'lat'                  => 'double',
-            'lng'                  => 'double',
+            'user_level_min'       => 'integer',
+            'latitude'             => 'double',
+            'longitude'            => 'double',
             'radius'               => 'integer'
         ];
 
@@ -320,6 +320,22 @@ class Offer extends NauModel
         $account = $this->account;
 
         return $account === null ? null : $account->owner;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setDtStartAttribute(string $value)
+    {
+        $this->dt_start = Carbon::parse($value);
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setDtFinishAttribute(string $value)
+    {
+        $this->dt_finish = Carbon::parse($value);
     }
 
 
