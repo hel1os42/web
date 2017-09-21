@@ -18,7 +18,7 @@
         <a href="{{ route('transactionList') }}">route(transactionList)</a><br>
         <a href="{{ route('transactionCreate') }}">route(transactionCreate)</a><br>
         <br>Photo:<br>
-        <form method="POST" action="{{route('profile.photo.show')}}" enctype="multipart/form-data">
+        <form method="POST" action="{{route('profile.photo.store')}}" enctype="multipart/form-data">
             {{ csrf_field() }}
             <input type="file" name="photo">
             <button type="submit">Set photo</button>

@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::patch('', 'ProfileController@update')->name('profile.update');
         Route::get('referrals', 'ProfileController@referrals')->name('referrals');
         Route::get('photo', 'Profile\PhotoController@show')->name('profile.photo.show');
-        Route::post('photo', 'Profile\PhotoController@store')->name('profile.photo.show');
+        Route::post('photo', 'Profile\PhotoController@store')->name('profile.photo.store');
     };
 
     Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], $profile);
