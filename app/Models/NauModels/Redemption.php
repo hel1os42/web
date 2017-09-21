@@ -63,25 +63,25 @@ class Redemption extends NauModel
     }
 
     /** @return string */
-    public function getOfferId(): string
+    public function getOfferId(): ?string
     {
         return $this->offer_id;
     }
 
     /** @return string */
-    public function getUserId(): string
+    public function getUserId(): ?string
     {
         return $this->user_id;
     }
 
     /** @return int */
-    public function getPoints(): int
+    public function getPoints(): ?int
     {
         return $this->points;
     }
 
     /** @return string */
-    public function getRewardedId(): string
+    public function getRewardedId(): ?string
     {
         return $this->rewarded_id;
     }
@@ -91,13 +91,13 @@ class Redemption extends NauModel
      *
      * @return float
      */
-    public function getAmountAttribute(int $value): float
+    public function getAmountAttribute(int $value): ?float
     {
         return $this->convertIntToFloat($value);
     }
 
     /** @return float */
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
@@ -107,13 +107,13 @@ class Redemption extends NauModel
      *
      * @return float
      */
-    public function getFeeAttribute(int $value): float
+    public function getFeeAttribute(int $value): ?float
     {
         return $this->convertIntToFloat($value);
     }
 
     /** @return float */
-    public function getFee(): float
+    public function getFee(): ?float
     {
         return $this->fee;
     }

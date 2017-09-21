@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use OmniSynapse\CoreService\Listeners\OfferRedemption;
+use OmniSynapse\CoreService\Response\OfferForRedemption;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -13,11 +15,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\Event' => [
-            'App\Listeners\EventListener',
-        ],
-        'OmniSynapse\CoreService\CoreService' => [
-            'App\Listeners\CoreServiceListener',
-        ],
+
     ];
 }

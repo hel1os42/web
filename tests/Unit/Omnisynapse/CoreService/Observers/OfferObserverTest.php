@@ -3,54 +3,49 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Offer;
-use Illuminate\Support\Testing\Fakes\BusFake;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferUpdated;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Bus;
+use Tests\Unit\OmniSynapse\CoreService\Observers\AbstractObserversTestCase;
 
-class OfferObserverTest extends TestCase
+class OfferObserverTest extends AbstractObserversTestCase
 {
     public function testCreating()
     {
-        $offerCreatedMock = \Mockery::mock(OfferCreated::class);
+        $offerCreatedMock = $this->createMock(OfferCreated::class);
+        $this->mockDispatcherToDispatch($offerCreatedMock);
 
-        $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('offerCreated')->once()->andReturn($offerCreatedMock);
+        $offer               = $this->createMock(Offer::class);
+        $coreServiceImplMock = $this->createMock(CoreService::class);
 
-        $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
-            return $coreServiceImplMock;
-        });
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('offerCreated')
+            ->withConsecutive([$offer])
+            ->willReturn($offerCreatedMock);
 
-        $this->app->singleton(\Illuminate\Contracts\Bus\Dispatcher::class, function () {
-            return new BusFake();
-        });
-
-        (new OfferObserver())
-            ->creating(\Mockery::mock(Offer::class));
-
-        Bus::assertDispatched(get_class($offerCreatedMock));
+        // Testing
+        (new OfferObserver($coreServiceImplMock))
+            ->creating($offer);
     }
 
     public function testUpdating()
     {
-        $offerUpdatedMock = \Mockery::mock(OfferUpdated::class);
+        /** @var OfferUpdated $offerUpdatedMock */
+        $offerUpdatedMock = $this->createMock(OfferUpdated::class);
+        $this->mockDispatcherToDispatch($offerUpdatedMock);
 
-        $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('offerUpdated')->once()->andReturn($offerUpdatedMock);
+        $offer = $this->createMock(Offer::class);
 
-        $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
-            return $coreServiceImplMock;
-        });
+        $coreServiceImplMock = $this->createMock(CoreService::class);
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('offerUpdated')
+            ->withConsecutive([$offer])
+            ->willReturn($offerUpdatedMock);
 
-        $this->app->singleton(\Illuminate\Contracts\Bus\Dispatcher::class, function () {
-            return new BusFake();
-        });
-
-        (new OfferObserver())
-            ->updating(\Mockery::mock(Offer::class));
-
-        Bus::assertDispatched(get_class($offerUpdatedMock));
+        // Testing
+        (new OfferObserver($coreServiceImplMock))
+            ->updating($offer);
     }
 }
