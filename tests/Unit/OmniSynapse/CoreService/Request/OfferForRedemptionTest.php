@@ -29,7 +29,7 @@ class OfferForRedemptionTest extends TestCase
         /*
          * Set Redemption methods
          */
-        $redemption->method('getId')->willReturn($offerId);
+        $redemption->method('getOfferId')->willReturn($offerId);
         $redemption->method('getUserId')->willReturn($userId);
 
         /*

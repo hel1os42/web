@@ -3,6 +3,7 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Redemption;
+use Illuminate\Events\Dispatcher;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Job\OfferRedemption;
 use Tests\TestCase;
@@ -11,25 +12,20 @@ class RedemptionObserverTest extends TestCase
 {
     public function testCreating()
     {
-        $offerRedemptionMock = \Mockery::mock(OfferRedemption::class);
-        $coreServiceImplMock = \Mockery::mock(CoreService::class);
+        /** @var OfferRedemption $offerRedemptionMock */
+        $offerRedemptionMock = $this->createMock(OfferRedemption::class);
+        /** @var CoreService $coreServiceImplMock */
+        $coreServiceImplMock = $this->createMock(CoreService::class);
+        /** @var Dispatcher $eventsDispatcher */
+        $eventsDispatcher = $this->createMock(Dispatcher::class);
+        /** @var Redemption $redemption */
+        $redemption = $this->createMock(Redemption::class);
 
-        try {
-            $offerRedemptionMock->shouldReceive('handle')->once()->andReturn(true);
-            $coreServiceImplMock->shouldReceive('offerRedemption')->once()->andReturn($offerRedemptionMock);
+        $offerRedemptionMock->expects($this->once())->method('handle')->willReturn(true);
+        $coreServiceImplMock->expects($this->once())->method('offerRedemption')->willReturn($offerRedemptionMock);
+        $eventsDispatcher->expects($this->once())->method('listen');
 
-            $allEventsCalled = true;
-        } catch (\Mockery\Exception\InvalidCountException $e) {
-            $allEventsCalled = false;
-        }
-
-        $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
-            return $coreServiceImplMock;
-        });
-
-        (new RedemptionObserver())
-            ->creating(\Mockery::mock(Redemption::class));
-
-        $this->assertTrue($allEventsCalled, 'not all observer methods was called');
+        (new RedemptionObserver($eventsDispatcher, $coreServiceImplMock))
+            ->creating($redemption);
     }
 }

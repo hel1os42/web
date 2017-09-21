@@ -12,10 +12,18 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
+        $user = new User([
             'name'     => 'admin',
             'email'    => 'test@test.com',
             'password' => '123456'
         ]);
+
+        try {
+            $user->save();
+        } catch (\Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException $exception) {
+            if (app('env') !== 'testing') {
+                throw $exception; // ignore exception for testing environment
+            }
+        }
     }
 }

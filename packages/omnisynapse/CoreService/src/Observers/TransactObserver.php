@@ -4,19 +4,21 @@ namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Exception\RequestException;
 
-class TransactObserver
+class TransactObserver extends AbstractJobObserver
 {
     /**
      * @param Transact $transact
+     *
+     * @return bool
      */
     public function creating(Transact $transact)
     {
         if (!$transact->isTypeP2p()) {
-            return;
+            return true;
         }
 
-        $coreService = app()->make(CoreService::class);
-        dispatch($coreService->sendNau($transact));
+        return $this->queue($this->getCoreService()->sendNau($transact));
     }
 }
