@@ -1,4 +1,6 @@
 @extends('layouts.ajax')
 @section('content')
-<pre>{{ var_dump($data) }}</pre>
+    @foreach($data as $category)
+        <option value="{{$category['id']}}">{{$category['name']}}</option>
+    @endforeach
 @stop
