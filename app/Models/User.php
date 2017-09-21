@@ -237,8 +237,7 @@ class User extends Authenticatable
         static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-
-                $model->id = Uuid::generate(4)->__toString();
+                $model->id          = Uuid::generate(4)->__toString();
             }
         });
     }
