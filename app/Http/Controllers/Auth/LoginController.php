@@ -121,6 +121,10 @@ class LoginController extends Controller
             break;
         }
 
+        if (null === $user) {
+            return $response->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+        }
+
         return $request->wantsJson()
             ? $this->postLoginJwt($user, $response)
             : $this->postLoginSession($user, $response);
