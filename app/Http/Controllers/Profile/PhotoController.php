@@ -22,7 +22,7 @@ class PhotoController extends Controller
     {
         $path = $request->file('photo')->storeAs('profile/photos', auth()->id());
 
-        if($path === false){
+        if ($path === false) {
             \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'Can\'t save picture.');
         }
 
@@ -37,7 +37,7 @@ class PhotoController extends Controller
      */
     public function show(string $userUuid = null): Response
     {
-        if(is_null($userUuid)){
+        if (is_null($userUuid)) {
             $userUuid = \auth()->id();
         }
 
@@ -51,7 +51,7 @@ class PhotoController extends Controller
 
         $file = Storage::get($file);
 
-        switch($extension) {
+        switch ($extension) {
             case 'jpg':
                 $contentType = 'image/jpeg';
                 break;
