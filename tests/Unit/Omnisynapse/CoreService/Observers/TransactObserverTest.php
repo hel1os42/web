@@ -3,35 +3,33 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\NauModels\Transact;
-use Illuminate\Support\Testing\Fakes\BusFake;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Job\SendNau;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Bus;
+use Tests\Unit\OmniSynapse\CoreService\Observers\AbstractObserversTestCase;
 
-class TransactObserverTest extends TestCase
+class TransactObserverTest extends AbstractObserversTestCase
 {
     public function testCreating()
     {
-        $sendNauMock = \Mockery::mock(SendNau::class);
+        /** @var SendNau $sendNauMock */
+        $sendNauMock = $this->createMock(SendNau::class);
+        $this->mockDispatcherToDispatch($sendNauMock);
 
-        $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('sendNau')->once()->andReturn($sendNauMock);
+        $coreServiceImplMock = $this->createMock(CoreService::class);
 
-        $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
-            return $coreServiceImplMock;
-        });
+        /** @var Transact $transactionMock */
+        $transactionMock = $this->createMock(Transact::class);
 
-        $this->app->singleton(\Illuminate\Contracts\Bus\Dispatcher::class, function () {
-            return new BusFake();
-        });
+        $transactionMock->expects($this->once())->method('isTypeP2p')->willReturn(true);
 
-        $transactionMock = \Mockery::mock(Transact::class);
-        $transactionMock->shouldReceive('isTypeP2p')->once()->andReturn(true);
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('sendNau')
+            ->withConsecutive([$transactionMock])
+            ->willReturn($sendNauMock);
 
-        (new TransactObserver())
+        // Testing
+        (new TransactObserver($coreServiceImplMock))
             ->creating($transactionMock);
-
-        Bus::assertDispatched(get_class($sendNauMock));
     }
 }

@@ -3,32 +3,57 @@
 namespace OmniSynapse\CoreService\Observers;
 
 use App\Models\User;
-use Illuminate\Support\Testing\Fakes\BusFake;
+use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\Job\UserCreated;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Bus;
+use Tests\Unit\OmniSynapse\CoreService\Observers\AbstractObserversTestCase;
 
-class UserObserverTest extends TestCase
+class UserObserverTest extends AbstractObserversTestCase
 {
     public function testCreating()
     {
-        $userCreatedMock = \Mockery::mock(UserCreated::class);
+        /** @var UserCreated $userCreatedMock */
+        $userCreatedMock = $this->createMock(UserCreated::class);
+        $this->mockDispatcherToDispatch($userCreatedMock);
 
-        $coreServiceImplMock = \Mockery::mock(CoreService::class);
-        $coreServiceImplMock->shouldReceive('userCreated')->once()->andReturn($userCreatedMock);
+        $user = $this->createMock(User::class);
 
-        $this->app->singleton(CoreService::class, function () use($coreServiceImplMock) {
-            return $coreServiceImplMock;
-        });
+        $coreServiceImplMock = $this->createMock(CoreService::class);
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('userCreated')
+            ->withConsecutive([$user])
+            ->willReturn($userCreatedMock);
 
-        $this->app->singleton(\Illuminate\Contracts\Bus\Dispatcher::class, function () {
-            return new BusFake();
-        });
+        // Testing
+        (new UserObserver($coreServiceImplMock))
+            ->created($user);
+    }
 
-        (new UserObserver())
-            ->created(\Mockery::mock(User::class));
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException
+     */
+    public function testCreatingWithException()
+    {
+        /** @var UserCreated $userCreatedMock */
+        $userCreatedMock = $this->createMock(UserCreated::class);
+        $responseMock    = $this->createMock(Response::class);
+        $user            = $this->createMock(User::class);
 
-        Bus::assertDispatched(get_class($userCreatedMock));
+        $coreServiceImplMock = $this->createMock(CoreService::class);
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('userCreated')
+            ->withConsecutive([$user])
+            ->willReturn($userCreatedMock);
+
+        $this->getDispatcherMock()
+            ->expects($this->once())->method('dispatch')
+            ->willThrowException(new RequestException($userCreatedMock, $responseMock));
+
+        // Testing
+        (new UserObserver($coreServiceImplMock))
+            ->created($user);
     }
 }

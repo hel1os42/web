@@ -17,7 +17,8 @@ class UserObserver extends AbstractJobObserver
         if (false === $this->queue($this->getCoreService()->userCreated($user))) {
             try {
                 $user->delete();
-            } catch (\Exception $ignored) {
+            } catch (\Exception $ignore) {
+                logger()->error($ignore->getMessage());
             }
 
             throw new ServiceUnavailableHttpException(5);

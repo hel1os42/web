@@ -9,7 +9,7 @@ use OmniSynapse\CoreService\CoreService;
  * Class AbstractJobObserver
  * NS: OmniSynapse\CoreService\Observers
  */
-class AbstractJobObserver
+abstract class AbstractJobObserver
 {
     private $coreService;
 
