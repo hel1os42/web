@@ -62,8 +62,8 @@ Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
         Route::put('', 'ProfileController@update');
         Route::patch('', 'ProfileController@update')->name('profile.update');
         Route::get('referrals', 'ProfileController@referrals')->name('referrals');
-        Route::get('photo', 'Profile\PhotoController@show')->name('profile.photo.show');
-        Route::post('photo', 'Profile\PhotoController@store')->name('profile.photo.store');
+        Route::get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
+        Route::post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
     };
 
     Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], $profile);

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="profile">
-        <img src="{{route('profile.photo.show')}}"><br>
+        <img src="{{route('profile.picture.show')}}"><br>
         {{$id}}<br>
         Your email: {{$email}}<br>
         Your invite link: <a
@@ -18,9 +18,9 @@
         <a href="{{ route('transactionList') }}">route(transactionList)</a><br>
         <a href="{{ route('transactionCreate') }}">route(transactionCreate)</a><br>
         <br>Photo:<br>
-        <form method="POST" action="{{route('profile.photo.store')}}" enctype="multipart/form-data">
+        <form method="POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">
             {{ csrf_field() }}
-            <input type="file" name="photo">
+            <input type="file" name="picture">
             <button type="submit">Set photo</button>
         </form>
 

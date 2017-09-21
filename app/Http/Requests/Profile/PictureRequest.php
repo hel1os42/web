@@ -5,13 +5,13 @@ namespace App\Http\Requests\Profile;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class PhotoRequest
+ * Class PictureRequest
  * @package App\Http\Requests
  *
  * @property string code
  *
  */
-class PhotoRequest extends FormRequest
+class PictureRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,7 +31,7 @@ class PhotoRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo'      => 'required|image'
+            'picture'      => 'required|image'
         ];
     }
 } 
