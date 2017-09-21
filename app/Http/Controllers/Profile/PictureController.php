@@ -20,7 +20,7 @@ class PictureController extends Controller
      */
     public function store(PictureRequest $request)
     {
-        $path = storage_path('app') . '/profile/pictures/' . auth()->id() . '.jpg';
+        $path  = storage_path('app') . '/profile/pictures/' . auth()->id() . '.jpg';
         $image = (new ImageManager)->make($request->file('picture'))->fit('192', '192')->encode('jpg', 80)->save($path);
 
         if ($image === false) {
