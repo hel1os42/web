@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Test;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -12,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Test::class
     ];
 
     /**
