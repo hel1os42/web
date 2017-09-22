@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {

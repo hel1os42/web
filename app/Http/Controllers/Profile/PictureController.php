@@ -69,6 +69,11 @@ class PictureController extends Controller
             : \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
     }
 
+    /**
+     * @param string $uuid
+     * @param bool $absolute
+     * @return string
+     */
     private function getImagesPath(string $uuid, bool $absolute = true): string
     {
         $path = '';
