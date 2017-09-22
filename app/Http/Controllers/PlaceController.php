@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PlaceController extends Controller
 {
+    use HandlesRequestData;
 
     public function index(): Response
     {
@@ -28,12 +29,15 @@ class PlaceController extends Controller
 
     /**
      * @param Request $request
-     * @param string|null $uuid
      * @return Response
      */
-    public function showOwnerPlace(Request $request, string $uuid = null): Response
+    public function showOwnerPlace(Request $request): Response
     {
-        $place = Place::findByUserId(auth()->id());
+        $with = $this->handleWith(
+            ['testimonials'],
+            $request
+        );
+        $place = Place::query()->with($with)->findByUserId(auth()->id());
         if (!$place instanceof Place) {
             throw new BadRequestHttpException('You have not created a place yet.');
         }
@@ -45,9 +49,18 @@ class PlaceController extends Controller
      * @param string|null $uuid
      * @return Response
      */
-    public function showPlaceOffers(Request $request, string $uuid = null): Response
+    public function showPlaceOffers(Request $request, string $uuid): Response
     {
         return \response()->render('place.show', Place::findOrFail($uuid)->getOffers()->toArray());
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function showOwnerPlaceOffers(Request $request): Response
+    {
+        return \response()->render('place.show', Place::findByUserId(auth()->id())->getOffers()->toArray());
     }
 
     /**
@@ -75,7 +88,7 @@ class PlaceController extends Controller
         return \response()->render('place.show.my',
             $place->toArray(),
             Response::HTTP_CREATED,
-            route('place.show.my'));
+            route('places.show.my'));
     }
 
     /**
@@ -98,6 +111,4 @@ class PlaceController extends Controller
             \response()->error(Response::HTTP_NO_CONTENT);
 
     }
-
-
 }

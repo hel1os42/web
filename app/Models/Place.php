@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Place
@@ -240,12 +242,13 @@ class Place extends Model
     }
 
     /**
+     * @param Builder $builder
      * @param string $uuid
-     * @return Place|null
+     * @return Builder
      */
-    public static function findByUserId(string $uuid): ?Place
+    public function scopeFindByUserId(Builder $builder, string $uuid)
     {
-        return self::query()->where('user_id', $uuid)->first();
+        return $builder->where('user_id', $uuid)->first();
     }
 
     /**
@@ -262,6 +265,16 @@ class Place extends Model
     public function getOffers()
     {
         return $this->user->getAccountFor(Currency::NAU)->offers()->get();
+    }
+
+    /**
+     * @return HasMany
+     *
+     * ATTENTION! it just stub
+     */
+    public function testimonials(): HasMany
+    {
+        return $this->hasMany(Account::class, 'owner_id', 'id');
     }
 
 }

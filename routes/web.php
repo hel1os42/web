@@ -122,6 +122,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('categories');
     $router->get('categories/{uuid}', 'CategoryController@show')
            ->name('categories.show');
+
+    /**
+     * Places
+     */
+
+    $router->get('profile/place', 'PlaceController@showOwnerPlace')
+        ->name('places.show.my');
 });
 
 //---- Authorized users
