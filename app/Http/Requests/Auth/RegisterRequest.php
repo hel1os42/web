@@ -50,4 +50,4 @@ class RegisterRequest extends FormRequest
     {
         return $user->fill($this->all());
     }
-} 
+}

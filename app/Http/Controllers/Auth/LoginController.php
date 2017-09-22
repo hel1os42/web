@@ -98,7 +98,7 @@ class LoginController extends Controller
         $user            = null;
         $defaultProvider = 'users';
 
-        $credentials = $request->all();
+        $credentials = $request->credentials();
 
         /** @var AuthManager $auth */
         $auth = app('auth');
