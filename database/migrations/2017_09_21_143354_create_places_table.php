@@ -20,10 +20,10 @@ class CreatePlacesTable extends Migration
             $table->string('description')->nullable();
             $table->text('about')->nullable();
             $table->string('address')->nullable();
-            $table->float('latitude')->nullable();
-            $table->float('longitude')->nullable();
-            $table->integer('radius')->nullable();
-            $table->integer('stars')->nullable();
+            $table->float('latitude');
+            $table->float('longitude');
+            $table->integer('radius');
+            $table->integer('stars')->default(0);
             $table->boolean('is_featured')->default(0);
             $table->timestamps();
         });

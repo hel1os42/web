@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
-use App\Models\NauModels\User as CoreUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,6 +51,26 @@ class Place extends Model
             'radius'      => 'integer',
             'stars'       => 'integer',
             'is_featured' => 'boolean'
+        ];
+
+        $this->fillable = [
+            'name',
+            'description',
+            'about',
+            'address',
+            'latitude',
+            'longitude',
+            'radius'
+        ];
+
+        $this->attributes = [
+            'name'        => null,
+            'description' => null,
+            'about'       => null,
+            'address'     => null,
+            'latitude'    => 0,
+            'longitude'   => 0,
+            'radius'      => 1
         ];
 
 //        $this->appends = [
@@ -220,19 +239,26 @@ class Place extends Model
         return $this;
     }
 
+    /**
+     * @param string $uuid
+     * @return Place|null
+     */
     public static function findByUserId(string $uuid): ?Place
     {
         return self::query()->where('user_id', $uuid)->first();
     }
 
     /**
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function user(): HasOne
+    public function user(): BelongsTo
     {
-        return $this->hasOne(CoreUser::class, 'id', 'user_id');
+        return $this->belongsTo(User::class, 'id', 'user_id');
     }
 
+    /**
+     * @return mixed
+     */
     public function getOffers()
     {
         return $this->user->getAccountFor(Currency::NAU)->offers()->get();

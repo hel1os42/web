@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PlaceCreateRequest;
-use App\Http\Requests\PlaceUpdateRequest;
-use App\Models\Currency;
+use App\Http\Requests\PlaceRequest;
 use App\Models\Place;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -29,6 +26,11 @@ class PlaceController extends Controller
         return \response()->render('place.show', Place::findOrFail($uuid)->toArray());
     }
 
+    /**
+     * @param Request $request
+     * @param string|null $uuid
+     * @return Response
+     */
     public function showOwnerPlace(Request $request, string $uuid = null): Response
     {
         $place = Place::findByUserId(auth()->id());
@@ -38,26 +40,49 @@ class PlaceController extends Controller
         return \response()->render('place.show', $place->toArray());
     }
 
+    /**
+     * @param Request $request
+     * @param string|null $uuid
+     * @return Response
+     */
+    public function showPlaceOffers(Request $request, string $uuid = null): Response
+    {
+        return \response()->render('place.show', Place::findOrFail($uuid)->getOffers()->toArray());
+    }
+
+    /**
+     * @return Response
+     */
     public function create(): Response
     {
         return \response()->render('place.create', (new Place)->toArray());
     }
 
-    public function store(PlaceCreateRequest $request): Response
+    /**
+     * @param PlaceRequest $request
+     * @return Response
+     */
+    public function store(PlaceRequest $request): Response
     {
         if (Place::findByUserId(auth()->id()) instanceof Place) {
             throw new BadRequestHttpException('You already create place.');
         }
 
         $place = new Place();
-        $place = $place->create($request->all());
+        $place->fill($request->all());
+        $place->user()->associate(auth()->user());
+        $place->save();
         return \response()->render('place.show.my',
             $place->toArray(),
             Response::HTTP_CREATED,
             route('place.show.my'));
     }
 
-    public function update(PlaceUpdateRequest $request): Response
+    /**
+     * @param PlaceRequest $request
+     * @return Response
+     */
+    public function update(PlaceRequest $request): Response
     {
         $place = Place::findByUserId(auth()->id());
         if (!$place instanceof Place) {
