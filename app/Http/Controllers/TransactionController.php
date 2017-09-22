@@ -34,11 +34,17 @@ class TransactionController extends Controller
      * @param TransactRequest $request
      * @return Response
      */
-    public function completeTransaction(TransactRequest $request): Response
+    public function completeTransaction(TransactRequest $request, $sourceAccount = null, $destinationAccount = null, $transaction = null): Response
     {
-        $sourceAccount      = Account::whereAddress($request->source)->firstOrFail();
-        $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
-        $amount             = $request->amount;
+        if (null === $sourceAccount) {
+            $sourceAccount = Account::whereAddress($request->source)->firstOrFail();
+        }
+
+        if (null === $destinationAccount) {
+            $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
+        }
+
+        $amount = $request->amount;
 
         if (false === $sourceAccount->isEnoughBalanceFor($amount)) {
             $multiplier = (int)config('nau.multiplier');
@@ -49,12 +55,14 @@ class TransactionController extends Controller
             );
         }
 
-        $transaction         = new Transact();
+        if (null === $transaction) {
+            $transaction = new Transact();
+        }
         $transaction->amount = $amount;
         $transaction->source()->associate($sourceAccount);
         $transaction->destination()->associate($destinationAccount);
 
-        $transaction->save();
+        //$transaction->save();
 
         Session::flash('message',
             null === $transaction->id ?
@@ -73,10 +81,13 @@ class TransactionController extends Controller
      * @param int $transactionId|null
      * @return Response
      */
-    public function listTransactions($transactionId = null): Response
+    public function listTransactions($transactionId = null, $transactions = null): Response
     {
-        $user         = auth()->user();
-        $transactions = Transact::forUser($user);
+        $user = auth()->user();
+
+        if (null === $transactions) {
+            $transactions = Transact::forUser($user);
+        }
 
         if (null === $transactionId) {
             return response()->render('transaction.list', $transactions->paginate());
