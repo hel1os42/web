@@ -10,9 +10,9 @@ use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Sofa\Eloquence\Builder;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
+use Sofa\Eloquence\Builder;
 
 /**
  * Class Offer
@@ -202,6 +202,15 @@ class Offer extends NauModel
     public function getRewardAttribute(int $value): float
     {
         return $this->convertIntToFloat($value);
+    }
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function setRewardAttribute(float $value): void
+    {
+        $this->attributes['reward'] = $this->convertFloatToInt($value);
     }
 
     /** @return float */
