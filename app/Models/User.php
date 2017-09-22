@@ -169,7 +169,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function getPictureUrlAttribute(): string
     {
-        return config('app.url') . '/users/' . $this->getId() . '/picture.jpg';
+        return route('profile.picture.show', ['id' => $this->getId()]);
     }
 
     /**
