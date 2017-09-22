@@ -44,7 +44,7 @@ class PictureController extends Controller
     {
         $path = storage_path(sprintf('app/img/profile/pictures/%s.jpg', auth()->id()));
         $this->imageManager->make($request->file('picture'))->fit('192', '192')->encode('jpg',
-            80)->save($path . '548484');
+            80)->save($path);
 
         return $request->wantsJson() ?
             \response()->render('', [], Response::HTTP_CREATED, route('profile.picture.show')) :
