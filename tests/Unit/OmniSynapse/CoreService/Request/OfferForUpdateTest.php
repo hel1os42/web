@@ -10,6 +10,9 @@ use Tests\TestCase;
 
 class OfferForUpdateTest extends TestCase
 {
+    const DATE_FORMAT = 'Y-m-dTH:i:sO';
+    const TIME_FORMAT = 'H:i:sO';
+
     /**
      * @return void
      */
@@ -81,10 +84,10 @@ class OfferForUpdateTest extends TestCase
             'geo'               => $offerForUpdateRequest->geo->jsonSerialize(), // don't have to be checked
             'limits'            => $offerForUpdateRequest->limits->jsonSerialize(), // don't have to be checked
             'reward'            => $reward,
-            'start_date'        => $startDate->toDateString(),
-            'end_date'          => $endDate->toDateString(),
-            'start_time'        => $startTime->toTimeString(),
-            'end_time'          => $endTime->toTimeString(),
+            'start_date'        => $startDate->format(self::DATE_FORMAT),
+            'end_date'          => $endDate->format(self::DATE_FORMAT),
+            'start_time'        => $startTime->format(self::TIME_FORMAT),
+            'end_time'          => $endTime->format(self::TIME_FORMAT),
         ];
 
         /*
