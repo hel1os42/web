@@ -14,7 +14,7 @@ use OmniSynapse\CoreService\Request\Offer\Point;
  */
 class Offer implements \JsonSerializable
 {
-    const DATE_FORMAT = 'Y-m-dTH:i:sO';
+    const DATE_FORMAT = 'Y-m-d\TH:i:sO';
     const TIME_FORMAT = 'H:i:sO';
 
     /** @var string */
