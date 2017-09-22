@@ -41,14 +41,14 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
-            'driver'   => 'token',
+        'jwt' => [
+            'driver'   => 'jwt',
             'provider' => 'users',
         ],
 
-        'jwt-guard' => [
-            'driver'   => 'jwt-driver',
-            'provider' => 'users',
+        'otp' => [
+            'driver'   => 'otp',
+            'provider' => 'otp-users'
         ]
     ],
 
@@ -75,10 +75,10 @@ return [
             'model'  => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'otp-users' => [
+            'driver' => 'otp-eloquent',
+            'model'  => App\Models\User::class,
+        ],
     ],
 
     /*

@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdditionalField;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
+    use HandlesRequestData;
 
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
      */
     public function index()
     {
-        return Auth::check() ? redirect()->route('profile') : response()->render('home', []);
+        return redirect()->route('profile');
     }
 
     /**
@@ -33,8 +32,10 @@ class ProfileController extends Controller
     {
         $userId = auth()->id();
 
-        $with = explode(',', $request->get('with', ''));
-        $with = array_intersect(['accounts', 'offers', 'referrals', 'activationCodes'], $with);
+        $with = $this->handleWith(
+            ['accounts', 'offers', 'referrals', 'activationCodes'],
+            $request
+        );
 
         return (!empty($uuid) && $uuid !== $userId) ?
             response()->error(Response::HTTP_FORBIDDEN) :

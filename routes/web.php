@@ -1,50 +1,59 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+/** @var \Illuminate\Routing\Router $router */
+$router = app('router');
 
 // Unauthorized users
+$router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
-Route::group(['middleware' => 'guest'], function () {
+    $router->get('/', function () {
+        return response()->render('home', []);
+    })->name('home');
 
-    Route::get('/', 'ProfileController@index')->name('home');
+    $router->group(['prefix' => 'auth'], function () use ($router) {
 
-    Route::group(['prefix' => 'auth'], function () {
-        /**
-         * login
-         */
-        Route::get('login', 'Auth\LoginController@getLogin')
-            ->name('loginForm');
-        Route::post('login', 'Auth\LoginController@postLogin')
-            ->name('login');
-        /**
-         * register with invite code
-         */
-        Route::get('register/{invite}', 'Auth\RegisterController@getRegisterForm')
-             ->where('invite', '[a-z0-9]+')
-             ->name('registerForm');
+        $router->group(['prefix' => 'login'], function () use ($router) {
+            $router->get('', 'Auth\LoginController@getLogin')
+                   ->name('loginForm');
+
+            $router->post('', 'Auth\LoginController@login')
+                   ->name('login');
+
+            $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
+                   ->middleware(['throttle:1,1'])
+                   ->where('phone_number', '\+[0-9]+')
+                   ->name('get-login-otp-code');
+        });
+
+        $router->group(['prefix' => 'register'], function () use ($router) {
+            $router->get('{invite}/{phone_number}/code', 'Auth\RegisterController@getOtpCode')
+                   ->middleware(['throttle:1,1'])
+                   ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
+                   ->name('get-register-otp-code');
+
+            /**
+             * register with invite code
+             */
+            $router->get('{invite}', 'Auth\RegisterController@getRegisterForm')
+                   ->where('invite', '[a-z0-9]+')
+                   ->name('registerForm');
+        });
+
         /**
          * reset password
          */
-        Route::group(['prefix' => 'password'], function () {
-            Route::get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-            Route::post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-            Route::get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-            Route::post('reset', 'Auth\ResetPasswordController@reset');
+        $router->group(['prefix' => 'password'], function () use ($router) {
+            $router->get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+            $router->post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+            $router->get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+            $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
+
     /**
      * register
      */
-    Route::post('users', 'Auth\RegisterController@register')->name('register');
+    $router->post('users', 'Auth\RegisterController@register')->name('register');
 });
 
 //---- Unauthorized users
@@ -52,22 +61,22 @@ Route::group(['middleware' => 'guest'], function () {
 
 // Authorized users
 
-Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
+$router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
-    Route::get('auth/logout', 'Auth\LoginController@logout')->name('logout');
-    Route::get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
+    $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
+    $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
-    Route::group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () {
-        Route::get('', 'ProfileController@show')->name('users.show');
-        Route::get('referrals', 'ProfileController@referrals');
+    $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
+        $router->get('', 'ProfileController@show')->name('users.show');
+        $router->get('referrals', 'ProfileController@referrals');
     });
 
-    Route::group(['prefix' => 'profile'], function () {
-        Route::get('', 'ProfileController@show')->name('profile');
-        Route::get('referrals', 'ProfileController@referrals')->name('referrals');
+    $router->group(['prefix' => 'profile'], function () use ($router) {
+        $router->get('', 'ProfileController@show')->name('profile');
+        $router->get('referrals', 'ProfileController@referrals')->name('referrals');
     });
 
-    Route::resource('advert/offers', 'Advert\OfferController', [
+    $router->resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
             'index'  => 'advert.offers.index',
             'show'   => 'advert.offers.show',
@@ -79,17 +88,17 @@ Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
             'destroy'
         ]
     ]);
-    Route::group(['prefix' => 'offers/{offerId}'], function () {
-        Route::get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
-        Route::group(['prefix' => 'redemption'], function () {
-            Route::get('create', 'RedemptionController@create')->name('redemption.create');
-            Route::post('', 'RedemptionController@redemption')->name('redemption.store');
-            Route::get('{rid}', 'RedemptionController@show')->where('rid',
+    $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
+        $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
+        $router->group(['prefix' => 'redemption'], function () use ($router) {
+            $router->get('create', 'RedemptionController@create')->name('redemption.create');
+            $router->post('', 'RedemptionController@redemption')->name('redemption.store');
+            $router->get('{rid}', 'RedemptionController@show')->where('rid',
                 '[a-z0-9-]+')->name('redemption.show');
         });
     });
 
-    Route::resource('offers', 'User\OfferController', [
+    $router->resource('offers', 'User\OfferController', [
         'except' => [
             'create',
             'store',
@@ -98,15 +107,21 @@ Route::group(['middleware' => 'auth:jwt-guard,web'], function () {
         ]
     ]);
 
-    Route::get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
-        ->name('transactionCreate');
-    Route::post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
-        ->name('transactionComplete');
-    Route::get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
-        ->where('reansactionId', '[0-9]+')
-        ->name('transactionList');
+    $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
+           ->name('transactionCreate');
+    $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
+           ->name('transactionComplete');
+    $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
+           ->where('reansactionId', '[0-9]+')
+           ->name('transactionList');
 
-    Route::get('categories', 'CategoryController@index')->name('categories');
+    /**
+     * Categories
+     */
+    $router->get('categories', 'CategoryController@index')
+           ->name('categories');
+    $router->get('categories/{uuid}', 'CategoryController@show')
+           ->name('categories.show');
 });
 
 //---- Authorized users
