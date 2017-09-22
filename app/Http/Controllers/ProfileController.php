@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -56,11 +58,15 @@ class ProfileController extends Controller
         }
 
         $success = request()->isMethod('put') ?
-            $user->update(array_merge((new User)->toArray(), $request->except('password'))) :
-            $user->update($request->except('password'));
+            $user->update(array_merge(
+                array_diff_key((new User)->getAttributes(), ['password' => '']),
+                $request->all()
+            )) :
+            $user->update($request->all());
 
         if ($success) {
-            return \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED, route('profile'));
+            return \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED,
+                route('profile'));
         }
         return \response()->error(Response::HTTP_NOT_ACCEPTABLE);
     }

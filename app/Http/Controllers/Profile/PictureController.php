@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\PictureRequest;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,17 +15,36 @@ use Symfony\Component\HttpFoundation\Response;
 class PictureController extends Controller
 {
     /**
+     * @var ImageManager
+     */
+    private $imageManager;
+
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
+     * PictureController constructor.
+     * @param ImageManager $imageManager
+     * @param Filesystem $filesystem
+     */
+    public function __construct(ImageManager $imageManager, Filesystem $filesystem)
+    {
+        $this->imageManager = $imageManager;
+        $this->filesystem   = $filesystem;
+    }
+
+
+    /**
      * @param PictureRequest $request
      * @return Response|\Illuminate\Routing\Redirector
      */
     public function store(PictureRequest $request)
     {
-        $path  = storage_path('app') . '/profile/pictures/' . auth()->id() . '.jpg';
-        $image = (new ImageManager)->make($request->file('picture'))->fit('192', '192')->encode('jpg', 80)->save($path);
-
-        if ($image === false) {
-            \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'Can\'t save picture.');
-        }
+        $path = storage_path(sprintf('app/img/profile/pictures/%s.jpg', auth()->id()));
+        $this->imageManager->make($request->file('picture'))->fit('192', '192')->encode('jpg',
+            80)->save($path . '548484');
 
         return $request->wantsJson() ?
             \response()->render('', [], Response::HTTP_CREATED, route('profile.picture.show')) :
@@ -42,15 +61,10 @@ class PictureController extends Controller
             $userUuid = \auth()->id();
         }
 
-        $file = 'profile/pictures/' . $userUuid . '.jpg';
+        $path = sprintf('img/profile/pictures/%s.jpg', $userUuid);
 
-        if (false === Storage::has($file)) {
-            return \response()->error(Response::HTTP_NOT_FOUND);
-        }
-
-        $file = Storage::get($file);
-
-
-        return \response($file, 200)->header('Content-Type', 'image/jpeg');
+        return false === $this->filesystem->exists($path) ?
+            \response()->error(Response::HTTP_NOT_FOUND) :
+            \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
     }
 }

@@ -42,8 +42,9 @@ class User extends Authenticatable implements PhoneAuthenticable
 
     public function __construct(array $attributes = [])
     {
+        $this->connection = config('database.default');
+
         $this->attributes = [
-            'id'             => null,
             'name'           => '',
             'email'          => null,
             'password'       => null,
@@ -61,8 +62,6 @@ class User extends Authenticatable implements PhoneAuthenticable
             'latitude'  => 'double',
             'longitude' => 'double'
         ];
-
-        $this->connection = config('database.default');
 
         $this->fillable = [
             'name',
@@ -169,7 +168,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function getPictureUrlAttribute(): string
     {
-        return route('profile.picture.show', ['id' => $this->getId()]);
+        return route('users.picture.show', ['id' => $this->getId()]);
     }
 
     /**

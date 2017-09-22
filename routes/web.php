@@ -73,21 +73,26 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      * Profile
      */
     $profile = function () use ($router) {
-        $router->get('', 'ProfileController@show')
-            ->name('profile');
-        $router->put('', 'ProfileController@update');
-        $router->patch('', 'ProfileController@update')
-            ->name('profile.update');
-        $router->get('referrals', 'ProfileController@referrals')
-            ->name('referrals');
-        $router->get('picture.jpg', 'Profile\PictureController@show')
-            ->name('profile.picture.show');
-        $router->post('picture', 'Profile\PictureController@store')
-            ->name('profile.picture.store');
+
     };
 
-    $router->group(['prefix' => 'profile'], $profile);
-    $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], $profile);
+    $router->group(['prefix' => 'profile'], function () use ($router) {
+        $router->get('', 'ProfileController@show')->name('profile');
+        $router->put('', 'ProfileController@update');
+        $router->patch('', 'ProfileController@update')->name('profile.update');
+        $router->get('referrals', 'ProfileController@referrals')->name('referrals');
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
+        $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
+    });
+
+    $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
+        $router->get('', 'ProfileController@show');
+        $router->put('', 'ProfileController@update');
+        $router->patch('', 'ProfileController@update');
+        $router->get('referrals', 'ProfileController@referrals');
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('users.picture.show');
+        $router->post('picture', 'Profile\PictureController@store');
+    });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
         'names'  => [

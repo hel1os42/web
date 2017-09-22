@@ -31,11 +31,15 @@ class ProfileUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'      => 'string|min:2',
-            'email'     => 'required_without:phone|email|max:255',
-            'phone'     => 'required_without:email|regex:/\+[0-9]{10,15}/',
-            'latitude'  => 'numeric|min:-90|max:90',
-            'longitude' => 'numeric|min:-180|max:180',
+            'name'             => 'string|min:2',
+            'email'            => sprintf('required_without:phone|email|max:255|unique:users,email,%s',
+                auth()->id()),
+            'phone'            => sprintf('required_without:email|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+                auth()->id()),
+            'password'         => 'min:6|max:255',
+            'password_confirm' => 'same:password',
+            'latitude'         => 'numeric|between:-90,90',
+            'longitude'        => 'numeric|between:-180,180',
         ];
     }
 } 
