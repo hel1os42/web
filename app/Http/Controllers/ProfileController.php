@@ -40,9 +40,9 @@ class ProfileController extends Controller
             $request
         );
 
-        return (!empty($uuid) && $uuid !== $userId) ?
-            response()->error(Response::HTTP_FORBIDDEN) :
-            response()->render('profile', (new User)->with($with)->findOrFail($userId)->toArray());
+        return (!empty($uuid) && $uuid !== $userId)
+            ? response()->error(Response::HTTP_FORBIDDEN)
+            : response()->render('profile', (new User)->with($with)->findOrFail($userId)->toArray());
     }
 
     /**
@@ -57,18 +57,16 @@ class ProfileController extends Controller
             return \response()->error(Response::HTTP_UNAUTHORIZED);
         }
 
-        $success = request()->isMethod('put') ?
-            $user->update(array_merge(
+        $success = request()->isMethod('put')
+            ? $user->update(array_merge(
                 array_diff_key((new User)->getAttributes(), ['password' => '']),
                 $request->all()
-            )) :
-            $user->update($request->all());
+            ))
+            : $user->update($request->all());
 
-        if ($success) {
-            return \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED,
-                route('profile'));
-        }
-        return \response()->error(Response::HTTP_NOT_ACCEPTABLE);
+        return $success
+            ? \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED, route('profile'))
+            : \response()->error(Response::HTTP_NOT_ACCEPTABLE);
     }
 
     /**
@@ -80,8 +78,8 @@ class ProfileController extends Controller
     {
         $userId = auth()->id();
 
-        return ($uuid === null || $uuid === $userId) ?
-            response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate()) :
-            response()->error(Response::HTTP_FORBIDDEN);
+        return ($uuid === null || $uuid === $userId)
+            ? response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate())
+            : response()->error(Response::HTTP_FORBIDDEN);
     }
 }

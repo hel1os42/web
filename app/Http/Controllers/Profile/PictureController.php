@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\PictureRequest;
 use Intervention\Image\ImageManager;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -42,13 +42,14 @@ class PictureController extends Controller
      */
     public function store(PictureRequest $request)
     {
-        $path = storage_path(sprintf('app/img/profile/pictures/%s.jpg', auth()->id()));
-        $this->imageManager->make($request->file('picture'))->fit('192', '192')->encode('jpg',
-            80)->save($path);
+        $this->imageManager->make($request->file('picture'))
+            ->fit('192', '192')
+            ->encode('jpg', 80)
+            ->save($this->getImagesPath(auth()->id()));
 
-        return $request->wantsJson() ?
-            \response()->render('', [], Response::HTTP_CREATED, route('profile.picture.show')) :
-            \redirect(route('profile.picture.show'));
+        return $request->wantsJson()
+            ? \response()->render('', [], Response::HTTP_CREATED, route('profile.picture.show'))
+            : \redirect(route('profile.picture.show'));
     }
 
     /**
@@ -61,10 +62,19 @@ class PictureController extends Controller
             $userUuid = \auth()->id();
         }
 
-        $path = sprintf('img/profile/pictures/%s.jpg', $userUuid);
+        $path = $this->getImagesPath($userUuid, false);
 
-        return false === $this->filesystem->exists($path) ?
-            \response()->error(Response::HTTP_NOT_FOUND) :
-            \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
+        return false === $this->filesystem->exists($path)
+            ? \response()->error(Response::HTTP_NOT_FOUND)
+            : \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
+    }
+
+    private function getImagesPath(string $uuid, bool $absolute = true): string
+    {
+        $path = '';
+        if ($absolute) {
+            $path = storage_path('app') . '/';
+        }
+        return $path . sprintf('img/profile/pictures/%s.jpg', $uuid);
     }
 }
