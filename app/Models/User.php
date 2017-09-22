@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Exceptions\TokenException;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
+use App\Services\Auth\Contracts\PhoneAuthenticable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use App\Exceptions\TokenException;
 use Webpatser\Uuid\Uuid;
 
 /**
@@ -20,6 +21,7 @@ use Webpatser\Uuid\Uuid;
  * @property string     name
  * @property string     email
  * @property string     password
+ * @property string     phone
  * @property string     invite_code
  * @property string     referrer_id
  * @property int        level
@@ -33,19 +35,32 @@ use Webpatser\Uuid\Uuid;
  * @property int        accounts_count
  * @property int        activation_codes_count
  */
-class User extends Authenticatable
+class User extends Authenticatable implements PhoneAuthenticable
 {
 
     use Notifiable, RelationsTrait;
 
     public function __construct(array $attributes = [])
     {
+        $this->attributes = [
+            'id'             => null,
+            'name'           => '',
+            'email'          => null,
+            'password'       => null,
+            'remember_token' => null,
+            'created_at'     => null,
+            'updated_at'     => null,
+            'referrer_id'    => null,
+            'invite_code'    => null,
+        ];
+
         $this->connection = config('database.default');
 
         $this->fillable = [
             'name',
             'email',
             'password',
+            'phone',
         ];
 
         $this->hidden = [
@@ -93,9 +108,9 @@ class User extends Authenticatable
     /**
      * Get user name
      *
-     * @return string
+     * @return null|string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -103,11 +118,21 @@ class User extends Authenticatable
     /**
      * Get user mail
      *
-     * @return string
+     * @return null|string
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * Get user phone
+     *
+     * @return null|string
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 
     /**
@@ -155,11 +180,11 @@ class User extends Authenticatable
     /**
      * Set user name
      *
-     * @param string $name
+     * @param null|string $name
      *
      * @return User
      */
-    public function setName(string $name): User
+    public function setName(?string $name): User
     {
         $this->name = $name;
 
@@ -169,11 +194,11 @@ class User extends Authenticatable
     /**
      * Set user mail
      *
-     * @param string $email
+     * @param null|string $email
      *
      * @return User
      */
-    public function setEmail(string $email): User
+    public function setEmail(?string $email): User
     {
         $this->email = $email;
 
@@ -181,13 +206,27 @@ class User extends Authenticatable
     }
 
     /**
-     * Set user password
+     * Set user phone
      *
-     * @param string $password
+     * @param null|string $phone
      *
      * @return User
      */
-    public function setPassword(string $password): User
+    public function setPhone(?string $phone): User
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Set user password
+     *
+     * @param string|null $password
+     *
+     * @return User
+     */
+    public function setPassword(?string $password): User
     {
         $this->password = $password;
 
@@ -195,11 +234,13 @@ class User extends Authenticatable
     }
 
     /**
-     * @param string $value
+     * @param null|string $value
      */
-    public function setPasswordAttribute(string $value)
+    public function setPasswordAttribute(?string $value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        if ($value !== null) {
+            $this->attributes['password'] = Hash::make($value);
+        }
     }
 
     protected static function boot()
@@ -233,12 +274,23 @@ class User extends Authenticatable
      *
      * @param string $invite
      *
-     * @return User|null
+     * @return User|\Illuminate\Database\Eloquent\Model|null
      * @throws \InvalidArgumentException
      */
-    public function findByInvite(string $invite): ?User
+    public static function findByInvite(string $invite): ?User
     {
-        return $this->where('invite_code', $invite)->first();
+        return self::query()->where('invite_code', $invite)->first();
+    }
+
+    /**
+     * @param string $phone
+     *
+     * @return User|\Illuminate\Database\Eloquent\Model|null
+     * @throws \InvalidArgumentException
+     */
+    public static function findByPhone(string $phone): ?User
+    {
+        return self::query()->where('phone', $phone)->first();
     }
 
     /**
@@ -250,7 +302,7 @@ class User extends Authenticatable
     {
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
-        return $this->findByInvite($newInvite) instanceof $this ? $this->generateInvite() : $newInvite;
+        return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
     }
 
     /**
@@ -261,6 +313,7 @@ class User extends Authenticatable
     public function getAccountFor(string $currency): ?Account
     {
         switch ($currency) {
+            /** @noinspection PhpMissingBreakStatementInspection */
             case Currency::NAU:
                 $account = $this->accounts()->first();
                 if ($account instanceof Account) {
