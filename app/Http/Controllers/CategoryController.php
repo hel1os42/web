@@ -23,7 +23,7 @@ class CategoryController extends Controller
             ['parent'],
             $request
         );
-        return \response()->render('category.list', Category::with($with)->paginate());
+        return \response()->render('category.list', Category::with($with)->withNoParent()->paginate());
     }
 
     /**
