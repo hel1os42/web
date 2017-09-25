@@ -4,10 +4,6 @@
 
 @section('content')
 
-    <section class="map">
-        <div id="map"></div>
-    </section>
-
     <section class="offer">
         <div class="offer-form">
             <form action="{{route('advert.offers.store')}}" method="post" target="_top">
@@ -78,6 +74,10 @@
                 <input type="submit">
             </form>
         </div>
+    </section>
+
+    <section class="map">
+            <div id="map"></div>
     </section>
 
 
