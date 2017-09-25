@@ -4,6 +4,7 @@ namespace OmniSynapse\CoreService\Observers;
 
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Exception\RequestException;
 
 /**
  * Class AbstractJobObserver
@@ -42,6 +43,14 @@ abstract class AbstractJobObserver
             dispatch($job);
             $success = true;
         } catch (\Throwable $exception) {
+            logger()->error($exception->getMessage());
+            logger()->debug(get_class($exception));
+
+            if ($exception instanceof RequestException) {
+                logger()->debug($exception->getRawResponse());
+            }
+
+            logger()->debug($exception->getTraceAsString());
             $success = false;
         }
 
@@ -59,6 +68,14 @@ abstract class AbstractJobObserver
             $job->handle();
             $success = true;
         } catch (\Throwable $exception) {
+            logger()->error($exception->getMessage());
+            logger()->debug(get_class($exception));
+
+            if ($exception instanceof RequestException) {
+                logger()->debug($exception->getRawResponse());
+            }
+
+            logger()->debug($exception->getTraceAsString());
             $success = false;
         }
 

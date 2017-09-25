@@ -3,11 +3,17 @@ namespace OmniSynapse\CoreService\Exception;
 
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
-use OmniSynapse\CoreService\Response\Error as ErrorResponse;
 use OmniSynapse\CoreService\Response\Error;
+use OmniSynapse\CoreService\Response\Error as ErrorResponse;
 
 class RequestException extends Exception
 {
+    private const CORE_EXCEPTION_EXPLANATION = [
+        'com.toavalon.nau.core.entities.Wallet$NotEnoughFunds' => [
+            'Not enough funds'
+        ]
+    ];
+
     /** @var AbstractJob $job */
     private $job;
 
@@ -51,6 +57,11 @@ class RequestException extends Exception
         $message = null !== $contents && isset($contents->message)
             ? $contents->message
             : $response->getReasonPhrase();
+
+        if (!isset($contents->message) && isset($contents->exception) && in_array($contents->exception,
+                self::CORE_EXCEPTION_EXPLANATION)) {
+            $contents->message = self::CORE_EXCEPTION_EXPLANATION[$contents->exception];
+        }
 
         parent::__construct($message, $response->getStatusCode(), $previous);
     }
