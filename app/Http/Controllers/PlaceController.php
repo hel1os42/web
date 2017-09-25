@@ -75,7 +75,7 @@ class PlaceController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('place.create', array_merge((new Place)->getFillable(), ['categories']));
+        return \response()->render('place.create', array_merge((new Place)::getFillableWithDefaults(), ['categories' => []]));
     }
 
     /**
@@ -116,7 +116,7 @@ class PlaceController extends Controller
         }
 
         $success = $request->isMethod('put') ?
-            $place->update(array_merge((new Place)->getFillable(), $request->all())) :
+            $place->update(array_merge((new Place)::getFillableWithDefaults(), $request->all())) :
             $place->update($request->all());
 
         if ($request->has('category_ids') === true) {

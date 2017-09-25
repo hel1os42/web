@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
+use App\Models\Traits\HasAttributes;
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,6 +32,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Place extends Model
 {
+    use HasAttributes, Uuids;
     /**
      * Place constructor.
      *
@@ -80,15 +83,6 @@ class Place extends Model
         ];
 
         parent::__construct($attributes);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (User $model) {
-            $model->id = Uuid::generate(4)->__toString();
-        });
     }
 
     /** @return string */
