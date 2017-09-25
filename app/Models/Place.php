@@ -146,7 +146,7 @@ class Place extends Model
     }
 
     /** @return bool */
-    public function getIsFeatured(): bool
+    public function isFeatured(): bool
     {
         return $this->is_featured;
     }
@@ -325,8 +325,8 @@ class Place extends Model
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
-                $builder->whereIn('id', $categoryIds);
-            });
+            $builder->whereIn('id', $categoryIds);
+        });
     }
 
     /**
@@ -336,5 +336,4 @@ class Place extends Model
     {
         return $this->getOffers()->count();
     }
-
 }
