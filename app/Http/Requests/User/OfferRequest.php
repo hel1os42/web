@@ -8,10 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class OfferRequest
  * @package App\Http\Requests\User
  *
- * @property string category
+ * @property array  category_ids
  * @property string latitude
  * @property string longitude
- * @property int radius
+ * @property int    radius
  *
  */
 class OfferRequest extends FormRequest
@@ -34,10 +34,14 @@ class OfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_id' => 'string|exists:categories,id',
-            'latitude'    => 'string|nullable',
-            'longitude'   => 'string|nullable',
-            'radius'      => 'integer|nullable'
+            'category_ids' => 'required|array',
+            'category_ids.*' => sprintf(
+                'string|regex:%s|exists:categories,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
+            'latitude'       => 'string|nullable',
+            'longitude'      => 'string|nullable',
+            'radius'         => 'integer|nullable'
         ];
     }
 } 
