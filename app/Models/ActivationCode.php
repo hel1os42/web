@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Exceptions\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -24,7 +25,9 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property Offer offer
  * @property User user
  * @property Redemption redemption
- * @method ActivationCode byCode(string $code)
+ *
+ * @method static static|ActivationCode[]|Collection|Builder byCode(string $code)
+ * @method static static|ActivationCode[]|Collection|Builder byOwner(User $owner)
  */
 class ActivationCode extends Model
 {
@@ -111,8 +114,11 @@ class ActivationCode extends Model
 
     /**
      * @param Builder $builder
-     * @param string $code
+     * @param string  $code
+     *
      * @return Builder
+     * @throws BadActivationCodeException
+     * @throws \InvalidArgumentException
      */
     public function scopeByCode(Builder $builder, string $code): Builder
     {
@@ -120,7 +126,22 @@ class ActivationCode extends Model
     }
 
     /**
+     * @param Builder $builder
+     * @param User    $owner
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOwner(Builder $builder, User $owner): Builder
+    {
+        return $builder->where('user_id', $owner->getId());
+    }
+
+    /**
      * @param Redemption $redemption
+     *
+     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function activated(Redemption $redemption)
     {
