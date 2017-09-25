@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Place;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -41,9 +42,19 @@ class PlaceRequest extends FormRequest
             'description' => 'string',
             'about'       => 'string',
             'address'     => 'string',
-            'latitude'    => 'required|numeric|min:-90|max:90',
-            'longitude'   => 'required|numeric|min:-180|max:180',
+            'categories'  => 'array',
+            'latitude'    => 'required|numeric|between:-90,90',
+            'longitude'   => 'required|numeric|between:-180,180',
             'radius'      => 'required|numeric|min:1',
         ];
+    }
+
+    /**
+     * @param Place $place
+     * @return Place
+     */
+    public function fillPlace(Place $place)
+    {
+        return $place->fill($this->all());
     }
 } 

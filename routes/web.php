@@ -147,6 +147,17 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->get('profile/place', 'PlaceController@showOwnerPlace')
         ->name('places.show.my');
+    $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
+        ->where('uuid', '[a-z0-9-]+')
+        ->name('places.show');
+    $router->get('profile/place/offers', 'PlaceController@showOwnerPlaceOffers')
+        ->name('places.show');
+
+    $router->resource('places', 'PlaceController', [
+        'except' => [
+            'destroy'
+        ]
+    ]);
 
     /**
      * Activation codes

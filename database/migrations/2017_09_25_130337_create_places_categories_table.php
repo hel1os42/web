@@ -14,7 +14,9 @@ class CreatePlacesCategoriesTable extends Migration
     public function up()
     {
         Schema::create('places_categories', function (Blueprint $table) {
-            $table->primary(['place_id', 'category_id']);
+            $table->uuid('place_id');
+            $table->uuid('category_id');
+            $table->primary(['place_id', 'category_id'])->index();
             $table->timestamps();
         });
 

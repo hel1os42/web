@@ -3,12 +3,10 @@
 namespace App\Models;
 
 use App\Models\NauModels\Account;
-use App\Models\NauModels\Offer;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -256,7 +254,7 @@ class Place extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -275,6 +273,14 @@ class Place extends Model
     public function testimonials(): HasMany
     {
         return $this->hasMany(Account::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
     }
 
 }
