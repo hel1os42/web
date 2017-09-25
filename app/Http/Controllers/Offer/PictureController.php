@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PictureController extends AbstractPictureController
 {
-    private const PROFILE_PICTURES_PATH = 'images/offer/pictures';
+    private const OFFER_PICTURES_PATH = 'images/offer/pictures';
 
     /**
      * Saves offer image from request
@@ -53,6 +53,6 @@ class PictureController extends AbstractPictureController
 
     protected function getPath(): string
     {
-        return self::PROFILE_PICTURES_PATH;
+        return self::OFFER_PICTURES_PATH;
     }
 }
