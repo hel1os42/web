@@ -7,6 +7,7 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
+use App\Models\Traits\HasAttributes;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class Offer extends NauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau;
+    use RelationsTrait, ScopesTrait, HasNau, HasAttributes;
 
     public function __construct(array $attributes = [])
     {
@@ -59,7 +60,7 @@ class Offer extends NauModel
             'acc_id'               => null,
             'name'                 => null,
             'descr'                => null,
-            'reward'               => '10000',
+            'reward'               => 10000,
             'status'               => null,
             'dt_start'             => null,
             'dt_finish'            => null,

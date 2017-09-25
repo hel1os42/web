@@ -26,7 +26,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('advert.offer.create', (new Offer())->getFillable());
+        return \response()->render('advert.offer.create', Offer::getFillableWithDefaults());
     }
 
     /**
