@@ -15,16 +15,16 @@ class CreatePlacesTable extends Migration
     {
         Schema::create('places', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
+            $table->uuid('user_id')->index();
             $table->string('name');
             $table->string('description')->nullable();
             $table->text('about')->nullable();
             $table->string('address')->nullable();
-            $table->float('latitude');
-            $table->float('longitude');
-            $table->integer('radius');
-            $table->integer('stars')->default(0);
-            $table->boolean('is_featured')->default(0);
+            $table->float('latitude')->index();
+            $table->float('longitude')->index();
+            $table->integer('radius')->index();
+            $table->integer('stars')->index()->default(0);
+            $table->boolean('is_featured')->index()->default(0);
             $table->timestamps();
         });
 

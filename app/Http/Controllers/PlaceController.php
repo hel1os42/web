@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PlaceFilterRequest;
 use App\Http\Requests\PlaceRequest;
 use App\Models\Place;
 use Illuminate\Http\Request;
-use Pheanstalk\Exception\ServerInternalErrorException;
-use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -14,11 +13,10 @@ class PlaceController extends Controller
 {
     use HandlesRequestData;
 
-    public function index(Request $request): Response
+    public function index(PlaceFilterRequest $request): Response
     {
         return response()->render('place.list',
-            Place::with('categories')
-                ->filterByCategories($request->get('category_ids', []))
+            Place::filterByCategories($request->get('category_ids', []))
                 ->filterByPosition($request->latitude, $request->longitude, $request->radius)
                 ->paginate()
         );
@@ -48,7 +46,7 @@ class PlaceController extends Controller
             ['testimonials', 'categories'],
             $request
         );
-        $place = Place::with($with)->findByUserId(auth()->id());
+        $place = Place::with($with)->byUser(auth()->id())->first();
         if (!$place instanceof Place) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
         }
@@ -69,7 +67,7 @@ class PlaceController extends Controller
      */
     public function showOwnerPlaceOffers(): Response
     {
-        return \response()->render('place.show', Place::findByUserId(auth()->id())->getOffers()->toArray());
+        return \response()->render('place.show', Place::byUser(auth()->id())->firstOrFail()->getOffers()->toArray());
     }
 
     /**
@@ -83,11 +81,10 @@ class PlaceController extends Controller
     /**
      * @param PlaceRequest $request
      * @return Response
-     * @throws ServerInternalErrorException
      */
     public function store(PlaceRequest $request): Response
     {
-        if (Place::findByUserId(auth()->id()) instanceof Place) {
+        if (Place::byUser(auth()->id())->first() instanceof Place) {
             throw new BadRequestHttpException('You already create place.');
         }
 
@@ -95,10 +92,10 @@ class PlaceController extends Controller
         $place->user()->associate(auth()->user());
         if (!$place->save()) {
             logger()->error('cannot save place', $place->toArray());
-            throw new ServerInternalErrorException();
+            throw new InternalServerErrorException();
         }
-        if ($request->has('categories') === true) {
-            $place->categories()->attach($request->categories);
+        if ($request->has('category_ids') === true) {
+            $place->categories()->attach($request->category_ids);
         }
 
         return \response()->render('place.show.my',
@@ -110,11 +107,10 @@ class PlaceController extends Controller
     /**
      * @param PlaceRequest $request
      * @return Response
-     * @throws ServerInternalErrorException
      */
     public function update(PlaceRequest $request): Response
     {
-        $place = Place::findByUserId(auth()->id());
+        $place = Place::byUser(auth()->id())->first();
         if (!$place instanceof Place) {
             throw new BadRequestHttpException('You have not created a place yet.');
         }
@@ -123,13 +119,13 @@ class PlaceController extends Controller
             $place->update(array_merge((new Place)->getFillable(), $request->all())) :
             $place->update($request->all());
 
-        if ($request->has('categories') === true) {
-            $place->categories()->sync($request->categories);
+        if ($request->has('category_ids') === true) {
+            $place->categories()->sync($request->category_ids);
         }
 
         if (!$success) {
             logger()->error('cannot update place', $place->toArray());
-            throw new ServerInternalErrorException();
+            throw new InternalServerErrorException();
         }
         return \response()->render('place.show.my', $place->toArray(), Response::HTTP_CREATED, route('place.show.my'));
     }

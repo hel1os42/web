@@ -42,7 +42,11 @@ class PlaceRequest extends FormRequest
             'description' => 'string',
             'about'       => 'string',
             'address'     => 'string',
-            'categories'  => 'array',
+            'category_ids' => 'required|array',
+            'category_ids.*' => sprintf(
+                'string|regex:%s|exists:categories,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
             'latitude'    => 'required|numeric|between:-90,90',
             'longitude'   => 'required|numeric|between:-180,180',
             'radius'      => 'required|numeric|min:1',

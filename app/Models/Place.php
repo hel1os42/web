@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int stars
  * @property bool is_featured
  *
+ * @method static static|Builder byUser(User $user)
+ * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
  */
 class Place extends Model
 {
@@ -244,9 +246,9 @@ class Place extends Model
      * @param string $uuid
      * @return Builder
      */
-    public function scopeFindByUserId(Builder $builder, string $uuid)
+    public function scopeByUser(Builder $builder, string $uuid): Builder
     {
-        return $builder->where('user_id', $uuid)->first();
+        return $builder->where('user_id', $uuid);
     }
 
     /**
@@ -322,11 +324,9 @@ class Place extends Model
      */
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
-        return count($categoryIds) >= 1
-            ? $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
+        return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
                 $builder->whereIn('id', $categoryIds);
-            })
-            : $builder;
+            });
     }
 
     /**
