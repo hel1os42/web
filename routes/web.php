@@ -82,7 +82,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('users.show');;
+        $router->get('', 'ProfileController@show')->name('users.show');
         $router->put('', 'ProfileController@update');
         $router->patch('', 'ProfileController@update');
         $router->get('referrals', 'ProfileController@referrals');
