@@ -136,6 +136,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('categories');
     $router->get('categories/{uuid}', 'CategoryController@show')
            ->name('categories.show');
+
+    /**
+     * Activation codes
+     */
+    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
+           ->name('activation_codes.show');
 });
 
 //---- Authorized users

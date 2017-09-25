@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\PictureRequest;
-use Intervention\Image\ImageManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -14,6 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PictureController extends Controller
 {
+    private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+    private const PICTURE_WIDTH         = 192;
+    private const PICTURE_HEIGHT        = 192;
+    private const PICTURE_QUALITY       = 100;
+    private const PICTURE_FORMAT        = 'jpg';
+
+    private const PICTURE_MIMETYPES = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+    ];
+
     /**
      * @var ImageManager
      */
@@ -26,8 +37,9 @@ class PictureController extends Controller
 
     /**
      * PictureController constructor.
+     *
      * @param ImageManager $imageManager
-     * @param Filesystem $filesystem
+     * @param Filesystem   $filesystem
      */
     public function __construct(ImageManager $imageManager, Filesystem $filesystem)
     {
@@ -38,14 +50,21 @@ class PictureController extends Controller
 
     /**
      * @param PictureRequest $request
-     * @return Response|\Illuminate\Routing\Redirector
+     *
+     * @return \Illuminate\Routing\Redirector|Response
+     * @throws \LogicException
+     * @throws \RuntimeException
      */
     public function store(PictureRequest $request)
     {
-        $this->imageManager->make($request->file('picture'))
-            ->fit('192', '192')
-            ->encode('jpg', 80)
-            ->save($this->getImagesPath(auth()->id()));
+        $imagesPath = $this->picturePathFor(auth()->id());
+
+        $picture = $this->imageManager
+            ->make($request->file('picture'))
+            ->fit(self::PICTURE_WIDTH, self::PICTURE_HEIGHT)
+            ->encode(self::PICTURE_FORMAT, self::PICTURE_QUALITY);
+
+        $this->filesystem->put($imagesPath, $picture);
 
         return $request->wantsJson()
             ? \response()->render('', [], Response::HTTP_CREATED, route('profile.picture.show'))
@@ -54,7 +73,11 @@ class PictureController extends Controller
 
     /**
      * @param string|null $userUuid
+     *
      * @return Response
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \LogicException
+     * @throws \RuntimeException
      */
     public function show(string $userUuid = null): Response
     {
@@ -62,24 +85,29 @@ class PictureController extends Controller
             $userUuid = \auth()->id();
         }
 
-        $path = $this->getImagesPath($userUuid, false);
+        $path = $this->picturePathFor($userUuid);
 
         return false === $this->filesystem->exists($path)
             ? \response()->error(Response::HTTP_NOT_FOUND)
-            : \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
+            : \response($this->filesystem->get($path), Response::HTTP_OK)->header('Content-Type',
+                self::PICTURE_MIMETYPES[self::PICTURE_FORMAT]);
     }
 
     /**
      * @param string $uuid
-     * @param bool $absolute
+     *
      * @return string
+     * @throws \RuntimeException
      */
-    private function getImagesPath(string $uuid, bool $absolute = true): string
+    private function picturePathFor(string $uuid): string
     {
-        $path = '';
-        if ($absolute) {
-            $path = storage_path('app') . '/';
+        $exists = $this->filesystem->exists(self::PROFILE_PICTURES_PATH)
+                  || $this->filesystem->makeDirectory(self::PROFILE_PICTURES_PATH);
+
+        if (!$exists) {
+            throw new \RuntimeException('Cannot create directory at: ' . self::PROFILE_PICTURES_PATH);
         }
-        return $path . sprintf('img/profile/pictures/%s.jpg', $uuid);
+
+        return sprintf(self::PROFILE_PICTURES_PATH . '/%s.%s', $uuid, self::PICTURE_FORMAT);
     }
 }
