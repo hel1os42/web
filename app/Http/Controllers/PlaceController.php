@@ -98,7 +98,7 @@ class PlaceController extends Controller
             $place->categories()->attach($request->category_ids);
         }
 
-        return \response()->render('place.show.my',
+        return \response()->render('place.list',
             $place->toArray(),
             Response::HTTP_CREATED,
             route('places.show.my'));
@@ -127,6 +127,6 @@ class PlaceController extends Controller
             logger()->error('cannot update place', $place->toArray());
             throw new InternalServerErrorException();
         }
-        return \response()->render('place.show.my', $place->toArray(), Response::HTTP_CREATED, route('place.show.my'));
+        return \response()->render('place.list', $place->toArray(), Response::HTTP_CREATED, route('place.show.my'));
     }
 }
