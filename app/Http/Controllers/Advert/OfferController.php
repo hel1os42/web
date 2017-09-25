@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Advert;
 
 use App\Http\Controllers\Controller;
-use App\Models\Currency;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\NauModels\Offer;
 use App\Http\Requests\Advert;
+use App\Models\Currency;
+use App\Models\NauModels\Offer;
+use Symfony\Component\HttpFoundation\Response;
 
 class OfferController extends Controller
 {
@@ -26,7 +26,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('advert.offer.create', (new Offer())->toArray());
+        return \response()->render('advert.offer.create', (new Offer())->getFillable());
     }
 
     /**

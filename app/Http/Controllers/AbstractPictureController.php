@@ -13,12 +13,12 @@ use Intervention\Image\ImageManager;
  */
 abstract class AbstractPictureController extends Controller
 {
-    protected $picture_width   = 192;
-    protected $picture_height  = 192;
-    protected $picture_quality = 100;
-    protected $picture_format  = 'jpg';
+    protected $pictureWidth   = 192;
+    protected $pictureHeight  = 192;
+    protected $pictureQuality = 100;
+    protected $pictureFormat  = 'jpg';
 
-    protected $picture_mimetypes = [
+    protected $pictureMimeTypes = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
     ];
@@ -61,8 +61,8 @@ abstract class AbstractPictureController extends Controller
 
         $picture = $this->imageManager
             ->make($request->file('picture'))
-            ->fit($this->picture_width, $this->picture_height)
-            ->encode($this->picture_format, $this->picture_quality);
+            ->fit($this->pictureWidth, $this->pictureHeight)
+            ->encode($this->pictureFormat, $this->pictureQuality);
 
         $this->filesystem->put($imagesPath, $picture);
 
@@ -87,7 +87,7 @@ abstract class AbstractPictureController extends Controller
             throw new \RuntimeException('Cannot create directory at: ' . $path);
         }
 
-        return sprintf($path . '/%s.%s', $uuid, $this->picture_format);
+        return sprintf($path . '/%s.%s', $uuid, $this->pictureFormat);
     }
 
     abstract protected function getPath(): string;
@@ -111,6 +111,6 @@ abstract class AbstractPictureController extends Controller
         return false === $this->filesystem->exists($path)
             ? \response()->error(Response::HTTP_NOT_FOUND)
             : \response($this->filesystem->get($path), Response::HTTP_OK)->header('Content-Type',
-                $this->picture_mimetypes[$this->picture_format]);
+                $this->pictureMimeTypes[$this->pictureFormat]);
     }
 }
