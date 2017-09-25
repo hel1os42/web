@@ -42,8 +42,9 @@ class User extends Authenticatable implements PhoneAuthenticable
 
     public function __construct(array $attributes = [])
     {
+        $this->connection = config('database.default');
+
         $this->attributes = [
-            'id'             => null,
             'name'           => '',
             'email'          => null,
             'password'       => null,
@@ -54,13 +55,21 @@ class User extends Authenticatable implements PhoneAuthenticable
             'invite_code'    => null,
         ];
 
-        $this->connection = config('database.default');
+        $this->casts = [
+            'name'      => 'string',
+            'email'     => 'string',
+            'phone'     => 'string',
+            'latitude'  => 'double',
+            'longitude' => 'double'
+        ];
 
         $this->fillable = [
             'name',
             'email',
             'password',
             'phone',
+            'latitude',
+            'longitude'
         ];
 
         $this->hidden = [
@@ -71,6 +80,7 @@ class User extends Authenticatable implements PhoneAuthenticable
         ];
 
         $this->appends = [
+            'picture_url',
             'level',
             'points',
             'offers_count',
@@ -151,6 +161,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getLevel(): int
     {
         return $this->level;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPictureUrlAttribute(): string
+    {
+        return route('users.picture.show', ['id' => $this->getId()]);
     }
 
     /**
