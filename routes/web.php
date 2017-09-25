@@ -144,8 +144,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      * Places
      */
 
-    $router->get('profile/place', 'PlaceController@showOwnerPlace')
-        ->name('places.show.my');
+    $router->group(['prefix' => 'profile'], function () use ($router) {
+        $router->get('profile/place', 'PlaceController@showOwnerPlace')
+            ->name('places.show.my');
+        $router->put('profile/place', 'PlaceController@update');
+        $router->patch('profile/place', 'PlaceController@update');
+    });
+
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
         ->where('uuid', '[a-z0-9-]+')
         ->name('places.show');
@@ -154,7 +159,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->resource('places', 'PlaceController', [
         'except' => [
-            'destroy'
+            'destroy',
+            'update'
         ]
     ]);
 

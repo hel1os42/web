@@ -8,10 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class PlaceFilterRequest
  * @package App\Http\Requests
  *
- * @property array  category_ids
+ * @property array category_ids
  * @property string latitude
  * @property string longitude
- * @property int    radius
+ * @property int radius
  *
  */
 class PlaceFilterRequest extends FormRequest
@@ -34,13 +34,13 @@ class PlaceFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_ids' => 'required|array',
+            'category_ids'   => 'required|array',
             'category_ids.*' => sprintf(
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'latitude'       => 'string|nullable',
-            'longitude'      => 'string|nullable',
+            'latitude'       => 'required|numeric|between:-90,90',
+            'longitude'      => 'required|numeric|between:-180,180',
             'radius'         => 'integer|nullable'
         ];
     }
