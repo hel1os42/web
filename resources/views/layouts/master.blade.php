@@ -50,7 +50,7 @@
 
 
 <!-- Location picker -->
-    <script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQ81-fUpHTJ73LOtZLzZjGjkUWl0TtvWA&libraries=places"></script>
     <script src=" {{ asset('js/locationpicker.jquery.js')  }} "></script>
 
 
