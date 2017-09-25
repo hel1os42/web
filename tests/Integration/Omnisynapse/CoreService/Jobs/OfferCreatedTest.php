@@ -107,8 +107,8 @@ class OfferCreatedTest extends TestCase
             'geo'         => $geo->jsonSerialize(),
             'limits'      => $limits->jsonSerialize(),
             'reward'      => $offer['reward'],
-            'start_date'  => $offerDateTimes['startDate']->format('Y-m-dO'),
-            'end_date'    => $offerDateTimes['endDate']->format('Y-m-dO'),
+            'start_date'  => $offerDateTimes['startDate']->format('Y-m-dTH:i:sO'),
+            'end_date'    => $offerDateTimes['endDate']->format('Y-m-dTH:i:sO'),
             'start_time'  => $offerDateTimes['startTime']->format('H:i:sO'),
             'end_time'    => $offerDateTimes['endTime']->format('H:i:sO'),
         ]));

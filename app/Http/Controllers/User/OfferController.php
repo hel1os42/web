@@ -9,16 +9,18 @@ use App\Models\NauModels\Offer;
 
 class OfferController extends Controller
 {
-
     /**
      * List offers
      * @param OfferRequest $request
+     *
      * @return Response
+     * @throws \LogicException
      */
     public function index(OfferRequest $request): Response
     {
+
         return response()->render('user.offer.index',
-            Offer::filterByCategory($request->category)
+            Offer::filterByCategories($request->get('category_ids', []))
             ->filterByPosition($request->latitude, $request->longitude, $request->radius)
             ->select(Offer::$publicAttributes)
             ->paginate()
@@ -27,8 +29,12 @@ class OfferController extends Controller
 
     /**
      * Get offer short info(for User) by it uuid
+     *
      * @param string $offerUuid
+     *
      * @return Response
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \LogicException
      */
     public function show(string $offerUuid): Response
     {

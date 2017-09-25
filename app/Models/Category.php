@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Class Category
@@ -17,7 +19,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon   created_at
  * @property Carbon   updated_at
  * @property Category parent
- * @property Category findByName
+ *
+ * @method static Category[]|Collection|Builder withParent(Category $parent)
+ * @method static Category[]|Collection|Builder withNoParent()
  */
 class Category extends Model
 {
@@ -89,5 +93,15 @@ class Category extends Model
     public function getChildrenCountAttribute(): int
     {
         return $this->children()->count();
+    }
+
+    public function scopeWithParent(Builder $builder, Category $parent)
+    {
+        return $builder->where('parent_id', $parent->getId());
+    }
+
+    public function scopeWithNoParent(Builder $builder)
+    {
+        return $builder->whereNull('parent_id');
     }
 }

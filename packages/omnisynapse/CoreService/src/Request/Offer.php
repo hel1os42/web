@@ -14,6 +14,9 @@ use OmniSynapse\CoreService\Request\Offer\Point;
  */
 class Offer implements \JsonSerializable
 {
+    const DATE_FORMAT = 'Y-m-d\TH:i:sO';
+    const TIME_FORMAT = 'H:i:sO';
+
     /** @var string */
     public $ownerId;
 
@@ -96,10 +99,10 @@ class Offer implements \JsonSerializable
             'geo'               => $this->geo->jsonSerialize(),
             'limits'            => $this->limits->jsonSerialize(),
             'reward'            => $this->reward,
-            'start_date'        => $this->startDate,
-            'end_date'          => $this->endDate,
-            'start_time'        => $this->startTime,
-            'end_time'          => $this->endTime,
+            'start_date'        => $this->startDate->format(self::DATE_FORMAT),
+            'end_date'          => $this->endDate->format(self::DATE_FORMAT),
+            'start_time'        => $this->startTime->format(self::TIME_FORMAT),
+            'end_time'          => $this->endTime->format(self::TIME_FORMAT),
         ];
     }
 
@@ -179,7 +182,7 @@ class Offer implements \JsonSerializable
      */
     public function setStartDate(Carbon $startDate): Offer
     {
-        $this->startDate = $startDate->toDateString();
+        $this->startDate = $startDate;
         return $this;
     }
 
@@ -189,7 +192,7 @@ class Offer implements \JsonSerializable
      */
     public function setEndDate(Carbon $endDate): Offer
     {
-        $this->endDate = $endDate->toDateString();
+        $this->endDate = $endDate;
         return $this;
     }
 
@@ -199,7 +202,7 @@ class Offer implements \JsonSerializable
      */
     public function setStartTime(Carbon $startTime): Offer
     {
-        $this->startTime = $startTime->toTimeString();
+        $this->startTime = $startTime;
         return $this;
     }
 
@@ -209,7 +212,7 @@ class Offer implements \JsonSerializable
      */
     public function setEndTime(Carbon $endTime): Offer
     {
-        $this->endTime = $endTime->toTimeString();
+        $this->endTime = $endTime;
         return $this;
     }
 }
