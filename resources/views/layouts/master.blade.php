@@ -5,86 +5,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
-    <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            color: #38bdff;
-            display: table;
-            font-weight: 100;
-            font-family: 'Lato';
-        }
-
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-            padding-top: calc(40px + 4%);
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 72px;
-            margin-bottom: 40px;
-        }
-
-        .header {
-            background-color: rgb(230, 230, 230);
-            position: fixed;
-            top: 0;
-            height: 60px;
-            border-bottom: 1px solid #38bdff;
-            width: 98%;
-            left: 0;
-            padding: 1%;
-        }
-
-        .header-right {
-            margin-top: 15px;
-            float: right;
-            margin-right: 20px;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .header-logo {
-            float: left;
-            font-size: 50px;
-        }
-
-        .offer {
-            color: black;
-            font-size: 25px;
-            text-align: left;
-            font-weight: bold;
-            margin-bottom: 100px;
-            margin-top: 100px;
-        }
-
-        .profile {
-            color: black;
-            font-size: 25px;
-            text-align: left;
-            font-weight: bold;
-            margin-bottom: 100px;
-        }
-
-        .alert.alert-danger {
-            text-align: left;
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+    <link href=" {{ asset('jquery/jquery-ui-1.9.2.custom.css') }} " rel="stylesheet" type="text/css">
+    <link href=" {{ asset('jquery/jquery.timepicker.css') }} " rel="stylesheet" type="text/css">
+    <link href=" {{ asset('css/base.css') }} " rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="container">
@@ -117,5 +40,22 @@
         @yield('content')
     </div>
 </div>
+
+
+<!-- jQuery picker -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src=" {{ asset('js/jquery-1.8.3.js')            }} "></script>
+    <script src=" {{ asset('js/jquery-ui-1.9.2.custom.js')  }} "></script>
+    <script src=" {{ asset('js/jquery.timepicker.js')       }} "></script>
+
+
+<!-- Location picker -->
+    <script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+    <script src=" {{ asset('js/locationpicker.jquery.js')  }} "></script>
+
+
+<!-- Main JS -->
+    <script src=" {{ asset('js/main.js')                    }} "></script>
 </body>
 </html>
+
