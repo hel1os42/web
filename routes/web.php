@@ -72,10 +72,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     /**
      * Profile
      */
-    $profile = function () use ($router) {
-
-    };
-
     $router->group(['prefix' => 'profile'], function () use ($router) {
         $router->get('', 'ProfileController@show')->name('profile');
         $router->put('', 'ProfileController@update');
@@ -86,7 +82,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
-        $router->get('', 'ProfileController@show');
+        $router->get('', 'ProfileController@show')->name('users.show');
         $router->put('', 'ProfileController@update');
         $router->patch('', 'ProfileController@update');
         $router->get('referrals', 'ProfileController@referrals');
@@ -106,7 +102,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
+
     $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
+        $router->get('picture.jpg', 'Offer\PictureController@show')->name('offer.picture.show');
+        $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
             $router->get('create', 'RedemptionController@create')->name('redemption.create');

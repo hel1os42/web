@@ -8,6 +8,7 @@
 
 namespace App\Models\NauModels\Offer;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -20,6 +21,7 @@ use Ramsey\Uuid\Uuid;
  * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
  * @method static filterByCategory(string $categoryId = null)
  * @method static filterByCategories(array $categoryIds)
+ * @method static static|Builder byOwner(User $user)
  */
 trait ScopesTrait
 {
@@ -87,5 +89,10 @@ trait ScopesTrait
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
         return count($categoryIds) >= 1 ? $builder->whereIn('category_id', $categoryIds) : $builder;
+    }
+
+    public function scopeByOwner(Builder $builder, User $owner): Builder
+    {
+        return $builder->whereIn('account_id', $owner->accounts->pluck('id'));
     }
 }
