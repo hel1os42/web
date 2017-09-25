@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 class PictureController extends Controller
 {
     private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
-    private const PICTURE_WIDTH = 192;
-    private const PICTURE_HEIGHT = 192;
-    private const PICTURE_QUALITY = 100;
-    private const PICTURE_FORMAT = 'jpg';
+    private const PICTURE_WIDTH         = 192;
+    private const PICTURE_HEIGHT        = 192;
+    private const PICTURE_QUALITY       = 100;
+    private const PICTURE_FORMAT        = 'jpg';
 
     private const PICTURE_MIMETYPES = [
         'jpg' => 'image/jpeg',
