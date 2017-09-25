@@ -31,7 +31,7 @@ class PlaceController extends Controller
      */
     public function show(Request $request, string $uuid): Response
     {
-        $with  = $this->handleWith(
+        $with = $this->handleWith(
             ['testimonials', 'categories'],
             $request
         );

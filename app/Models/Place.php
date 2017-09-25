@@ -73,9 +73,9 @@ class Place extends Model
             'radius'      => 1
         ];
 
-//        $this->appends = [
-//            'offers',
-//        ];
+        $this->appends = [
+            'offers_count',
+        ];
 
         parent::__construct($attributes);
     }
@@ -284,10 +284,10 @@ class Place extends Model
     }
 
     /**
-     * @param Builder     $builder
+     * @param Builder $builder
      * @param string|null $lat
      * @param string|null $lng
-     * @param int|null    $radius
+     * @param int|null $radius
      *
      * @return Builder
      * @throws \InvalidArgumentException
@@ -315,14 +315,26 @@ class Place extends Model
 
     /**
      * @param Builder $builder
-     * @param array   $categoryIds
+     * @param array $categoryIds
      *
      * @return Builder
      * @throws \InvalidArgumentException
      */
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
-        return count($categoryIds) >= 1 ? $builder->whereIn('category_id', $categoryIds) : $builder;
+        return count($categoryIds) >= 1
+            ? $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
+                $builder->whereIn('id', $categoryIds);
+            })
+            : $builder;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffersCountAttribute(): int
+    {
+        return $this->getOffers()->count();
     }
 
 }
