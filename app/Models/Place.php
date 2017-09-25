@@ -283,4 +283,46 @@ class Place extends Model
         return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
     }
 
+    /**
+     * @param Builder     $builder
+     * @param string|null $lat
+     * @param string|null $lng
+     * @param int|null    $radius
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeFilterByPosition(
+        Builder $builder,
+        string $lat = null,
+        string $lng = null,
+        int $radius = null
+    ): Builder {
+        if (empty($lat) || empty($lng) || $radius < 1) {
+            return $builder;
+        }
+
+        return $builder->whereRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((lng - %2$s) * 
+        PI()/180 / 2), 2)))) < (radius + %3$d)',
+            DB::connection()->getPdo()->quote($lat),
+            DB::connection()->getPdo()->quote($lng),
+            $radius));
+    }
+
+    /**
+     * @param Builder $builder
+     * @param array   $categoryIds
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
+    {
+        return count($categoryIds) >= 1 ? $builder->whereIn('category_id', $categoryIds) : $builder;
+    }
+
 }
