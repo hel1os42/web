@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\Offer;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
+use App\Models\NauModels\Offer;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -12,35 +13,42 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PictureController extends AbstractPictureController
 {
-    private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+    private const PROFILE_PICTURES_PATH = 'images/offer/pictures';
 
     /**
-     * Saves profile image from request
+     * Saves offer image from request
      *
      * @param PictureRequest $request
+     * @param string         $offerId
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function store(PictureRequest $request)
+    public function store(PictureRequest $request, string $offerId)
     {
-        return $this->storeImageFor($request, auth()->id(), route('profile.picture.show'));
+        /** @var Offer $offer */
+        $offer = Offer::byOwner(auth()->user())->findOrFail($offerId);
+
+        return $this->storeImageFor($request, $offer->id, route('offer.picture.show', ['offerId' => $offerId]));
     }
 
     /**
-     * Retrieves and responds with profile image
+     * Retrieves and responds with offer image
      *
-     * @param string|null $userUuid
+     * @param string $offerId
      *
      * @return Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $userUuid = null): Response
+    public function show(string $offerId): Response
     {
-        return $this->respondWithImageFor($userUuid);
+        /** @var Offer $offer */
+        $offer = Offer::findOrFail($offerId);
+
+        return $this->respondWithImageFor($offer->id);
     }
 
     protected function getPath(): string

@@ -94,7 +94,7 @@ class Offer extends NauModel
         $this->appends = [
             'account_id', 'label', 'description', 'start_date',
             'finish_date', 'start_time', 'finish_time', 'category_id',
-            'user_level_min', 'latitude', 'longitude'
+            'user_level_min', 'latitude', 'longitude', 'picture_url'
         ];
 
         $this->casts = [
@@ -323,6 +323,14 @@ class Offer extends NauModel
         $account = $this->account;
 
         return $account === null ? null : $account->owner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPictureUrlAttribute(): string
+    {
+        return route('offer.picture.show', ['offerId' => $this->getId()]);
     }
 
     /**

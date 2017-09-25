@@ -102,7 +102,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
+
     $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
+        $router->get('picture.jpg', 'Offer\PictureController@show')->name('offer.picture.show');
+        $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
             $router->get('create', 'RedemptionController@create')->name('redemption.create');
