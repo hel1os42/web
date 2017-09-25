@@ -8,9 +8,9 @@
 namespace App\Helpers;
 
 /**
- * Class Constants
+ * Interface Constants
  */
-class Constants
+interface Constants
 {
     /**
      * uuid regular expression
