@@ -15,6 +15,15 @@ use Symfony\Component\HttpFoundation\Response;
 class PictureController extends Controller
 {
     private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+    private const PICTURE_WIDTH = 192;
+    private const PICTURE_HEIGHT = 192;
+    private const PICTURE_QUALITY = 100;
+    private const PICTURE_FORMAT = 'jpg';
+
+    private const PICTURE_MIMETYPES = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+    ];
 
     /**
      * @var ImageManager
@@ -52,8 +61,8 @@ class PictureController extends Controller
 
         $picture = $this->imageManager
             ->make($request->file('picture'))
-            ->fit('192', '192')
-            ->encode('jpg', 80);
+            ->fit(self::PICTURE_WIDTH, self::PICTURE_HEIGHT)
+            ->encode(self::PICTURE_FORMAT, self::PICTURE_QUALITY);
 
         $this->filesystem->put($imagesPath, $picture);
 
@@ -80,7 +89,8 @@ class PictureController extends Controller
 
         return false === $this->filesystem->exists($path)
             ? \response()->error(Response::HTTP_NOT_FOUND)
-            : \response($this->filesystem->get($path), 200)->header('Content-Type', 'image/jpeg');
+            : \response($this->filesystem->get($path), Response::HTTP_OK)->header('Content-Type',
+                self::PICTURE_MIMETYPES[self::PICTURE_FORMAT]);
     }
 
     /**
@@ -98,6 +108,6 @@ class PictureController extends Controller
             throw new \RuntimeException('Cannot create directory at: ' . self::PROFILE_PICTURES_PATH);
         }
 
-        return sprintf(self::PROFILE_PICTURES_PATH . '/%s.jpg', $uuid);
+        return sprintf(self::PROFILE_PICTURES_PATH . '/%s.%s', $uuid, self::PICTURE_FORMAT);
     }
 }
