@@ -38,6 +38,9 @@ class OfferForRedemption
     /** @var string */
     public $created_at;
 
+    /** @var Transaction|null */
+    public $transaction;
+
     /**
      * @return string
      */
