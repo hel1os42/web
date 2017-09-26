@@ -19,5 +19,4 @@ class AddQueuedCookiesToResponse extends BaseVerifier
 
         return parent::handle($request, $next);
     }
-
 }
