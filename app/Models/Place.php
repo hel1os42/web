@@ -10,25 +10,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Class Place
  * @package App\Models
  *
- * @property string id
- * @property string user_id
- * @property string name
- * @property string description
- * @property string about
- * @property string address
- * @property float latitude
- * @property float longitude
- * @property int radius
- * @property int stars
- * @property bool is_featured
- * @property string picture_url
- * @property string cover_url
- * @property int offers_count
+ * @property string                       id
+ * @property string                       user_id
+ * @property string                       name
+ * @property string                       description
+ * @property string                       about
+ * @property string                       address
+ * @property float                        latitude
+ * @property float                        longitude
+ * @property int                          radius
+ * @property int                          stars
+ * @property bool                         is_featured
+ * @property string                       picture_url
+ * @property string                       cover_url
+ * @property int                          offers_count
+ *
+ * @property User                         user
+ * @property Collection                   testimonials
+ * @property NauModels\Offer[]|Collection offers
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
@@ -37,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Place extends Model
 {
     use HasAttributes, Uuids;
+
     /**
      * Place constructor.
      *
@@ -62,6 +68,10 @@ class Place extends Model
             'is_featured' => 'boolean'
         ];
 
+        $this->hidden = [
+            'user'
+        ];
+
         $this->fillable = [
             'name',
             'description',
@@ -83,6 +93,8 @@ class Place extends Model
         ];
 
         $this->appends = [
+            'categories_count',
+            'testimonials_count',
             'offers_count',
             'picture_url',
             'cover_url'
@@ -147,10 +159,27 @@ class Place extends Model
 
     /**
      * @return int
+     * @throws \App\Exceptions\TokenException
      */
     public function getOffersCountAttribute(): int
     {
-        return $this->offers()->get()->count();
+        return $this->offers()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getTestimonialsCountAttribute(): int
+    {
+        return $this->testimonials()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoriesCountAttribute(): int
+    {
+        return $this->categories()->count();
     }
 
     public function getOffersAttribute()
@@ -174,8 +203,6 @@ class Place extends Model
         return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
     }
 
-
-
     /** @return bool */
     public function isFeatured(): bool
     {
@@ -184,98 +211,118 @@ class Place extends Model
 
     /**
      * @param string $name
+     *
      * @return Place
      */
     public function setName(string $name): Place
     {
         $this->name = $name;
+
         return $this;
     }
 
     /**
      * @param string $description
+     *
      * @return Place
      */
     public function setDescription(string $description): Place
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
      * @param string $about
+     *
      * @return Place
      */
     public function setAbout(string $about): Place
     {
         $this->about = $about;
+
         return $this;
     }
 
     /**
      * @param string $address
+     *
      * @return Place
      */
     public function setAddress(string $address): Place
     {
         $this->address = $address;
+
         return $this;
     }
 
     /**
      * @param float $latitude
+     *
      * @return Place
      */
     public function setLatitude(float $latitude): Place
     {
         $this->latitude = $latitude;
+
         return $this;
     }
 
     /**
      * @param float $longitude
+     *
      * @return Place
      */
     public function setLongitude(float $longitude): Place
     {
         $this->longitude = $longitude;
+
         return $this;
     }
 
     /**
      * @param int $radius
+     *
      * @return Place
      */
     public function setRadius(int $radius): Place
     {
         $this->radius = $radius;
+
         return $this;
     }
 
     /**
      * @param int $stars
+     *
      * @return Place
      */
     public function setStars(int $stars): Place
     {
         $this->stars = $stars;
+
         return $this;
     }
 
     /**
      * @param bool $isFeatured
+     *
      * @return Place
      */
     public function setIsFeatured(bool $isFeatured): Place
     {
         $this->is_featured = $isFeatured;
+
         return $this;
     }
 
     /**
      * @param Builder $builder
-     * @param User $user
+     * @param User    $user
+     *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
     public function scopeByUser(Builder $builder, User $user): Builder
     {
@@ -316,16 +363,21 @@ class Place extends Model
         return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
     }
 
+    /**
+     * @return HasMany
+     *
+     * @throws \App\Exceptions\TokenException
+     */
     public function offers()
     {
         return $this->user->getAccountFor(Currency::NAU)->offers();
     }
 
     /**
-     * @param Builder $builder
+     * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
-     * @param int|null $radius
+     * @param int|null    $radius
      *
      * @return Builder
      * @throws \InvalidArgumentException
@@ -353,7 +405,7 @@ class Place extends Model
 
     /**
      * @param Builder $builder
-     * @param array $categoryIds
+     * @param array   $categoryIds
      *
      * @return Builder
      * @throws \InvalidArgumentException
@@ -361,7 +413,7 @@ class Place extends Model
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
-            $builder->whereIn('id', $categoryIds);
+            $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
         });
     }
 }

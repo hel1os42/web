@@ -3,19 +3,14 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncrypter;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse as BaseVerifier;
 
-class EncryptCookies extends BaseEncrypter
+/**
+ * Class AddQueuedCookiesToResponse
+ * NS: App\Http\Middleware
+ */
+class AddQueuedCookiesToResponse extends BaseVerifier
 {
-    /**
-     * The names of the cookies that should not be encrypted.
-     *
-     * @var array
-     */
-    protected $except = [
-        //
-    ];
-
     public function handle($request, Closure $next)
     {
         if (!$request->hasCookie(config('session.cookie')) && $request->wantsJson()) {

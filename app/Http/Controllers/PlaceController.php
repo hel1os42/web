@@ -16,9 +16,14 @@ class PlaceController extends Controller
 
     public function index(PlaceFilterRequest $request): Response
     {
+        $with = $this->handleWith(
+            ['testimonials', 'categories'],
+            $request
+        );
         return response()->render('place.list',
             Place::filterByCategories($request->category_ids)
                 ->filterByPosition($request->latitude, $request->longitude, $request->radius)
+                ->with($with)
                 ->paginate()
         );
     }
@@ -31,16 +36,19 @@ class PlaceController extends Controller
     public function show(Request $request, string $uuid): Response
     {
         $with = $this->handleWith(
-            ['testimonials', 'categories', 'offers'],
+            ['testimonials', 'categories'],
             $request
         );
 
         $place = new Place;
 
+        $place = $place->with($with)->findOrFail($uuid);
+
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
-        return \response()->render('place.show', $place->with($with)->findOrFail($uuid)->toArray());
+
+        return \response()->render('place.show', $place->toArray());
     }
 
     /**
@@ -50,20 +58,21 @@ class PlaceController extends Controller
     public function showOwnerPlace(Request $request): Response
     {
         $with = $this->handleWith(
-            ['testimonials', 'categories', 'offers'],
+            ['testimonials', 'categories'],
             $request
         );
 
         $place = new Place;
 
-        if (in_array('offers', explode(',', $request->get('with', '')))) {
-            $place->append('offers');
-        }
-
         $place = $place->with($with)->byUser(auth()->user())->first();
         if (!$place instanceof Place) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
         }
+
+        if (in_array('offers', explode(',', $request->get('with', '')))) {
+            $place->append('offers');
+        }
+
         return \response()->render('place.show', $place->toArray());
     }
 
@@ -89,7 +98,7 @@ class PlaceController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('place.create', array_merge(Place::getFillableWithDefaults(), ['categories' => []]));
+        return \response()->render('place.create', array_merge(Place::getFillableWithDefaults(), ['category_ids' => []]));
     }
 
     /**
