@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class PictureController
- * @package App\Http\Controllers\Profile
+ * @package App\Http\Controllers\Offer
  */
 class PictureController extends AbstractPictureController
 {

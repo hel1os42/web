@@ -8,6 +8,7 @@ use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\Place;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations;
 
@@ -74,6 +75,14 @@ trait RelationsTrait
     public function coreUser(): Relations\HasOne
     {
         return $this->hasOne(CoreUser::class, 'id', 'id');
+    }
+
+    /**
+     * @return Relations\HasOne
+     */
+    public function place(): Relations\HasOne
+    {
+        return $this->hasOne(Place::class, 'user_id', 'id');
     }
 
     /**
