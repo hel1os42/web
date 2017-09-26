@@ -36,7 +36,8 @@
             </div>
         @endif
     @endif
-    {!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
+
+    {!! session()->has('message') ? '<div class="alert alert-info"><p>'.session()->get('message').'</p></div>' : '' !!}
 
     <div class="content">
         @yield('content')
@@ -46,15 +47,15 @@
 
 <!-- jQuery picker -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src=" {{ asset('js/jquery-1.8.3.js')            }} "></script>
-    <script src=" {{ asset('js/jquery-ui-1.9.2.custom.js')  }} "></script>
-    <script src=" {{ asset('js/jquery.timepicker.js')       }} "></script>
-    <script src=" {{ asset('js/moment.min.js')       }} "></script>
+    <script src=" {{ asset('jquery/jquery-1.8.3.js')            }} "></script>
+    <script src=" {{ asset('jquery/jquery-ui-1.9.2.custom.js')  }} "></script>
+    <script src=" {{ asset('jquery/jquery.timepicker.js')       }} "></script>
+    <script src=" {{ asset('jquery/moment.min.js')       }} "></script>
 
 
 <!-- Location picker -->
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQ81-fUpHTJ73LOtZLzZjGjkUWl0TtvWA&libraries=places"></script>
-    <script src=" {{ asset('js/locationpicker.jquery.js')  }} "></script>
+    <script src=" {{ asset('jquery/locationpicker.jquery.js')  }} "></script>
 
 
 <!-- Main JS -->
