@@ -35,9 +35,7 @@ class PlaceController extends Controller
             $request
         );
 
-        $place = new Place;
-
-        $place = $place->with($with)->findOrFail($uuid);
+        $place = Place::with($with)->findOrFail($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -57,9 +55,7 @@ class PlaceController extends Controller
             $request
         );
 
-        $place = new Place;
-
-        $place = $place->with($with)->byUser(auth()->user())->first();
+        $place = Place::with($with)->byUser(auth()->user())->first();
         if (!$place instanceof Place) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
         }
@@ -113,10 +109,10 @@ class PlaceController extends Controller
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot save place');
         }
         if ($request->has('category_ids') === true) {
-            $place->categories()->attach($request->category_ids);
+            $place->categories()->attach(explode(',', $request->category_ids));
         }
 
-        return \response()->render('place.list',
+        return \response()->render('place.show',
             $place->toArray(),
             Response::HTTP_CREATED,
             route('places.show', ['uuid' => $place->getId()]));
