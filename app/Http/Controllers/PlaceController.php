@@ -8,6 +8,7 @@ use App\Models\Place;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PlaceController extends Controller
 {
@@ -92,7 +93,7 @@ class PlaceController extends Controller
         $place->user()->associate(auth()->user());
         if (!$place->save()) {
             logger()->error('cannot save place', $place->toArray());
-            throw new InternalServerErrorException();
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot save place');
         }
         if ($request->has('category_ids') === true) {
             $place->categories()->attach($request->category_ids);
@@ -125,7 +126,7 @@ class PlaceController extends Controller
 
         if (!$success) {
             logger()->error('cannot update place', $place->toArray());
-            throw new InternalServerErrorException();
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot update place');
         }
         return \response()->render('place.list', $place->toArray(), Response::HTTP_CREATED, route('place.show.my'));
     }
