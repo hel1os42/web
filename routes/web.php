@@ -86,9 +86,9 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->patch('place', 'PlaceController@update')
             ->name('profile.place.update');
         $router->get('place/offers', 'PlaceController@showOwnerPlaceOffers')
-            ->name('places.show');
-        $router->post('place/picture', 'Offer\PictureController@storePicture')->name('place.picture.store');
-        $router->post('place/cover', 'Offer\PictureController@storeCover')->name('place.cover.store');
+            ->name('profile.place.offers');
+        $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
+        $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
     });
 
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {

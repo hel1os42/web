@@ -20,7 +20,7 @@ class PlaceController extends Controller
             ['testimonials', 'categories'],
             $request
         );
-        return response()->render('place.list',
+        return response()->render('place.index',
             Place::filterByCategories($request->category_ids)
                 ->filterByPosition($request->latitude, $request->longitude, $request->radius)
                 ->with($with)
@@ -69,7 +69,7 @@ class PlaceController extends Controller
             $place->append('offers');
         }
 
-        return \response()->render('place.show', $place->toArray());
+        return \response()->render('profile.place.show', $place->toArray());
     }
 
     /**
@@ -78,7 +78,7 @@ class PlaceController extends Controller
      */
     public function showPlaceOffers(string $uuid): Response
     {
-        return \response()->render('place.show', Place::findOrFail($uuid)->getOffers()->toArray());
+        return \response()->render('user.offer.index', Place::findOrFail($uuid)->offers()->paginate());
     }
 
     /**
@@ -86,7 +86,8 @@ class PlaceController extends Controller
      */
     public function showOwnerPlaceOffers(): Response
     {
-        return \response()->render('place.show', Place::byUser(auth()->user())->firstOrFail()->getOffers()->toArray());
+        return \response()->render('advert.offer.index',
+            Place::byUser(auth()->user())->firstOrFail()->offers()->paginate());
     }
 
     /**
@@ -94,7 +95,12 @@ class PlaceController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('place.create', array_merge(Place::getFillableWithDefaults(), ['category_ids' => []]));
+        if (Place::byUser(auth()->user())->first() instanceof Place) {
+            throw new BadRequestHttpException('You already create place.');
+        }
+
+        return \response()->render('place.create',
+            array_merge(Place::getFillableWithDefaults(), ['category_ids' => []]));
     }
 
     /**
@@ -114,13 +120,13 @@ class PlaceController extends Controller
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot save place');
         }
         if ($request->has('category_ids') === true) {
-            $place->categories()->attach(explode(',', $request->category_ids));
+            $place->categories()->attach($request->category_ids);
         }
 
-        return \response()->render('place.show',
+        return \response()->render('profile.place.show',
             $place->toArray(),
             Response::HTTP_CREATED,
-            route('places.show', ['uuid' => $place->getId()]));
+            route('profile.place.show'));
     }
 
     /**
@@ -146,6 +152,7 @@ class PlaceController extends Controller
             logger()->error('cannot update place', $place->toArray());
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot update place');
         }
-        return \response()->render('place.list', $place->toArray(), Response::HTTP_CREATED, route('places.show', ['uuid' => $place->getId()]));
+        return \response()->render('profile.place.show', $place->toArray(), Response::HTTP_CREATED,
+            route('profile.place.show'));
     }
 }

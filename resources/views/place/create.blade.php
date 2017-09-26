@@ -12,7 +12,7 @@
                    value="{{old('description')}}"><br>
             <textarea name="about" placeholder="about">{{old('description')}}</textarea><br>
             <input name="address" placeholder="address" value="{{old('address')}}"><br>
-            <select id="place-category" name="categories_ids[]">
+            <select id="place-category" name="category_ids[]">
             </select><br>
             <input name="latitude" placeholder="latitude" value="{{old('latitude')}}"><br>
             <input name="longitude" placeholder="longitude" value="{{old('longitude')}}"><br>
