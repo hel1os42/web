@@ -52,6 +52,7 @@
         };
 
         xmlhttp.open("GET", "{{route('categories')}}", true);
+        xmlhttp.setRequestHeader('Accept', 'application/json');
         xmlhttp.send();
     </script>
 
