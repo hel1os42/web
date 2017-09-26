@@ -2,19 +2,63 @@ $( document ).ready(function() {
     $( function() {
 
         // Date, time Pickers
-        $( "#start_date" ).datepicker();
+        var date = $("#start_date, #finish_date");
+        var time = $("#start_time, #finish_time");
 
-        $('#start_time, #finish_time').timepicker({
-            'timeFormat': 'h:mm p'
+
+        date.datepicker({
+            dateFormat: "yy-mm-dd"
+        }).val();
+
+        date.on("change", function() {
+            var selected = $(this).val();
+            var momentDate = moment(selected).format('YYYY-MM-DD hh:mm:ss.000000ZZ');
+            console.log(momentDate);
         });
 
-        $('#finish_date').datepicker({
-            dateFormat: 'yy-mm-dd'
+
+        time.timepicker({
+            'showDuration': true,
+            'timeFormat': 'H:i:s'
+        }).val();
+
+        time.on("change", function() {
+            var sel = $(this).val();
+            var momentTime = moment(sel, '+-HH:mm').format('hh:mm:00.000000ZZ');
+            console.log(momentTime);
         });
 
 
+        // AJAX
+        $('.offer-form form').on('submit', function (e) {
+            e.preventDefault();
 
-        // Map location picker
+            var params = $(e.target).serialize();
+            var data = JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+
+            data.start_date = moment(data.start_date).format('YYYY-MM-DD hh:mm:ss.000000ZZ');
+            data.finish_date = moment(data.finish_date).format('YYYY-MM-DD hh:mm:ss.000000ZZ');
+
+            data.start_time = moment(data.start_time, '+-HH:mm').format('hh:mm:00.000000ZZ');
+            data.finish_time = moment(data.finish_time, '+-HH:mm').format('hh:mm:00.000000ZZ');
+
+            debugger;
+
+            $.ajax({
+                url: '/advert/offers',
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    debugger;
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        });
+
+
+        // Map Picker
         function updateControls(addressComponents) {
             $('#city').val(addressComponents.city);
             $('#country').val(addressComponents.country);

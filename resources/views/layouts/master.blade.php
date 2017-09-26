@@ -49,6 +49,7 @@
     <script src=" {{ asset('js/jquery-1.8.3.js')            }} "></script>
     <script src=" {{ asset('js/jquery-ui-1.9.2.custom.js')  }} "></script>
     <script src=" {{ asset('js/jquery.timepicker.js')       }} "></script>
+    <script src=" {{ asset('js/moment.min.js')       }} "></script>
 
 
 <!-- Location picker -->
