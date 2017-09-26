@@ -16,9 +16,14 @@ class PlaceController extends Controller
 
     public function index(PlaceFilterRequest $request): Response
     {
+        $with = $this->handleWith(
+            ['testimonials', 'categories'],
+            $request
+        );
         return response()->render('place.list',
             Place::filterByCategories($request->category_ids)
                 ->filterByPosition($request->latitude, $request->longitude, $request->radius)
+                ->with($with)
                 ->paginate()
         );
     }
