@@ -338,14 +338,6 @@ class Place extends Model
     }
 
     /**
-     * @return mixed
-     */
-    public function getOffers()
-    {
-        return $this->user->getAccountFor(Currency::NAU)->offers()->get();
-    }
-
-    /**
      * @return HasMany
      *
      * ATTENTION! it just stub
