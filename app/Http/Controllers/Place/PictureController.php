@@ -35,7 +35,7 @@ class PictureController extends AbstractPictureController
     {
         $this->type = self::TYPE_PICTURE;
         /** @var Place $place */
-        $place = Place::byUser(auth()->user());
+        $place = Place::byUser(auth()->user())->firstOrFail();
 
         return $this->storeImageFor($request, $place->getId(),
             route('place.picture.show', ['uuid' => $place->getId(), 'type' => self::TYPE_PICTURE]));
@@ -54,7 +54,7 @@ class PictureController extends AbstractPictureController
     {
         $this->type = self::TYPE_COVER;
         /** @var Place $place */
-        $place = Place::byUser(auth()->user());
+        $place = Place::byUser(auth()->user())->firstOrFail();
 
         $this->pictureHeight = 200;
         $this->pictureWidth  = 600;
