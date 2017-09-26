@@ -86,6 +86,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->patch('place', 'PlaceController@update');
         $router->get('place/offers', 'PlaceController@showOwnerPlaceOffers')
             ->name('places.show');
+        $router->post('place/picture', 'Offer\PictureController@storePicture')->name('place.picture.store');
+        $router->post('place/cover', 'Offer\PictureController@storeCover')->name('place.cover.store');
     });
 
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
@@ -155,9 +157,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ->where('uuid', '[a-z0-9-]+')
         ->name('places.show');
     $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->name('place.picture.show');
-    $router->post('places/picture', 'Offer\PictureController@storePicture')->name('place.picture.store');
-    $router->post('places/cover', 'Offer\PictureController@storeCover')->name('place.cover.store');
-
 
     $router->resource('places', 'PlaceController', [
         'except' => [
