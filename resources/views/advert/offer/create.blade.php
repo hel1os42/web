@@ -24,18 +24,13 @@
                 <input id="finish_date" name="finish_date" placeholder="finish_date" value="{{old('finish_date')}}">
 
                 <label for='start_time'>start time</label>
-                <input id="start_time" name="start_time" placeholder="start_time" value="{{old('start_time')}}">
+                <input id="start_time" name="start_time" type="text" placeholder="start_time" value="{{old('start_time')}}">
 
                 <label for='finish_time'>finish time</label>
-                <input id="finish_time" name="finish_time" placeholder="finish_time" value="{{old('finish_time')}}">
+                <input id="finish_time" name="finish_time" type="text" placeholder="finish_time" value="{{old('finish_time')}}">
 
                 <label for='offer_category'>offer-category</label>
-                <select id="offer_category" name="category_id">
-                    <option value="1">Category</option>
-                    <option value="2">Category</option>
-                    <option value="3">Category</option>
-                    <option value="4">Category</option>
-                </select>
+                <select id="offer_category" name="category_id"></select>
 
                 <label for='max_count'>max count</label>
                 <input id="max_count" name="max_count" type="number" max="1000" min="0" placeholder="max_count" value="{{old('max_count')}}">
@@ -87,7 +82,7 @@
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == XMLHttpRequest.DONE) {
                 if (xmlhttp.status == 200) {
-                    document.getElementById("offer-category").innerHTML = xmlhttp.responseText;
+                    document.getElementById("offer_category").innerHTML = xmlhttp.responseText;
                 }
                 else if (xmlhttp.status == 400) {
                     alert('There was an error 400');

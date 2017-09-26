@@ -25,5 +25,10 @@
                 {{$longitude}}
                 {{$radius}}
             </pre>
+        <form method="POST" action="{{route('offer.picture.store', ['offerId' => $id])}}" enctype="multipart/form-data">
+            {{ csrf_field() }}
+            <input type="file" name="picture">
+            <button type="submit">Set photo</button>
+        </form>
     </div>
 @stop

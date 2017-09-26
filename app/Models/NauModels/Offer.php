@@ -6,13 +6,12 @@ use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer\RelationsTrait;
+use App\Models\NauModels\Offer\ScopesTrait;
+use App\Models\Traits\HasAttributes;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Sofa\Eloquence\Builder;
-use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Class Offer
@@ -44,14 +43,10 @@ use Ramsey\Uuid\Uuid;
  * @property Account account
  * @property Collection|ActivationCode[] activationCodes
  * @property Collection|Redemption[] redemptions
- * @method static accountOffers(int $accountId) : Offer
- * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
- * @method static filterByCategory(string $categoryId = null)
- *
  */
 class Offer extends NauModel
 {
-    use RelationsTrait, HasNau;
+    use RelationsTrait, ScopesTrait, HasNau, HasAttributes;
 
     public function __construct(array $attributes = [])
     {
@@ -65,7 +60,7 @@ class Offer extends NauModel
             'acc_id'               => null,
             'name'                 => null,
             'descr'                => null,
-            'reward'               => '10000',
+            'reward'               => 10000,
             'status'               => null,
             'dt_start'             => null,
             'dt_finish'            => null,
@@ -100,7 +95,7 @@ class Offer extends NauModel
         $this->appends = [
             'account_id', 'label', 'description', 'start_date',
             'finish_date', 'start_time', 'finish_time', 'category_id',
-            'user_level_min', 'latitude', 'longitude'
+            'user_level_min', 'latitude', 'longitude', 'picture_url'
         ];
 
         $this->casts = [
@@ -202,6 +197,15 @@ class Offer extends NauModel
     public function getRewardAttribute(int $value): float
     {
         return $this->convertIntToFloat($value);
+    }
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function setRewardAttribute(float $value): void
+    {
+        $this->attributes['reward'] = $this->convertFloatToInt($value);
     }
 
     /** @return float */
@@ -323,6 +327,14 @@ class Offer extends NauModel
     }
 
     /**
+     * @return string
+     */
+    public function getPictureUrlAttribute(): string
+    {
+        return route('offer.picture.show', ['offerId' => $this->getId()]);
+    }
+
+    /**
      * @param string $value
      */
     public function setDtStartAttribute(string $value)
@@ -363,57 +375,6 @@ class Offer extends NauModel
     public function isOwner(User $user): bool
     {
         return $user->equals($this->getOwner());
-    }
-
-    /**
-     * @param Builder $builder
-     * @param int $accountId
-     *
-     * @return Builder
-     */
-    public function scopeAccountOffers(Builder $builder, int $accountId): Builder
-    {
-        return $builder->where('account_id', $accountId);
-    }
-
-    /**
-     * @param Builder $builder
-     * @param string $lat
-     * @param string $lng
-     * @param int $radius
-     *
-     * @return Builder
-     */
-    public function scopeFilterByPosition(
-        Builder $builder,
-        string $lat = null,
-        string $lng = null,
-        int $radius = null
-    ): Builder {
-        if (empty($lat) || empty($lng) || $radius < 1) {
-            return $builder;
-        }
-
-        return $builder->whereRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
-        COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((lng - %2$s) * 
-        PI()/180 / 2), 2)))) < (radius + %3$d)',
-            DB::connection()->getPdo()->quote($lat),
-            DB::connection()->getPdo()->quote($lng),
-            $radius));
-    }
-
-    /**
-     * @param Builder $builder
-     * @param string $categoryId
-     *
-     * @return Builder
-     */
-    public function scopeFilterByCategory(Builder $builder, string $categoryId = null): Builder
-    {
-        return !Uuid::isValid($categoryId) ? $builder : $builder->where('category_id', $categoryId);
     }
 
     /**
