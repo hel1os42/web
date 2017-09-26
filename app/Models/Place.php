@@ -26,9 +26,13 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int radius
  * @property int stars
  * @property bool is_featured
+ * @property string picture_url
+ * @property string cover_url
+ * @property int offers_count
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
+ * @method static static|Builder filterByCategories(array $category_ids)
  */
 class Place extends Model
 {
@@ -80,6 +84,8 @@ class Place extends Model
 
         $this->appends = [
             'offers_count',
+            'picture_url',
+            'cover_url'
         ];
 
         parent::__construct($attributes);
@@ -138,6 +144,37 @@ class Place extends Model
     {
         return $this->stars;
     }
+
+    /**
+     * @return int
+     */
+    public function getOffersCountAttribute(): int
+    {
+        return $this->offers()->get()->count();
+    }
+
+    public function getOffersAttribute()
+    {
+        return $this->offers()->get();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPictureUrlAttribute(): string
+    {
+        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverUrlAttribute(): string
+    {
+        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+    }
+
+
 
     /** @return bool */
     public function isFeatured(): bool
@@ -237,12 +274,12 @@ class Place extends Model
 
     /**
      * @param Builder $builder
-     * @param string $uuid
+     * @param User $user
      * @return Builder
      */
-    public function scopeByUser(Builder $builder, string $uuid): Builder
+    public function scopeByUser(Builder $builder, User $user): Builder
     {
-        return $builder->where('user_id', $uuid);
+        return $builder->where('user_id', $user->getId());
     }
 
     /**
@@ -279,6 +316,11 @@ class Place extends Model
         return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
     }
 
+    public function offers()
+    {
+        return $this->user->getAccountFor(Currency::NAU)->offers();
+    }
+
     /**
      * @param Builder $builder
      * @param string|null $lat
@@ -295,14 +337,14 @@ class Place extends Model
         int $radius = null
     ): Builder {
         if (empty($lat) || empty($lng) || $radius < 1) {
-            return $builder->whereNull('lat')->whereNull('lng')->whereNull('radius');
+            return $builder->whereNull('latitude')->whereNull('longitude')->whereNull('radius');
         }
 
         return $builder->whereRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
+        ASIN(SQRT(POWER(SIN((latitude - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(latitude * PI()/180) * 
         COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((lng - %2$s) * 
+        POWER(SIN((longitude - %2$s) * 
         PI()/180 / 2), 2)))) < (radius + %3$d)',
             DB::connection()->getPdo()->quote($lat),
             DB::connection()->getPdo()->quote($lng),
@@ -321,13 +363,5 @@ class Place extends Model
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
             $builder->whereIn('id', $categoryIds);
         });
-    }
-
-    /**
-     * @return int
-     */
-    public function getOffersCountAttribute(): int
-    {
-        return $this->getOffers()->count();
     }
 }

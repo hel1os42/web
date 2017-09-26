@@ -31,10 +31,16 @@ class PlaceController extends Controller
     public function show(Request $request, string $uuid): Response
     {
         $with = $this->handleWith(
-            ['testimonials', 'categories'],
+            ['testimonials', 'categories', 'offers'],
             $request
         );
-        return \response()->render('place.show', Place::with($with)->findOrFail($uuid)->toArray());
+
+        $place = new Place;
+
+        if (in_array('offers', explode(',', $request->get('with', '')))) {
+            $place->append('offers');
+        }
+        return \response()->render('place.show', $place->with($with)->findOrFail($uuid)->toArray());
     }
 
     /**
@@ -43,11 +49,18 @@ class PlaceController extends Controller
      */
     public function showOwnerPlace(Request $request): Response
     {
-        $with  = $this->handleWith(
-            ['testimonials', 'categories'],
+        $with = $this->handleWith(
+            ['testimonials', 'categories', 'offers'],
             $request
         );
-        $place = Place::with($with)->byUser(auth()->id())->first();
+
+        $place = new Place;
+
+        if (in_array('offers', explode(',', $request->get('with', '')))) {
+            $place->append('offers');
+        }
+
+        $place = $place->with($with)->byUser(auth()->user())->first();
         if (!$place instanceof Place) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
         }
@@ -68,7 +81,7 @@ class PlaceController extends Controller
      */
     public function showOwnerPlaceOffers(): Response
     {
-        return \response()->render('place.show', Place::byUser(auth()->id())->firstOrFail()->getOffers()->toArray());
+        return \response()->render('place.show', Place::byUser(auth()->user())->firstOrFail()->getOffers()->toArray());
     }
 
     /**
@@ -85,7 +98,7 @@ class PlaceController extends Controller
      */
     public function store(PlaceRequest $request): Response
     {
-        if (Place::byUser(auth()->id())->first() instanceof Place) {
+        if (Place::byUser(auth()->user())->first() instanceof Place) {
             throw new BadRequestHttpException('You already create place.');
         }
 
@@ -102,7 +115,7 @@ class PlaceController extends Controller
         return \response()->render('place.list',
             $place->toArray(),
             Response::HTTP_CREATED,
-            route('places.show.my'));
+            route('places.show', ['uuid' => $place->getId()]));
     }
 
     /**
@@ -111,7 +124,7 @@ class PlaceController extends Controller
      */
     public function update(PlaceRequest $request): Response
     {
-        $place = Place::byUser(auth()->id())->first();
+        $place = Place::byUser(auth()->user())->first();
         if (!$place instanceof Place) {
             throw new BadRequestHttpException('You have not created a place yet.');
         }
@@ -128,6 +141,6 @@ class PlaceController extends Controller
             logger()->error('cannot update place', $place->toArray());
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot update place');
         }
-        return \response()->render('place.list', $place->toArray(), Response::HTTP_CREATED, route('place.show.my'));
+        return \response()->render('place.list', $place->toArray(), Response::HTTP_CREATED, route('places.show', ['uuid' => $place->getId()]));
     }
 }
