@@ -39,9 +39,9 @@ class OfferRequest extends FormRequest
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'latitude'       => 'string|nullable',
-            'longitude'      => 'string|nullable',
-            'radius'         => 'integer|nullable'
+            'latitude'       => 'required_with:longitude,radius|string|nullable',
+            'longitude'      => 'required_with:latitude,radius|string|nullable',
+            'radius'         => 'required_with:latitude,longitude|integer|nullable'
         ];
     }
 } 
