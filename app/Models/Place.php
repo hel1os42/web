@@ -68,6 +68,10 @@ class Place extends Model
             'is_featured' => 'boolean'
         ];
 
+        $this->hidden = [
+            'user'
+        ];
+
         $this->fillable = [
             'name',
             'description',
@@ -318,6 +322,7 @@ class Place extends Model
      * @param User    $user
      *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
     public function scopeByUser(Builder $builder, User $user): Builder
     {
