@@ -43,9 +43,12 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
          * reset password
          */
         $router->group(['prefix' => 'password'], function () use ($router) {
-            $router->get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-            $router->post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-            $router->get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+            $router->get('reset', 'Auth\ForgotPasswordController@showLinkRequestForm')
+                ->name('password.request');
+            $router->post('email', 'Auth\ForgotPasswordController@sendResetLinkEmail')
+                ->name('password.email');
+            $router->get('reset/{token}', 'Auth\ResetPasswordController@showResetForm')
+                ->name('password.reset');
             $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
@@ -66,14 +69,25 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
-    $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('users.show');
-        $router->get('referrals', 'ProfileController@referrals');
-    });
-
+    /**
+     * Profile
+     */
     $router->group(['prefix' => 'profile'], function () use ($router) {
         $router->get('', 'ProfileController@show')->name('profile');
+        $router->put('', 'ProfileController@update');
+        $router->patch('', 'ProfileController@update')->name('profile.update');
         $router->get('referrals', 'ProfileController@referrals')->name('referrals');
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
+        $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
+    });
+
+    $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
+        $router->get('', 'ProfileController@show')->name('users.show');
+        $router->put('', 'ProfileController@update');
+        $router->patch('', 'ProfileController@update');
+        $router->get('referrals', 'ProfileController@referrals');
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('users.picture.show');
+        $router->post('picture', 'Profile\PictureController@store');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -88,7 +102,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
+
     $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
+        $router->get('picture.jpg', 'Offer\PictureController@show')->name('offer.picture.show');
+        $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
             $router->get('create', 'RedemptionController@create')->name('redemption.create');
@@ -122,6 +139,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('categories');
     $router->get('categories/{uuid}', 'CategoryController@show')
            ->name('categories.show');
+
+    /**
+     * Activation codes
+     */
+    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
+           ->name('activation_codes.show');
 });
 
 //---- Authorized users
