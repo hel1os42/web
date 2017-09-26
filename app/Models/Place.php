@@ -150,7 +150,7 @@ class Place extends Model
      */
     public function getOffersCountAttribute(): int
     {
-        return $this->offers()->get()->count();
+        return $this->offers()->count();
     }
 
     public function getOffersAttribute()
