@@ -18,7 +18,7 @@ class VerifyCsrfToken extends BaseVerifier
 
     public function handle($request, Closure $next)
     {
-        if (!$request->hasCookie(config('session.cookie')) && $request->wantsJson()) {
+        if (auth('jwt')->check() || !$request->hasCookie(config('session.cookie')) && $request->wantsJson()) {
             return $next($request);
         }
 
