@@ -17,7 +17,7 @@ class PlaceController extends Controller
     public function index(PlaceFilterRequest $request): Response
     {
         return response()->render('place.list',
-            Place::filterByCategories($request->get('category_ids', []))
+            Place::filterByCategories($request->category_ids)
                 ->filterByPosition($request->latitude, $request->longitude, $request->radius)
                 ->paginate()
         );

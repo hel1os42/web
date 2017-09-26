@@ -295,7 +295,7 @@ class Place extends Model
         int $radius = null
     ): Builder {
         if (empty($lat) || empty($lng) || $radius < 1) {
-            return $builder;
+            return $builder->whereNull('lat')->whereNull('lng')->whereNull('radius');
         }
 
         return $builder->whereRaw(sprintf('(6371000 * 2 * 

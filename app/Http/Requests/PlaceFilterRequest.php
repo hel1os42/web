@@ -39,9 +39,9 @@ class PlaceFilterRequest extends FormRequest
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'latitude'       => 'required|numeric|between:-90,90',
-            'longitude'      => 'required|numeric|between:-180,180',
-            'radius'         => 'integer|nullable'
+            'latitude'       => 'required_with:longitude,radius|numeric|between:-90,90',
+            'longitude'      => 'required_with:latitude,radius|numeric|between:-180,180',
+            'radius'         => 'required_with:latitude,longitude|integer'
         ];
     }
 } 
