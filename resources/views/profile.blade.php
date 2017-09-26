@@ -56,9 +56,8 @@
         Name: {{$name}}<br>
         ID: {{$id}}<br>
         Your email: {{$email}}<br>
-        Your invite link: <a
-                href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a><br>
-        <br>Links profile:<br>
+        Your invite link: <a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a><br>
+        <br>Links:<br>
         <a href="{{route('referrals')}}">{{route('referrals')}}</a><br>
         <a href="{{route('profile.place.show')}}">{{route('profile.place.show')}}</a><br>
         <a href="{{route('profile.place.offers')}}">{{route('profile.place.offers')}}</a><br>
@@ -72,13 +71,12 @@
         <br>Places:<br>
         <a href="{{ route('places.create') }}">{{ route('places.create') }}</a><br>
         <br>Photo:<br>
-        <form method=" POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">
+        <form method="POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">
             {{ csrf_field() }}
-            <input type="file" name="picture">
+            <label for="picture">Photo:</label>
+            <input id="picture" type="file" name="picture">
             <button type="submit">Set photo</button>
         </form>
-
-
     </div>
 
 @stop
