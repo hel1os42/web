@@ -5,11 +5,11 @@ namespace App\Models;
 use App\Models\NauModels\Account;
 use App\Models\Traits\HasAttributes;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class Place
@@ -346,8 +346,8 @@ class Place extends Model
         COS(ABS(%1$s) * PI()/180) * 
         POWER(SIN((longitude - %2$s) * 
         PI()/180 / 2), 2)))) < (radius + %3$d)',
-            DB::connection()->getPdo()->quote($lat),
-            DB::connection()->getPdo()->quote($lng),
+            $this->getConnection()->getPdo()->quote($lat),
+            $this->getConnection()->getPdo()->quote($lng),
             $radius));
     }
 
