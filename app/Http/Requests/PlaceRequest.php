@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property float latitude
  * @property float longitude
  * @property int radius
- * @property string category_ids
+ * @property array category_ids
  *
  */
 class PlaceRequest extends FormRequest

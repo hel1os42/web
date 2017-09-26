@@ -3,8 +3,6 @@
 <head>
     <title>@yield('title')</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
     <style>
         html, body {
             height: 100%;
@@ -17,7 +15,7 @@
             color: #38bdff;
             display: table;
             font-weight: 100;
-            font-family: 'Lato';
+            font-family: 'Helvetica, Arial, sans-serif';
         }
 
         .container {
