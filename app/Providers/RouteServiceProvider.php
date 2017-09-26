@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
         /** @var \Illuminate\Routing\Router $router */
         $router = app('router');
 
-        return $router->middleware('jwt')->middleware('web')
+        return $router->middleware('web')
                       ->namespace($this->namespace)
                       ->group(base_path('routes/web.php'));
     }

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Routing\ResponseFactory;
@@ -100,12 +101,12 @@ class LoginController extends Controller
 
         $credentials = $request->credentials();
 
-        /** @var AuthManager $auth */
-        $auth = app('auth');
-
         foreach (config('auth.guards') as $guardName => $config) {
+            /** @var AuthManager|Guard $auth */
+            $auth = auth();
+
             try {
-                $validated = auth($guardName)->validate($credentials);
+                $validated = $auth->guard($guardName)->validate($credentials);
             } catch (QueryException $queryException) {
                 $validated = false;
             }
@@ -124,6 +125,8 @@ class LoginController extends Controller
         if (null === $user) {
             return $response->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
         }
+
+        session()->migrate(true);
 
         return $request->wantsJson()
             ? $this->postLoginJwt($user, $response)
