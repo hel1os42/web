@@ -34,7 +34,7 @@ class ProfileController extends Controller
         $userId = auth()->id();
 
         $with = $this->handleWith(
-            ['accounts', 'offers', 'referrals', 'activationCodes'],
+            ['accounts', 'offers', 'referrals', 'activationCodes', 'place'],
             $request
         );
 

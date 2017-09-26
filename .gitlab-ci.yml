@@ -24,6 +24,7 @@ build:
     - apk add git
     - git submodule sync --recursive
     - git submodule update --init --recursive
+    - cp .env.testing .env
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
   script:

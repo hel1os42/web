@@ -79,6 +79,15 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'ProfileController@referrals')->name('referrals');
         $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
         $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
+
+        $router->get('place', 'PlaceController@showOwnerPlace')
+            ->name('places.show.my');
+        $router->put('place', 'PlaceController@update');
+        $router->patch('place', 'PlaceController@update');
+        $router->get('place/offers', 'PlaceController@showOwnerPlaceOffers')
+            ->name('places.show');
+        $router->post('place/picture', 'Offer\PictureController@storePicture')->name('place.picture.store');
+        $router->post('place/cover', 'Offer\PictureController@storeCover')->name('place.cover.store');
     });
 
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
@@ -139,6 +148,22 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('categories');
     $router->get('categories/{uuid}', 'CategoryController@show')
            ->name('categories.show');
+
+    /**
+     * Places
+     */
+
+    $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
+        ->where('uuid', '[a-z0-9-]+')
+        ->name('places.show');
+    $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->name('place.picture.show');
+
+    $router->resource('places', 'PlaceController', [
+        'except' => [
+            'destroy',
+            'update'
+        ]
+    ]);
 
     /**
      * Activation codes
