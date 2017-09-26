@@ -18,7 +18,6 @@ class OfferController extends Controller
      */
     public function index(OfferRequest $request): Response
     {
-
         return response()->render('user.offer.index',
             Offer::filterByCategories($request->get('category_ids', []))
             ->filterByPosition($request->latitude, $request->longitude, $request->radius)

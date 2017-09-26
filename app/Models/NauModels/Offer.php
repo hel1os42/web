@@ -327,11 +327,11 @@ class Offer extends NauModel
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getPictureUrlAttribute(): string
+    public function getPictureUrlAttribute():? string
     {
-        return route('offer.picture.show', ['offerId' => $this->getId()]);
+        return $this->hasId() ? route('offer.picture.show', ['offerId' => $this->getId()]) : null;
     }
 
     /**
@@ -399,5 +399,13 @@ class Offer extends NauModel
         $activationCode->activated($redemption);
 
         return $redemption;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasId(): bool
+    {
+        return !is_null($this->id);
     }
 }
