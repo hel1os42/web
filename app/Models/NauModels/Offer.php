@@ -166,25 +166,25 @@ class Offer extends NauModel
     }
 
     /** @return string */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
 
     /** @return int */
-    public function getAccountId(): int
+    public function getAccountId(): ?int
     {
         return $this->account_id;
     }
 
     /** @return string */
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->label;
     }
 
     /** @return string */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -194,34 +194,34 @@ class Offer extends NauModel
      *
      * @return float
      */
-    public function getRewardAttribute(int $value): float
+    public function getRewardAttribute(?int $value): float
     {
-        return $this->convertIntToFloat($value);
+        return $this->convertIntToFloat((int)$value);
     }
 
     /**
      * @param float $value
      * @return void
      */
-    public function setRewardAttribute(float $value): void
+    public function setRewardAttribute(?float $value): void
     {
-        $this->attributes['reward'] = $this->convertFloatToInt($value);
+        $this->attributes['reward'] = $this->convertFloatToInt((float)$value);
     }
 
     /** @return float */
-    public function getReward(): float
+    public function getReward(): ?float
     {
         return $this->reward;
     }
 
     /** @return string */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
     /** @return Carbon */
-    public function getStartDate(): Carbon
+    public function getStartDate(): ?Carbon
     {
         return $this->start_date;
     }
@@ -237,7 +237,7 @@ class Offer extends NauModel
     /**
      * @return Carbon
      */
-    public function getStartTime(): Carbon
+    public function getStartTime(): ?Carbon
     {
         return $this->start_time;
     }
@@ -251,19 +251,19 @@ class Offer extends NauModel
     }
 
     /** @return string */
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }
 
     /** @return string */
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
     /** @return string */
-    public function getCategoryId(): string
+    public function getCategoryId(): ?string
     {
         return $this->category_id;
     }
@@ -271,55 +271,55 @@ class Offer extends NauModel
     /** @return int */
     public function getMaxCount(): int
     {
-        return $this->max_count;
+        return (int)$this->max_count;
     }
 
     /** @return int */
     public function getMaxForUser(): int
     {
-        return $this->max_for_user;
+        return (int)$this->max_for_user;
     }
 
     /** @return int */
     public function getMaxPerDay(): int
     {
-        return $this->max_per_day;
+        return (int)$this->max_per_day;
     }
 
     /** @return int */
     public function getMaxForUserPerDay(): int
     {
-        return $this->max_for_user_per_day;
+        return (int)$this->max_for_user_per_day;
     }
 
     /** @return int */
     public function getUserLevelMin(): int
     {
-        return $this->user_level_min;
+        return (int)$this->user_level_min;
     }
 
     /** @return float */
     public function getLatitude(): float
     {
-        return $this->latitude;
+        return (float)$this->latitude;
     }
 
     /** @return float */
     public function getLongitude(): float
     {
-        return $this->longitude;
+        return (float)$this->longitude;
     }
 
     /** @return int */
     public function getRadius(): int
     {
-        return $this->radius;
+        return (int)$this->radius;
     }
 
     /**
      * @return User|null
      */
-    public function getOwner()
+    public function getOwner(): ?User
     {
         $account = $this->account;
 
@@ -329,9 +329,9 @@ class Offer extends NauModel
     /**
      * @return null|string
      */
-    public function getPictureUrlAttribute():? string
+    public function getPictureUrlAttribute(): ?string
     {
-        return $this->hasId() ? route('offer.picture.show', ['offerId' => $this->getId()]) : null;
+        return route('offer.picture.show', ['offerId' => $this->id ?? 'empty']);
     }
 
     /**
@@ -339,7 +339,7 @@ class Offer extends NauModel
      */
     public function setDtStartAttribute(string $value)
     {
-        $this->dt_start = Carbon::parse($value);
+        $this->attributes['dt_start'] = Carbon::parse($value);
     }
 
     /**
@@ -347,7 +347,7 @@ class Offer extends NauModel
      */
     public function setDtFinishAttribute(string $value)
     {
-        $this->dt_finish = Carbon::parse($value);
+        $this->attributes['dt_finish'] = Carbon::parse($value);
     }
 
 
@@ -356,7 +356,7 @@ class Offer extends NauModel
      */
     public function setTmStartAttribute(string $value)
     {
-        $this->tm_start = Carbon::parse($value)->year(1970)->month(01)->day(01);
+        $this->attributes['tm_start'] = Carbon::parse($value)->year(1970)->month(01)->day(01);
     }
 
     /**
@@ -364,7 +364,7 @@ class Offer extends NauModel
      */
     public function setTmFinishAttribute(string $value)
     {
-        $this->tm_finish = Carbon::parse($value)->year(1970)->month(01)->day(01);
+        $this->attributes['tm_finish'] = Carbon::parse($value)->year(1970)->month(01)->day(01);
     }
 
     /**
@@ -383,7 +383,7 @@ class Offer extends NauModel
      * @return Redemption
      * @throws BadActivationCodeException|CannotRedeemException
      */
-    public function redeem(string $code)
+    public function redeem(string $code): Redemption
     {
         $activationCode = $this->activationCodes()->byCode($code)->first();
 
@@ -399,13 +399,5 @@ class Offer extends NauModel
         $activationCode->activated($redemption);
 
         return $redemption;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasId(): bool
-    {
-        return !is_null($this->id);
     }
 }
