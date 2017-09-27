@@ -58,7 +58,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = Offer::firstOrFail($offerUuid);
+        $offer = Offer::query()->findOrFail($offerUuid);
 
         if ($offer->isOwner(auth()->user())) {
             return \response()->render('advert.offer.show', $offer->toArray());
