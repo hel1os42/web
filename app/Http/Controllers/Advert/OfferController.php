@@ -7,6 +7,7 @@ use App\Http\Requests\Advert;
 use App\Models\Currency;
 use App\Models\NauModels\Offer;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OfferController extends Controller
 {
@@ -39,7 +40,10 @@ class OfferController extends Controller
         $newOffer = new Offer();
         $newOffer->fill($request->toArray());
         $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
-        $newOffer->save();
+
+        if (!$newOffer->save()) {
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "Cannot save your offer.");
+        }
 
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
@@ -54,7 +58,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = Offer::firstOrFail($offerUuid);
+        $offer = Offer::query()->findOrFail($offerUuid);
 
         if ($offer->isOwner(auth()->user())) {
             return \response()->render('advert.offer.show', $offer->toArray());
