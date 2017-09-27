@@ -39,7 +39,7 @@ class Category extends Model
         $this->table      = 'categories';
         $this->primaryKey = 'id';
 
-        $this->initUUID();
+        $this->initUuid();
 
         $this->casts = [
             'id'        => 'string',

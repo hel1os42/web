@@ -48,7 +48,7 @@ class User extends Authenticatable implements PhoneAuthenticable
         $this->connection = config('database.default');
         $this->primaryKey = 'id';
 
-        $this->initUUID();
+        $this->initUuid();
 
         $this->attributes = [
             'name'           => '',

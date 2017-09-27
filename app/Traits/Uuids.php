@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use Webpatser\Uuid\Uuid;
@@ -17,9 +18,9 @@ trait Uuids
         });
     }
 
-    protected function initUUID()
+    protected function initUuid()
     {
         $this->incrementing = false;
-        $this->keyType = 'string';
+        $this->keyType      = 'string';
     }
 }
