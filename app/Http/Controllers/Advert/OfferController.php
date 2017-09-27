@@ -72,7 +72,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, auth()->user());
+        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, $this->auth->user());
 
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));

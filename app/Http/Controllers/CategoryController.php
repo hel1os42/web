@@ -16,8 +16,6 @@ class CategoryController extends Controller
 
 
     /**
-     * @param Request $request
-     *
      * @return Response
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -33,7 +31,6 @@ class CategoryController extends Controller
     /**
      * Category show
      *
-     * @param Request $request
      * @param string  $uuid
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response

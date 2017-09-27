@@ -6,11 +6,10 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
-use Tymon\JWTAuth\Exceptions as JwtException;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
-
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
@@ -38,12 +37,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof JwtException\JWTException) {
-            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
-        } elseif ($exception instanceof JwtException\TokenExpiredException) {
-            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
-        } elseif ($exception instanceof JwtException\TokenInvalidException) {
-            return response()->json(trans($exception->getMessage()), $exception->getStatusCode());
+        if ($exception instanceof JWTException) {
+            return response()->json(trans($exception->getMessage()), Response::HTTP_UNAUTHORIZED);
         }
 
         return parent::render($request, $exception);
