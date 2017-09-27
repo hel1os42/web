@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\Traits\HasAttributes;
 use App\Traits\Uuids;

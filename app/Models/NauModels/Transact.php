@@ -21,10 +21,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Account source
  * @property Account destination
  * @property string  type
- * @method static Transact forAccount(Account $account)
- * @method static Transact forUser(User $user)
+ *
+ * @method static static|Builder forAccount(Account $account)
+ * @method static static|Builder forUser(User $user)
  */
-class Transact extends NauModel
+class Transact extends AbstractNauModel
 {
     use HasNau;
 

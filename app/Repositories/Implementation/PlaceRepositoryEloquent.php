@@ -84,8 +84,12 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
-    public function getByCategoriesAndPosition(array $categoryIds, float $latitude, float $longitude, int $radius): Builder
-    {
+    public function getByCategoriesAndPosition(
+        array $categoryIds,
+        float $latitude,
+        float $longitude,
+        int $radius
+    ): Builder {
         $this->applyCriteria();
         $this->applyScope();
         $model = $this->model->filterByCategories($categoryIds)->filterByPosition($latitude, $longitude, $radius);

@@ -39,9 +39,12 @@ use Carbon\Carbon;
  * @property Carbon      created_at
  * @property Carbon      updated_at
  */
-class Offer extends NauModel
+class Offer extends AbstractNauModel
 {
     use RelationsTrait, ScopesTrait, HasNau, HasAttributes;
+
+    const STATUS_ACTIVE = 'active';
+    const STATUS_DEACTIVE = 'deactive';
 
     public function __construct(array $attributes = [])
     {

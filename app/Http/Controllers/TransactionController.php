@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormRequest;
 use App\Http\Requests\TransactRequest;
-use App\Models\Currency;
-use App\Models\NauModels\Account;
-use App\Models\NauModels\Transact;
-use Illuminate\Support\Facades\Session;
+use App\Models\Contracts\Currency;
+use App\Repositories\AccountRepository;
+use App\Repositories\TransactionRepository;
+use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,19 +16,33 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TransactionController extends Controller
 {
+    private $transactionRepository;
+    private $accountRepository;
+    private $auth;
+
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        AccountRepository $accountRepository,
+        AuthManager $authManager
+    ) {
+        $this->transactionRepository = $transactionRepository;
+        $this->accountRepository     = $accountRepository;
+        $this->auth                  = $authManager->guard();
+    }
+
+
     /**
      * @return Response
      */
     public function createTransaction(): Response
     {
-        return response()->render('transaction.create', [
-            'amount'      => 0.0001,
-            'destination' => null,
-            'source'      => auth()
+        return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
+            'amount' => 1,
+            'source' => $this->auth
                 ->user()
                 ->getAccountFor(Currency::NAU)
                 ->getAddress()
-        ]);
+        ]));
     }
 
     /**
@@ -37,37 +52,18 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $sourceAccount      = Account::whereAddress($request->source)->firstOrFail();
-        $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
+        $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
+        $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
-        $transaction        = new Transact();
 
-        if (false === $sourceAccount->isEnoughBalanceFor($amount)) {
-            $multiplier = $transaction->getNauMultiplier();
-
-            return response()->error(Response::HTTP_NOT_ACCEPTABLE,
-                trans('msg.transaction.balance', [
-                    'balance' => sprintf('%0.' . $multiplier . 'f', $sourceAccount->getBalance()),
-                ])
-            );
-        }
-
-        $transaction->amount = $amount;
-        $transaction->source()->associate($sourceAccount);
-        $transaction->destination()->associate($destinationAccount);
-
-        $transaction->save();
-
-        Session::flash('message',
-            null === $transaction->id ?
-                trans('msg.transaction.accepted') :
-                trans('msg.transaction.saved'));
+        $transaction = $this->transactionRepository
+            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
         return response()->render('transaction.complete', $transaction->toArray(),
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
-            route('transactionComplete')
+            route('transaction.complete')
         );
     }
 
@@ -78,8 +74,8 @@ class TransactionController extends Controller
      */
     public function listTransactions($transactionId = null): Response
     {
-        $user         = auth()->user();
-        $transactions = Transact::forUser($user);
+        $user         = $this->auth->user();
+        $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
 
         if (null === $transactionId) {
             return response()->render('transaction.list', $transactions->paginate());

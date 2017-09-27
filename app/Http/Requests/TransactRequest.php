@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
  * Class TransactRequest
  * @package App\Http\Requests
  *
- * @property string sender
+ * @property string source
  * @property string destination
  * @property float amount
  */
@@ -33,9 +33,9 @@ class TransactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'source'      => 'required|ownAddress',
+            'source'      => 'required|ownAddress|enoughFor:amount',
             'destination' => 'required|different:source|exists:pgsql_nau.account,addr',
-            'amount'      => 'required|numeric|min:0.0001',
+            'amount'      => 'required|numeric|min:1',
         ];
     }
 }

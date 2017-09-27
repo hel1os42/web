@@ -124,5 +124,6 @@ return [
         'password_confirm' => 'Password confirmation'
     ],
 
-    'otp' => 'Wrong OTP code.'
+    'otp' => 'Wrong OTP code.',
+    'enough_for' => 'Not enough money',
 ];

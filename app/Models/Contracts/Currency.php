@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Contracts;
 
 /**
  * Class Currency
  * @package App\Models
  */
-class Currency
+interface Currency
 {
     const NAU = 'NAU';
 }

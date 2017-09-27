@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Advert;
 use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
-use App\Models\Currency;
+use App\Models\Contracts\Currency;
 use App\Repositories\OfferRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;

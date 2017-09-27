@@ -8,10 +8,10 @@ use Sofa\Eloquence\Eloquence;
 use Sofa\Eloquence\Mappable;
 
 /**
- * Class NauModel
+ * Class AbstractNauModel
  * @package App\Models\NauModels
  */
-class NauModel extends Model
+abstract class AbstractNauModel extends Model
 {
     use Eloquence, Mappable;
 
@@ -25,7 +25,7 @@ class NauModel extends Model
     protected $maps = [];
 
     /**
-     * NauModel constructor.
+     * AbstractNauModel constructor.
      *
      * @param array $attributes
      *
@@ -57,8 +57,8 @@ class NauModel extends Model
      * @return bool
      * @SuppressWarnings("unused")
      */
-    /*protected function performInsert(Builder $query)
+    protected function performInsert(Builder $query)
     {
         return $this->fireModelEvent('creating') !== false;
-    }*/
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\TokenException;
+use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\Traits\HasAttributes;
@@ -98,6 +99,16 @@ class User extends Authenticatable implements PhoneAuthenticable
      * @var bool
      */
     public $incrementing = false;
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+        if (array_key_exists('accounts', $array) && count($array['accounts']) > 0) {
+            $array['accounts'] = [Currency::NAU => $array['accounts'][0]];
+        }
+
+        return $array;
+    }
 
     /**
      * @return User

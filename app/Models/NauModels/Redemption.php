@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User   rewardedUser
  * @property User   user
  */
-class Redemption extends NauModel
+class Redemption extends AbstractNauModel
 {
     use HasNau;
 

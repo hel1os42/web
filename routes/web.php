@@ -137,7 +137,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
            ->name('transactionCreate');
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
-           ->name('transactionComplete');
+           ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
            ->where('reansactionId', '[0-9]+')
            ->name('transactionList');

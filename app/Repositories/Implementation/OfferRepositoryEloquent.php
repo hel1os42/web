@@ -2,11 +2,12 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Models\Currency;
+use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Repositories\OfferRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
@@ -71,6 +72,40 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $model = $this->model->where([
             'acc_id' => $user->getAccountFor(Currency::NAU)->id
         ])->find($id);
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param float $latitude
+     * @param float $longitude
+     * @param int   $radius
+     *
+     * @return Builder
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function getByCategoriesAndPosition(
+        array $categoryIds,
+        float $latitude,
+        float $longitude,
+        int $radius
+    ): Builder {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->filterByCategories($categoryIds)->filterByPosition($latitude, $longitude, $radius);
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    public function findActiveByIdOrFail(string $id): Offer
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->active()->findOrFail($id);
         $this->resetModel();
 
         return $this->parserResult($model);

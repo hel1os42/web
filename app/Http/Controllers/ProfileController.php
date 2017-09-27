@@ -64,12 +64,11 @@ class ProfileController extends Controller
     {
         $uuid = $this->checkUuid($uuid);
 
-        $userData = $request->isMethod('put')
-            ? \array_merge(
-                \array_diff_key(User::getFillableWithDefaults(), ['password' => '']),
-                $request->all()
-            )
-            : $request->all();
+        $userData = $request->all();
+
+        if ($request->isMethod('put')) {
+            $userData = \array_merge(User::getFillableWithDefaults(['password']), $userData);
+        }
 
         $user = $this->userRepository->update($userData, $uuid);
 

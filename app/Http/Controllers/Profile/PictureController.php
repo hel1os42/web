@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -13,6 +16,17 @@ use Symfony\Component\HttpFoundation\Response;
 class PictureController extends AbstractPictureController
 {
     private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+    private $auth;
+
+    public function __construct(
+        ImageManager $imageManager,
+        Filesystem $filesystem,
+        AuthManager $authManager
+    ) {
+        parent::__construct($imageManager, $filesystem);
+
+        $this->auth = $authManager->guard();
+    }
 
     /**
      * Saves profile image from request
@@ -25,7 +39,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request)
     {
-        return $this->storeImageFor($request, auth()->id(), route('profile.picture.show'));
+        return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }
 
     /**
@@ -40,7 +54,7 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $userUuid = null): Response
     {
-        return $this->respondWithImageFor($userUuid);
+        return $this->respondWithImageFor($userUuid ?? $this->auth->id());
     }
 
     protected function getPath(): string
