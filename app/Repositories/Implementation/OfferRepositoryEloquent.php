@@ -65,13 +65,13 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
-    public function findByIdAndOwner(string $id, User $user): ?Offer
+    public function findByIdAndOwner(string $identity, User $user): ?Offer
     {
         $this->applyCriteria();
         $this->applyScope();
         $model = $this->model->where([
             'acc_id' => $user->getAccountFor(Currency::NAU)->id
-        ])->find($id);
+        ])->find($identity);
         $this->resetModel();
 
         return $this->parserResult($model);
@@ -100,12 +100,12 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
-    public function findActiveByIdOrFail(string $id): Offer
+    public function findActiveByIdOrFail(string $identity): Offer
     {
         $this->applyCriteria();
         $this->applyScope();
 
-        $model = $this->model->active()->findOrFail($id);
+        $model = $this->model->active()->findOrFail($identity);
         $this->resetModel();
 
         return $this->parserResult($model);

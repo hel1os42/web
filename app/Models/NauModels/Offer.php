@@ -43,8 +43,8 @@ class Offer extends AbstractNauModel
 {
     use RelationsTrait, ScopesTrait, HasNau, HasAttributes;
 
-    const STATUS_ACTIVE = 'active';
-    const STATUS_DEACTIVE = 'deactive';
+    public const STATUS_ACTIVE   = 'active';
+    public const STATUS_DEACTIVE = 'deactive';
 
     public function __construct(array $attributes = [])
     {
@@ -78,22 +78,54 @@ class Offer extends AbstractNauModel
         ];
 
         $this->fillable = [
-            'account_id', 'label', 'description', 'reward',
-            'start_date', 'finish_date', 'start_time', 'finish_time',
-            'country', 'city', 'category_id', 'max_count', 'max_for_user',
-            'max_per_day', 'max_for_user_per_day', 'user_level_min', 'latitude',
-            'longitude', 'radius'
+            'account_id',
+            'label',
+            'description',
+            'reward',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'country',
+            'city',
+            'category_id',
+            'max_count',
+            'max_for_user',
+            'max_per_day',
+            'max_for_user_per_day',
+            'user_level_min',
+            'latitude',
+            'longitude',
+            'radius'
         ];
 
         $this->hidden = [
-            'acc_id', 'name', 'descr', 'dt_start', 'dt_finish',
-            'tm_start', 'tm_finish', 'categ', 'min_level', 'lat', 'lng'
+            'acc_id',
+            'name',
+            'descr',
+            'dt_start',
+            'dt_finish',
+            'tm_start',
+            'tm_finish',
+            'categ',
+            'min_level',
+            'lat',
+            'lng'
         ];
 
         $this->appends = [
-            'account_id', 'label', 'description', 'start_date',
-            'finish_date', 'start_time', 'finish_time', 'category_id',
-            'user_level_min', 'latitude', 'longitude', 'picture_url'
+            'account_id',
+            'label',
+            'description',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'category_id',
+            'user_level_min',
+            'latitude',
+            'longitude',
+            'picture_url'
         ];
 
         $this->casts = [

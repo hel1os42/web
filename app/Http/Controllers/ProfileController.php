@@ -42,7 +42,7 @@ class ProfileController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid = null): Response
+    public function show(string $uuid = null): Response
     {
         $uuid = $this->checkUuid($uuid);
 

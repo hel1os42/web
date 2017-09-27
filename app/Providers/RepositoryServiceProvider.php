@@ -9,6 +9,8 @@ use Illuminate\Support\ServiceProvider;
 /**
  * Class RepositoryServiceProvider
  * NS: App\Providers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RepositoryServiceProvider extends ServiceProvider
 {

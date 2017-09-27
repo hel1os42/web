@@ -33,7 +33,6 @@ class LoginController extends Controller
 
     /**
      * @return Response
-     * @throws \LogicException
      */
     public function getLogin()
     {
@@ -48,8 +47,6 @@ class LoginController extends Controller
      * @param string  $phone
      *
      * @return Response
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function getOtpCode(OtpAuth $otpAuth, string $phone): Response
     {
@@ -67,9 +64,7 @@ class LoginController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
+     * @return Response
      */
     public function logout()
     {
@@ -81,9 +76,7 @@ class LoginController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \LogicException
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @return Response
      */
     public function tokenRefresh()
     {
@@ -102,10 +95,9 @@ class LoginController extends Controller
      * @param Session         $session
      *
      * @return Response
-     * @throws \InvalidArgumentException
      *
      */
-    public function login(LoginRequest $request, ResponseFactory $response, Session $session)
+    public function login(LoginRequest $request, Session $session)
     {
         $user            = null;
         $defaultProvider = 'users';
@@ -131,40 +123,37 @@ class LoginController extends Controller
         }
 
         if (null === $user) {
-            return $response->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+            return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
         }
 
         $session->migrate(true);
 
         return $request->wantsJson()
-            ? $this->postLoginJwt($user, $response)
-            : $this->postLoginSession($user, $response);
+            ? $this->postLoginJwt($user)
+            : $this->postLoginSession($user);
     }
 
     /**
      * @param Authenticatable $user
-     * @param ResponseFactory $response
      *
      * @return Response
      */
-    private function postLoginJwt(Authenticatable $user, ResponseFactory $response): Response
+    private function postLoginJwt(Authenticatable $user): Response
     {
         $token = $this->jwtAuth->fromUser($user);
 
-        return $response->render('', \compact('token'));
+        return \response()->render('', \compact('token'));
     }
 
     /**
      * @param Authenticatable $user
-     * @param ResponseFactory $response
      *
      * @return Response
-     * @throws \InvalidArgumentException
      */
-    private function postLoginSession(Authenticatable $user, ResponseFactory $response)
+    private function postLoginSession(Authenticatable $user)
     {
         $this->auth->guard('web')->login($user);
 
-        return $response->redirectTo(\request()->get('redirect_to', '/'));
+        return \response()->redirectTo(\request()->get('redirect_to', '/'));
     }
 }

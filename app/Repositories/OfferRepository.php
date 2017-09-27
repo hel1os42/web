@@ -20,7 +20,7 @@ interface OfferRepository extends RepositoryInterface
 
     public function createForAccountOrFail(array $attributes, Account $account): Offer;
 
-    public function findByIdAndOwner(string $id, User $user): ?Offer;
+    public function findByIdAndOwner(string $identity, User $user): ?Offer;
 
     /**
      * @param $categoryIds
@@ -37,5 +37,5 @@ interface OfferRepository extends RepositoryInterface
         int $radius
     ): Builder;
 
-    public function findActiveByIdOrFail(string $id): Offer;
+    public function findActiveByIdOrFail(string $identity): Offer;
 }

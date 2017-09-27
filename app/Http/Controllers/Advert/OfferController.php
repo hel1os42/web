@@ -16,9 +16,10 @@ class OfferController extends Controller
     private $offerRepository;
     private $auth;
 
-    public function __construct(OfferRepository $offerRepository, AuthManager $authManager) {
+    public function __construct(OfferRepository $offerRepository, AuthManager $authManager)
+    {
         $this->offerRepository = $offerRepository;
-        $this->auth = $authManager->guard();
+        $this->auth            = $authManager->guard();
     }
 
     /**
@@ -38,12 +39,15 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('advert.offer.create', FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
+        return \response()->render('advert.offer.create',
+            FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
     }
 
     /**
      * Send new offer data to core to store
+     *
      * @param  Advert\OfferRequest $request
+     *
      * @return Response
      */
     public function store(Advert\OfferRequest $request): Response
@@ -61,7 +65,9 @@ class OfferController extends Controller
 
     /**
      * Get offer full info(for Advert) by it uuid
+     *
      * @param string $offerUuid
+     *
      * @return Response
      */
     public function show(string $offerUuid): Response

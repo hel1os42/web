@@ -20,10 +20,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PictureController extends AbstractPictureController
 {
     private const PLACE_PICTURES_PATH = 'images/place/pictures';
-    private const PLACE_COVERS_PATH = 'images/place/covers';
+    private const PLACE_COVERS_PATH   = 'images/place/covers';
 
-    const TYPE_COVER = 'cover';
-    const TYPE_PICTURE = 'picture';
+    private const TYPE_COVER   = 'cover';
+    private const TYPE_PICTURE = 'picture';
 
     private $type = 'picture';
     private $auth;

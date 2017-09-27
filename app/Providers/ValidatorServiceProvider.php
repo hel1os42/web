@@ -38,11 +38,19 @@ class ValidatorServiceProvider extends ServiceProvider
      * @param OtpAuth $otpAuth
      *
      * @return \Closure
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function validateOtp(OtpAuth $otpAuth): \Closure
     {
+        /**
+         * @param           $attribute
+         * @param           $value
+         * @param           $parameters
+         * @param Validator $validator
+         *
+         * @return bool
+         */
         return function (
-            /** @noinspection PhpUnusedParameterInspection */
             $attribute,
             $value,
             $parameters,
@@ -65,9 +73,16 @@ class ValidatorServiceProvider extends ServiceProvider
      * @param Guard             $auth
      *
      * @return \Closure
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function validateOwnAddress(AccountRepository $accountRepository, Guard $auth): \Closure
     {
+        /**
+         * @param           $attribute
+         * @param           $value
+         *
+         * @return bool
+         */
         return function (
             /** @noinspection PhpUnusedParameterInspection */
             $attribute,
@@ -80,9 +95,18 @@ class ValidatorServiceProvider extends ServiceProvider
      * @param AccountRepository $accountRepository
      *
      * @return \Closure
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function validateEnoughMoneyOnAccountFor(AccountRepository $accountRepository): \Closure
     {
+        /**
+         * @param           $attribute
+         * @param           $value
+         * @param           $parameters
+         * @param Validator $validator
+         *
+         * @return bool
+         */
         return function (
             /** @noinspection PhpUnusedParameterInspection */
             $attribute,

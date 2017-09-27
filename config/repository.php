@@ -31,7 +31,7 @@ return [
 
     */
     'fractal'    => [
-        'params'     => [
+        'params' => [
             'include' => 'include'
         ],
         //'serializer' => League\Fractal\Serializer\DataArraySerializer::class
@@ -109,7 +109,7 @@ return [
             ]
         ],
 
-        'params'     => [
+        'params'  => [
             /*
             |--------------------------------------------------------------------------
             | Skip Cache Params
@@ -123,21 +123,21 @@ return [
         ],
 
         /*
-       |--------------------------------------------------------------------------
-       | Methods Allowed
-       |--------------------------------------------------------------------------
-       |
-       | methods cacheable : all, paginate, find, findByField, findWhere, getByCriteria
-       |
-       | Ex:
-       |
-       | 'only'  =>['all','paginate'],
-       |
-       | or
-       |
-       | 'except'  =>['find'],
-       */
-        'allowed'    => [
+        |--------------------------------------------------------------------------
+        | Methods Allowed
+        |--------------------------------------------------------------------------
+        |
+        | methods cacheable : all, paginate, find, findByField, findWhere, getByCriteria
+        |
+        | Ex:
+        |
+        | 'only'  =>['all','paginate'],
+        |
+        | or
+        |
+        | 'except'  =>['find'],
+        */
+        'allowed' => [
             'only'   => null,
             'except' => null
         ]
@@ -216,7 +216,7 @@ return [
             'orderBy'      => 'orderBy',
             'sortedBy'     => 'sortedBy',
             'with'         => 'with',
-            'searchJoin'   => 'searchJoin'            
+            'searchJoin'   => 'searchJoin'
         ]
     ],
     /*
@@ -226,10 +226,10 @@ return [
     |
     */
     'generator'  => [
-        'basePath'      => app_path(),
-        'rootNamespace' => 'App\\',
+        'basePath'          => app_path(),
+        'rootNamespace'     => 'App\\',
         'stubsOverridePath' => app_path(),
-        'paths'         => [
+        'paths'             => [
             'models'       => 'Models',
             'repositories' => 'Repositories',
             'interfaces'   => 'Repositories',

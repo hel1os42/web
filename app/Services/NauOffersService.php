@@ -18,9 +18,10 @@ class NauOffersService implements OffersService
     private $activationCodeRepository;
     private $offerRepository;
 
-    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository) {
+    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository)
+    {
         $this->activationCodeRepository = $activationCodeRepository;
-        $this->offerRepository = $offerRepository;
+        $this->offerRepository          = $offerRepository;
     }
 
     /**
