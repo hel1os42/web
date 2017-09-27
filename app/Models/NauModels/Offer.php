@@ -4,45 +4,40 @@ namespace App\Models\NauModels;
 
 use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
-use App\Models\ActivationCode;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
 use App\Models\Traits\HasAttributes;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class Offer
  * @package App\Models\NauModels
  *
- * @property string id
- * @property int account_id
- * @property string label
- * @property string description
- * @property float reward
- * @property string status
- * @property Carbon start_date
- * @property Carbon finish_date
- * @property Carbon start_time
- * @property Carbon finish_time
- * @property string country
- * @property string city
- * @property string category_id
- * @property int max_count
- * @property int max_for_user
- * @property int max_per_day
- * @property int max_for_user_per_day
- * @property int user_level_min
- * @property float latitude
- * @property float longitude
- * @property int radius
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property Account account
- * @property Collection|ActivationCode[] activationCodes
- * @property Collection|Redemption[] redemptions
+ * @property string      id
+ * @property int         account_id
+ * @property null|string label
+ * @property null|string description
+ * @property float       reward
+ * @property string      status
+ * @property Carbon      start_date
+ * @property null|Carbon finish_date
+ * @property Carbon      start_time
+ * @property null|Carbon finish_time
+ * @property null|string country
+ * @property null|string city
+ * @property null|string category_id
+ * @property null|int    max_count
+ * @property null|int    max_for_user
+ * @property null|int    max_per_day
+ * @property null|int    max_for_user_per_day
+ * @property null|int    user_level_min
+ * @property null|float  latitude
+ * @property null|float  longitude
+ * @property null|int    radius
+ * @property Carbon      created_at
+ * @property Carbon      updated_at
  */
 class Offer extends NauModel
 {
@@ -201,6 +196,7 @@ class Offer extends NauModel
 
     /**
      * @param float $value
+     *
      * @return void
      */
     public function setRewardAttribute(?float $value): void
@@ -343,13 +339,12 @@ class Offer extends NauModel
     }
 
     /**
-     * @param string $value
+     * @param null|string $value
      */
-    public function setDtFinishAttribute(string $value)
+    public function setDtFinishAttribute(?string $value)
     {
-        $this->attributes['dt_finish'] = Carbon::parse($value);
+        $this->attributes['dt_finish'] = null === $value ? null : Carbon::parse($value);
     }
-
 
     /**
      * @param string $value
@@ -360,11 +355,14 @@ class Offer extends NauModel
     }
 
     /**
-     * @param string $value
+     * @param null|string $value
      */
-    public function setTmFinishAttribute(string $value)
+    public function setTmFinishAttribute(?string $value)
     {
-        $this->attributes['tm_finish'] = Carbon::parse($value)->year(1970)->month(01)->day(01);
+        $this->attributes['tm_finish'] =
+            null === $value
+                ? null
+                : Carbon::parse($value)->year(1970)->month(01)->day(01);
     }
 
     /**
