@@ -19,11 +19,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request): Response
     {
-        $with = $this->handleWith(
-            ['parent'],
-            $request
-        );
-        return \response()->render('category.list', Category::with($with)->withNoParent()->paginate());
+        return \response()->render('category.list', Category::withNoParent()->paginate());
     }
 
     /**
