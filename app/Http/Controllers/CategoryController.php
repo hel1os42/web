@@ -11,13 +11,11 @@ class CategoryController extends Controller
     use HandlesRequestData;
 
     /**
-     * @param Request $request
-     *
      * @return Response
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
         return \response()->render('category.list', Category::withNoParent()->paginate());
     }
