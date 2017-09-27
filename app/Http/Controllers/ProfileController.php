@@ -4,80 +4,111 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Repositories\UserRepository;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProfileController extends Controller
 {
-    use HandlesRequestData;
+    private $userRepository;
+    private $auth;
+
+    public function __construct(UserRepository $userRepository, AuthManager $authManager)
+    {
+        $this->userRepository = $userRepository;
+        $this->auth           = $authManager;
+    }
+
 
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
+     * @throws \InvalidArgumentException
      */
     public function index()
     {
-        return redirect()->route('profile');
+        return \redirect()->route('profile');
     }
 
     /**
      * User profile show
      *
-     * @param Request $request
+     * @param Request     $request
      * @param string|null $uuid
      *
      * @return Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws HttpException
+     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function show(Request $request, string $uuid = null): Response
     {
-        $userId = auth()->id();
+        $uuid = $this->checkUuid($uuid);
 
-        $with = $this->handleWith(
-            ['accounts', 'offers', 'referrals', 'activationCodes', 'place'],
-            $request
-        );
+        $user = $this->userRepository->find($uuid);
 
-        return (!empty($uuid) && $uuid !== $userId)
-            ? response()->error(Response::HTTP_FORBIDDEN)
-            : response()->render('profile', (new User)->with($with)->findOrFail($userId)->toArray());
+        return \response()->render('profile', $user->toArray());
     }
 
     /**
      * @param ProfileUpdateRequest $request
-     * @param string|null $uuid
+     * @param string|null          $uuid
+     *
      * @return Response
+     * @throws HttpException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function update(ProfileUpdateRequest $request, string $uuid = null): Response
     {
-        $user = auth()->user();
-        if (!is_null($uuid) && auth()->id() != $uuid) {
-            return \response()->error(Response::HTTP_UNAUTHORIZED);
-        }
+        $uuid = $this->checkUuid($uuid);
 
-        $success = request()->isMethod('put')
-            ? $user->update(array_merge(
-                array_diff_key((new User)->getAttributes(), ['password' => '']),
+        $userData = $request->isMethod('put')
+            ? \array_merge(
+                \array_diff_key(User::getFillableWithDefaults(), ['password' => '']),
                 $request->all()
-            ))
-            : $user->update($request->all());
+            )
+            : $request->all();
 
-        return $success
-            ? \response()->render('profile', User::findOrFail(auth()->id()), Response::HTTP_CREATED, route('profile'))
-            : \response()->error(Response::HTTP_NOT_ACCEPTABLE);
+        $user = $this->userRepository->update($userData, $uuid);
+
+        return \response()->render('profile', $user->toArray(), Response::HTTP_CREATED, route('profile'));
     }
 
     /**
      * @param string|null $uuid
      *
      * @return Response
+     * @throws HttpException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function referrals(string $uuid = null)
     {
-        $userId = auth()->id();
+        $uuid = $this->checkUuid($uuid);
 
-        return ($uuid === null || $uuid === $userId)
-            ? response()->render('user.profile.referrals', (new User)->findOrFail($userId)->referrals()->paginate())
-            : response()->error(Response::HTTP_FORBIDDEN);
+        $user = $this->userRepository->find($uuid);
+
+        return \response()->render('user.profile.referrals', $user->referrals()->paginate());
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return int|null|string
+     * @throws HttpException
+     * @throws \InvalidArgumentException
+     */
+    private function checkUuid(?string $uuid)
+    {
+        $currentId = $this->auth->guard()->id();
+        if (null === $uuid) {
+            $uuid = $currentId;
+        } elseif ($uuid !== $currentId) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
+
+        return $uuid;
     }
 }

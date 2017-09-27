@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivationCode;
+use App\Repositories\ActivationCodeRepository;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class ActivationCodeController
@@ -10,14 +12,23 @@ use App\Models\ActivationCode;
  */
 class ActivationCodeController extends Controller
 {
-    use HandlesRequestData;
+    private $activationCodeRepository;
+    private $auth;
+
+    public function __construct(ActivationCodeRepository $activationCodeRepository, AuthManager $auth)
+    {
+        $this->activationCodeRepository = $activationCodeRepository;
+        $this->auth                     = $auth;
+    }
 
     public function show($code)
     {
-        $with = $this->handleWith(['user', 'offer', 'redemption'], request());
+        $activationCode = $this->activationCodeRepository
+            ->findByCodeAndOwner($code, $this->auth->guard()->user());
 
-        $activationCode = ActivationCode::byCode($code)->byOwner(auth()->user())
-                                        ->with($with)->firstOrFail();
+        if (null === $activationCode) {
+            throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());
+        }
 
         return response()->render('activation_code.show', $activationCode->toArray());
     }

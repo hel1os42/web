@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    use HandlesRequestData;
+    private $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository) {
+        $this->categoryRepository = $categoryRepository;
+    }
+
 
     /**
      * @param Request $request
@@ -17,13 +22,12 @@ class CategoryController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
-        $with = $this->handleWith(
-            ['parent'],
-            $request
-        );
-        return \response()->render('category.list', Category::with($with)->withNoParent()->paginate());
+        $categories = $this->categoryRepository
+            ->getWithNoParent();
+
+        return \response()->render('category.list', $categories->paginate());
     }
 
     /**
@@ -36,14 +40,10 @@ class CategoryController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid)
+    public function show(string $uuid)
     {
-        $with     = $this->handleWith(
-            ['children'],
-            $request,
-            ['parent']
-        );
-        $category = Category::with($with)->findOrFail($uuid);
+        $category = $this->categoryRepository
+            ->with(['parent'])->find($uuid);
 
         return response()->render('category.show', $category->toArray());
     }

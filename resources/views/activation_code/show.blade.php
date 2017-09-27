@@ -6,6 +6,7 @@
     <div class="profile">
         <ul>
             <li>id: {{$id}}</li>
+            <li>code: {{$code}}</li>
             <li>user_id: {{$user_id}}</li>
             <li>offer_id: {{$offer_id}}</li>
             <li>redemption_id: {{$redemption_id}}</li>

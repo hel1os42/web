@@ -135,4 +135,10 @@ class Redemption extends NauModel
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    /** @return BelongsTo */
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transact::class, 'txid', 'id');
+    }
 }

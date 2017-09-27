@@ -57,8 +57,8 @@ class NauModel extends Model
      * @return bool
      * @SuppressWarnings("unused")
      */
-    protected function performInsert(Builder $query)
+    /*protected function performInsert(Builder $query)
     {
         return $this->fireModelEvent('creating') !== false;
-    }
+    }*/
 }

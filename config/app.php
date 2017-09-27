@@ -184,6 +184,8 @@ return [
         OmniSynapse\CoreService\CoreServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
         App\Services\Auth\Otp\Stub\OtpAuthProvider::class,
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*

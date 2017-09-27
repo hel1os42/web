@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\TokenException;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\Traits\HasAttributes;
 use App\Models\User\RelationsTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,8 +38,7 @@ use Webpatser\Uuid\Uuid;
  */
 class User extends Authenticatable implements PhoneAuthenticable
 {
-
-    use Notifiable, RelationsTrait;
+    use Notifiable, RelationsTrait, HasAttributes;
 
     public function __construct(array $attributes = [])
     {

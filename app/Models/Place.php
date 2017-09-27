@@ -37,7 +37,7 @@ use Illuminate\Support\Collection;
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
- * @method static static|Builder filterByCategories(array $category_ids)
+ * @method static static|Builder filterByCategories(array $categoryIds)
  */
 class Place extends Model
 {
@@ -54,6 +54,8 @@ class Place extends Model
 
         $this->table      = 'places';
         $this->primaryKey = 'id';
+
+        $this->incrementing = false;
 
         $this->casts = [
             'id'          => 'string',
@@ -324,7 +326,7 @@ class Place extends Model
      * @return Builder
      * @throws \InvalidArgumentException
      */
-    public function scopeByUser(Builder $builder, User $user): Builder
+    public function scopeByUser($builder, User $user): Builder
     {
         return $builder->where('user_id', $user->getId());
     }

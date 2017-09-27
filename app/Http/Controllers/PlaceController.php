@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Http\Requests\PlaceRequest;
 use App\Models\Place;
+use App\Repositories\PlaceRepository;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -12,35 +15,34 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PlaceController extends Controller
 {
-    use HandlesRequestData;
+    private $placesRepository;
+    private $auth;
+
+    public function __construct(PlaceRepository $placesRepository, AuthManager $authManager)
+    {
+        $this->placesRepository = $placesRepository;
+        $this->auth             = $authManager->guard();
+    }
 
     public function index(PlaceFilterRequest $request): Response
     {
-        $with = $this->handleWith(
-            ['testimonials', 'categories'],
-            $request
-        );
-        return response()->render('place.index',
-            Place::filterByCategories($request->category_ids)
-                ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-                ->with($with)
-                ->paginate()
-        );
+        $places = $this->placesRepository
+            ->getByCategoriesAndPosition($request->category_ids, $request->latitude, $request->longitude,
+                $request->radius);
+
+        return response()->render('place.index', $places->paginate());
     }
 
     /**
      * @param Request $request
-     * @param string $uuid
+     * @param string  $uuid
+     *
      * @return Response
      */
     public function show(Request $request, string $uuid): Response
     {
-        $with = $this->handleWith(
-            ['testimonials', 'categories'],
-            $request
-        );
-
-        $place = Place::with($with)->findOrFail($uuid);
+        $place = $this->placesRepository
+            ->find($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -51,18 +53,15 @@ class PlaceController extends Controller
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function showOwnerPlace(Request $request): Response
     {
-        $with = $this->handleWith(
-            ['testimonials', 'categories'],
-            $request
-        );
+        $place = $this->placesRepository->findByUser($this->auth->user());
 
-        $place = Place::with($with)->byUser(auth()->user())->first();
-        if (!$place instanceof Place) {
-            return \response()->error(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
+        if (null === $place) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
         }
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
@@ -74,11 +73,14 @@ class PlaceController extends Controller
 
     /**
      * @param string|null $uuid
+     *
      * @return Response
      */
     public function showPlaceOffers(string $uuid): Response
     {
-        return \response()->render('user.offer.index', Place::findOrFail($uuid)->offers()->paginate());
+        $offers = $this->placesRepository->find($uuid)->offers();
+
+        return \response()->render('user.offer.index', $offers->paginate());
     }
 
     /**
@@ -86,8 +88,9 @@ class PlaceController extends Controller
      */
     public function showOwnerPlaceOffers(): Response
     {
-        return \response()->render('advert.offer.index',
-            Place::byUser(auth()->user())->firstOrFail()->offers()->paginate());
+        $place = $this->placesRepository->findByUser($this->auth->user());
+
+        return \response()->render('advert.offer.index', $place->offers()->paginate());
     }
 
     /**
@@ -95,30 +98,35 @@ class PlaceController extends Controller
      */
     public function create(): Response
     {
-        if (Place::byUser(auth()->user())->first() instanceof Place) {
-            throw new BadRequestHttpException('You already create place.');
+        $place = $this->placesRepository->findByUser($this->auth->user());
+
+        if (null !== $place) {
+            throw new BadRequestHttpException('You\'ve already created a place.');
         }
 
-        return \response()->render('place.create',
-            array_merge(Place::getFillableWithDefaults(), ['category_ids' => []]));
+        return \response()->render('place.create', FormRequest::preFilledFormRequest(PlaceRequest::class));
     }
 
     /**
      * @param PlaceRequest $request
+     *
      * @return Response
      */
     public function store(PlaceRequest $request): Response
     {
-        if (Place::byUser(auth()->user())->first() instanceof Place) {
-            throw new BadRequestHttpException('You already create place.');
+        if ($this->placesRepository->existsByUser($this->auth->user())) {
+            throw new BadRequestHttpException('You\'ve already created a place.');
         }
 
-        $place = $request->fillPlace(new Place());
-        $place->user()->associate(auth()->user());
-        if (!$place->save()) {
+        $placeData = $request->all();
+
+        $place = $this->placesRepository->createForUser($placeData, $this->auth->user());
+
+        if (null === $place->id) {
             logger()->error('cannot save place', $place->toArray());
             throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot save place');
         }
+
         if ($request->has('category_ids') === true) {
             $place->categories()->attach($request->category_ids);
         }
@@ -131,27 +139,26 @@ class PlaceController extends Controller
 
     /**
      * @param PlaceRequest $request
+     *
      * @return Response
      */
     public function update(PlaceRequest $request): Response
     {
-        $place = Place::byUser(auth()->user())->first();
-        if (!$place instanceof Place) {
-            throw new BadRequestHttpException('You have not created a place yet.');
+        $place = $this->placesRepository->findByUser($this->auth->user());
+
+        if (null === $place) {
+            throw new BadRequestHttpException('You\'ve not created a place yet.');
         }
 
-        $success = $request->isMethod('put') ?
-            $place->update(array_merge(Place::getFillableWithDefaults(), $request->all())) :
-            $place->update($request->all());
+        $placeData = $request->all();
 
-        if ($request->has('category_ids') === true) {
-            $place->categories()->sync($request->category_ids);
+        if ($request->isMethod('put')) {
+            $placeData = array_merge(Place::getFillableWithDefaults(), $placeData);
         }
 
-        if (!$success) {
-            logger()->error('cannot update place', $place->toArray());
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot update place');
-        }
+        $place = $this->placesRepository->update($placeData, $place->id);
+        $place->categories()->sync($request->category_ids);
+
         return \response()->render('profile.place.show', $place->toArray(), Response::HTTP_CREATED,
             route('profile.place.show'));
     }
