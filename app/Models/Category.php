@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuids;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ use Illuminate\Support\Collection;
  */
 class Category extends Model
 {
+    use Uuids;
     /**
      * Category constructor.
      *
@@ -36,6 +38,8 @@ class Category extends Model
 
         $this->table      = 'categories';
         $this->primaryKey = 'id';
+
+        $this->initUUID();
 
         $this->casts = [
             'id'        => 'string',

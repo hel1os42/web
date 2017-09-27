@@ -16,4 +16,10 @@ trait Uuids
             $model->{$model->getKeyName()} = Uuid::generate(4)->string;
         });
     }
+
+    protected function initUUID()
+    {
+        $this->incrementing = false;
+        $this->keyType = 'string';
+    }
 }

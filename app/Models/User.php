@@ -7,6 +7,7 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -38,11 +39,16 @@ use Webpatser\Uuid\Uuid;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait;
+    use Notifiable, RelationsTrait, Uuids{
+        Uuids::boot as uuidsBoot;
+    }
 
     public function __construct(array $attributes = [])
     {
         $this->connection = config('database.default');
+        $this->primaryKey = 'id';
+
+        $this->initUUID();
 
         $this->attributes = [
             'name'           => '',
@@ -268,9 +274,10 @@ class User extends Authenticatable implements PhoneAuthenticable
         static::creating(function (User $model) {
             if (null === $model->invite_code) {
                 $model->invite_code = $model->generateInvite();
-                $model->id          = Uuid::generate(4)->__toString();
             }
         });
+
+        self::uuidsBoot();
     }
 
     /**

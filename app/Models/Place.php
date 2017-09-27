@@ -55,6 +55,8 @@ class Place extends Model
         $this->table      = 'places';
         $this->primaryKey = 'id';
 
+        $this->initUUID();
+
         $this->casts = [
             'id'          => 'string',
             'name'        => 'string',
