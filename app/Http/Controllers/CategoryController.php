@@ -11,19 +11,13 @@ class CategoryController extends Controller
     use HandlesRequestData;
 
     /**
-     * @param Request $request
-     *
      * @return Response
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
-        $with = $this->handleWith(
-            ['parent'],
-            $request
-        );
-        return \response()->render('category.list', Category::with($with)->withNoParent()->paginate());
+        return \response()->render('category.list', Category::withNoParent()->paginate());
     }
 
     /**
