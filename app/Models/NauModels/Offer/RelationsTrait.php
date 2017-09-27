@@ -10,14 +10,21 @@ namespace App\Models\NauModels\Offer;
 
 use App\Models\ActivationCode;
 use App\Models\UserOfferPivot;
+use App\Models\NauModels\Account;
+use App\Models\NauModels\Redemption;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use \App\Models\User;
+use Illuminate\Support\Collection;
 
 /**
  * Trait RelationsTrait
  * @package App\Models\NauModels\Offer
+ *
+ * @property Account account
+ * @property Collection|ActivationCode[] activationCodes
+ * @property Collection|Redemption[] redemptions
  */
 trait RelationsTrait
 {
