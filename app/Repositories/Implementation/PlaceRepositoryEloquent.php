@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Http\Exceptions\InternalServerErrorException;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\PlaceRepository;
@@ -44,7 +45,7 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->model->without('offers');
     }
 
-    public function createForUser(array $attributes, User $user): Place
+    public function createForUserOrFail(array $attributes, User $user): Place
     {
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
@@ -60,16 +61,28 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $model->save();
         $this->resetModel();
 
+        if (!$model->exists) {
+            logger()->error('cannot save place', $attributes);
+            throw new InternalServerErrorException('Cannot save place');
+        }
+
         event(new RepositoryEntityCreated($this, $model));
 
         return $this->parserResult($model);
     }
 
-    public function findByUser(User $user): ?Place
+    /**
+     * @param User $user
+     *
+     * @return Place
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function findByUser(User $user): Place
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->byUser($user)->first();
+        $model = $this->model->byUser($user)->firstOrFail();
         $this->resetModel();
 
         return $this->parserResult($model);

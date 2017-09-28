@@ -6,7 +6,6 @@ use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
-use App\Models\Traits\HasAttributes;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
@@ -41,9 +40,9 @@ use Carbon\Carbon;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, HasAttributes;
+    use RelationsTrait, ScopesTrait, HasNau;
 
-    public const STATUS_ACTIVE   = 'active';
+    public const STATUS_ACTIVE = 'active';
     public const STATUS_DEACTIVE = 'deactive';
 
     public function __construct(array $attributes = [])

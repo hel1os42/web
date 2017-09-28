@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Place;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
-use App\Models\Place;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -78,10 +76,6 @@ class PictureController extends AbstractPictureController
     private function store(PictureRequest $request)
     {
         $place = $this->placeRepository->findByUser($this->auth->user());
-
-        if (null === $place) {
-            throw (new ModelNotFoundException)->setModel(Place::class);
-        }
 
         return $this->storeImageFor($request, $place->getId(),
             route('place.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));

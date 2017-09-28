@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Attributes;
 use App\Helpers\FormRequest;
+use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
-use App\Http\Requests\PlaceRequest;
-use App\Models\Place;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class PlaceController
+ * @package App\Http\Controllers
+ */
 class PlaceController extends Controller
 {
     private $placesRepository;
@@ -29,8 +30,6 @@ class PlaceController extends Controller
      * @param PlaceFilterRequest $request
      *
      * @return Response
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function index(PlaceFilterRequest $request): Response
     {
@@ -68,10 +67,6 @@ class PlaceController extends Controller
     {
         $place = $this->placesRepository->findByUser($this->auth->user());
 
-        if (null === $place) {
-            throw new NotFoundHttpException('You have not created a place yet.');
-        }
-
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
@@ -102,38 +97,25 @@ class PlaceController extends Controller
     }
 
     /**
-     * @return Response
-     */
-    public function create(): Response
-    {
-        $place = $this->placesRepository->findByUser($this->auth->user());
-
-        if (null !== $place) {
-            throw new BadRequestHttpException('You\'ve already created a place.');
-        }
-
-        return \response()->render('place.create', FormRequest::preFilledFormRequest(PlaceRequest::class));
-    }
-
-    /**
-     * @param PlaceRequest $request
+     * @param CreateUpdateRequest $request
      *
      * @return Response
      */
-    public function store(PlaceRequest $request): Response
+    public function create(CreateUpdateRequest $request): Response
     {
-        if ($this->placesRepository->existsByUser($this->auth->user())) {
-            throw new BadRequestHttpException('You\'ve already created a place.');
-        }
+        return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+    }
 
+    /**
+     * @param CreateUpdateRequest $request
+     *
+     * @return Response
+     */
+    public function store(CreateUpdateRequest $request): Response
+    {
         $placeData = $request->all();
 
-        $place = $this->placesRepository->createForUser($placeData, $this->auth->user());
-
-        if (null === $place->id) {
-            logger()->error('cannot save place', $place->toArray());
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'Cannot save place');
-        }
+        $place = $this->placesRepository->createForUserOrFail($placeData, $this->auth->user());
 
         if ($request->has('category_ids') === true) {
             $place->categories()->attach($request->category_ids);
@@ -146,22 +128,18 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param PlaceRequest $request
+     * @param CreateUpdateRequest $request
      *
      * @return Response
      */
-    public function update(PlaceRequest $request): Response
+    public function update(CreateUpdateRequest $request): Response
     {
         $place = $this->placesRepository->findByUser($this->auth->user());
-
-        if (null === $place) {
-            throw new BadRequestHttpException('You\'ve not created a place yet.');
-        }
 
         $placeData = $request->all();
 
         if ($request->isMethod('put')) {
-            $placeData = array_merge(Place::getFillableWithDefaults(), $placeData);
+            $placeData = array_merge(Attributes::getFillableWithDefaults($place), $placeData);
         }
 
         $place = $this->placesRepository->update($placeData, $place->id);

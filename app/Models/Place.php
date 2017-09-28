@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
-use App\Models\Traits\HasAttributes;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +41,7 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use HasAttributes, Uuids;
+    use Uuids;
 
     /**
      * Place constructor.

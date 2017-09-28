@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\Implementation\PlaceRepositoryEloquent;
 use App\Repositories\PlaceRepository;
+use Faker\Factory as Faker;
+use Faker\Generator;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use Illuminate\Routing\ResponseFactory;
 use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\TestCase;
 use Webpatser\Uuid\Uuid;
 
@@ -33,8 +36,25 @@ class PlaceControllerTest extends TestCase
      * @var AuthManager|PHPUnit_Framework_MockObject_MockObject
      */
     private $authManager;
+    /**
+     * @var Guard|PHPUnit_Framework_MockObject_MockObject
+     */
     private $guard;
+    /**
+     * @var User|PHPUnit_Framework_MockObject_MockObject
+     */
     private $user;
+    /**
+     * @var Generator
+     */
+    private $faker;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->faker = Faker::create();
+    }
+
 
     /**
      * @before
@@ -50,7 +70,19 @@ class PlaceControllerTest extends TestCase
         $this->guard->method('user')->with()->willReturn($this->user);
         $this->guard->method('id')->with()->willReturn($this->user->method('getId'));
 
+        $this->configureTestUser();
+
         $this->controller = new PlaceController($this->placeRepository, $this->authManager);
+    }
+
+    private function configureTestUser()
+    {
+        $userData = [
+            'id'   => $this->faker->uuid,
+            'name' => $this->faker->uuid,
+        ];
+        $this->user->method('getId')->willReturn($userData['id']);
+        $this->user->method('getName')->willReturn($userData['name']);
     }
 
     // tests
@@ -186,15 +218,14 @@ class PlaceControllerTest extends TestCase
      * @test
      * @dataProvider showOwnerPlaceData
      *
-     * @param bool $placeExists
      * @param bool $withOffers
      *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \InvalidArgumentException
      * @throws \PHPUnit_Framework_Exception
      * @throws \PHPUnit_Framework_MockObject_RuntimeException
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function showOwnerPlaceTest(bool $placeExists, bool $withOffers)
+    public function showOwnerPlaceTest(bool $withOffers)
     {
         $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
         $request         = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
@@ -209,54 +240,393 @@ class PlaceControllerTest extends TestCase
             ->expects(self::once())
             ->method('findByUser')
             ->with($this->user)
-            ->willReturn($placeExists ? $place : null);
+            ->willReturn($place);
 
         if ($withOffers) {
             $request
-                ->expects($placeExists ? self::once() : self::never())
+                ->expects(self::once())
                 ->method('get')
                 ->with('with', '')
                 ->willReturn('offers');
 
             $place
-                ->expects($placeExists ? self::once() : self::never())
+                ->expects(self::once())
                 ->method('append')
                 ->with('offers')
                 ->willReturnSelf();
         }
 
         $place
-            ->expects($placeExists ? self::once() : self::never())
+            ->expects(self::once())
             ->method('toArray')
             ->with()
             ->willReturn($placesArray);
 
         $responseFactory
-            ->expects($placeExists ? self::once() : self::never())
+            ->expects(self::once())
             ->method('__call')
             ->with('render', ['profile.place.show', $placesArray])
             ->willReturn($response);
 
-        if (!$placeExists) {
-            $this->expectException(NotFoundHttpException::class);
-        }
-
         // test
         $returnValue = $this->controller->showOwnerPlace($request);
 
-        if ($placeExists) {
-            self::assertSame($response, $returnValue);
+        self::assertSame($response, $returnValue);
+    }
+
+    /**
+     * @test
+     * @dataProvider showPlaceOffersData
+     *
+     * @param string $uuid
+     *
+     * @throws \App\Exceptions\TokenException
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_MockObject_RuntimeException
+     */
+    public function showPlaceOffersTest(string $uuid)
+    {
+        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
+        $builder         = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock();
+        $pagination      = $this->getMockBuilder(LengthAwarePaginator::class)->disableOriginalConstructor()->getMock();
+        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
+        $response        = new Response();
+
+        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->placeRepository
+            ->expects(self::once())
+            ->method('find')
+            ->with($uuid)
+            ->willReturn($place);
+
+        $place
+            ->expects(self::once())
+            ->method('offers')
+            ->with()
+            ->willReturn($builder);
+
+        $builder
+            ->expects(self::once())
+            ->method('paginate')
+            ->with()
+            ->willReturn($pagination);
+
+        $responseFactory
+            ->expects(self::once())
+            ->method('__call')
+            ->with('render', ['user.offer.index', $pagination])
+            ->willReturn($response);
+
+        $returnValue = $this->controller->showPlaceOffers($uuid);
+        self::assertSame($response, $returnValue);
+    }
+
+    /**
+     * @test
+     *
+     * @throws \App\Exceptions\TokenException
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_MockObject_RuntimeException
+     */
+    public function showOwnerPlaceOffersTest()
+    {
+        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
+        $builder         = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock();
+        $pagination      = $this->getMockBuilder(LengthAwarePaginator::class)->disableOriginalConstructor()->getMock();
+        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
+        $response        = new Response();
+
+        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->placeRepository
+            ->expects(self::once())
+            ->method('findByUser')
+            ->with($this->user)
+            ->willReturn($place);
+
+        $place
+            ->expects(self::once())
+            ->method('offers')
+            ->with()
+            ->willReturn($builder);
+
+        $builder
+            ->expects(self::once())
+            ->method('paginate')
+            ->with()
+            ->willReturn($pagination);
+
+        $responseFactory
+            ->expects(self::once())
+            ->method('__call')
+            ->with('render', ['advert.offer.index', $pagination])
+            ->willReturn($response);
+
+        $returnValue = $this->controller->showOwnerPlaceOffers();
+        self::assertSame($response, $returnValue);
+    }
+
+    /**
+     * @test
+     * @dataProvider createData
+     *
+     * @param array $data
+     *
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_MockObject_RuntimeException
+     */
+    public function createTest(array $data)
+    {
+        $request         = $this->getMockBuilder(CreateUpdateRequest::class)->disableOriginalConstructor()->getMock();
+        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
+        $response        = new Response();
+
+        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $responseFactory
+            ->expects(self::once())
+            ->method('__call')
+            ->with('render', ['place.create', $data])
+            ->willReturn($response);
+
+        $returnValue = $this->controller->create($request);
+        self::assertSame($response, $returnValue);
+    }
+
+    /**
+     * @test
+     * @dataProvider storeData
+     *
+     * @param array $data
+     * @param array $placeArray
+     *
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_MockObject_RuntimeException
+     */
+    public function storeTest(array $data, array $placeArray)
+    {
+        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
+        $request         = $this->getMockBuilder(CreateUpdateRequest::class)->disableOriginalConstructor()->getMock();
+        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
+        $response        = new Response();
+
+        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->placeRepository
+            ->expects(self::once())
+            ->method('createForUserOrFail')
+            ->with($data, $this->user)
+            ->willReturn($place);
+
+        $place
+            ->expects(self::once())
+            ->method('toArray')
+            ->with()
+            ->willReturn($placeArray);
+
+        $categoriesSet = array_key_exists('category_ids', $data);
+
+        if ($categoriesSet) {
+            $categoriesRelation = $this->getMockBuilder(BelongsToMany::class)->disableOriginalConstructor()->getMock();
+            $place
+                ->expects(self::once())
+                ->method('categories')
+                ->with()
+                ->willReturn($categoriesRelation);
+
+            $request
+                ->expects(self::once())
+                ->method('__get')
+                ->with('category_ids')
+                ->willReturn($data['category_ids']);
+
+            $categoriesRelation
+                ->expects(self::once())
+                ->method('attach')
+                ->with($data['category_ids']);
         }
+
+        $request
+            ->expects(self::once())
+            ->method('all')
+            ->with()
+            ->willReturn($data);
+
+        $request
+            ->expects(self::once())
+            ->method('has')
+            ->with('category_ids')
+            ->willReturn($categoriesSet);
+
+        $responseFactory
+            ->expects(self::once())
+            ->method('__call')
+            ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
+            ->willReturn($response);
+
+        $returnValue = $this->controller->store($request);
+        self::assertSame($response, $returnValue);
+    }
+
+    /**
+     * @test
+     * @dataProvider updateData
+     *
+     * @param array $data
+     * @param array $placeArray
+     * @param bool  $isPut
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \InvalidArgumentException
+     * @throws \PHPUnit_Framework_Exception
+     * @throws \PHPUnit_Framework_MockObject_RuntimeException
+     */
+    public function updateTest(array $data, array $placeArray, bool $isPut)
+    {
+        $placeId            = $this->faker->uuid;
+        $place              = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
+        $request            = $this->getMockBuilder(CreateUpdateRequest::class)->disableOriginalConstructor()->getMock();
+        $categoriesRelation = $this->getMockBuilder(BelongsToMany::class)->disableOriginalConstructor()->getMock();
+        $responseFactory    = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
+        $response           = new Response();
+
+        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        if ($isPut) {
+            $place
+                ->expects(self::once())
+                ->method('getFillable')
+                ->with()
+                ->willReturn([]);
+        }
+
+        $place
+            ->expects(self::once())
+            ->method('__get')
+            ->with('id')
+            ->willReturn($placeId);
+
+        $request
+            ->expects(self::once())
+            ->method('__get')
+            ->with('category_ids')
+            ->willReturn($data['category_ids']);
+
+        $place
+            ->expects(self::once())
+            ->method('categories')
+            ->with()
+            ->willReturn($categoriesRelation);
+
+        $place
+            ->expects(self::once())
+            ->method('toArray')
+            ->with()
+            ->willReturn($placeArray);
+
+        $categoriesRelation
+            ->expects(self::once())
+            ->method('sync')
+            ->with($data['category_ids']);
+
+        $this->placeRepository
+            ->expects(self::once())
+            ->method('findByUser')
+            ->with($this->user)
+            ->willReturn($place);
+
+        $request
+            ->expects(self::once())
+            ->method('all')
+            ->with()
+            ->willReturn($data);
+
+        $request
+            ->expects(self::once())
+            ->method('isMethod')
+            ->with('put')
+            ->willReturn($isPut);
+
+        $this->placeRepository
+            ->expects(self::once())
+            ->method('update')
+            ->with($data, $placeId)
+            ->willReturn($place);
+
+        $responseFactory
+            ->expects(self::once())
+            ->method('__call')
+            ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
+            ->willReturn($response);
+
+        $returnValue = $this->controller->update($request);
+        self::assertSame($response, $returnValue);
     }
 
     // data
 
+    public function updateData()
+    {
+        return [
+            [$this->fakePlaceData(true), $this->fakeArray(), $this->faker->boolean],
+            [$this->fakePlaceData(true), $this->fakeArray(), $this->faker->boolean],
+            [$this->fakePlaceData(true), $this->fakeArray(), $this->faker->boolean],
+            [$this->fakePlaceData(true), $this->fakeArray(), $this->faker->boolean],
+        ];
+    }
+
+    public function storeData()
+    {
+        return [
+            [
+                $this->fakePlaceData(),
+                $this->fakeArray()
+            ],
+            [
+                $this->fakePlaceData(true),
+                $this->fakeArray()
+            ],
+        ];
+    }
+
+    public function createData()
+    {
+        return [
+            [
+                [
+                    'name'           => null,
+                    'description'    => null,
+                    'about'          => null,
+                    'address'        => null,
+                    'category_ids'   => null,
+                    'category_ids.*' => null,
+                    'latitude'       => null,
+                    'longitude'      => null,
+                    'radius'         => null
+                ]
+            ],
+        ];
+    }
+
+    public function showPlaceOffersData()
+    {
+        return [
+            [$this->generateUuid()],
+            [$this->generateUuid()],
+        ];
+    }
+
     public function showOwnerPlaceData()
     {
         return [
-            [true, false],
-            [false, false],
-            [true, true],
+            [false],
+            [false],
+            [true],
         ];
     }
 
@@ -284,4 +654,59 @@ class PlaceControllerTest extends TestCase
             [[$this->generateUuid()], 100, 450, 10],
         ];
     }
+
+    private function fakeArray()
+    {
+        $array = [];
+
+        $count = $this->faker->numberBetween(1, 10);
+
+        for ($i = 0; $i < $count; ++$i) {
+            $array[$this->faker->randomAscii] = $this->faker->randomAscii;
+        }
+
+        return $array;
+    }
+
+    private function fakeNullValueArray()
+    {
+        $array = [];
+
+        $count = $this->faker->numberBetween(1, 10);
+
+        for ($i = 0; $i < $count; ++$i) {
+            $array[$this->faker->randomAscii] = null;
+        }
+
+        return $array;
+    }
+
+    /**
+     * @param bool $withCategories
+     *
+     * @return array
+     */
+    private function fakePlaceData($withCategories = false): array
+    {
+        $data = [
+            'name'        => $this->faker->name,
+            'description' => $this->faker->text,
+            'about'       => $this->faker->text,
+            'address'     => $this->faker->address,
+            'latitude'    => $this->faker->latitude,
+            'longitude'   => $this->faker->longitude,
+            'radius'      => $this->faker->randomNumber()
+        ];
+
+        if ($withCategories) {
+            $categories = [];
+            for ($i = 0; $i < $this->faker->randomDigit; ++$i) {
+                $categories[] = $this->faker->uuid;
+            }
+            $data['category_ids'] = $categories;
+        }
+
+        return $data;
+    }
+
 }

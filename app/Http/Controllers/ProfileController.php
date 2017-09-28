@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Attributes;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
@@ -67,7 +67,8 @@ class ProfileController extends Controller
         $userData = $request->all();
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(User::getFillableWithDefaults(['password']), $userData);
+            $userData = \array_merge(Attributes::getFillableWithDefaults($this->auth->guard()->user(), ['password']),
+                $userData);
         }
 
         $user = $this->userRepository->update($userData, $uuid);

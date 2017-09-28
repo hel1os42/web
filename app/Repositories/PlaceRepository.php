@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Place;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
@@ -19,9 +20,15 @@ interface PlaceRepository extends RepositoryInterface
 {
     public function model(): string;
 
-    public function createForUser(array $placeData, User $user): Place;
+    public function createForUserOrFail(array $placeData, User $user): Place;
 
-    public function findByUser(User $user): ?Place;
+    /**
+     * @param User $user
+     *
+     * @return Place
+     * @throws ModelNotFoundException
+     */
+    public function findByUser(User $user): Place;
 
     /**
      * @param $categoryIds

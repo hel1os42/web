@@ -1,11 +1,17 @@
 <?php
-namespace App\Models\Traits;
 
-trait HasAttributes
+namespace App\Helpers;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Class Attributes
+ * NS: App\Helpers
+ */
+class Attributes
 {
-    public static function getFillableWithDefaults($without = [])
+    public static function getFillableWithDefaults(Model $model, $without = [])
     {
-        $model = new static();
         $array = [];
 
         foreach ($model->getFillable() as $item) {
