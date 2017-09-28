@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
-use App\Models\Traits\HasAttributes;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -37,11 +37,11 @@ use Illuminate\Support\Collection;
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
- * @method static static|Builder filterByCategories(array $category_ids)
+ * @method static static|Builder filterByCategories(array $categoryIds)
  */
 class Place extends Model
 {
-    use HasAttributes, Uuids;
+    use Uuids;
 
     /**
      * Place constructor.
@@ -326,7 +326,7 @@ class Place extends Model
      * @return Builder
      * @throws \InvalidArgumentException
      */
-    public function scopeByUser(Builder $builder, User $user): Builder
+    public function scopeByUser($builder, User $user): Builder
     {
         return $builder->where('user_id', $user->getId());
     }

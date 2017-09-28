@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <form action="{{ route('transactionComplete') }}" method="post" target="_top">
+    <form action="{{ route('transaction.complete') }}" method="post" target="_top">
         {{ csrf_field() }}
 
         <label>source</label><input type="text" name="source" value="{{ $source }}"> <br>

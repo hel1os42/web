@@ -22,6 +22,10 @@
         <testsuite name="CoreService JOBS INTEGRATION">
             <directory suffix="Test.php">./tests/Integration/OmniSynapse/CoreService/Jobs</directory>
         </testsuite>
+
+        <testsuite name="App UNIT">
+            <directory suffix="Test.php">./tests/Unit/app</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

@@ -32,9 +32,9 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name'             => 'string|min:2',
-            'email'            => sprintf('required_without:phone|email|max:255|unique:users,email,%s',
+            'email'            => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 auth()->id()),
-            'phone'            => sprintf('required_without:email|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+            'phone'            => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 auth()->id()),
             'password'         => 'min:6|max:255',
             'password_confirm' => 'same:password',

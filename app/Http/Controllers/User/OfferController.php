@@ -4,13 +4,25 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\OfferRequest;
-use Symfony\Component\HttpFoundation\Response;
 use App\Models\NauModels\Offer;
+use App\Repositories\OfferRepository;
+use Illuminate\Auth\AuthManager;
+use Symfony\Component\HttpFoundation\Response;
 
 class OfferController extends Controller
 {
+    private $offerRepository;
+    private $auth;
+
+    public function __construct(OfferRepository $offerRepository, AuthManager $authManager)
+    {
+        $this->offerRepository = $offerRepository;
+        $this->auth            = $authManager->guard();
+    }
+
     /**
      * List offers
+     *
      * @param OfferRequest $request
      *
      * @return Response
@@ -18,12 +30,11 @@ class OfferController extends Controller
      */
     public function index(OfferRequest $request): Response
     {
-        return response()->render('user.offer.index',
-            Offer::filterByCategories($request->get('category_ids', []))
-            ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-            ->select(Offer::$publicAttributes)
-            ->paginate()
-        );
+        $offers = $this->offerRepository
+            ->getActiveByCategoriesAndPosition($request->category_ids,
+                $request->latitude, $request->longitude, $request->radius);
+
+        return response()->render('user.offer.index', $offers->select(Offer::$publicAttributes)->paginate());
     }
 
     /**
@@ -38,7 +49,12 @@ class OfferController extends Controller
     public function show(string $offerUuid): Response
     {
         //check is this offer have active status
-        $offer = Offer::findOrFail($offerUuid);
-        return \response()->render('user.offer.show', $offer->isOwner(\auth()->user()) ? $offer->toArray() : $offer->setVisible(Offer::$publicAttributes)->toArray());
+        $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
+
+        if ($offer->isOwner($this->auth->user())) {
+            $offer->setVisible(Offer::$publicAttributes);
+        }
+
+        return \response()->render('user.offer.show', $offer->toArray());
     }
 }

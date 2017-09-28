@@ -19,6 +19,7 @@
     "michaelachrisco/readonly": "^0.20.1",
     "netresearch/jsonmapper": "^1.2",
     "pda/pheanstalk": "^3.1",
+    "prettus/l5-repository": "^2.6",
     "sofa/eloquence": "^5.4",
     "tymon/jwt-auth": "0.5.*",
     "vinkla/hashids": "^3.2",

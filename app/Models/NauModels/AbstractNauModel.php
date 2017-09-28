@@ -2,20 +2,22 @@
 
 namespace App\Models\NauModels;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Sofa\Eloquence\Eloquence;
 use Sofa\Eloquence\Mappable;
 
 /**
- * Class NauModel
+ * Class AbstractNauModel
  * @package App\Models\NauModels
  */
-class NauModel extends Model
+abstract class AbstractNauModel extends Model
 {
     use Eloquence, Mappable;
 
     const DATE_FORMAT = 'Y-m-d H:i:s.uO';
+    const TIME_FORMAT = 'H:i:s.uO';
 
     /**
      * Mapped attributes
@@ -25,7 +27,7 @@ class NauModel extends Model
     protected $maps = [];
 
     /**
-     * NauModel constructor.
+     * AbstractNauModel constructor.
      *
      * @param array $attributes
      *
@@ -39,6 +41,16 @@ class NauModel extends Model
         parent::__construct($attributes);
     }
 
+    public function asDateTime($value)
+    {
+        try {
+            $returnValue = parent::asDateTime($value);
+        } catch (\InvalidArgumentException $e) {
+            $returnValue = Carbon::parse($value);
+        }
+
+        return $returnValue;
+    }
 
     /**
      * @param Builder $query

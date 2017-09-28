@@ -100,12 +100,8 @@ abstract class AbstractPictureController extends Controller
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    protected function respondWithImageFor(string $identity = null): Response
+    protected function respondWithImageFor(string $identity): Response
     {
-        if (is_null($identity)) {
-            $identity = \auth()->id();
-        }
-
         $path = $this->picturePathFor($identity);
 
         return false === $this->filesystem->exists($path)

@@ -1,34 +1,45 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Place;
 
-use App\Models\Place;
+use App\Repositories\PlaceRepository;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class PlaceRequest
+ * Class CreateUpdateRequest
  * @package App\Http\Requests
  *
  * @property string name
  * @property string description
  * @property string about
  * @property string address
- * @property float latitude
- * @property float longitude
- * @property int radius
- * @property array category_ids
+ * @property float  latitude
+ * @property float  longitude
+ * @property int    radius
+ * @property array  category_ids
  *
  */
-class PlaceRequest extends FormRequest
+class CreateUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
+     * @param PlaceRepository $repository
+     * @param AuthManager     $authManager
+     *
      * @return bool
+     * @throws \InvalidArgumentException
      */
-    public function authorize()
+    public function authorize(PlaceRepository $repository, AuthManager $authManager)
     {
-        return true;
+        $authorized = $repository->existsByUser($authManager->guard()->user());
+
+        if ($this->isMethod('post')) {
+            $authorized = !$authorized;
+        }
+
+        return $authorized;
     }
 
     /**
@@ -53,13 +64,4 @@ class PlaceRequest extends FormRequest
             'radius'         => 'required_with:latitude,longitude|integer|min:1'
         ];
     }
-
-    /**
-     * @param Place $place
-     * @return Place
-     */
-    public function fillPlace(Place $place)
-    {
-        return $place->fill($this->all());
-    }
-} 
+}

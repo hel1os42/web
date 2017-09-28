@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    use HandlesRequestData;
+    private $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository) {
+        $this->categoryRepository = $categoryRepository;
+    }
+
 
     /**
      * @return Response
@@ -17,27 +22,25 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
-        return \response()->render('category.list', Category::withNoParent()->paginate());
+        $categories = $this->categoryRepository
+            ->getWithNoParent();
+
+        return \response()->render('category.list', $categories->paginate());
     }
 
     /**
      * Category show
      *
-     * @param Request $request
      * @param string  $uuid
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid)
+    public function show(string $uuid)
     {
-        $with     = $this->handleWith(
-            ['children'],
-            $request,
-            ['parent']
-        );
-        $category = Category::with($with)->findOrFail($uuid);
+        $category = $this->categoryRepository
+            ->with(['parent'])->find($uuid);
 
         return response()->render('category.show', $category->toArray());
     }

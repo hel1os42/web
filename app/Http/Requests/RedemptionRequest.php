@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Repositories\ActivationCodeRepository;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -15,6 +17,10 @@ class RedemptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @param ActivationCodeRepository $activationCodeRepository
+     *
+     * @param AuthManager              $authManager
      *
      * @return bool
      */
@@ -31,7 +37,7 @@ class RedemptionRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'string|min:3'
+            'code' => 'required|can_redeem'
         ];
     }
 } 

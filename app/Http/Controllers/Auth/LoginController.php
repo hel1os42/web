@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Routing\ResponseFactory;
@@ -20,35 +20,43 @@ class LoginController extends Controller
 {
     use ThrottlesLogins;
 
+    private $userRepository;
+    private $jwtAuth;
+    private $auth;
+
+    public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
+    {
+        $this->userRepository = $userRepository;
+        $this->jwtAuth        = $jwtAuth;
+        $this->auth           = $auth;
+    }
+
     /**
      * @return Response
-     * @throws \LogicException
      */
     public function getLogin()
     {
-        return response()->render('auth.login', [
+        return \response()->render('auth.login', [
             'email'    => null,
             'password' => null
         ]);
     }
 
     /**
-     * @param string $phone
+     * @param OtpAuth $otpAuth
+     * @param string  $phone
      *
      * @return Response
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
-    public function getOtpCode(string $phone): Response
+    public function getOtpCode(OtpAuth $otpAuth, string $phone): Response
     {
-        $user = User::findByPhone($phone);
+        $user = $this->userRepository->findByPhone($phone);
 
         if (null === $user) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
         /** @var OtpAuth $otpAuth */
-        $otpAuth = app(OtpAuth::class);
         $otpAuth->generateCode($user->phone);
 
         return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
@@ -56,57 +64,49 @@ class LoginController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
-     *
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
+     * @return Response
      */
     public function logout()
     {
-        auth()->logout();
+        $this->auth->guard()->logout();
 
-        return request()->wantsJson()
-            ? response()->render('', '', Response::HTTP_NO_CONTENT)
-            : redirect()->route('home');
+        return \request()->wantsJson()
+            ? \response()->render('', '', Response::HTTP_NO_CONTENT)
+            : \redirect()->route('home');
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function tokenRefresh()
     {
-        /** @var JWTAuth $jwtAuth */
-        $jwtAuth = app('tymon.jwt.auth');
-
         try {
-            $token = $jwtAuth->refresh();
+            $token = $this->jwtAuth->refresh();
         } catch (TokenInvalidException $e) {
             return \response()->error(Response::HTTP_UNAUTHORIZED, 'The token is invalid');
         }
 
-        return response()->json(compact('token'));
+        return \response()->json(compact('token'));
     }
 
     /**
      * @param LoginRequest    $request
      * @param ResponseFactory $response
+     * @param Session         $session
      *
      * @return Response
-     * @throws \InvalidArgumentException
+     *
      */
-    public function login(LoginRequest $request, ResponseFactory $response)
+    public function login(LoginRequest $request, Session $session)
     {
         $user            = null;
         $defaultProvider = 'users';
 
         $credentials = $request->credentials();
 
-        foreach (config('auth.guards') as $guardName => $config) {
-            /** @var AuthManager|Guard $auth */
-            $auth = auth();
-
+        foreach (\config('auth.guards') as $guardName => $config) {
             try {
-                $validated = $auth->guard($guardName)->validate($credentials);
+                $validated = $this->auth->guard($guardName)->validate($credentials);
             } catch (QueryException $queryException) {
                 $validated = false;
             }
@@ -116,50 +116,44 @@ class LoginController extends Controller
             }
 
             $providerName = $config['provider'] ?? $defaultProvider;
-            $provider     = $auth->createUserProvider($providerName);
+            $provider     = $this->auth->createUserProvider($providerName);
             $user         = $provider->retrieveByCredentials($credentials);
 
             break;
         }
 
         if (null === $user) {
-            return $response->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+            return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
         }
 
-        session()->migrate(true);
+        $session->migrate(true);
 
         return $request->wantsJson()
-            ? $this->postLoginJwt($user, $response)
-            : $this->postLoginSession($user, $response);
+            ? $this->postLoginJwt($user)
+            : $this->postLoginSession($user);
     }
 
     /**
      * @param Authenticatable $user
-     * @param ResponseFactory $response
      *
      * @return Response
      */
-    private function postLoginJwt(Authenticatable $user, ResponseFactory $response): Response
+    private function postLoginJwt(Authenticatable $user): Response
     {
-        /** @var JWTAuth $jwtAuth */
-        $jwtAuth = app('tymon.jwt.auth');
+        $token = $this->jwtAuth->fromUser($user);
 
-        $token = $jwtAuth->fromUser($user);
-
-        return $response->render('', compact('token'));
+        return \response()->render('', \compact('token'));
     }
 
     /**
      * @param Authenticatable $user
-     * @param ResponseFactory $response
      *
      * @return Response
-     *
      */
-    private function postLoginSession(Authenticatable $user, ResponseFactory $response)
+    private function postLoginSession(Authenticatable $user)
     {
-        auth('web')->login($user);
+        $this->auth->guard('web')->login($user);
 
-        return $response->redirectTo(request()->get('redirect_to', '/'));
+        return \response()->redirectTo(\request()->get('redirect_to', '/'));
     }
 }
