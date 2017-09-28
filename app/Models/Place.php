@@ -346,7 +346,7 @@ class Place extends Model
      */
     public function testimonials(): HasMany
     {
-        return $this->hasMany(Account::class, 'owner_id', 'id');
+        return $this->hasMany(Testimonials::class);
     }
 
     /**

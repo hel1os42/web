@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\NauModels\Offer;
 use App\Traits\Uuids;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Testimonials
@@ -86,8 +83,8 @@ class Testimonials extends Model
     /**
      * @return BelongsTo
      */
-    public function offer(): BelongsTo
+    public function place(): BelongsTo
     {
-        return $this->belongsTo(Offer::class);
+        return $this->belongsTo(Place::class);
     }
 }
