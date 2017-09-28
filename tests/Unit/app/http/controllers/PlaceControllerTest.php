@@ -381,7 +381,6 @@ class PlaceControllerTest extends TestCase
      */
     public function createTest(array $data)
     {
-        $request         = $this->getMockBuilder(CreateUpdateRequest::class)->disableOriginalConstructor()->getMock();
         $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
         $response        = new Response();
 
@@ -393,7 +392,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['place.create', $data])
             ->willReturn($response);
 
-        $returnValue = $this->controller->create($request);
+        $returnValue = $this->controller->create();
         self::assertSame($response, $returnValue);
     }
 
