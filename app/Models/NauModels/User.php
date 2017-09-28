@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int     points
  * @property WebUser owner
  */
-class User extends NauModel
+class User extends AbstractNauModel
 {
 
     public function __construct(array $attributes = [])

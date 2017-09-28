@@ -10,29 +10,31 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
-use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * Class ActivationCode
  * @package App\Models
  *
- * @property integer id
- * @property string code
- * @property string user_id
- * @property string offer_id
- * @property string redemption_id
- * @property Carbon created_at
- * @property Offer offer
- * @property User user
+ * @property integer    id
+ * @property string     code
+ * @property string     user_id
+ * @property string     offer_id
+ * @property string     redemption_id
+ * @property Carbon     created_at
+ * @property Offer      offer
+ * @property User       user
  * @property Redemption redemption
  *
  * @method static static|ActivationCode[]|Collection|Builder byCode(string $code)
  * @method static static|ActivationCode[]|Collection|Builder byOwner(User $owner)
+ * @method static static|ActivationCode[]|Collection|Builder byOffer(Offer $offer)
  */
 class ActivationCode extends Model
 {
     /**
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -69,16 +71,18 @@ class ActivationCode extends Model
     /** @return string */
     public function getCodeAttribute(): string
     {
-        return Hashids::connection('activation_code')->encode($this->id);
+        return app('hashids')->connection('activation_code')->encode($this->id);
     }
 
     /**
      * @param string $uuid
+     *
      * @return ActivationCode
      */
     public function setRedemptionId(string $uuid): ActivationCode
     {
         $this->redemption_id = $uuid;
+
         return $this;
     }
 
@@ -102,12 +106,14 @@ class ActivationCode extends Model
 
     /**
      * @param string $code
+     *
      * @return int
      * @throws BadActivationCodeException
      */
     public function getIdByCode(string $code): ?int
     {
-        $activationId = Hashids::connection('activation_code')->decode($code);
+        $activationId = app('hashids')->connection('activation_code')->decode($code);
+
         return isset($activationId[0]) ? $activationId[0] : null;
 
     }
@@ -135,6 +141,18 @@ class ActivationCode extends Model
     public function scopeByOwner(Builder $builder, User $owner): Builder
     {
         return $builder->where('user_id', $owner->getId());
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Offer   $offer
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOffer(Builder $builder, Offer $offer): Builder
+    {
+        return $builder->where('offer_id', $offer->getId());
     }
 
     /**

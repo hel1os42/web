@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -41,13 +40,8 @@ class RegisterRequest extends FormRequest
             'password'         => 'required_with:email|min:6|max:255',
             'password_confirm' => 'required_with:email|same:password',
             'phone'            => 'required_without:email|regex:/\+[0-9]{10,15}/|unique:users,phone',
-            'code'             => 'required_with:phone|digits:6',
+            'code'             => 'required_with:phone|digits:6|otp',
             'referrer_id'      => 'required|string|exists:users,id'
         ];
-    }
-
-    public function fillUser(User $user)
-    {
-        return $user->fill($this->all());
     }
 }

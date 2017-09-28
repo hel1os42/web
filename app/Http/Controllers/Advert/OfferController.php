@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers\Advert;
 
+use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
-use App\Models\Currency;
-use App\Models\NauModels\Offer;
+use App\Models\Contracts\Currency;
+use App\Repositories\OfferRepository;
+use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OfferController extends Controller
 {
+    private $offerRepository;
+    private $auth;
+
+    public function __construct(OfferRepository $offerRepository, AuthManager $authManager)
+    {
+        $this->offerRepository = $offerRepository;
+        $this->auth            = $authManager->guard();
+    }
 
     /**
      * Obtain a list of the offers that this user created
@@ -18,7 +28,9 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        return \response()->render('advert.offer.index', auth()->user()->getAccountFor(Currency::NAU)->offers()->paginate());
+        $offers = $this->auth->user()->getAccountFor(Currency::NAU)->offers();
+
+        return \response()->render('advert.offer.index', $offers->paginate());
     }
 
     /**
@@ -27,23 +39,23 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        return \response()->render('advert.offer.create', Offer::getFillableWithDefaults());
+        return \response()->render('advert.offer.create',
+            FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
     }
 
     /**
      * Send new offer data to core to store
+     *
      * @param  Advert\OfferRequest $request
+     *
      * @return Response
      */
     public function store(Advert\OfferRequest $request): Response
     {
-        $newOffer = new Offer();
-        $newOffer->fill($request->toArray());
-        $newOffer->account()->associate(auth()->user()->getAccountFor(Currency::NAU));
-
-        if (!$newOffer->save()) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "Cannot save your offer.");
-        }
+        $newOffer = $this->offerRepository->createForAccountOrFail(
+            $request->all(),
+            $this->auth->user()->getAccountFor(Currency::NAU)
+        );
 
         return \response()->render('advert.offer.store',
             $newOffer->toArray(),
@@ -53,16 +65,19 @@ class OfferController extends Controller
 
     /**
      * Get offer full info(for Advert) by it uuid
+     *
      * @param string $offerUuid
+     *
      * @return Response
      */
     public function show(string $offerUuid): Response
     {
-        $offer = Offer::query()->findOrFail($offerUuid);
+        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, $this->auth->user());
 
-        if ($offer->isOwner(auth()->user())) {
-            return \response()->render('advert.offer.show', $offer->toArray());
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
-        return \response()->error(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+
+        return \response()->render('advert.offer.show', $offer->toArray());
     }
 }

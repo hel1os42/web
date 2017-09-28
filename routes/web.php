@@ -118,9 +118,9 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
-            $router->get('create', 'RedemptionController@create')->name('redemption.create');
+            $router->get('create', 'RedemptionController@createFromOffer')->name('redemption.create');
             $router->post('', 'RedemptionController@redemption')->name('redemption.store');
-            $router->get('{rid}', 'RedemptionController@show')->where('rid',
+            $router->get('{rid}', 'RedemptionController@showFromOffer')->where('rid',
                 '[a-z0-9-]+')->name('redemption.show');
         });
     });
@@ -134,10 +134,17 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
+    $router->resource('redemptions', 'RedemptionController', [
+        'except' => [
+            'update',
+            'destroy'
+        ]
+    ]);
+
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
            ->name('transactionCreate');
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
-           ->name('transactionComplete');
+           ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
            ->where('reansactionId', '[0-9]+')
            ->name('transactionList');

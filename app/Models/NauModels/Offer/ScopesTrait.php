@@ -8,7 +8,9 @@
 
 namespace App\Models\NauModels\Offer;
 
+use App\Models\NauModels\Offer;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -17,11 +19,12 @@ use Ramsey\Uuid\Uuid;
  * Trait ScopesTrait
  * @package App\Models\NauModels\Offer
  *
- * @method static accountOffers(int $accountId) : Offer
- * @method static filterByPosition(string $latitude, string $longitude, int $radius) : Offer
- * @method static filterByCategory(string $categoryId = null)
- * @method static filterByCategories(array $categoryIds)
+ * @method static static|Builder accountOffers(int $accountId) : Offer
+ * @method static static|Builder filterByPosition(string $latitude, string $longitude, int $radius) : Offer
+ * @method static static|Builder filterByCategory(string $categoryId = null)
+ * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder byOwner(User $user)
+ * @method static static|Builder active()
  */
 trait ScopesTrait
 {
@@ -94,5 +97,18 @@ trait ScopesTrait
     public function scopeByOwner(Builder $builder, User $owner): Builder
     {
         return $builder->whereIn('account_id', $owner->accounts->pluck('id'));
+    }
+
+    public function scopeActive(Builder $builder): Builder
+    {
+        $now = Carbon::now()->format(Carbon::ISO8601);
+
+        return $builder->where('status', Offer::STATUS_ACTIVE)
+            ->where('start_date', '<=', $now)
+            ->where(function(Builder $builder) use ($now) {
+                $builder
+                    ->whereNull('finish_date')
+                    ->orWhere('finish_date', '>', $now);
+            });
     }
 }

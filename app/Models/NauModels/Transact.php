@@ -4,8 +4,8 @@ namespace App\Models\NauModels;
 
 use App\Models\Traits\HasNau;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Transact
@@ -21,10 +21,11 @@ use Illuminate\Database\Eloquent\Builder;
  * @property Account source
  * @property Account destination
  * @property string  type
- * @method static Transact forAccount(Account $account)
- * @method static Transact forUser(User $user)
+ *
+ * @method static static|Builder forAccount(Account $account)
+ * @method static static|Builder forUser(User $user)
  */
-class Transact extends NauModel
+class Transact extends AbstractNauModel
 {
     use HasNau;
 
@@ -37,6 +38,10 @@ class Transact extends NauModel
         $this->table = "transact";
 
         $this->primaryKey = 'txid';
+
+        $this->fillable = [
+            'id', 'source_account_id', 'destination_account_id', 'amount'
+        ];
 
         $this->casts = [
             'txid'    => 'string',
@@ -152,7 +157,7 @@ class Transact extends NauModel
      */
     public function getType(): string
     {
-        return $this->type;
+        return $this->type ?? self::TYPE_REDEMPTION;
     }
 
     /**

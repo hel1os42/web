@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\NauModels\NauModel;
+use App\Models\NauModels\AbstractNauModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -28,7 +28,7 @@ class UserOfferPivot extends Pivot
         $table,
         $exists = false
     ) {
-        $this->dateFormat = NauModel::DATE_FORMAT;
+        $this->dateFormat = AbstractNauModel::DATE_FORMAT;
 
         parent::__construct($parent, $attributes, $table, $exists);
     }
