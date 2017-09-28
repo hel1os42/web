@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlaceController extends Controller
 {
@@ -24,6 +25,13 @@ class PlaceController extends Controller
         $this->auth             = $authManager->guard();
     }
 
+    /**
+     * @param PlaceFilterRequest $request
+     *
+     * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
     public function index(PlaceFilterRequest $request): Response
     {
         $places = $this->placesRepository
@@ -61,7 +69,7 @@ class PlaceController extends Controller
         $place = $this->placesRepository->findByUser($this->auth->user());
 
         if (null === $place) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, 'You have not created a place yet.');
+            throw new NotFoundHttpException('You have not created a place yet.');
         }
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
