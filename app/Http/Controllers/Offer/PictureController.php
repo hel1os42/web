@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PictureController extends AbstractPictureController
 {
-    private const OFFER_PICTURES_PATH = 'images/offer/pictures';
+    const OFFER_PICTURES_PATH = 'images/offer/pictures';
     private $offerRepository;
     private $auth;
 

@@ -8,7 +8,7 @@ use OmniSynapse\CoreService\Response\Error as ErrorResponse;
 
 class RequestException extends Exception
 {
-    private const CORE_EXCEPTION_EXPLANATION = [
+    const CORE_EXCEPTION_EXPLANATION = [
         'com.toavalon.nau.core.entities.Wallet$NotEnoughFunds' => [
             'Not enough funds'
         ]

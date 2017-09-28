@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PictureController extends AbstractPictureController
 {
-    private const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+    const PROFILE_PICTURES_PATH = 'images/profile/pictures';
     private $auth;
 
     public function __construct(

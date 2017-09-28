@@ -708,5 +708,4 @@ class PlaceControllerTest extends TestCase
 
         return $data;
     }
-
 }

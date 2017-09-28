@@ -42,8 +42,8 @@ class Offer extends AbstractNauModel
 {
     use RelationsTrait, ScopesTrait, HasNau;
 
-    public const STATUS_ACTIVE = 'active';
-    public const STATUS_DEACTIVE = 'deactive';
+    const STATUS_ACTIVE   = 'active';
+    const STATUS_DEACTIVE = 'deactive';
 
     public function __construct(array $attributes = [])
     {

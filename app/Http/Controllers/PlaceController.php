@@ -103,6 +103,7 @@ class PlaceController extends Controller
      */
     public function create(CreateUpdateRequest $request): Response
     {
+        $request->validate();
         return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
