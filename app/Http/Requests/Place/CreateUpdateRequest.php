@@ -49,7 +49,7 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        return $this->isMethod('get') ? [] : [
             'name'        => 'required|string|min:3',
             'description' => 'string',
             'about'       => 'string',
