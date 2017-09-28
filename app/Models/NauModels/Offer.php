@@ -53,116 +53,12 @@ class Offer extends AbstractNauModel
 
         $this->incrementing = false;
 
-        $this->attributes = [
-            'acc_id'               => null,
-            'name'                 => null,
-            'descr'                => null,
-            'reward'               => 10000,
-            'status'               => null,
-            'dt_start'             => null,
-            'dt_finish'            => null,
-            'tm_start'             => null,
-            'tm_finish'            => null,
-            'country'              => null,
-            'city'                 => null,
-            'categ'                => null,
-            'max_count'            => null,
-            'max_for_user'         => null,
-            'max_per_day'          => null,
-            'max_for_user_per_day' => null,
-            'min_level'            => null,
-            'lat'                  => null,
-            'lng'                  => null,
-            'radius'               => null
-        ];
-
-        $this->fillable = [
-            'account_id',
-            'label',
-            'description',
-            'reward',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'country',
-            'city',
-            'category_id',
-            'max_count',
-            'max_for_user',
-            'max_per_day',
-            'max_for_user_per_day',
-            'user_level_min',
-            'latitude',
-            'longitude',
-            'radius'
-        ];
-
-        $this->hidden = [
-            'acc_id',
-            'name',
-            'descr',
-            'dt_start',
-            'dt_finish',
-            'tm_start',
-            'tm_finish',
-            'categ',
-            'min_level',
-            'lat',
-            'lng'
-        ];
-
-        $this->appends = [
-            'account_id',
-            'label',
-            'description',
-            'start_date',
-            'finish_date',
-            'start_time',
-            'finish_time',
-            'category_id',
-            'user_level_min',
-            'latitude',
-            'longitude',
-            'picture_url'
-        ];
-
-        $this->casts = [
-            'id'                   => 'string',
-            'account_id'           => 'integer',
-            'label'                => 'string',
-            'description'          => 'string',
-            'status'               => 'string',
-            'start_date'           => 'datetime',
-            'finish_date'          => 'datetime',
-            'start_time'           => 'datetime',
-            'finish_time'          => 'datetime',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'category_id'          => 'string',
-            'max_count'            => 'integer',
-            'max_for_user'         => 'integer',
-            'max_per_day'          => 'integer',
-            'max_for_user_per_day' => 'integer',
-            'user_level_min'       => 'integer',
-            'latitude'             => 'double',
-            'longitude'            => 'double',
-            'radius'               => 'integer'
-        ];
-
-        $this->maps = [
-            'account_id'     => 'acc_id',
-            'label'          => 'name',
-            'description'    => 'descr',
-            'start_date'     => 'dt_start',
-            'finish_date'    => 'dt_finish',
-            'start_time'     => 'tm_start',
-            'finish_time'    => 'tm_finish',
-            'category_id'    => 'categ',
-            'user_level_min' => 'min_level',
-            'latitude'       => 'lat',
-            'longitude'      => 'lng'
-        ];
+        $this->initAttributes();
+        $this->initFillable();
+        $this->initHidden();
+        $this->initAppends();
+        $this->initCasts();
+        $this->initMaps();
 
         parent::__construct($attributes);
     }
@@ -431,5 +327,134 @@ class Offer extends AbstractNauModel
         $activationCode->activated($redemption);
 
         return $redemption;
+    }
+
+    private function initAttributes(): void
+    {
+        $this->attributes = [
+            'acc_id'               => null,
+            'name'                 => null,
+            'descr'                => null,
+            'reward'               => 10000,
+            'status'               => null,
+            'dt_start'             => null,
+            'dt_finish'            => null,
+            'tm_start'             => null,
+            'tm_finish'            => null,
+            'country'              => null,
+            'city'                 => null,
+            'categ'                => null,
+            'max_count'            => null,
+            'max_for_user'         => null,
+            'max_per_day'          => null,
+            'max_for_user_per_day' => null,
+            'min_level'            => null,
+            'lat'                  => null,
+            'lng'                  => null,
+            'radius'               => null
+        ];
+    }
+
+    private function initFillable(): void
+    {
+        $this->fillable = [
+            'account_id',
+            'label',
+            'description',
+            'reward',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'country',
+            'city',
+            'category_id',
+            'max_count',
+            'max_for_user',
+            'max_per_day',
+            'max_for_user_per_day',
+            'user_level_min',
+            'latitude',
+            'longitude',
+            'radius'
+        ];
+    }
+
+    private function initHidden(): void
+    {
+        $this->hidden = [
+            'acc_id',
+            'name',
+            'descr',
+            'dt_start',
+            'dt_finish',
+            'tm_start',
+            'tm_finish',
+            'categ',
+            'min_level',
+            'lat',
+            'lng'
+        ];
+    }
+
+    private function initAppends(): void
+    {
+        $this->appends = [
+            'account_id',
+            'label',
+            'description',
+            'start_date',
+            'finish_date',
+            'start_time',
+            'finish_time',
+            'category_id',
+            'user_level_min',
+            'latitude',
+            'longitude',
+            'picture_url'
+        ];
+    }
+
+    private function initCasts(): void
+    {
+        $this->casts = [
+            'id'                   => 'string',
+            'account_id'           => 'integer',
+            'label'                => 'string',
+            'description'          => 'string',
+            'status'               => 'string',
+            'start_date'           => 'datetime',
+            'finish_date'          => 'datetime',
+            'start_time'           => 'datetime',
+            'finish_time'          => 'datetime',
+            'country'              => 'string',
+            'city'                 => 'string',
+            'category_id'          => 'string',
+            'max_count'            => 'integer',
+            'max_for_user'         => 'integer',
+            'max_per_day'          => 'integer',
+            'max_for_user_per_day' => 'integer',
+            'user_level_min'       => 'integer',
+            'latitude'             => 'double',
+            'longitude'            => 'double',
+            'radius'               => 'integer'
+        ];
+    }
+
+    private function initMaps(): void
+    {
+        $this->maps = [
+            'account_id'     => 'acc_id',
+            'label'          => 'name',
+            'description'    => 'descr',
+            'start_date'     => 'dt_start',
+            'finish_date'    => 'dt_finish',
+            'start_time'     => 'tm_start',
+            'finish_time'    => 'tm_finish',
+            'category_id'    => 'categ',
+            'user_level_min' => 'min_level',
+            'latitude'       => 'lat',
+            'longitude'      => 'lng'
+        ];
     }
 }
