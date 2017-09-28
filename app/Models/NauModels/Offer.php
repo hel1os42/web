@@ -53,6 +53,13 @@ class Offer extends AbstractNauModel
 
         $this->incrementing = false;
 
+        $this->dates = [
+            'dt_start',
+            'dt_finish',
+            'tm_start',
+            'tm_finish',
+        ];
+
         $this->initAttributes();
         $this->initFillable();
         $this->initHidden();
