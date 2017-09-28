@@ -118,9 +118,9 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
-            $router->get('create', 'RedemptionController@create')->name('redemption.create');
+            $router->get('create', 'RedemptionController@createFromOffer')->name('redemption.create');
             $router->post('', 'RedemptionController@redemption')->name('redemption.store');
-            $router->get('{rid}', 'RedemptionController@show')->where('rid',
+            $router->get('{rid}', 'RedemptionController@showFromOffer')->where('rid',
                 '[a-z0-9-]+')->name('redemption.show');
         });
     });
@@ -129,6 +129,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         'except' => [
             'create',
             'store',
+            'update',
+            'destroy'
+        ]
+    ]);
+
+    $router->resource('redemptions', 'RedemptionController', [
+        'except' => [
             'update',
             'destroy'
         ]

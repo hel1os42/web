@@ -24,7 +24,7 @@ class ActivationCodeController extends Controller
     public function show($code)
     {
         $activationCode = $this->activationCodeRepository
-            ->findByCodeAndOwner($code, $this->auth->guard()->user());
+            ->findByCodeAndUser($code, $this->auth->guard()->user());
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());

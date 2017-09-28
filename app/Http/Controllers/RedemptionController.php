@@ -11,10 +11,13 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
+use App\Models\NauModels\Redemption;
 use App\Models\User;
 use App\Repositories\OfferRepository;
+use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -23,8 +26,10 @@ class RedemptionController extends Controller
     private $offerRepository;
     private $auth;
 
-    public function __construct(OfferRepository $offerRepository, AuthManager $auth)
-    {
+    public function __construct(
+        OfferRepository $offerRepository,
+        AuthManager $auth
+    ) {
         $this->offerRepository = $offerRepository;
         $this->auth            = $auth;
     }
@@ -34,8 +39,6 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function getActivationCode(string $offerId): Response
     {
@@ -56,14 +59,41 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
-    public function create(string $offerId): Response
+    public function createFromOffer(string $offerId): Response
     {
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         return \response()->render('redemption.create', ['offer_id' => $offer->id, 'code' => null]);
+    }
+
+    /**
+     * @return Response
+     * @throws HttpException
+     */
+    public function create(): Response
+    {
+        return \response()->render('redemption.create', ['code' => null]);
+    }
+
+    /**
+     * @param RedemptionRequest $request
+     * @param OffersService     $offersService
+     *
+     * @return Response
+     */
+    public function store(RedemptionRequest $request, OffersService $offersService): Response
+    {
+        $code = $request->code;
+
+        $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
+
+        return \response()->render(
+            'redemption.redeem',
+            $redemption->toArray(),
+            Response::HTTP_CREATED,
+            route('redemptions.show', ['id' => $redemption->getId()])
+        );
     }
 
     /**
@@ -73,14 +103,12 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
         $offer = $this->validateOfferAndGetOwn($offerId);
 
-        $redemption = $offersService->redeem($offer, $request->code);
+        $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
 
         return \response()->render(
             'redemption.redeem',
@@ -91,16 +119,31 @@ class RedemptionController extends Controller
     }
 
     /**
+     * @param string               $redemptionId
+     * @param RedemptionRepository $repository
+     *
+     * @return Response
+     * @throws ModelNotFoundException
+     */
+    public function show(string $redemptionId, RedemptionRepository $repository): Response
+    {
+        $redemption = $repository->find($redemptionId);
+
+        if (!$redemption->offer->isOwner($this->auth->guard()->user())) {
+            throw (new ModelNotFoundException)->setModel(Redemption::class, $redemptionId);
+        }
+
+        return \response()->render('redemption.show', $redemption->toArray());
+    }
+
+    /**
      * @param string $offerId
      * @param string $rid
      *
      * @return Response
-     * @throws HttpException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
-    public function show(string $offerId, string $rid): Response
+    public function showFromOffer(string $offerId, string $rid): Response
     {
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -111,7 +154,6 @@ class RedemptionController extends Controller
      * @param $offerId
      *
      * @return void
-     * @throws HttpException
      */
     private function validateOffer(string $offerId): void
     {

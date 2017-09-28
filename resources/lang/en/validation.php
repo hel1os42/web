@@ -126,4 +126,5 @@ return [
 
     'otp' => 'Wrong OTP code.',
     'enough_for' => 'Not enough money',
+    'can_redeem' => 'Incorrect activation code'
 ];

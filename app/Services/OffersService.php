@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use App\Models\User;
 
 /**
  * Interface OffersService
@@ -11,5 +12,7 @@ use App\Models\NauModels\Redemption;
  */
 interface OffersService
 {
-    public function redeem(Offer $offer, string $code): Redemption;
+    public function redeemByOfferAndCode(Offer $offer, string $code): Redemption;
+
+    public function redeemByOwnerAndCode(User $owner, string $code);
 }

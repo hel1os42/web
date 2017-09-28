@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\AccountRepository;
+use App\Repositories\ActivationCodeRepository;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
@@ -15,10 +16,11 @@ class ValidatorServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application services.
      *
-     * @param ValidatorFactory  $validator
-     * @param OtpAuth           $otpAuth
-     * @param AccountRepository $accountRepository
-     * @param AuthManager       $authManager
+     * @param ValidatorFactory         $validator
+     * @param OtpAuth                  $otpAuth
+     * @param AccountRepository        $accountRepository
+     * @param ActivationCodeRepository $activationCodeRepository
+     * @param AuthManager              $authManager
      *
      * @return void
      * @throws \InvalidArgumentException
@@ -27,11 +29,14 @@ class ValidatorServiceProvider extends ServiceProvider
         ValidatorFactory $validator,
         OtpAuth $otpAuth,
         AccountRepository $accountRepository,
+        ActivationCodeRepository $activationCodeRepository,
         AuthManager $authManager
     ) {
         $validator->extend('otp', $this->validateOtp($otpAuth));
         $validator->extend('ownAddress', $this->validateOwnAddress($accountRepository, $authManager->guard()));
         $validator->extend('enoughFor', $this->validateEnoughMoneyOnAccountFor($accountRepository));
+        $validator->extend('can_redeem',
+            $this->validateCanRedeemActivationCode($activationCodeRepository, $authManager->guard()));
     }
 
     /**
@@ -91,6 +96,7 @@ class ValidatorServiceProvider extends ServiceProvider
             return $accountRepository->existsByAddressAndOwner($value ?? null, $auth->user());
         };
     }
+
     /**
      * @param AccountRepository $accountRepository
      *
@@ -125,6 +131,43 @@ class ValidatorServiceProvider extends ServiceProvider
             }
 
             return $accountRepository->existsByAddressAndBalanceGreaterThan($value ?? null, $amount);
+        };
+    }
+
+    /**
+     * @param ActivationCodeRepository $activationCodeRepository
+     * @param Guard                    $guard
+     *
+     * @return \Closure
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    private function validateCanRedeemActivationCode(ActivationCodeRepository $activationCodeRepository, Guard $guard)
+    {
+        /**
+         * @param           $attribute
+         * @param           $value
+         * @param           $parameters
+         * @param Validator $validator
+         *
+         * @return bool
+         */
+        return function (
+            /** @noinspection PhpUnusedParameterInspection */
+            $attribute,
+            $value,
+            $parameters,
+            Validator $validator
+        ) use ($activationCodeRepository, $guard): bool {
+            if (null === $value) {
+                return false;
+            }
+
+            $activationCode = $activationCodeRepository->findByCodeAndNotRedeemed($value);
+
+            return null !== $activationCode
+                   && null !== $activationCode->offer
+                   && $activationCode->offer->isOwner($guard->user());
         };
     }
 }

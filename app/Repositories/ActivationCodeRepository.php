@@ -17,7 +17,9 @@ interface ActivationCodeRepository extends RepositoryInterface
 {
     public function model(): string;
 
-    public function findByCodeAndOwner($code, User $user): ?ActivationCode;
+    public function findByCodeAndUser($code, User $user): ?ActivationCode;
 
-    public function findByCodeAndOfferAndNotRedeemed($code, Offer $offer): ?ActivationCode;
+    public function findByCodeAndOfferAndNotRedeemed(string $code, Offer $offer): ?ActivationCode;
+
+    public function findByCodeAndNotRedeemed(string $code): ?ActivationCode;
 }

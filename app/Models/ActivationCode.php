@@ -120,6 +120,19 @@ class ActivationCode extends Model
 
     /**
      * @param Builder $builder
+     * @param string  $code
+     *
+     * @return Builder
+     * @throws BadActivationCodeException
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByCode(Builder $builder, string $code): Builder
+    {
+        return $builder->where('id', $this->getIdByCode($code));
+    }
+
+    /**
+     * @param Builder $builder
      * @param User    $owner
      *
      * @return Builder

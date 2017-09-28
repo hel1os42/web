@@ -5,6 +5,7 @@ namespace App\Models\NauModels;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -23,6 +24,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Offer  offer
  * @property User   rewardedUser
  * @property User   user
+ *
+ * @method static static|Builder byUser(User $user)
  */
 class Redemption extends AbstractNauModel
 {
@@ -140,5 +143,10 @@ class Redemption extends AbstractNauModel
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transact::class, 'txid', 'id');
+    }
+
+    public function scopeByUser(Builder $builder, User $user)
+    {
+        return $builder->where('user_id', $user->id);
     }
 }
