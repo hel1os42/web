@@ -47,7 +47,7 @@ return [
         'activation_code' => [
             'salt' => 'glh4z38d',
             'length' => 3,
-            'alphabet' => 'ABCDEFGHJKMNPQRSTUVWYZabcdefghjkmnpqrstuvwxyz23456789',
+            'alphabet' => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789',
         ],
 
     ],
