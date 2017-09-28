@@ -31,7 +31,7 @@ class OfferController extends Controller
     public function index(OfferRequest $request): Response
     {
         $offers = $this->offerRepository
-            ->getByCategoriesAndPosition($request->category_ids,
+            ->getActiveByCategoriesAndPosition($request->category_ids,
                 $request->latitude, $request->longitude, $request->radius);
 
         return response()->render('user.offer.index', $offers->select(Offer::$publicAttributes)->paginate());

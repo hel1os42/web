@@ -30,7 +30,7 @@ interface OfferRepository extends RepositoryInterface
      *
      * @return Builder
      */
-    public function getByCategoriesAndPosition(
+    public function getActiveByCategoriesAndPosition(
         array $categoryIds,
         float $latitude,
         float $longitude,

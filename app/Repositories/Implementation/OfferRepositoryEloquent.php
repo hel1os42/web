@@ -86,7 +86,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
-    public function getByCategoriesAndPosition(
+    public function getActiveByCategoriesAndPosition(
         array $categoryIds,
         float $latitude,
         float $longitude,
@@ -94,7 +94,12 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     ): Builder {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->filterByCategories($categoryIds)->filterByPosition($latitude, $longitude, $radius);
+
+        $model = $this->model
+            ->active()
+            ->filterByCategories($categoryIds)
+            ->filterByPosition($latitude, $longitude, $radius);
+
         $this->resetModel();
 
         return $this->parserResult($model);
@@ -106,6 +111,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
 
         $model = $this->model->active()->findOrFail($identity);
+
         $this->resetModel();
 
         return $this->parserResult($model);
