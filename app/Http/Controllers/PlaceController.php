@@ -7,6 +7,7 @@ use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\PlaceRepository;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -101,9 +102,12 @@ class PlaceController extends Controller
      *
      * @return Response
      */
-    public function create(CreateUpdateRequest $request): Response
+    public function create(): Response
     {
-        $request->validate();
+        if ($this->placesRepository->existsByUser($this->auth->user())) {
+            throw new AuthorizationException('This action is unauthorized.');
+        }
+
         return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 

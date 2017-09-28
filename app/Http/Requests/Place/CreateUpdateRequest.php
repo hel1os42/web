@@ -35,7 +35,7 @@ class CreateUpdateRequest extends FormRequest
     {
         $authorized = $repository->existsByUser($authManager->guard()->user());
 
-        if ($this->isMethod('get') || $this->isMethod('post')) {
+        if ($this->isMethod('post')) {
             $authorized = !$authorized;
         }
 
@@ -49,7 +49,7 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return $this->isMethod('get') ? [] : [
+        return [
             'name'        => 'required|string|min:3',
             'description' => 'string',
             'about'       => 'string',
