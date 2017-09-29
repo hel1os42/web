@@ -46,11 +46,6 @@ class Testimonial extends Model
             'stars'    => 'integer'
         ];
 
-        $this->hidden = [
-            'created_at',
-            'updated_at',
-        ];
-
         parent::__construct($attributes);
     }
 
@@ -66,8 +61,8 @@ class Testimonial extends Model
         return $this->text;
     }
 
-    /** @return string */
-    public function getStars(): string
+    /** @return int */
+    public function getStars(): int
     {
         return $this->stars;
     }
