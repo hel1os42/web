@@ -10,6 +10,8 @@ use App\Models\NauModels\Redemption;
 use App\Models\User;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use OmniSynapse\CoreService\Exception\RequestException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Class NauOffersService
@@ -33,8 +35,6 @@ class NauOffersService implements OffersService
      * @return Redemption
      * @throws BadActivationCodeException
      * @throws CannotRedeemException
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function redeemByOfferAndCode(Offer $offer, string $code): Redemption
     {
@@ -70,15 +70,19 @@ class NauOffersService implements OffersService
      *
      * @return Redemption
      * @throws CannotRedeemException
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     private function redeem(?ActivationCode $activationCode): Redemption
     {
-        /** @var Redemption $redemption */
-        $redemption = $activationCode->offer->redemptions()->create([
-            'user_id' => $activationCode->getUserId()
-        ]);
+        try {
+            /** @var Redemption $redemption */
+            $redemption = $activationCode->offer->redemptions()->create([
+                'user_id' => $activationCode->getUserId()
+            ]);
+        } catch (RequestException $exception) {
+            throw new HttpException($exception->getCode(), $exception->getMessage(), $exception);
+        } catch (\Throwable $throwable) {
+            throw new HttpException(503, $throwable);
+        }
 
         if (null === $redemption->id) {
             throw new CannotRedeemException($activationCode->offer, $activationCode->getCode());
