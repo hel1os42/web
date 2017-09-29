@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Contracts\Currency;
-use App\Models\NauModels\Account;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -346,7 +345,7 @@ class Place extends Model
      */
     public function testimonials(): HasMany
     {
-        return $this->hasMany(Testimonials::class);
+        return $this->hasMany(Testimonial::class);
     }
 
     /**

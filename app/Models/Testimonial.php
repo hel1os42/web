@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Testimonials
+ * Class Testimonial
  * @package App\Models
  *
  * @property string id
@@ -20,12 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon updated_at
  *
  */
-class Testimonials extends Model
+class Testimonial extends Model
 {
     use Uuids;
 
     /**
-     * Testimonials constructor.
+     * Testimonial constructor.
      *
      * @param array $attributes
      */
