@@ -55,7 +55,10 @@ class OfferRequest extends FormRequest
             'finish_date'          => 'date|date_format:Y-m-d H:i:s.uO',
             'start_time'           => 'required|date_format:H:i:s.uO',
             'finish_time'          => 'date_format:H:i:s.uO',
-            'category_id'          => 'required|string|exists:categories,id',
+            'category_id'          => sprintf(
+                'required|string|regex:%s|exists:categories,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
             'max_count'            => 'integer|min:1',
             'max_for_user'         => 'integer|min:1',
             'max_per_day'          => 'integer|min:1',

@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Constants;
+use App\Http\Exceptions\ServiceUnavailableException;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -18,6 +19,7 @@ use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -86,7 +88,13 @@ class RedemptionController extends Controller
     {
         $code = $request->code;
 
-        $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
+        try {
+            $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
+        } catch (RequestException $exception) {
+            throw new HttpException($exception->getCode(), $exception->getMessage(), $exception);
+        } catch (\Throwable $throwable) {
+            throw new ServiceUnavailableException(null, $throwable);
+        }
 
         return \response()->render(
             'redemption.redeem',
@@ -108,7 +116,13 @@ class RedemptionController extends Controller
     {
         $offer = $this->validateOfferAndGetOwn($offerId);
 
-        $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
+        try {
+            $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
+        } catch (RequestException $exception) {
+            throw new HttpException($exception->getCode(), $exception->getMessage(), $exception);
+        } catch (\Throwable $throwable) {
+            throw new ServiceUnavailableException(null, $throwable);
+        }
 
         return \response()->render(
             'redemption.redeem',

@@ -8,6 +8,7 @@ return [
     \Illuminate\Http\Response::HTTP_NOT_FOUND => '404 Page not found',
     \Illuminate\Http\Response::HTTP_METHOD_NOT_ALLOWED => '405 Method not allowed',
     \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR => '500 Uuups... something went wrong.',
+    \Illuminate\Http\Response::HTTP_SERVICE_UNAVAILABLE => '503 Service unavailable. Please try again some later.',
     'invalid_email_or_password' => 'Invalid email or password.',
     'invalid_code' => 'Wrong OTP code.',
     'offer_not_found' => 'The offer you are looking for, does not exist, or it is on moderation',

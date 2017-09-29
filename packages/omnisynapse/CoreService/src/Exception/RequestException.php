@@ -87,7 +87,7 @@ class RequestException extends Exception
      *
      * @return null|ErrorResponse
      */
-    private function mapResponse(string $rawResponse)
+    private function mapResponse(?string $rawResponse)
     {
         $jsonMapper                                = new \JsonMapper();
         $jsonMapper->bExceptionOnMissingData       = true;
@@ -113,7 +113,7 @@ class RequestException extends Exception
      *
      * @return string
      */
-    private function parseMessageFromResponse(Response $response, string $rawResponse): string
+    private function parseMessageFromResponse(Response $response, ?string $rawResponse): string
     {
         $contents            = $this->mapResponse($rawResponse);
         $this->errorResponse = $contents;
