@@ -102,8 +102,6 @@ class RegisterController extends Controller
             throw new UnprocessableEntityHttpException();
         }
 
-        $user->referrer()->associate($request->referrer_id)->save();
-
         return request()->wantsJson()
             ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))
             : redirect()->route('loginForm');
