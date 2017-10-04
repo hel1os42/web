@@ -20,6 +20,8 @@ use Prettus\Validator\Contracts\ValidatorInterface;
  */
 class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
 {
+    protected $fieldSearchable = ['name' => 'like', 'description' => 'like'];
+
     /**
      * Specify Model class name
      *

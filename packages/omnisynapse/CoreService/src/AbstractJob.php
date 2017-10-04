@@ -2,14 +2,15 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Http\Exceptions\ServiceUnavailableException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use OmniSynapse\CoreService\Exception\RequestException;
 
 abstract class AbstractJob implements ShouldQueue
@@ -64,7 +65,7 @@ abstract class AbstractJob implements ShouldQueue
                 ]
             );
         } catch (TransferException $exception) {
-            throw new RequestException($this, new Response(0), null, $exception);
+            throw new ServiceUnavailableException( null, $exception);
         }
 
         $responseContent = $response->getBody()->getContents();

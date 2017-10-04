@@ -54,8 +54,9 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
         $model = $this->model->newInstance($attributes);
         $model->account()->associate($account);
+
         if (!$model->save()) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "Cannot save your offer.");
+            throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
 
         $this->resetModel();

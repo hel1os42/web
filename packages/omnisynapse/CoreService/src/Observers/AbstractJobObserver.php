@@ -39,19 +39,13 @@ abstract class AbstractJobObserver
      */
     protected function queue(AbstractJob $job): bool
     {
+        $success = false;
+
         try {
             dispatch($job);
             $success = true;
         } catch (\Throwable $exception) {
-            logger()->error($exception->getMessage());
-            logger()->debug(get_class($exception));
-
-            if ($exception instanceof RequestException) {
-                logger()->debug($exception->getRawResponse());
-            }
-
-            logger()->debug($exception->getTraceAsString());
-            $success = false;
+            $this->handleException($exception);
         }
 
         return $success;
@@ -64,21 +58,34 @@ abstract class AbstractJobObserver
      */
     protected function execute(AbstractJob $job): bool
     {
+        $success = false;
+
         try {
             $job->handle();
             $success = true;
         } catch (\Throwable $exception) {
-            logger()->error($exception->getMessage());
-            logger()->debug(get_class($exception));
-
-            if ($exception instanceof RequestException) {
-                logger()->debug($exception->getRawResponse());
-            }
-
-            logger()->debug($exception->getTraceAsString());
-            $success = false;
+            $this->handleException($exception);
         }
 
         return $success;
+    }
+
+    /**
+     * @param \Throwable $exception
+     *
+     * @return void
+     * @throws RequestException
+     */
+    private function handleException(\Throwable $exception): void
+    {
+        logger()->debug($exception->getTraceAsString());
+
+        logger()->error($exception->getMessage());
+        logger()->debug(get_class($exception));
+
+        if ($exception instanceof RequestException) {
+            logger()->debug($exception->getRawResponse());
+            throw $exception; // re-throw RequestException
+        }
     }
 }
