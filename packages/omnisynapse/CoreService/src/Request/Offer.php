@@ -81,9 +81,7 @@ class Offer implements \JsonSerializable
             ->setLimits($limits)
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
-            ->setEndDate($offer->getFinishDate())
-            ->setStartTime($offer->getStartTime())
-            ->setEndTime($offer->getFinishTime());
+            ->setEndDate($offer->getFinishDate());
     }
 
     /**
@@ -127,10 +125,11 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param string $description
+     * @param null|string $description
+     *
      * @return Offer
      */
-    public function setDescription(string $description): Offer
+    public function setDescription(?string $description): Offer
     {
         $this->description = $description;
         return $this;
@@ -177,42 +176,24 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param Carbon $startDate
+     * @param Carbon|null $startDate
+     *
      * @return Offer
      */
-    public function setStartDate(Carbon $startDate): Offer
+    public function setStartDate(?Carbon $startDate): Offer
     {
         $this->startDate = $startDate;
         return $this;
     }
 
     /**
-     * @param Carbon $endDate
+     * @param Carbon|null $endDate
+     *
      * @return Offer
      */
-    public function setEndDate(Carbon $endDate): Offer
+    public function setEndDate(?Carbon $endDate): Offer
     {
         $this->endDate = $endDate;
-        return $this;
-    }
-
-    /**
-     * @param Carbon $startTime
-     * @return Offer
-     */
-    public function setStartTime(Carbon $startTime): Offer
-    {
-        $this->startTime = $startTime;
-        return $this;
-    }
-
-    /**
-     * @param Carbon $endTime
-     * @return Offer
-     */
-    public function setEndTime(Carbon $endTime): Offer
-    {
-        $this->endTime = $endTime;
         return $this;
     }
 }

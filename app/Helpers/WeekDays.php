@@ -13,21 +13,21 @@ namespace App\Helpers;
  */
 interface WeekDays
 {
-    const SUNDAY = 1;
+    const SUNDAY = 1 << 0;
 
-    const MONDAY = 2;
+    const MONDAY = 1 << 1;
 
-    const TUESDAY = 4;
+    const TUESDAY = 1 << 2;
 
-    const WEDNESDAY = 8;
+    const WEDNESDAY = 1 << 3;
 
-    const THURSDAY = 16;
+    const THURSDAY = 1 << 4;
 
-    const FRIDAY = 32;
+    const FRIDAY = 1 << 5;
 
-    const SATURDAY = 64;
+    const SATURDAY = 1 << 6;
 
-    const VERBAL = [
+    const LIST = [
         self::SUNDAY    => 'su',
         self::MONDAY    => 'mo',
         self::TUESDAY   => 'tu',

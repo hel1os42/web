@@ -34,6 +34,4 @@ class Timeframes extends Model
 
         parent::__construct($attributes);
     }
-
 }
-

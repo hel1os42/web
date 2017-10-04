@@ -22,8 +22,6 @@ use Carbon\Carbon;
  * @property string      status
  * @property Carbon      start_date
  * @property null|Carbon finish_date
- * @property Carbon      start_time
- * @property null|Carbon finish_time
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
@@ -56,8 +54,6 @@ class Offer extends AbstractNauModel
         $this->dates = [
             'dt_start',
             'dt_finish',
-            'tm_start',
-            'tm_finish',
         ];
 
         $this->initAttributes();
@@ -79,8 +75,6 @@ class Offer extends AbstractNauModel
         'description',
         'start_date',
         'finish_date',
-        'start_time',
-        'finish_time',
         'country',
         'city',
         'category_id',
@@ -165,22 +159,6 @@ class Offer extends AbstractNauModel
     public function getFinishDate(): ?Carbon
     {
         return $this->finish_date;
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getStartTime(): ?Carbon
-    {
-        return $this->start_time;
-    }
-
-    /**
-     * @return Carbon|null
-     */
-    public function getFinishTime(): ?Carbon
-    {
-        return $this->finish_time;
     }
 
     /** @return string */
@@ -284,25 +262,6 @@ class Offer extends AbstractNauModel
     }
 
     /**
-     * @param string $value
-     */
-    public function setTmStartAttribute(string $value)
-    {
-        $this->attributes['tm_start'] = Carbon::parse($value)->year(1970)->month(01)->day(01);
-    }
-
-    /**
-     * @param null|string $value
-     */
-    public function setTmFinishAttribute(?string $value)
-    {
-        $this->attributes['tm_finish'] =
-            null === $value
-                ? null
-                : Carbon::parse($value)->year(1970)->month(01)->day(01);
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
@@ -346,8 +305,6 @@ class Offer extends AbstractNauModel
             'status'               => null,
             'dt_start'             => null,
             'dt_finish'            => null,
-            'tm_start'             => null,
-            'tm_finish'            => null,
             'country'              => null,
             'city'                 => null,
             'categ'                => null,
@@ -371,8 +328,6 @@ class Offer extends AbstractNauModel
             'reward',
             'start_date',
             'finish_date',
-            'start_time',
-            'finish_time',
             'country',
             'city',
             'category_id',
@@ -395,8 +350,6 @@ class Offer extends AbstractNauModel
             'descr',
             'dt_start',
             'dt_finish',
-            'tm_start',
-            'tm_finish',
             'categ',
             'min_level',
             'lat',
@@ -412,8 +365,6 @@ class Offer extends AbstractNauModel
             'description',
             'start_date',
             'finish_date',
-            'start_time',
-            'finish_time',
             'category_id',
             'user_level_min',
             'latitude',
@@ -432,8 +383,6 @@ class Offer extends AbstractNauModel
             'status'               => 'string',
             'start_date'           => 'datetime',
             'finish_date'          => 'datetime',
-            'start_time'           => 'datetime',
-            'finish_time'          => 'datetime',
             'country'              => 'string',
             'city'                 => 'string',
             'category_id'          => 'string',
@@ -456,8 +405,6 @@ class Offer extends AbstractNauModel
             'description'    => 'descr',
             'start_date'     => 'dt_start',
             'finish_date'    => 'dt_finish',
-            'start_time'     => 'tm_start',
-            'finish_time'    => 'tm_finish',
             'category_id'    => 'categ',
             'user_level_min' => 'min_level',
             'latitude'       => 'lat',

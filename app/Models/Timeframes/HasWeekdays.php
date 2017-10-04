@@ -49,6 +49,7 @@ trait HasWeekdays
     {
         return $this->isWeekDay(WeekDays::MONDAY);
     }
+
     /**
      * @return bool
      */
@@ -56,6 +57,7 @@ trait HasWeekdays
     {
         return $this->isWeekDay(WeekDays::TUESDAY);
     }
+
     /**
      * @return bool
      */
@@ -63,6 +65,7 @@ trait HasWeekdays
     {
         return $this->isWeekDay(WeekDays::WEDNESDAY);
     }
+
     /**
      * @return bool
      */
@@ -70,6 +73,7 @@ trait HasWeekdays
     {
         return $this->isWeekDay(WeekDays::THURSDAY);
     }
+
     /**
      * @return bool
      */
@@ -77,6 +81,7 @@ trait HasWeekdays
     {
         return $this->isWeekDay(WeekDays::FRIDAY);
     }
+
     /**
      * @return bool
      */
@@ -85,4 +90,11 @@ trait HasWeekdays
         return $this->isWeekDay(WeekDays::SATURDAY);
     }
 
+    /**
+     * @return array
+     */
+    public function weekDaysList(): array
+    {
+        return WeekDays::LIST;
+    }
 }

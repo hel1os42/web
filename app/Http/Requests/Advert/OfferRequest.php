@@ -12,9 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string description
  * @property float reward
  * @property \Carbon\Carbon start_date
- * @property \Carbon\Carbon start_time
  * @property \Carbon\Carbon finish_date
- * @property \Carbon\Carbon finish_time
  * @property string category_id
  * @property int max_count
  * @property int max_for_user
@@ -51,9 +49,7 @@ class OfferRequest extends FormRequest
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'string',
             'reward'               => 'required|numeric|min:1',
-            'start_date'           => 'required|date|date_format:Y-m-d H:i:s.uO',
             'finish_date'          => 'date|date_format:Y-m-d H:i:s.uO',
-            'start_time'           => 'required|date_format:H:i:s.uO',
             'finish_time'          => 'date_format:H:i:s.uO',
             'category_id'          => sprintf(
                 'required|string|regex:%s|exists:categories,id',
@@ -68,7 +64,13 @@ class OfferRequest extends FormRequest
             'longitude'            => 'numeric|between:-180,180',
             'radius'               => 'integer',
             'country'              => 'string',
-            'city'                 => 'string'
+            'city'                 => 'string',
+            'timeframes'           => 'array',
+            'timeframes.*'         => 'array',
+            'timeframes.*.*'       => sprintf(
+                'string|in:%s',
+                implode(',', \App\Helpers\WeekDays::LIST)
+            ),
         ];
     }
 } 
