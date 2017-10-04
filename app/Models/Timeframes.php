@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Timeframes\HasWeekdays;
+use App\Models\NauModels\Offer;
+use App\Services\WeekDaysService;
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Timeframes
@@ -11,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Timeframes extends Model
 {
-    use HasWeekdays;
+    use Uuids;
 
     public function __construct(array $attributes = [])
     {
@@ -20,6 +23,8 @@ class Timeframes extends Model
         $this->table = 'timeframes';
 
         $this->primaryKey = 'id';
+
+        $this->initUuid();
 
         $this->casts = [
             'id' => 'uuid',
@@ -32,6 +37,31 @@ class Timeframes extends Model
             'weekdays'
         ];
 
+        $this->fillable = [
+            'offer_id',
+            'from',
+            'to',
+            'days',
+        ];
+
+        $this->timestamps = false;
+
         parent::__construct($attributes);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function offer(): BelongsTo
+    {
+        return $this->belongsTo(Offer::class);
+    }
+
+    /**
+     * @return array
+     */
+    public function getWeekdaysAttribute()
+    {
+        return app(WeekDaysService::class)->daysToWeekDays($this->days);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Advert;
 
+use App\Helpers\Constants;
+use App\Services\WeekDaysService;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -49,11 +51,11 @@ class OfferRequest extends FormRequest
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'string',
             'reward'               => 'required|numeric|min:1',
-            'start_date'           => 'required|date|date_format:Y-m-d H:i:s.uO',
-            'finish_date'          => 'date|date_format:Y-m-d H:i:s.uO',
+            'start_date'           => 'required|date|date_format:' . Constants::DATE_FORMAT,
+            'finish_date'          => 'date|date_format:' . Constants::DATE_FORMAT,
             'category_id'          => sprintf(
                 'required|string|regex:%s|exists:categories,id',
-                \App\Helpers\Constants::UUID_REGEX
+                Constants::UUID_REGEX
             ),
             'max_count'            => 'integer|min:1',
             'max_for_user'         => 'integer|min:1',
@@ -65,11 +67,13 @@ class OfferRequest extends FormRequest
             'radius'               => 'integer',
             'country'              => 'string',
             'city'                 => 'string',
-            'timeframes'           => 'array',
-            'timeframes.*'         => 'array',
-            'timeframes.*.*'       => sprintf(
+            'timeframes'           => 'required|array',
+            'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.to'      => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.days'    => 'required|array',
+            'timeframes.*.days.*'  => sprintf(
                 'string|in:%s',
-                implode(',', \App\Helpers\WeekDays::LIST)
+                implode(',', app(WeekDaysService::class)->fullList())
             ),
         ];
     }

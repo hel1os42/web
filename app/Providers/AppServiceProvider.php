@@ -29,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(OffersService::class, NauOffersService::class);
+        $this->app->bind(
+            \App\Services\WeekDaysService::class,
+            \App\Services\Implementation\WeekDaysService::class
+        );
     }
 }

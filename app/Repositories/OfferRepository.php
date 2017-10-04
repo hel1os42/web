@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\User;
+use App\Services\WeekDaysService;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Contracts\RepositoryInterface;
 

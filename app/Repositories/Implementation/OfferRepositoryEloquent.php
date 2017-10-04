@@ -7,7 +7,9 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Repositories\OfferRepository;
+use App\Services\WeekDaysService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
@@ -58,6 +60,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         if (!$model->save()) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
+
+        $model->timeframes()->createMany($this->replaceTimeframesDays($attributes['timeframes']));
 
         $this->resetModel();
 
@@ -116,5 +120,13 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    protected function replaceTimeframesDays(array $timeframes): array
+    {
+        foreach ($timeframes as $key => $timeframe) {
+            $timeframes[$key]['days'] = app(WeekDaysService::class)->weekDaysToDays($timeframe['days']);
+        }
+        return $timeframes;
     }
 }

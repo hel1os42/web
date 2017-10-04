@@ -187,4 +187,12 @@ class Offer implements \JsonSerializable
         $this->endDate = $endDate;
         return $this;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getEndDate(): ?string
+    {
+        return $this->endDate === null ? null : $this->endDate->format(self::DATE_FORMAT);
+    }
 }

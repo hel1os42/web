@@ -254,22 +254,6 @@ class Offer extends AbstractNauModel
     }
 
     /**
-     * @param string $value
-     */
-    public function setDtStartAttribute(string $value)
-    {
-        $this->attributes['dt_start'] = Carbon::parse($value);
-    }
-
-    /**
-     * @param null|string $value
-     */
-    public function setDtFinishAttribute(?string $value)
-    {
-        $this->attributes['dt_finish'] = null === $value ? null : Carbon::parse($value);
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
