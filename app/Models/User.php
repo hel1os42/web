@@ -288,6 +288,10 @@ class User extends Authenticatable implements PhoneAuthenticable
         });
 
         self::uuidsBoot();
+
+        static::created(function (User $model) {
+            $model->roles()->attach([Role::getIdByName(Role::ROLE_USER), Role::getIdByName(Role::ROLE_ADVERTISER)]);
+        });
     }
 
     /**
