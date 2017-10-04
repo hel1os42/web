@@ -6,33 +6,34 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Limits
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property int offers
- * @property int perDay
- * @property int perUser
- * @property int minLevel
+ * @property int|null offers
+ * @property int|null perDay
+ * @property int|null perUser
+ * @property int|null minLevel
  */
 class Limits implements \JsonSerializable
 {
-    /** @var int */
+    /** @var int|null */
     private $offers;
 
-    /** @var int */
+    /** @var int|null */
     private $perDay;
 
-    /** @var int */
+    /** @var int|null */
     private $perUser;
 
-    /** @var int */
+    /** @var int|null */
     private $minLevel;
 
     /**
      * Limits constructor.
-     * @param int $offers
-     * @param int $perDay
-     * @param int $perUser
-     * @param int $minLevel
+     *
+     * @param int|null $offers
+     * @param int|null $perDay
+     * @param int|null $perUser
+     * @param int      $minLevel
      */
-    public function __construct(int $offers, int $perDay, int $perUser, int $minLevel)
+    public function __construct(?int $offers, ?int $perDay, ?int $perUser, int $minLevel)
     {
         $this->setOffers($offers)
             ->setPerDay($perDay)
@@ -54,25 +55,25 @@ class Limits implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getOffers(): int
+    public function getOffers(): ?int
     {
         return $this->offers;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerDay(): int
+    public function getPerDay(): ?int
     {
         return $this->perDay;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerUser(): int
+    public function getPerUser(): ?int
     {
         return $this->perUser;
     }
@@ -86,30 +87,33 @@ class Limits implements \JsonSerializable
     }
 
     /**
-     * @param int $offers
+     * @param int|null $offers
+     *
      * @return Limits
      */
-    public function setOffers(int $offers): Limits
+    public function setOffers(?int $offers): Limits
     {
         $this->offers = $offers;
         return $this;
     }
 
     /**
-     * @param int $perDay
+     * @param int|null $perDay
+     *
      * @return Limits
      */
-    public function setPerDay(int $perDay): Limits
+    public function setPerDay(?int $perDay): Limits
     {
         $this->perDay = $perDay;
         return $this;
     }
 
     /**
-     * @param int $perUser
+     * @param int|null $perUser
+     *
      * @return Limits
      */
-    public function setPerUser(int $perUser): Limits
+    public function setPerUser(?int $perUser): Limits
     {
         $this->perUser = $perUser;
         return $this;

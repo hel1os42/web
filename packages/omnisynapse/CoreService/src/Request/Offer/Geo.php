@@ -22,16 +22,16 @@ class Geo implements \JsonSerializable
     /** @var string */
     private $type;
 
-    /** @var Point */
+    /** @var null|Point */
     private $point;
 
-    /** @var int */
+    /** @var null|int */
     private $radius;
 
-    /** @var string */
+    /** @var null|string */
     private $city;
 
-    /** @var string */
+    /** @var null|string */
     private $country;
 
     /**

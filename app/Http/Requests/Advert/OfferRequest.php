@@ -49,8 +49,8 @@ class OfferRequest extends FormRequest
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'string',
             'reward'               => 'required|numeric|min:1',
+            'start_date'           => 'required|date|date_format:Y-m-d H:i:s.uO',
             'finish_date'          => 'date|date_format:Y-m-d H:i:s.uO',
-            'finish_time'          => 'date_format:H:i:s.uO',
             'category_id'          => sprintf(
                 'required|string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
@@ -59,7 +59,7 @@ class OfferRequest extends FormRequest
             'max_for_user'         => 'integer|min:1',
             'max_per_day'          => 'integer|min:1',
             'max_for_user_per_day' => 'integer|min:1',
-            'user_level_min'       => 'integer|min:1',
+            'user_level_min'       => 'required|integer|min:1',
             'latitude'             => 'numeric|between:-90,90',
             'longitude'            => 'numeric|between:-180,180',
             'radius'               => 'integer',

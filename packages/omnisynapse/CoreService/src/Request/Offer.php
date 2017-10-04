@@ -23,7 +23,7 @@ class Offer implements \JsonSerializable
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|null */
     public $description;
 
     /** @var string */
@@ -41,14 +41,8 @@ class Offer implements \JsonSerializable
     /** @var Carbon */
     public $startDate;
 
-    /** @var Carbon */
+    /** @var Carbon|null */
     public $endDate;
-
-    /** @var Carbon */
-    public $startTime;
-
-    /** @var Carbon */
-    public $endTime;
 
     /**
      * Offer constructor.
@@ -99,8 +93,6 @@ class Offer implements \JsonSerializable
             'reward'            => $this->reward,
             'start_date'        => $this->startDate->format(self::DATE_FORMAT),
             'end_date'          => $this->endDate->format(self::DATE_FORMAT),
-            'start_time'        => $this->startTime->format(self::TIME_FORMAT),
-            'end_time'          => $this->endTime->format(self::TIME_FORMAT),
         ];
     }
 
@@ -176,11 +168,10 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param Carbon|null $startDate
-     *
+     * @param Carbon $startDate
      * @return Offer
      */
-    public function setStartDate(?Carbon $startDate): Offer
+    public function setStartDate(Carbon $startDate): Offer
     {
         $this->startDate = $startDate;
         return $this;

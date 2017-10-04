@@ -29,7 +29,7 @@ use Carbon\Carbon;
  * @property null|int    max_for_user
  * @property null|int    max_per_day
  * @property null|int    max_for_user_per_day
- * @property null|int    user_level_min
+ * @property int         user_level_min
  * @property null|float  latitude
  * @property null|float  longitude
  * @property null|int    radius
@@ -179,34 +179,42 @@ class Offer extends AbstractNauModel
         return $this->category_id;
     }
 
-    /** @return int */
-    public function getMaxCount(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxCount(): ?int
     {
-        return (int)$this->max_count;
+        return $this->max_count;
     }
 
-    /** @return int */
-    public function getMaxForUser(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxForUser(): ?int
     {
-        return (int)$this->max_for_user;
+        return $this->max_for_user;
     }
 
-    /** @return int */
-    public function getMaxPerDay(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxPerDay(): ?int
     {
-        return (int)$this->max_per_day;
+        return $this->max_per_day;
     }
 
-    /** @return int */
-    public function getMaxForUserPerDay(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerDay(): ?int
     {
-        return (int)$this->max_for_user_per_day;
+        return $this->max_for_user_per_day;
     }
 
     /** @return int */
     public function getUserLevelMin(): int
     {
-        return (int)$this->user_level_min;
+        return $this->user_level_min;
     }
 
     /** @return float */
@@ -312,7 +320,7 @@ class Offer extends AbstractNauModel
             'max_for_user'         => null,
             'max_per_day'          => null,
             'max_for_user_per_day' => null,
-            'min_level'            => null,
+            'min_level'            => 1,
             'lat'                  => null,
             'lng'                  => null,
             'radius'               => null
