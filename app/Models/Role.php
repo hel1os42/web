@@ -26,7 +26,8 @@ class Role extends Model
     use Uuids;
 
     const ROLE_USER       = 'user';
-    const ROLE_ADVERTISER = 'advert';
+    const ROLE_ADVERTISER = 'advertiser';
+    const ROLE_CHIEF_ADVERTISER = 'chief_advertiser';
     const ROLE_AGENT      = 'agent';
     const ROLE_ADMIN      = 'admin';
 

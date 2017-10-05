@@ -34,7 +34,7 @@ class CreateTableRoles extends Migration
 
         $rolesArray = [];
 
-        foreach (['user', 'advert', 'agent', 'admin'] as $rolename) {
+        foreach (['admin', 'agent', 'chief_advertiser', 'advertiser', 'user'] as $rolename) {
             $rolesArray[$rolename]['id']         = Uuid::generate('4')->string;
             $rolesArray[$rolename]['name']       = $rolename;
             $rolesArray[$rolename]['created_at'] = Carbon::now();
@@ -55,7 +55,7 @@ class CreateTableRoles extends Migration
                 ],
                 [
                     'user_id'    => $user->id,
-                    'role_id'    => $rolesArray['advert']['id'],
+                    'role_id'    => $rolesArray['advertiser']['id'],
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ],
