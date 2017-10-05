@@ -6,6 +6,7 @@ use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferUpdated;
+use OmniSynapse\CoreService\Job\OfferDeleted;
 use Tests\Unit\OmniSynapse\CoreService\Observers\AbstractObserversTestCase;
 
 class OfferObserverTest extends AbstractObserversTestCase
@@ -47,5 +48,25 @@ class OfferObserverTest extends AbstractObserversTestCase
         // Testing
         (new OfferObserver($coreServiceImplMock))
             ->updating($offer);
+    }
+
+    public function testDeleting()
+    {
+        /** @var OfferDeleted $offerDeletedMock */
+        $offerDeletedMock = $this->createMock(OfferDeleted::class);
+        $this->mockDispatcherToDispatch($offerDeletedMock);
+
+        $offer = $this->createMock(Offer::class);
+
+        $coreServiceImplMock = $this->createMock(CoreService::class);
+        $coreServiceImplMock
+            ->expects($this->once())
+            ->method('offerDeleted')
+            ->withConsecutive([$offer])
+            ->willReturn($offerDeletedMock);
+
+        // Testing
+        (new OfferObserver($coreServiceImplMock))
+            ->deleting();
     }
 }

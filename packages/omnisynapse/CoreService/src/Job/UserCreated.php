@@ -15,7 +15,7 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class UserCreated extends AbstractJob
 {
-    /** @var UserRequest */
+    /** @var null|UserRequest */
     public $requestObject;
 
     /** @var User */
@@ -63,9 +63,9 @@ class UserCreated extends AbstractJob
     }
 
     /**
-     * @return \JsonSerializable
+     * @return null|\JsonSerializable
      */
-    public function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): ?\JsonSerializable
     {
         return $this->requestObject;
     }

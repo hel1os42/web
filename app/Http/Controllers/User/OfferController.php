@@ -8,6 +8,7 @@ use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OfferController extends Controller
 {
@@ -56,5 +57,25 @@ class OfferController extends Controller
         }
 
         return \response()->render('user.offer.show', $offer->toArray());
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return Response
+     * @throws \Exception
+     * @throws \LogicException
+     */
+    public function destroy(string $uuid): Response
+    {
+        $offer = $this->offerRepository->findByIdAndOwner($uuid, $this->auth->user());
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+
+        $offer->delete();
+
+        return \response()->json('', Response::HTTP_NO_CONTENT);
     }
 }

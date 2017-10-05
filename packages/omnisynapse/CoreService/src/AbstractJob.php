@@ -109,8 +109,8 @@ abstract class AbstractJob implements ShouldQueue
     /** @return string */
     abstract public function getHttpPath(): string;
 
-    /** @return \JsonSerializable */
-    abstract public function getRequestObject(): \JsonSerializable;
+    /** @return null|\JsonSerializable */
+    abstract public function getRequestObject(): ?\JsonSerializable;
 
     /** @return string */
     abstract public function getResponseClass(): string;

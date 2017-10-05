@@ -130,7 +130,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'create',
             'store',
             'update',
-            'destroy'
         ]
     ]);
 

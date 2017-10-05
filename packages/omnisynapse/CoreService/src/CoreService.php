@@ -17,6 +17,11 @@ interface CoreService
     public function setClient(Client $client): CoreService;
 
     /**
+     * @return \GuzzleHttp\Client
+     */
+    public function getClient(): Client;
+
+    /**
      * @param Offer $offer
      * @return AbstractJob
      */
@@ -52,4 +57,11 @@ interface CoreService
      * @return AbstractJob
      */
     public function transactionNotification(Transact $transaction, $category): AbstractJob;
+
+    /**
+     * @param Offer $offer
+     *
+     * @return AbstractJob
+     */
+    public function offerDeleted(Offer $offer): AbstractJob;
 }

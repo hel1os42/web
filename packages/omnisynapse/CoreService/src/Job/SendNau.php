@@ -15,7 +15,7 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class SendNau extends AbstractJob
 {
-    /** @var SendNauRequest */
+    /** @var null|SendNauRequest */
     private $requestObject;
 
     /** @var Transact */
@@ -63,9 +63,9 @@ class SendNau extends AbstractJob
     }
 
     /**
-     * @return \JsonSerializable
+     * @return null|\JsonSerializable
      */
-    public function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): ?\JsonSerializable
     {
         return $this->requestObject;
     }

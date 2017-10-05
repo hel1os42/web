@@ -8,6 +8,9 @@ class OfferObserver extends AbstractJobObserver
 {
     /**
      * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
      */
     public function creating(Offer $offer)
     {
@@ -16,9 +19,23 @@ class OfferObserver extends AbstractJobObserver
 
     /**
      * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
      */
     public function updating(Offer $offer)
     {
         return $this->queue($this->getCoreService()->offerUpdated($offer));
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
+     */
+    public function deleting(Offer $offer)
+    {
+        return $this->queue($this->getCoreService()->offerDeleted($offer));
     }
 }

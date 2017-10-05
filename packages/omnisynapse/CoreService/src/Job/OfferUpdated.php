@@ -15,7 +15,7 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class OfferUpdated extends AbstractJob
 {
-    /** @var OfferForUpdate */
+    /** @var null|OfferForUpdate */
     private $requestObject;
 
     /** @var Offer */
@@ -63,9 +63,9 @@ class OfferUpdated extends AbstractJob
     }
 
     /**
-     * @return \JsonSerializable
+     * @return null|\JsonSerializable
      */
-    public function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): ?\JsonSerializable
     {
         return $this->requestObject;
     }

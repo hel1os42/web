@@ -11,7 +11,7 @@ use OmniSynapse\CoreService\FailedJob;
 
 class TransactionNotification extends AbstractJob
 {
-    /** @var TransactionNotificationRequest */
+    /** @var null|TransactionNotificationRequest */
     private $requestObject;
 
     /** @var Transact */
@@ -60,9 +60,9 @@ class TransactionNotification extends AbstractJob
     }
 
     /**
-     * @return \JsonSerializable
+     * @return null|\JsonSerializable
      */
-    public function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): ?\JsonSerializable
     {
         return $this->requestObject;
     }
