@@ -122,6 +122,14 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
+
+    /**
+     * Replaces each timeframe days value: instead of an array we store in "days" its binary representation.
+     *
+     * @param array $timeframes
+     *
+     * @return array
+     */
     protected function replaceTimeframesDays(array $timeframes): array
     {
         foreach ($timeframes as $key => $timeframe) {
