@@ -149,7 +149,7 @@ class TransactionControllerTest extends TestCase
      * @param array $data
      *
      */
-    public function CreateTransactionTest(array $data)
+    public function createTransactionTest(array $data)
     {
         $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
 
@@ -177,7 +177,7 @@ class TransactionControllerTest extends TestCase
      * @param array $data
      *
      */
-    public function ListTransactionTest($data)
+    public function listTransactionTest($data)
     {
         $builder = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock();
 
@@ -226,7 +226,7 @@ class TransactionControllerTest extends TestCase
      * @param array $data
      *
      */
-    public function CompleteTransactionTest($data)
+    public function completeTransactionTest($data)
     {
         $responseFactory      = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
         $request              = $this->getMockBuilder(TransactRequest::class)->disableOriginalConstructor()->getMock();
@@ -250,7 +250,7 @@ class TransactionControllerTest extends TestCase
         self::assertSame($response, $returnValue);
     }
 
-    public function CreateTransactionData()
+    public function createTransactionData()
     {
         return [
             [
@@ -259,7 +259,7 @@ class TransactionControllerTest extends TestCase
         ];
     }
 
-    public function TransactionData()
+    public function transactionData()
     {
         return [[null], [$this->faker->randomDigitNotNull]];
     }
