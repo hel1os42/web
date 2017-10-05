@@ -219,10 +219,28 @@ class Offer extends AbstractNauModel
         return (int)$this->max_per_day;
     }
 
-    /** @return int */
-    public function getMaxForUserPerDay(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerDay(): ?int
     {
-        return (int)$this->max_for_user_per_day;
+        return $this->max_for_user_per_day;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerWeek(): ?int
+    {
+        return $this->max_for_user_per_day;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerMonth(): ?int
+    {
+        return $this->max_for_user_per_day;
     }
 
     /** @return int */
