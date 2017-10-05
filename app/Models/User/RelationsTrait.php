@@ -64,10 +64,10 @@ trait RelationsTrait
     public function offers(): Relations\BelongsToMany
     {
         return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
-                    ->withPivot([
-                        'created_at',
-                        'points',
-                    ]);
+            ->withPivot([
+                'created_at',
+                'points',
+            ]);
     }
 
     /**
@@ -99,6 +99,6 @@ trait RelationsTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'users_roles')->withTimestamps();;
+        return $this->belongsToMany(Role::class, 'users_roles')->withTimestamps();
     }
 }
