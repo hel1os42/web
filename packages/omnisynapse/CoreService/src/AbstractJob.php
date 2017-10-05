@@ -2,48 +2,71 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Http\Exceptions\ServiceUnavailableException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use OmniSynapse\CoreService\Exception\RequestException;
 
 abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /** @var \GuzzleHttp\Client */
-    private $client;
+    /** @var CoreService */
+    protected $coreService;
 
     /**
      * AbstractJob constructor.
      *
-     * @param Client $client
+     * @param CoreService $coreService
      */
-    public function __construct(Client $client)
+    public function __construct(CoreService $coreService)
     {
-        $this->client = $client;
+        $this->coreService = $coreService;
+    }
+
+    /**
+     * @return Client
+     */
+    final protected function getClient()
+    {
+        return $this->coreService->getClient();
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        return ['coreService'];
     }
 
     /**
      * Execute the job.
      *
      * @return void
+     * @throws RequestException
      * @throws \InvalidArgumentException
      */
     public function handle()
     {
         /** @var Response $response */
-        $response = $this->client->request($this->getHttpMethod(), $this->getHttpPath(),
-            [
-                'json' => null !== $this->getRequestObject()
-                    ? $this->getRequestObject()->jsonSerialize()
-                    : null
-            ]
-        );
+        try {
+            $response = $this->coreService->getClient()->request($this->getHttpMethod(), $this->getHttpPath(),
+                [
+                    'json' => null !== $this->getRequestObject()
+                        ? $this->getRequestObject()->jsonSerialize()
+                        : null
+                ]
+            );
+        } catch (TransferException $exception) {
+            throw new ServiceUnavailableException( null, $exception);
+        }
 
         $responseContent = $response->getBody()->getContents();
 
@@ -66,7 +89,9 @@ abstract class AbstractJob implements ShouldQueue
 
         try {
             $jsonMapper->map($decodedContent, $responseObject = new $responseClassName);
-        } catch (\InvalidArgumentException|\JsonMapper_Exception $e) {
+        } catch (\InvalidArgumentException $e) {
+            throw new RequestException($this, $response, $responseContent, $e);
+        } catch (\JsonMapper_Exception $e) {
             throw new RequestException($this, $response, $responseContent, $e);
         }
 
@@ -89,4 +114,20 @@ abstract class AbstractJob implements ShouldQueue
 
     /** @return string */
     abstract public function getResponseClass(): string;
+
+    /**
+     * @param \Exception $exception
+     * @return FailedJob
+     */
+    abstract protected function getFailedResponseObject(\Exception $exception): FailedJob;
+
+    /**
+     * @param \Exception $exception
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+        $failedResponse = $this->getFailedResponseObject($exception);
+        event($failedResponse);
+    }
 }

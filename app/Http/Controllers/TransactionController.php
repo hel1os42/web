@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormRequest;
 use App\Http\Requests\TransactRequest;
-use App\Models\NauModels\Account;
-use App\Models\NauModels\Transact;
+use App\Models\Contracts\Currency;
+use App\Repositories\AccountRepository;
+use App\Repositories\TransactionRepository;
+use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Session;
-use App\Models\Currency;
 
 /**
  * Class TransactionController
@@ -15,85 +16,73 @@ use App\Models\Currency;
  */
 class TransactionController extends Controller
 {
+    private $transactionRepository;
+    private $accountRepository;
+    private $auth;
+
+    public function __construct(
+        TransactionRepository $transactionRepository,
+        AccountRepository $accountRepository,
+        AuthManager $authManager
+    ) {
+        $this->transactionRepository = $transactionRepository;
+        $this->accountRepository     = $accountRepository;
+        $this->auth                  = $authManager->guard();
+    }
+
+
     /**
      * @return Response
      */
     public function createTransaction(): Response
     {
-        return response()->render('transaction.create', [
-            'amount'      => 0.0001,
-            'destination' => null,
-            'source'      => auth()
+        return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
+            'amount' => 1,
+            'source' => $this->auth
                 ->user()
                 ->getAccountFor(Currency::NAU)
                 ->getAddress()
-        ]);
+        ]));
     }
 
     /**
      * @param TransactRequest $request
+     *
      * @return Response
      */
-    public function completeTransaction(TransactRequest $request, $sourceAccount = null, $destinationAccount = null, $transaction = null): Response
+    public function completeTransaction(TransactRequest $request): Response
     {
-        if (null === $sourceAccount) {
-            $sourceAccount = Account::whereAddress($request->source)->firstOrFail();
-        }
+        $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
+        $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
+        $amount             = $request->amount;
 
-        if (null === $destinationAccount) {
-            $destinationAccount = Account::whereAddress($request->destination)->firstOrFail();
-        }
-
-        $amount = $request->amount;
-
-        if (false === $sourceAccount->isEnoughBalanceFor($amount)) {
-            $multiplier = (int)config('nau.multiplier');
-            return response()->error(Response::HTTP_NOT_ACCEPTABLE,
-                trans('msg.transaction.balance', [
-                    'balance' => sprintf('%0.'.$multiplier.'f', $sourceAccount->getBalance()),
-                ])
-            );
-        }
-
-        if (null === $transaction) {
-            $transaction = new Transact();
-        }
-        $transaction->amount = $amount;
-        $transaction->source()->associate($sourceAccount);
-        $transaction->destination()->associate($destinationAccount);
-
-        //$transaction->save();
-
-        Session::flash('message',
-            null === $transaction->id ?
-                trans('msg.transaction.accepted') :
-                trans('msg.transaction.saved'));
+        $transaction = $this->transactionRepository
+            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
         return response()->render('transaction.complete', $transaction->toArray(),
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
-            route('transactionComplete')
+            route('transaction.complete')
         );
     }
 
     /**
-     * @param int $transactionId|null
+     * @param int $transactionId |null
+     *
      * @return Response
      */
-    public function listTransactions($transactionId = null, $transactions = null): Response
+    public function listTransactions($transactionId = null): Response
     {
-        $user = auth()->user();
-
-        if (null === $transactions) {
-            $transactions = Transact::forUser($user);
-        }
+        $user         = $this->auth->user();
+        $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
 
         if (null === $transactionId) {
             return response()->render('transaction.list', $transactions->paginate());
         }
 
         $transaction = $transactions->findOrFail($transactionId);
+
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }
 }

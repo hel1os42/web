@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
+use App\Http\Middleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 class Kernel extends HttpKernel
 {
@@ -27,19 +29,22 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            // \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ],
+            Middleware\EncryptCookies::class,
+            Middleware\AddQueuedCookiesToResponse::class,
+            Middleware\StartSession::class,
+            Middleware\ShareErrorsFromSession::class,
+            Middleware\VerifyCsrfToken::class,
+            SubstituteBindings::class,
+        ]
+    ];
 
-        'api' => [
-            'throttle:60,1',
-            'bindings',
-        ],
+    protected $middlewarePriority = [
+        Middleware\StartSession::class,
+        Middleware\ShareErrorsFromSession::class,
+        \Illuminate\Auth\Middleware\Authenticate::class,
+        \Illuminate\Session\Middleware\AuthenticateSession::class,
+        SubstituteBindings::class,
+        \Illuminate\Auth\Middleware\Authorize::class,
     ];
 
     /**
@@ -52,7 +57,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'bindings' => SubstituteBindings::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,

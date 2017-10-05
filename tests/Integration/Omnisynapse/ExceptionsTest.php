@@ -5,6 +5,9 @@ namespace Tests\Integration\CoreService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Response\Point;
 use Tests\TestCase;
 use Faker\Factory as Faker;
@@ -25,12 +28,15 @@ class ExceptionsTest extends TestCase
             }
         });
 
-        ((new class ($errorClientMock, $requestObject) extends AbstractJob {
+        $coreService = (app()->make(CoreService::class))
+            ->setClient($errorClientMock);
+
+        return ((new class ($coreService, $requestObject) extends AbstractJob {
             private $requestObject;
 
-            public function __construct(Client $client, $requestObject)
+            public function __construct(CoreService $coreService, $requestObject)
             {
-                parent::__construct($client);
+                parent::__construct($coreService);
 
                 $this->requestObject = $requestObject;
             }
@@ -46,6 +52,10 @@ class ExceptionsTest extends TestCase
             }
             public function getResponseClass(): string {
                 return Point::class;
+            }
+            public function getFailedResponseObject(\Exception $exception): FailedJob
+            {
+                return new FailedJob($exception);
             }
         }))->handle();
     }
@@ -107,5 +117,33 @@ class ExceptionsTest extends TestCase
             'message' => 'error message',
         ]));
         $this->sendRequestAndTestExceptions($response);
+    }
+
+    public function testErrorResponseObject()
+    {
+        $error   = 'error name';
+        $message = 'error message';
+
+        $response = new Response(\Illuminate\Http\Response::HTTP_NOT_FOUND, [
+            'Content-Type' => 'application/json',
+        ], \GuzzleHttp\json_encode([
+            'error'   => $error,
+            'message' => $message,
+        ]));
+
+        try {
+            $this->sendRequestAndTestExceptions($response);
+        } catch (RequestException $e) {
+            $this->assertNotNull($e->getErrorResponse());
+            $this->assertEquals($error, $e->getErrorResponse()->getError());
+            $this->assertEquals($message, $e->getErrorResponse()->getMessage());
+            $this->assertEquals([
+                'error' => $error,
+                'message' => $message,
+            ], $e->getErrorResponse()->jsonSerialize());
+
+            $this->assertNotEmpty($e->getRawResponse());
+            $this->assertNotEmpty($e->getResponse());
+        }
     }
 }

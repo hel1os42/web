@@ -4,8 +4,10 @@ namespace OmniSynapse\CoreService\Job;
 
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
+use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
+use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class UserCreated
@@ -14,20 +16,34 @@ use OmniSynapse\CoreService\Response\User as UserResponse;
 class UserCreated extends AbstractJob
 {
     /** @var UserRequest */
-    private $requestObject;
+    public $requestObject;
+
+    /** @var User */
+    private $user;
 
     /**
      * UserCreated constructor.
      *
      * @param User $user
-     * @param \GuzzleHttp\Client $client
+     * @param CoreService $coreService
      */
-    public function __construct(User $user, \GuzzleHttp\Client $client)
+    public function __construct(User $user, CoreService $coreService)
     {
-        parent::__construct($client);
+        parent::__construct($coreService);
+
+        $this->user = $user;
 
         /** @var UserRequest requestObject */
         $this->requestObject = new UserRequest($user);
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentProperties = parent::__sleep();
+        return array_merge($parentProperties, ['requestObject', 'user']);
     }
 
     /**
@@ -60,5 +76,14 @@ class UserCreated extends AbstractJob
     public function getResponseClass(): string
     {
         return UserResponse::class;
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return FailedJob
+     */
+    protected function getFailedResponseObject(\Exception $exception): FailedJob
+    {
+        return new FailedJob\UserCreated($exception, $this->user);
     }
 }

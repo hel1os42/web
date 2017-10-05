@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
@@ -24,11 +22,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        $this->mapApiRoutes();
-
-        $this->mapWebRoutes();
-
-        //
+        $this->mapRoutes();
     }
 
     /**
@@ -38,25 +32,13 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    protected function mapWebRoutes()
+    protected function mapRoutes()
     {
-        return Route::middleware(request()->wantsJson() ? 'api' : 'web')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/web.php'));
-    }
+        /** @var \Illuminate\Routing\Router $router */
+        $router = app('router');
 
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
-    protected function mapApiRoutes()
-    {
-        Route::prefix(null)
-             ->middleware('api')
-             ->namespace($this->namespace)
-             ->group(base_path('routes/api.php'));
+        return $router->middleware('web')
+                      ->namespace($this->namespace)
+                      ->group(base_path('routes/web.php'));
     }
 }

@@ -2,34 +2,39 @@
 
 namespace App\Models;
 
-use App\Exceptions\BadActivationCodeException;
+use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
-use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Collection;
 
 /**
  * Class ActivationCode
- * @package App
+ * @package App\Models
  *
- * @property integer id
- * @property string code
- * @property string user_id
- * @property string offer_id
- * @property string redemption_id
- * @property Carbon created_at
- * @property Offer offer
- * @property User user
+ * @property integer    id
+ * @property string     code
+ * @property string     user_id
+ * @property string     offer_id
+ * @property string     redemption_id
+ * @property Carbon     created_at
+ * @property Offer      offer
+ * @property User       user
  * @property Redemption redemption
- * @method ActivationCode byCode(string $code)
+ *
+ * @method static static|ActivationCode[]|Collection|Builder byCode(string $code)
+ * @method static static|ActivationCode[]|Collection|Builder byOwner(User $owner)
+ * @method static static|ActivationCode[]|Collection|Builder byOffer(Offer $offer)
  */
 class ActivationCode extends Model
 {
     /**
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -66,16 +71,18 @@ class ActivationCode extends Model
     /** @return string */
     public function getCodeAttribute(): string
     {
-        return Hashids::connection('activation_code')->encode($this->id);
+        return app('hashids')->connection('activation_code')->encode($this->id);
     }
 
     /**
      * @param string $uuid
+     *
      * @return ActivationCode
      */
     public function setRedemptionId(string $uuid): ActivationCode
     {
         $this->redemption_id = $uuid;
+
         return $this;
     }
 
@@ -99,20 +106,25 @@ class ActivationCode extends Model
 
     /**
      * @param string $code
+     *
      * @return int
      * @throws BadActivationCodeException
      */
     public function getIdByCode(string $code): ?int
     {
-        $activationId = Hashids::connection('activation_code')->decode($code);
+        $activationId = app('hashids')->connection('activation_code')->decode($code);
+
         return isset($activationId[0]) ? $activationId[0] : null;
 
     }
 
     /**
      * @param Builder $builder
-     * @param string $code
+     * @param string  $code
+     *
      * @return Builder
+     * @throws BadActivationCodeException
+     * @throws \InvalidArgumentException
      */
     public function scopeByCode(Builder $builder, string $code): Builder
     {
@@ -120,7 +132,34 @@ class ActivationCode extends Model
     }
 
     /**
+     * @param Builder $builder
+     * @param User    $owner
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOwner(Builder $builder, User $owner): Builder
+    {
+        return $builder->where('user_id', $owner->getId());
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Offer   $offer
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOffer(Builder $builder, Offer $offer): Builder
+    {
+        return $builder->where('offer_id', $offer->getId());
+    }
+
+    /**
      * @param Redemption $redemption
+     *
+     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function activated(Redemption $redemption)
     {

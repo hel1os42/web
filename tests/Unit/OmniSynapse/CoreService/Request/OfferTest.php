@@ -10,6 +10,9 @@ use Tests\TestCase;
 
 class OfferTest extends TestCase
 {
+    const DATE_FORMAT = 'Y-m-dTH:i:sO';
+    const TIME_FORMAT = 'H:i:sO';
+
     /**
      * @return void
      */
@@ -22,6 +25,13 @@ class OfferTest extends TestCase
          */
         $account = $this->createMock(Account::class);
         $account->method('getOwnerId')->willReturn($faker->uuid);
+
+        $dates = [
+            'startDate' => '2017-01-01T00:00:00+0300',
+            'endDate' => '2017-01-01T23:59:59+0300',
+            'startTime' => '12:00:00+0300',
+            'endTime' => '17:59:59+0300',
+        ];
 
         /*
          * Prepare Offer mock and params
@@ -40,10 +50,10 @@ class OfferTest extends TestCase
         $maxPerUser   = $faker->randomDigitNotNull;
         $userMinLevel = $faker->randomDigitNotNull;
         $reward       = $faker->randomFloat();
-        $startDate    = Carbon::now()->subDays(30);
-        $endDate      = Carbon::now()->addDays(30);
-        $startTime    = $startDate->copy()->setTimeFromTimeString($faker->time());
-        $endTime      = $startDate->copy()->setTimeFromTimeString($faker->time());
+        $startDate    = Carbon::parse($dates['startDate']);
+        $endDate      = Carbon::parse($dates['endDate']);
+        $startTime    = Carbon::parse($dates['startTime']);
+        $endTime      = Carbon::parse($dates['endTime']);
 
         /*
          * Set Offer methods
@@ -79,10 +89,10 @@ class OfferTest extends TestCase
             'geo'               => $offerRequest->geo->jsonSerialize(), // don't have to be checked
             'limits'            => $offerRequest->limits->jsonSerialize(), // don't have to be checked
             'reward'            => $reward,
-            'start_date'        => $startDate->toDateString(),
-            'end_date'          => $endDate->toDateString(),
-            'start_time'        => $startTime->toTimeString(),
-            'end_time'          => $endTime->toTimeString(),
+            'start_date'        => $dates['startDate'],
+            'end_date'          => $dates['endDate'],
+            'start_time'        => $dates['startTime'],
+            'end_time'          => $dates['endTime'],
         ];
 
         /*

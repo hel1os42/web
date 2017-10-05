@@ -14,6 +14,9 @@ class Error implements \JsonSerializable
     /** @var string */
     public $message;
 
+    /** @var string|null */
+    public $exception = null;
+
     /**
      * @return array
      */

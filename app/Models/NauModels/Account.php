@@ -2,16 +2,17 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Class Account
- * @package App
+ * @package App\Models\NauModels
  *
  * @property int id
  * @property string owner_id
@@ -22,15 +23,15 @@ use Illuminate\Database\Eloquent\Builder;
  * @property Collection|Offer[] offers
  * @property User owner
  *
- * @method static Account whereAddress
+ * @method static static|Builder byAddress(string $address)
+ * @method static static|Builder byOwner(User $owner)
  */
-class Account extends NauModel
+class Account extends AbstractNauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = 'account';
 
         $this->primaryKey = 'id';
@@ -51,18 +52,25 @@ class Account extends NauModel
             'amount',
             'addr'
         ];
-    }
 
-    /** @var array */
-    protected $maps = [
-        'balance' => 'amount',
-        'address' => 'addr',
-    ];
+        $this->maps = [
+            'balance' => 'amount',
+            'address' => 'addr',
+        ];
+
+        parent::__construct($attributes);
+    }
 
     /** @return BelongsTo */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /** @return User */
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 
     /** @return HasMany */
@@ -105,21 +113,26 @@ class Account extends NauModel
     }
 
     /**
-     * @param float $amount
-     * @return bool
+     * @param Builder $builder
+     * @param string  $address
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
      */
-    public function isEnoughBalanceFor(float $amount): bool
+    public function scopeByAddress(Builder $builder, string $address): Builder
     {
-        return $this->getBalance() >= $amount;
+        return $builder->where('address', $address);
     }
 
     /**
      * @param Builder $builder
-     * @param string $address
+     * @param User    $owner
+     *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
-    public function scopeWhereAddress(Builder $builder, string $address): Builder
+    public function scopeByOwner(Builder $builder, User $owner): Builder
     {
-        return $builder->where('address', $address);
+        return $builder->where('owner_id', $owner->id);
     }
 }

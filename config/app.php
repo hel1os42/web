@@ -158,7 +158,7 @@ return [
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-        Illuminate\Session\SessionServiceProvider::class,
+        App\Providers\SessionServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
@@ -169,6 +169,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Sofa\Eloquence\ServiceProvider::class,
         Vinkla\Hashids\HashidsServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -182,6 +183,9 @@ return [
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
+        App\Services\Auth\Otp\Stub\OtpAuthProvider::class,
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*
@@ -234,6 +238,7 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'Hashids' => Vinkla\Hashids\Facades\Hashids::class,
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
 ];

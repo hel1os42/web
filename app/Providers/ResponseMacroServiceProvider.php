@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Response as HTTPResponse;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Response as HTTPResponse;
 
 class ResponseMacroServiceProvider extends ServiceProvider
 {
@@ -16,7 +16,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
     public function boot()
     {
         Response::macro('render', function (string $view, $params = [], int $statusCode = HTTPResponse::HTTP_OK, string $route = '') {
-            if(request()->wantsJson()){
+            if (request()->wantsJson()){
                 if(($statusCode == HTTPResponse::HTTP_ACCEPTED || $statusCode == HTTPResponse::HTTP_CREATED) && !empty($route)){
                     return response()->json($params, $statusCode)->header('Location', $route);
                 }
@@ -34,10 +34,10 @@ class ResponseMacroServiceProvider extends ServiceProvider
 
             if (!request()->wantsJson()) {
                 session()->flash('error', $message);
-                abort($statusCode);
+                abort($statusCode, $message);
             }
 
-            return response()->json(['error' => $message], $statusCode);
+            return response()->json(['error' => true, 'message' => $message], $statusCode);
         });
 
 

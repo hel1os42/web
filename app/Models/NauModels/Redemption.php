@@ -2,37 +2,49 @@
 
 namespace App\Models\NauModels;
 
+use App\Models\Traits\HasNau;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Redemption
- * @package App
+ * @package App\Models\NauModels
  *
  * @property string id
  * @property string offer_id
  * @property string user_id
- * @property int points
+ * @property int    points
  * @property string rewarded_id
- * @property int amount
- * @property int fee
+ * @property int    amount
+ * @property int    fee
  * @property Carbon created_at
  * @property Carbon updated_at
- * @property Offer offer
- * @property User rewardedUser
- * @property User user
+ * @property Offer  offer
+ * @property User   rewardedUser
+ * @property User   user
+ *
+ * @method static static|Builder byUser(User $user)
  */
-class Redemption extends NauModel
+class Redemption extends AbstractNauModel
 {
+    use HasNau;
 
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->table = "redemption";
 
         $this->primaryKey = 'id';
+
+        $this->fillable = [
+            'offer_id',
+            'user_id',
+            'points',
+            'rewarded_id',
+            'amount',
+            'fee',
+        ];
 
         $this->casts = [
             'id'          => 'string',
@@ -44,12 +56,8 @@ class Redemption extends NauModel
             'fee'         => 'integer'
         ];
 
+        parent::__construct($attributes);
     }
-
-    protected $fillable = [
-        'offer_id',
-        'user_id'
-    ];
 
     /** @return string */
     public function getId(): ?string
@@ -58,55 +66,57 @@ class Redemption extends NauModel
     }
 
     /** @return string */
-    public function getOfferId(): string
+    public function getOfferId(): ?string
     {
         return $this->offer_id;
     }
 
     /** @return string */
-    public function getUserId(): string
+    public function getUserId(): ?string
     {
         return $this->user_id;
     }
 
     /** @return int */
-    public function getPoints(): int
+    public function getPoints(): ?int
     {
         return $this->points;
     }
 
     /** @return string */
-    public function getRewardedId(): string
+    public function getRewardedId(): ?string
     {
         return $this->rewarded_id;
     }
 
     /**
      * @param int $value
+     *
      * @return float
      */
-    public function getAmountAttribute(int $value): float
+    public function getAmountAttribute(int $value): ?float
     {
         return $this->convertIntToFloat($value);
     }
 
     /** @return float */
-    public function getAmount(): float
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
     /**
      * @param int $value
+     *
      * @return float
      */
-    public function getFeeAttribute(int $value): float
+    public function getFeeAttribute(int $value): ?float
     {
         return $this->convertIntToFloat($value);
     }
 
     /** @return float */
-    public function getFee(): float
+    public function getFee(): ?float
     {
         return $this->fee;
     }
@@ -127,5 +137,16 @@ class Redemption extends NauModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /** @return BelongsTo */
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transact::class, 'txid', 'id');
+    }
+
+    public function scopeByUser(Builder $builder, User $user)
+    {
+        return $builder->where('user_id', $user->id);
     }
 }

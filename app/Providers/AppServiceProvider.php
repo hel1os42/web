@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\NauOffersService;
+use App\Services\OffersService;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap([
+            'users' => \App\Models\User::class
+        ]);
     }
 
     /**
@@ -23,6 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(OffersService::class, NauOffersService::class);
     }
 }

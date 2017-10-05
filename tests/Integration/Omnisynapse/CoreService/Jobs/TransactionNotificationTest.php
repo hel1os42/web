@@ -103,11 +103,25 @@ class TransactionNotificationTest extends TestCase
             $eventCalled++;
         });
 
-        $this->app->make(CoreService::class)
+        $exceptionEventCalled = 0;
+        \Event::listen(\OmniSynapse\CoreService\FailedJob\TransactionNotification::class, function () use(&$exceptionEventCalled) {
+            $exceptionEventCalled++;
+        });
+
+        $transactionNotification = $this->app->make(CoreService::class)
             ->setClient($clientMock)
-            ->transactionNotification($transactionMock, $transaction['category'])
-            ->handle();
+            ->transactionNotification($transactionMock, $transaction['category']);
+
+        $transactionNotification->handle();
+        $transactionNotification->failed((new \Exception));
 
         $this->assertEquals( 1, $eventCalled, 'Can not listen TransactionNotification response event.');
+        $this->assertEquals(1, $exceptionEventCalled, 'Can not listen TransactionNotification failed job.');
+
+        $this->assertEquals([
+            'coreService',
+            'requestObject',
+            'transaction',
+        ], $transactionNotification->__sleep());
     }
 }

@@ -2,25 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuids;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Class Category
- * @package App
+ * @package App\Models
  *
- * @property string id
- * @property string name
- * @property string parent_id
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string   id
+ * @property string   name
+ * @property string   parent_id
+ * @property Carbon   created_at
+ * @property Carbon   updated_at
  * @property Category parent
- * @property Category findByName
+ *
+ * @method static Category[]|Collection|Builder withParent(Category $parent)
+ * @method static Category[]|Collection|Builder withNoParent()
  */
 class Category extends Model
 {
+    use Uuids;
     /**
      * Category constructor.
      *
@@ -28,18 +34,29 @@ class Category extends Model
      */
     public function __construct(array $attributes = [])
     {
-        parent::__construct($attributes);
-
         $this->connection = config('database.default');
 
         $this->table      = 'categories';
         $this->primaryKey = 'id';
+
+        $this->initUuid();
 
         $this->casts = [
             'id'        => 'string',
             'name'      => 'string',
             'parent_id' => 'string'
         ];
+
+        $this->hidden = [
+            'created_at',
+            'updated_at',
+        ];
+
+        $this->appends = [
+            'children_count',
+        ];
+
+        parent::__construct($attributes);
     }
 
     /** @return string */
@@ -72,5 +89,23 @@ class Category extends Model
     public function children(): hasMany
     {
         return $this->hasMany(Category::class, 'parent_id', 'id');
+    }
+
+    /**
+     * @return int
+     */
+    public function getChildrenCountAttribute(): int
+    {
+        return $this->children()->count();
+    }
+
+    public function scopeWithParent(Builder $builder, Category $parent)
+    {
+        return $builder->where('parent_id', $parent->getId());
+    }
+
+    public function scopeWithNoParent(Builder $builder)
+    {
+        return $builder->whereNull('parent_id');
     }
 }
