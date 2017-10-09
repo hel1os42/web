@@ -16,7 +16,7 @@ class SetAdminRoleSeeder extends Seeder
 
         if ($user instanceof User) {
             if (class_exists('\App\Models\Role')) {
-                $user->roles()->attach(\App\Models\Role::getIdByName('admin'));
+                $user->roles()->attach(\App\Models\Role::findByName('admin'));
             }
         }
     }
