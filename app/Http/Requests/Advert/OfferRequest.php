@@ -19,7 +19,9 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property int max_count
  * @property int max_for_user
  * @property int max_per_day
- * @property int max_for_user_per_day
+ * @property int|null max_for_user_per_day
+ * @property int|null max_for_user_per_week
+ * @property int|null max_for_user_per_month
  * @property int user_level_min
  * @property string latitude
  * @property string longitude
@@ -63,6 +65,8 @@ class OfferRequest extends FormRequest
             'max_for_user'         => 'integer|min:1',
             'max_per_day'          => 'integer|min:1',
             'max_for_user_per_day' => 'integer|min:1',
+            'max_for_user_per_week'  => 'integer|min:1',
+            'max_for_user_per_month' => 'integer|min:1',
             'user_level_min'       => 'integer|min:1',
             'latitude'             => 'numeric|between:-90,90',
             'longitude'            => 'numeric|between:-180,180',

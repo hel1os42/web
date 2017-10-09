@@ -31,6 +31,8 @@ use Carbon\Carbon;
  * @property null|int    max_for_user
  * @property null|int    max_per_day
  * @property null|int    max_for_user_per_day
+ * @property null|int    max_for_user_per_week
+ * @property null|int    max_for_user_per_month
  * @property null|int    user_level_min
  * @property null|float  latitude
  * @property null|float  longitude
@@ -232,7 +234,7 @@ class Offer extends AbstractNauModel
      */
     public function getMaxForUserPerWeek(): ?int
     {
-        return $this->max_for_user_per_day;
+        return $this->max_for_user_per_week;
     }
 
     /**
@@ -240,7 +242,7 @@ class Offer extends AbstractNauModel
      */
     public function getMaxForUserPerMonth(): ?int
     {
-        return $this->max_for_user_per_day;
+        return $this->max_for_user_per_month;
     }
 
     /** @return int */
@@ -373,6 +375,8 @@ class Offer extends AbstractNauModel
             'max_for_user'         => null,
             'max_per_day'          => null,
             'max_for_user_per_day' => null,
+            'max_for_user_per_week' => null,
+            'max_for_user_per_month' => null,
             'min_level'            => null,
             'lat'                  => null,
             'lng'                  => null,
@@ -398,6 +402,8 @@ class Offer extends AbstractNauModel
             'max_for_user',
             'max_per_day',
             'max_for_user_per_day',
+            'max_for_user_per_week',
+            'max_for_user_per_month',
             'user_level_min',
             'latitude',
             'longitude',
@@ -459,6 +465,8 @@ class Offer extends AbstractNauModel
             'max_for_user'         => 'integer',
             'max_per_day'          => 'integer',
             'max_for_user_per_day' => 'integer',
+            'max_for_user_per_week'  => 'integer',
+            'max_for_user_per_month' => 'integer',
             'user_level_min'       => 'integer',
             'latitude'             => 'double',
             'longitude'            => 'double',
