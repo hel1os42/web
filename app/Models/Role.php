@@ -64,9 +64,9 @@ class Role extends Model
         return $this->name;
     }
 
-    public static function getIdByName(string $name): string
+    public static function findByName(string $name): Role
     {
-        return self::query()->where('name', $name)->firstOrFail()->getId();
+        return self::query()->where('name', $name)->firstOrFail();
     }
 
     /** @return BelongsToMany */

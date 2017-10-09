@@ -17,14 +17,12 @@ class CreateTableRoles extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->timestampsTz();
         });
 
         Schema::create('users_roles', function (Blueprint $table) {
             $table->uuid('user_id');
             $table->uuid('role_id');
             $table->primary(['user_id', 'role_id'])->index();
-            $table->timestampsTz();
         });
 
         Schema::table('users_roles', function (Blueprint $table) {

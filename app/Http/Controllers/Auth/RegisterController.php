@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Routing\ResponseFactory;
@@ -101,6 +102,8 @@ class RegisterController extends Controller
         if (!$success) {
             throw new UnprocessableEntityHttpException();
         }
+
+        $user->roles()->attach([Role::findByName(Role::ROLE_USER)->getId()]);
 
         return request()->wantsJson()
             ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))
