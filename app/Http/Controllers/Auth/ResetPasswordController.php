@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\PasswordFormRequest;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
@@ -15,17 +14,9 @@ use Illuminate\Contracts\Auth\CanResetPassword;
  * Class ResetPasswordController
  * @package App\Http\Controllers\Auth
  */
-class ResetPasswordController extends Controller
+class ResetPasswordController extends AuthController
 {
     use ResetsPasswords;
-
-    /**
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
 
     /**
      * @param  Request $request
