@@ -22,7 +22,14 @@ class LimitsTest extends TestCase
         $perUserPerMonth = $faker->randomDigitNotNull;
         $minLevel        = $faker->randomDigitNotNull;
 
-        $limits = new Limits($offers, $perDay, $perUser, $perUserPerDay, $perUserPerWeek, $perUserPerMonth, $minLevel);
+        $limits = (new Limits)
+            ->setOffers($offers)
+            ->setPerDay($perDay)
+            ->setPerUser($perUser)
+            ->setPerUserPerDay($perUserPerDay)
+            ->setPerUserPerWeek($perUserPerWeek)
+            ->setPerUserPerMonth($perUserPerMonth)
+            ->setMinLevel($minLevel);
 
         $this->assertEquals($offers, $limits->getOffers(), 'offers');
         $this->assertEquals($perDay, $limits->getPerDay(), 'perDay');

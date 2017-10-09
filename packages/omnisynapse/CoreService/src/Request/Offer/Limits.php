@@ -44,35 +44,6 @@ class Limits implements \JsonSerializable
     private $minLevel;
 
     /**
-     * Limits constructor.
-     *
-     * @param int $offers
-     * @param int $perDay
-     * @param int $perUser
-     * @param int|null $perUserPerDay
-     * @param int|null $perUserPerWeek
-     * @param int|null $perUserPerMonth
-     * @param int $minLevel
-     */
-    public function __construct(
-        int $offers,
-        int $perDay,
-        int $perUser,
-        ?int $perUserPerDay,
-        ?int $perUserPerWeek,
-        ?int $perUserPerMonth,
-        int $minLevel
-    ) {
-        $this->setOffers($offers)
-             ->setPerDay($perDay)
-             ->setPerUser($perUser)
-             ->setPerUserPerDay($perUserPerDay)
-             ->setPerUserPerWeek($perUserPerWeek)
-             ->setPerUserPerMonth($perUserPerMonth)
-             ->setMinLevel($minLevel);
-    }
-
-    /**
      * @return array
      */
     public function jsonSerialize()
