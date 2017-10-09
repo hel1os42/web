@@ -95,7 +95,7 @@ class RegisterController extends AuthController
             throw new UnprocessableEntityHttpException();
         }
 
-        $user->roles()->attach([Role::findByName(Role::ROLE_USER)->getId()]);
+        $user->roles()->attach([Role::findByName(Role::ROLE_USER)->getId(), Role::findByName(Role::ROLE_ADVERTISER)->getId()]);
 
         return request()->wantsJson()
             ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))

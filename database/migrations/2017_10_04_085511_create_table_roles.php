@@ -46,6 +46,10 @@ class CreateTableRoles extends Migration
                 [
                     'user_id'    => $user->id,
                     'role_id'    => $rolesArray['user']['id']
+                ],
+                [
+                    'user_id'    => $user->id,
+                    'role_id'    => $rolesArray['advertiser']['id']
                 ]
             ]);
             $i++;
