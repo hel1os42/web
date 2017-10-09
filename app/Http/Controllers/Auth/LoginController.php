@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -13,7 +12,7 @@ use Illuminate\Routing\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
-class LoginController extends Controller
+class LoginController extends AuthController
 {
     use ThrottlesLogins;
 
