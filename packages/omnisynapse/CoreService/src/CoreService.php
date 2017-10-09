@@ -17,11 +17,6 @@ interface CoreService
     public function setClient(Client $client): CoreService;
 
     /**
-     * @return \GuzzleHttp\Client
-     */
-    public function getClient(): Client;
-
-    /**
      * @param Offer $offer
      * @return AbstractJob
      */
