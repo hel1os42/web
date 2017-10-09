@@ -15,10 +15,25 @@ use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
     protected $userRepository;
+    /**
+     * @var JWTAuth
+     */
     protected $jwtAuth;
+    /**
+     * @var AuthManager
+     */
     protected $auth;
 
+    /**
+     * AuthController constructor.
+     * @param UserRepository $userRepository
+     * @param JWTAuth $jwtAuth
+     * @param AuthManager $auth
+     */
     public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
     {
         $this->userRepository = $userRepository;
