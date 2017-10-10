@@ -36,25 +36,28 @@ class OfferForUpdateTest extends TestCase
         /*
          * Prepare Offer mock and params
          */
-        $offer        = $this->createMock(Offer::class);
-        $offerId      = $faker->uuid;
-        $name         = $faker->name;
-        $description  = $faker->text();
-        $categoryId   = $faker->uuid;
-        $radius       = $faker->randomDigitNotNull;
-        $city         = $faker->city;
-        $country      = $faker->country;
-        $latitude     = $faker->latitude;
-        $longitude    = $faker->longitude;
-        $maxCount     = $faker->randomDigitNotNull;
-        $maxPerDay    = $faker->randomDigitNotNull;
-        $maxPerUser   = $faker->randomDigitNotNull;
-        $userMinLevel = $faker->randomDigitNotNull;
-        $reward       = $faker->randomFloat();
-        $startDate    = Carbon::parse($dates['startDate']);
-        $endDate      = Carbon::parse($dates['endDate']);
-        $startTime    = Carbon::parse($dates['startTime']);
-        $endTime      = Carbon::parse($dates['endTime']);
+        $offer              = $this->createMock(Offer::class);
+        $offerId            = $faker->uuid;
+        $name               = $faker->name;
+        $description        = $faker->text();
+        $categoryId         = $faker->uuid;
+        $radius             = $faker->randomDigitNotNull;
+        $city               = $faker->city;
+        $country            = $faker->country;
+        $latitude           = $faker->latitude;
+        $longitude          = $faker->longitude;
+        $maxCount           = $faker->randomDigitNotNull;
+        $maxPerDay          = $faker->randomDigitNotNull;
+        $maxPerUser         = $faker->randomDigitNotNull;
+        $maxPerUserPerDay   = $faker->randomDigitNotNull;
+        $maxPerUserPerWeek  = $faker->randomDigitNotNull;
+        $maxPerUserPerMonth = $faker->randomDigitNotNull;
+        $userMinLevel       = $faker->randomDigitNotNull;
+        $reward             = $faker->randomFloat();
+        $startDate          = Carbon::parse($dates['startDate']);
+        $endDate            = Carbon::parse($dates['endDate']);
+        $startTime          = Carbon::parse($dates['startTime']);
+        $endTime            = Carbon::parse($dates['endTime']);
 
         /*
          * Set Offer methods
@@ -71,6 +74,9 @@ class OfferForUpdateTest extends TestCase
         $offer->method('getMaxCount')->willReturn($maxCount);
         $offer->method('getMaxPerDay')->willReturn($maxPerDay);
         $offer->method('getMaxForUser')->willReturn($maxPerUser);
+        $offer->method('getMaxForUserPerDay')->willReturn($maxPerUserPerDay);
+        $offer->method('getMaxForUserPerWeek')->willReturn($maxPerUserPerWeek);
+        $offer->method('getMaxForUserPerMonth')->willReturn($maxPerUserPerMonth);
         $offer->method('getUserLevelMin')->willReturn($userMinLevel);
         $offer->method('getReward')->willReturn($reward);
         $offer->method('getStartDate')->willReturn($startDate);

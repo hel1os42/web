@@ -66,7 +66,14 @@ class Offer implements \JsonSerializable
             $point = new Point($lat, $lon);
         }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
-        $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
+        $limits  = (new Limits)
+            ->setOffers($offer->getMaxCount())
+            ->setPerDay($offer->getMaxPerDay())
+            ->setPerUser($offer->getMaxForUser())
+            ->setPerUserPerDay($offer->getMaxForUserPerDay())
+            ->setPerUserPerWeek($offer->getMaxForUserPerWeek())
+            ->setPerUserPerMonth($offer->getMaxForUserPerMonth())
+            ->setMinLevel($offer->getUserLevelMin());
         $account = $offer->getAccount();
 
         if (null === $account) {

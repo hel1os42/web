@@ -6,10 +6,13 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Limits
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property int offers
- * @property int perDay
- * @property int perUser
- * @property int minLevel
+ * @property int      offers
+ * @property int      perDay
+ * @property int      perUser
+ * @property int|null perUserPerDay
+ * @property int|null perUserPerWeek
+ * @property int|null perUserPerMonth
+ * @property int      minLevel
  */
 class Limits implements \JsonSerializable
 {
@@ -22,23 +25,23 @@ class Limits implements \JsonSerializable
     /** @var int */
     private $perUser;
 
-    /** @var int */
-    private $minLevel;
+    /**
+     * @var int|null
+     */
+    private $perUserPerDay;
 
     /**
-     * Limits constructor.
-     * @param int $offers
-     * @param int $perDay
-     * @param int $perUser
-     * @param int $minLevel
+     * @var int|null
      */
-    public function __construct(int $offers, int $perDay, int $perUser, int $minLevel)
-    {
-        $this->setOffers($offers)
-            ->setPerDay($perDay)
-            ->setPerUser($perUser)
-            ->setMinLevel($minLevel);
-    }
+    private $perUserPerWeek;
+
+    /**
+     * @var int|null
+     */
+    private $perUserPerMonth;
+
+    /** @var int */
+    private $minLevel;
 
     /**
      * @return array
@@ -46,10 +49,13 @@ class Limits implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'offers'    => $this->getOffers(),
-            'per_day'   => $this->getPerDay(),
-            'per_user'  => $this->getPerUser(),
-            'min_level' => $this->getMinLevel(),
+            'offers'             => $this->getOffers(),
+            'per_day'            => $this->getPerDay(),
+            'per_user'           => $this->getPerUser(),
+            'per_user_per_day'   => $this->getPerUserPerDay(),
+            'per_user_per_week'  => $this->getPerUserPerWeek(),
+            'per_user_per_month' => $this->getPerUserPerMonth(),
+            'min_level'          => $this->getMinLevel(),
         ];
     }
 
@@ -75,6 +81,30 @@ class Limits implements \JsonSerializable
     public function getPerUser(): int
     {
         return $this->perUser;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerDay(): ?int
+    {
+        return $this->perUserPerDay;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerWeek(): ?int
+    {
+        return $this->perUserPerWeek;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerMonth(): ?int
+    {
+        return $this->perUserPerMonth;
     }
 
     /**
@@ -112,6 +142,42 @@ class Limits implements \JsonSerializable
     public function setPerUser(int $perUser): Limits
     {
         $this->perUser = $perUser;
+        return $this;
+    }
+
+    /**
+     * @param int|null $perUserPerDay
+     *
+     * @return Limits
+     */
+    public function setPerUserPerDay(?int $perUserPerDay): Limits
+    {
+        $this->perUserPerDay = $perUserPerDay;
+
+        return $this;
+    }
+
+    /**
+     * @param int|null $perUserPerWeek
+     *
+     * @return Limits
+     */
+    public function setPerUserPerWeek(?int $perUserPerWeek): Limits
+    {
+        $this->perUserPerWeek = $perUserPerWeek;
+
+        return $this;
+    }
+
+    /**
+     * @param $perUserPerMonth
+     *
+     * @return Limits
+     */
+    public function setPerUserPerMonth($perUserPerMonth): Limits
+    {
+        $this->perUserPerMonth = $perUserPerMonth;
+
         return $this;
     }
 
