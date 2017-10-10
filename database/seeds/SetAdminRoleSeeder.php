@@ -16,15 +16,14 @@ class SetAdminRoleSeeder extends Seeder
             'name'     => 'Admin',
             'email'    => 'sadm@nau.io',
             'password' => 'jf747hsf',
-            'phone' => '+380123456789'
+            'phone'    => '+380123456789'
         ]);
 
         try {
-            $user->save();
-
-            if ($user instanceof User) {
+            if ($user->save()) {
                 if (class_exists('\App\Models\Role')) {
-                    $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(), \App\Models\Role::findByName('user')->getId());
+                    $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(),
+                        \App\Models\Role::findByName('user')->getId());
                 }
             }
         } catch (\Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException $exception) {
