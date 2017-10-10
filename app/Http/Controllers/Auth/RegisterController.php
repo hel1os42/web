@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Helpers\FormRequest;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Repositories\UserRepository;
+use App\Models\Role;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\ValidationException;
@@ -13,14 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
-class RegisterController extends Controller
+class RegisterController extends AuthController
 {
-    private $userRepository;
-
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
 
     /**
      * Return user register form
@@ -101,6 +94,8 @@ class RegisterController extends Controller
         if (!$success) {
             throw new UnprocessableEntityHttpException();
         }
+
+        $user->roles()->attach([Role::findByName(Role::ROLE_USER)->getId(), Role::findByName(Role::ROLE_ADVERTISER)->getId()]);
 
         return request()->wantsJson()
             ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))

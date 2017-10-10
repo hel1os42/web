@@ -9,6 +9,7 @@ use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\Place;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations;
 
@@ -91,5 +92,13 @@ trait RelationsTrait
     public function additionalFields()
     {
         return $this->morphToMany(AdditionalField::class, 'parent', 'additional_field_values')->withPivot('value');
+    }
+
+    /**
+     * The roles that belong to the user.
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'users_roles');
     }
 }
