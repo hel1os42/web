@@ -2,12 +2,20 @@
 
 namespace App\Policies;
 
-use App\Models\NauModels\Offer;
+use App\Models\Role;
+use App\Repositories\OfferRepository;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class OfferPolicy
 {
     use HandlesAuthorization;
+
+    private $offerRepository;
+
+    public function __construct(OfferRepository $offerRepository)
+    {
+        $this->offerRepository = $offerRepository;
+    }
 
     /**
      * @return bool
@@ -34,6 +42,8 @@ class OfferPolicy
     }
 
     /**
+     * @param string $offerId
+     *
      * @return bool
      */
     public function show(string $offerId)
@@ -47,7 +57,7 @@ class OfferPolicy
         }
 
         if(auth()->user()->hasRole(Role::ROLE_ADVERTISER)){
-            $offer = Offer::find($offerId);
+            $offer = $this->offerRepository->find($offerId);
             if($offer !== null && $offer->isOwner(auth()->user())){
                 return true;
             }
