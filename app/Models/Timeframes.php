@@ -33,10 +33,6 @@ class Timeframes extends Model
             'to' => 'time',
         ];
 
-        $this->appends = [
-            'weekdays'
-        ];
-
         $this->fillable = [
             'offer_id',
             'from',
@@ -60,8 +56,8 @@ class Timeframes extends Model
     /**
      * @return array
      */
-    public function getWeekdaysAttribute()
+    public function getDaysAttribute()
     {
-        return app(WeekDaysService::class)->daysToWeekDays($this->days);
+        return app(WeekDaysService::class)->daysToWeekDays($this->attributes['days']);
     }
 }
