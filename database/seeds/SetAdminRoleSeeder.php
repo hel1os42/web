@@ -19,17 +19,19 @@ class SetAdminRoleSeeder extends Seeder
             'phone'    => '+380123456789'
         ]);
 
+        $success = false;
+
         try {
-            if ($user->save()) {
-                if (class_exists('\App\Models\Role')) {
-                    $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(),
-                        \App\Models\Role::findByName('user')->getId());
-                }
-            }
+            $success = $user->save();
         } catch (\Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException $exception) {
             if (app('env') !== 'testing') {
                 throw $exception; // ignore exception for testing environment
             }
+        }
+
+        if($success){
+            $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(),
+                \App\Models\Role::findByName('user')->getId());
         }
     }
 }
