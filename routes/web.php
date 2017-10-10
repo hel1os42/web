@@ -101,13 +101,16 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
-        'names'  => [
+        'middleware' => [
+            'can:create,' . \App\Models\NauModels\Offer::class
+        ],
+        'names'      => [
             'index'  => 'advert.offers.index',
             'show'   => 'advert.offers.show',
             'create' => 'advert.offers.create',
             'store'  => 'advert.offers.store'
         ],
-        'except' => [
+        'except'     => [
             'update',
             'destroy'
         ]

@@ -78,6 +78,18 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
+    public function isOwner(string $identity, User $user): ?Offer
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->where([
+            'acc_id' => $user->getAccountFor(Currency::NAU)->id
+        ])->find($identity);
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
     /**
      * @param array $categoryIds
      * @param float $latitude

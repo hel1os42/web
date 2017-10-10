@@ -401,4 +401,18 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         return $this->activationCodes()->count();
     }
+
+    /**
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole(string $roleName)
+    {
+        foreach ($this->roles() as $userRole){
+            if($userRole->name == $roleName){
+                return true;
+            }
+        }
+        return false;
+    }
 }
