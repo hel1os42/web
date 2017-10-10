@@ -29,7 +29,7 @@ class SetAdminRoleSeeder extends Seeder
             }
         }
 
-        if($success){
+        if ($success) {
             $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(),
                 \App\Models\Role::findByName('user')->getId());
         }
