@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class SetAdminRoleSeeder extends Seeder
 {
@@ -30,8 +30,10 @@ class SetAdminRoleSeeder extends Seeder
         }
 
         if ($success) {
-            $user->roles()->attach(\App\Models\Role::findByName('admin')->getId(),
-                \App\Models\Role::findByName('user')->getId());
+            $user->roles()->attach([
+                \App\Models\Role::findByName('admin')->getId(),
+                \App\Models\Role::findByName('user')->getId()
+            ]);
         }
     }
 }
