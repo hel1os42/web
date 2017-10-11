@@ -35,14 +35,11 @@ class PictureController extends AbstractPictureController
     }
 
     /**
-     * Saves offer image from request
-     *
      * @param PictureRequest $request
      * @param string         $offerId
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
      * @throws ModelNotFoundException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      * @throws \RuntimeException
      */

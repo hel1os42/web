@@ -10,11 +10,6 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
-    public function __construct(\Illuminate\Contracts\Foundation\Application $app)
-    {
-        parent::__construct($app);
-    }
-
     /**
      * The policy mappings for the application.
      *

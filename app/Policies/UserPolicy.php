@@ -16,6 +16,4 @@ class UserPolicy
     {
         return auth()->user()->hasRoles([Role::ROLE_ADMIN]) ? true : false;
     }
-
-
 }
