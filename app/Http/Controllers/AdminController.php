@@ -19,11 +19,15 @@ class AdminController extends Controller
 
     /**
      * @return Response
-     * @throws \InvalidArgumentException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function index(): Response
+    public function usersList(): Response
     {
-        return \response()->render('admin.users.list', $this->userRepository->with('roles')->all()->paginate());
+        $this->authorize('adminUserList', $this->userRepository->model());
+
+        dd(auth()->user()->childs()->get());
+
+        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate(100));
     }
 }

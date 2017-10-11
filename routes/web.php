@@ -101,9 +101,9 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
-        'middleware' => [
-            'can:create,' . \App\Models\NauModels\Offer::class
-        ],
+//        'middleware' => [
+//            'can:create,' . \App\Models\NauModels\Offer::class
+//        ],
         'names'      => [
             'index'  => 'advert.offers.index',
             'show'   => 'advert.offers.show',
@@ -181,6 +181,11 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
     $router->get('activation_codes/{code}', 'ActivationCodeController@show')
            ->name('activation_codes.show');
+
+    /**
+     * Admin pages
+     */
+    $router->get('admin/users', 'AdminController@usersList')->name('admin.users.index');
 });
 
 //---- Authorized users

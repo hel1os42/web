@@ -41,16 +41,21 @@ class PictureController extends AbstractPictureController
      * @param string         $offerId
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @throws ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      * @throws \RuntimeException
      */
     public function store(PictureRequest $request, string $offerId)
     {
-        $offer = $this->offerRepository->findByIdAndOwner($offerId, $this->auth->user());
+
+        $offer = $this->offerRepository->find($offerId);
 
         if (null === $offer) {
             throw (new ModelNotFoundException)->setModel(Offer::class);
         }
+
+        $this->authorize('pictureStore', $offer);
 
         return $this->storeImageFor($request, $offer->id, route('offer.picture.show', ['offerId' => $offer->id]));
     }

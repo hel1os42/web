@@ -4,9 +4,9 @@ namespace App\Models\User;
 
 use App\Models\ActivationCode;
 use App\Models\AdditionalField;
+use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\Place;
 use App\Models\Role;
@@ -100,5 +100,21 @@ trait RelationsTrait
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'users_roles');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function parents()
+    {
+        return $this->belongsToMany(User::class, 'users_parents', 'user_id', 'parent_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function childs()
+    {
+        return $this->belongsToMany(User::class, 'users_parents', 'parent_id', 'user_id');
     }
 }

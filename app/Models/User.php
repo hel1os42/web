@@ -343,7 +343,8 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @param string $currency
      *
-     * @return Account
+     * @return Account|null
+     * @throws TokenException
      */
     public function getAccountFor(string $currency): ?Account
     {
@@ -354,7 +355,7 @@ class User extends Authenticatable implements PhoneAuthenticable
                 if ($account instanceof Account) {
                     return $account;
                 }
-                // no break
+            // no break
             default:
                 throw new TokenException($currency);
         }
@@ -403,13 +404,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
-     * @param string $roleName
+     * @param array $roleNames
+     *
      * @return bool
      */
-    public function hasRole(string $roleName)
+    public function hasRoles(array $roleNames)
     {
-        foreach ($this->roles() as $userRole){
-            if($userRole->name == $roleName){
+        foreach ($this->roles()->get() as $userRole) {
+            if (in_array($userRole->name, $roleNames)) {
                 return true;
             }
         }

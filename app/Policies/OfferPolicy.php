@@ -2,19 +2,21 @@
 
 namespace App\Policies;
 
+use App\Models\NauModels\Offer;
 use App\Models\Role;
-use App\Repositories\OfferRepository;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\AuthManager;
 
 class OfferPolicy
 {
     use HandlesAuthorization;
 
-    private $offerRepository;
+    private $auth;
 
-    public function __construct(OfferRepository $offerRepository)
+    public function __construct(AuthManager $authManager)
     {
-        $this->offerRepository = $offerRepository;
+        $this->auth = $authManager->guard();
     }
 
     /**
@@ -22,7 +24,7 @@ class OfferPolicy
      */
     public function index()
     {
-        return auth()->user()->hasRole(Role::ROLE_ADVERTISER) ? true : false;
+        return $this->onlyAdvertiser();
     }
 
     /**
@@ -30,7 +32,7 @@ class OfferPolicy
      */
     public function create()
     {
-        return auth()->user()->hasRole(Role::ROLE_ADVERTISER) ? true : false;
+        return $this->onlyAdvertiser();
     }
 
     /**
@@ -38,32 +40,26 @@ class OfferPolicy
      */
     public function store()
     {
-        return auth()->user()->hasRole(Role::ROLE_ADVERTISER) ? true : false;
+        return $this->onlyAdvertiser();
     }
 
     /**
-     * @param string $offerId
+     * @param User  $user
+     * @param Offer $offer
      *
      * @return bool
      */
-    public function show(string $offerId)
+    public function show(User $user, Offer $offer)
     {
-        if(auth()->user()->hasRole(Role::ROLE_ADMIN)){
+        if ($user->hasRoles([Role::ROLE_ADMIN])) {
             return true;
         }
 
-        if(auth()->user()->hasRole(Role::ROLE_CHIEF_ADVERTISER) || auth()->user()->hasRole(Role::ROLE_AGENT)) {
-            return false; //check if agent or main advert can view offer
+        if ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT])) {
+            return false; //todo check if agent or main advert can view offer
         }
 
-        if(auth()->user()->hasRole(Role::ROLE_ADVERTISER)){
-            $offer = $this->offerRepository->find($offerId);
-            if($offer !== null && $offer->isOwner(auth()->user())){
-                return true;
-            }
-        }
-
-        return false;
+        return $this->onlyAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
     }
 
     /**
@@ -71,7 +67,7 @@ class OfferPolicy
      */
     public function userIndex()
     {
-        return auth()->user()->hasRole(Role::ROLE_USER) ? true : false;
+        return $this->onlyUser();
     }
 
     /**
@@ -79,6 +75,32 @@ class OfferPolicy
      */
     public function userShow()
     {
-        return auth()->user()->hasRole(Role::ROLE_USER) ? true : false;
+        return $this->onlyUser();
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function pictureStore(Offer $offer)
+    {
+        return $this->onlyAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function onlyUser()
+    {
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]) ? true : false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function onlyAdvertiser()
+    {
+        return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]) ? true : false;
     }
 }
