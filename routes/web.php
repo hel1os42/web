@@ -57,18 +57,6 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
      * register
      */
     $router->post('users', 'Auth\RegisterController@register')->name('register');
-
-    /**
-     * pictures
-     */
-    $router->get('users/{uuid}/picture.jpg', 'Profile\PictureController@show')->where('uuid',
-        '[a-z0-9-]+')->name('users.picture.show');
-    $router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
-        '[a-z0-9-]+')->name('offer.picture.show');
-    $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
-        'uuid',
-        '[a-z0-9-]+'
-    ])->name('place.picture.show');
 });
 
 //---- Unauthorized users
@@ -190,3 +178,15 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 });
 
 //---- Authorized users
+
+/**
+ * pictures
+ */
+$router->get('users/{uuid}/picture.jpg', 'Profile\PictureController@show')->where('uuid',
+    '[a-z0-9-]+')->name('users.picture.show');
+$router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
+    '[a-z0-9-]+')->name('offer.picture.show');
+$router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
+    'uuid',
+    '[a-z0-9-]+'
+])->name('place.picture.show');
