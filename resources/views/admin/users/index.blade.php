@@ -19,4 +19,5 @@
             </li>
         @endforeach
     </ul>
+    @include('pagination.default', compact('current_page','from','last_page','next_page_url','path','per_page','prev_page_url','to','total'))
 @stop
