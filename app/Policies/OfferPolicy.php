@@ -93,7 +93,7 @@ class OfferPolicy
      */
     public function pictureStore(Offer $offer)
     {
-        return $this->isAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
+        return $this->isAdvertiser() && $offer->isOwner($this->auth->user());
     }
 
     /**
@@ -101,7 +101,7 @@ class OfferPolicy
      */
     private function isUser()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]) ? true : false;
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -109,6 +109,6 @@ class OfferPolicy
      */
     private function isAdvertiser()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]) ? true : false;
+        return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]);
     }
 }

@@ -14,6 +14,6 @@ class UserPolicy
      */
     public function adminUserList()
     {
-        return auth()->user()->hasRoles([Role::ROLE_ADMIN]) ? true : false;
+        return auth()->user()->hasRoles([Role::ROLE_ADMIN]);
     }
 }

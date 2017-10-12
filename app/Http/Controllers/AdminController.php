@@ -26,6 +26,6 @@ class AdminController extends Controller
     {
         $this->authorize('adminUserList', $this->userRepository->model());
 
-        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate(100));
+        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
 }

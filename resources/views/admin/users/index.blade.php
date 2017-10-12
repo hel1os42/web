@@ -19,10 +19,4 @@
             </li>
         @endforeach
     </ul>
-
-    @if(request('latitude'))
-        <iframe width="800" height="500"
-                src="https://maps.google.com/maps?q={{request('latitude')}},{{request('longitude')}}&hl=en&output=embed"></iframe>
-        <br>
-    @endif
 @stop
