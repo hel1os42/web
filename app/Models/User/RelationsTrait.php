@@ -113,7 +113,7 @@ trait RelationsTrait
     /**
      * @return mixed
      */
-    public function childs()
+    public function children()
     {
         return $this->belongsToMany(User::class, 'users_parents', 'parent_id', 'user_id');
     }

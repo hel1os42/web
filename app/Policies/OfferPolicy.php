@@ -24,7 +24,7 @@ class OfferPolicy
      */
     public function index()
     {
-        return $this->onlyAdvertiser();
+        return $this->isAdvertiser();
     }
 
     /**
@@ -32,7 +32,7 @@ class OfferPolicy
      */
     public function create()
     {
-        return $this->onlyAdvertiser();
+        return $this->isAdvertiser();
     }
 
     /**
@@ -40,7 +40,7 @@ class OfferPolicy
      */
     public function store()
     {
-        return $this->onlyAdvertiser();
+        return $this->isAdvertiser();
     }
 
     /**
@@ -55,11 +55,19 @@ class OfferPolicy
             return true;
         }
 
-        if ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT])) {
-            return false; //todo check if agent or main advert can view offer
+        if ($this->isAdvertiser() && $offer->isOwner($user)) {
+            return true;
         }
 
-        return $this->onlyAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
+        if ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT])) {
+            $owner = $offer->getOwner();
+            if ($owner !== null) {
+                return $owner->hasParent($user);
+            }
+        }
+
+        return false;
+
     }
 
     /**
@@ -67,7 +75,7 @@ class OfferPolicy
      */
     public function userIndex()
     {
-        return $this->onlyUser();
+        return $this->isUser();
     }
 
     /**
@@ -75,7 +83,7 @@ class OfferPolicy
      */
     public function userShow()
     {
-        return $this->onlyUser();
+        return $this->isUser();
     }
 
     /**
@@ -85,13 +93,13 @@ class OfferPolicy
      */
     public function pictureStore(Offer $offer)
     {
-        return $this->onlyAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
+        return $this->isAdvertiser() ? $offer->isOwner($this->auth->user()) : false;
     }
 
     /**
      * @return bool
      */
-    private function onlyUser()
+    private function isUser()
     {
         return $this->auth->user()->hasRoles([Role::ROLE_USER]) ? true : false;
     }
@@ -99,7 +107,7 @@ class OfferPolicy
     /**
      * @return bool
      */
-    private function onlyAdvertiser()
+    private function isAdvertiser()
     {
         return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]) ? true : false;
     }

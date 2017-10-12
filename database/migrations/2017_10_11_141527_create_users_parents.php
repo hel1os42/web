@@ -18,6 +18,11 @@ class CreateUsersParents extends Migration
             $table->uuid('parent_id');
             $table->primary(['user_id', 'parent_id'])->index();
         });
+
+        Schema::table('users_parents', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('parent_id')->references('id')->on('users');
+        });
     }
 
     /**
