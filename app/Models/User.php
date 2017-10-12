@@ -358,7 +358,7 @@ class User extends Authenticatable implements PhoneAuthenticable
                 if ($account instanceof Account) {
                     return $account;
                 }
-            // no break
+                // no break
             default:
                 throw new TokenException($currency);
         }
