@@ -78,7 +78,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->patch('', 'ProfileController@update')->name('profile.update');
         $router->get('referrals', 'ProfileController@referrals')->name('referrals');
         $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
-        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show'); // only for desktop
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
         $router->get('place', 'PlaceController@showOwnerPlace')
             ->name('profile.place.show');
         $router->put('place', 'PlaceController@update');
