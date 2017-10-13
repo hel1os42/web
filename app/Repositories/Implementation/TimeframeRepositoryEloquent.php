@@ -46,7 +46,7 @@ class TimeframeRepositoryEloquent extends BaseRepository implements TimeframeRep
      *
      * @return Collection
      */
-    public function createMany(array $timeframes, Offer $offer): Collection
+    public function createManyForOffer(array $timeframes, Offer $offer): Collection
     {
         return $offer->timeframes()->createMany($this->replaceTimeframesWeekdaysByDays($timeframes));
     }
