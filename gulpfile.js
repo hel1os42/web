@@ -11,3 +11,7 @@ elixir(function(mix) {
 elixir(function(mix) {
     mix.copy('resources/assets/fonts/', 'public/fonts/');
 });
+
+elixir(function(mix) {
+    mix.copy('resources/assets/img/', 'public/img/');
+});
