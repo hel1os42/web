@@ -9,6 +9,8 @@
     <h4>{{$description}}</h4>
     <h4>{{$address}}</h4>
     <p>{{$about}}</p>
+    <a href="{{route('profile.place.offers')}}"></a>
+
     <br>Set logo:<br>
     <form method="POST" action="{{route('place.picture.store')}}" enctype="multipart/form-data">
         {{ csrf_field() }}

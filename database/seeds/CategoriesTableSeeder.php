@@ -8,7 +8,7 @@ use Webpatser\Uuid\Uuid;
 class CategoriesTableSeeder extends Seeder
 {
     private $categories = [
-        'Food & Drinks' => [
+        self::FOOD_DRINKS => [
             'American',
             'Arabic',
             'African',
@@ -38,11 +38,17 @@ class CategoriesTableSeeder extends Seeder
             'Vegetarian',
             'Yogurt',
         ],
-        'Beauty & Fitness',
-        'Retail & Services',
-        'Attractions & Leisure',
-        'Other & Online'
+        self::BEAUTY_FITNESS,
+        self::RETAIL_SERVICES,
+        self::ATTRACTIONS_LEISURE,
+        self::OTHER_ONLINE
     ];
+
+    const FOOD_DRINKS = 'Food & Drinks';
+    const BEAUTY_FITNESS = 'Beauty & Fitness';
+    const RETAIL_SERVICES = 'Retail & Services';
+    const ATTRACTIONS_LEISURE = 'Attractions & Leisure';
+    const OTHER_ONLINE = 'Other & Online';
 
     /**
      * @var DatabaseManager

@@ -8,6 +8,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class PictureController
@@ -54,7 +55,12 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $userUuid = null): Response
     {
-        return $this->respondWithImageFor($userUuid ?? $this->auth->id());
+        $userUuid = $userUuid ?? $this->auth->id();
+        if ($userUuid === null) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->respondWithImageFor($userUuid);
     }
 
     protected function getPath(): string

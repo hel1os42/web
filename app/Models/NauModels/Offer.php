@@ -29,6 +29,8 @@ use Carbon\Carbon;
  * @property null|int    max_for_user
  * @property null|int    max_per_day
  * @property null|int    max_for_user_per_day
+ * @property null|int    max_for_user_per_week
+ * @property null|int    max_for_user_per_month
  * @property int         user_level_min
  * @property null|float  latitude
  * @property null|float  longitude
@@ -212,6 +214,22 @@ class Offer extends AbstractNauModel
         return $this->max_for_user_per_day;
     }
 
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerWeek(): ?int
+    {
+        return $this->max_for_user_per_week;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerMonth(): ?int
+    {
+        return $this->max_for_user_per_month;
+    }
+
     /** @return int */
     public function getUserLevelMin(): int
     {
@@ -291,24 +309,26 @@ class Offer extends AbstractNauModel
     private function initAttributes(): void
     {
         $this->attributes = [
-            'acc_id'               => null,
-            'name'                 => null,
-            'descr'                => null,
-            'reward'               => 10000,
-            'status'               => null,
-            'dt_start'             => null,
-            'dt_finish'            => null,
-            'country'              => null,
-            'city'                 => null,
-            'categ'                => null,
-            'max_count'            => null,
-            'max_for_user'         => null,
-            'max_per_day'          => null,
-            'max_for_user_per_day' => null,
-            'min_level'            => 1,
-            'lat'                  => null,
-            'lng'                  => null,
-            'radius'               => null
+            'acc_id'                 => null,
+            'name'                   => null,
+            'descr'                  => null,
+            'reward'                 => 10000,
+            'status'                 => null,
+            'dt_start'               => null,
+            'dt_finish'              => null,
+            'country'                => null,
+            'city'                   => null,
+            'categ'                  => null,
+            'max_count'              => null,
+            'max_for_user'           => null,
+            'max_per_day'            => null,
+            'max_for_user_per_day'   => null,
+            'max_for_user_per_week'  => null,
+            'max_for_user_per_month' => null,
+            'min_level'              => 1,
+            'lat'                    => null,
+            'lng'                    => null,
+            'radius'                 => null
         ];
     }
 
@@ -328,6 +348,8 @@ class Offer extends AbstractNauModel
             'max_for_user',
             'max_per_day',
             'max_for_user_per_day',
+            'max_for_user_per_week',
+            'max_for_user_per_month',
             'user_level_min',
             'latitude',
             'longitude',
@@ -383,6 +405,8 @@ class Offer extends AbstractNauModel
             'max_for_user'         => 'integer',
             'max_per_day'          => 'integer',
             'max_for_user_per_day' => 'integer',
+            'max_for_user_per_week'  => 'integer',
+            'max_for_user_per_month' => 'integer',
             'user_level_min'       => 'integer',
             'latitude'             => 'double',
             'longitude'            => 'double',

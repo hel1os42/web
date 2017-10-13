@@ -20,4 +20,6 @@ interface Constants
     const DATE_FORMAT = 'Y-m-d H:i:s.uO';
 
     const TIME_FORMAT = 'H:i:s.uO';
+
+    const SLUG_SEPARATOR = '-';
 }

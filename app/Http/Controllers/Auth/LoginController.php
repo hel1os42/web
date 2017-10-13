@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Repositories\UserRepository;
 use App\Services\Auth\Otp\OtpAuth;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
@@ -14,22 +11,10 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Routing\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\JWTAuth;
 
-class LoginController extends Controller
+class LoginController extends AuthController
 {
     use ThrottlesLogins;
-
-    private $userRepository;
-    private $jwtAuth;
-    private $auth;
-
-    public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
-    {
-        $this->userRepository = $userRepository;
-        $this->jwtAuth        = $jwtAuth;
-        $this->auth           = $auth;
-    }
 
     /**
      * @return Response
