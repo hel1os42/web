@@ -40,6 +40,11 @@ class Timeframe extends Model
             'days',
         ];
 
+        $this->hidden = [
+            'id',
+            'offer_id',
+        ];
+
         $this->timestamps = false;
 
         parent::__construct($attributes);

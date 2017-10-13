@@ -58,7 +58,7 @@ class WeekDaysService implements WeekDaysServiceInterface
         $day      = 1;
         while ($day <= self::LAST_DAY) {
             if (($days & $day) > 0) {
-                $weekDays[$day] = self::LIST[$day];
+                $weekDays[] = self::LIST[$day];
             }
             $day = $day << 1;
         }
