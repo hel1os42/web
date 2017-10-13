@@ -53,7 +53,7 @@
                             </li>
                             <li>
                                 @auth
-                                <a href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
+                                <a href="{{route('profile')}}" class="dropdown-toggle">
                                     <i class="ti-user"></i>
                                     <p class="hidden-lg hidden-md">Profile</p>
                                 </a>
