@@ -60,11 +60,9 @@
 						    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
 						        <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a>
 							    </li>
-							    <li class=""><a href="#links" aria-controls="links" role="tab" data-toggle="tab" aria-expanded="false">Links</a>
-							    </li>
 							    <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a>
 							    </li>
-                                <li class=""><a href="#places" aria-controls="places" role="tab" data-toggle="tab" aria-expanded="false">Find places</a>
+                                <li class=""><a href="#find_offers" aria-controls="offers" role="tab" data-toggle="tab" aria-expanded="false">Find offers</a>
 							    </li>
 						    </ul>
 					    </div>
@@ -85,21 +83,6 @@
                                     <p><a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a></p>
                                 </div>
                             </div>
-                        </div>
-                        <div role="tabpanel" id="links" class="tab-pane">
-                            <br>Links:<br>
-                            <a href="{{route('referrals')}}">{{route('referrals')}}</a><br>
-                            <a href="{{route('profile.place.show')}}">{{route('profile.place.show')}}</a><br>
-                            <a href="{{route('profile.place.offers')}}">{{route('profile.place.offers')}}</a><br>
-                            <br>Offers:<br>
-                            <a href="{{route('advert.offers.create')}}">{{route('advert.offers.create')}}</a><br>
-                            <a href="{{route('advert.offers.index')}}">{{route('advert.offers.index')}}</a><br>
-                            <a href="{{route('offers.index')}}">{{route('offers.index')}}</a><br>
-                            <br>Operations:<br>
-                            <a href="{{ route('transactionList') }}">{{ route('transactionList')}}</a><br>
-                            <a href="{{ route('transactionCreate') }}">{{ route('transactionCreate') }}</a><br>
-                            <br>Places:<br>
-                            <a href="{{ route('places.create') }}">{{ route('places.create') }}</a><br>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
                             <form method="POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">
@@ -126,7 +109,7 @@
                                 <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
                             </form>
                         </div>
-                        <div role="tabpanel" id="places" class="tab-pane">
+                        <div role="tabpanel" id="find_offers" class="tab-pane">
                             <h4 class="title">Find best offers in best places:</h4>
                             <form action="{{route('places.index')}}" target="_top">
                                 {{ csrf_field() }}
