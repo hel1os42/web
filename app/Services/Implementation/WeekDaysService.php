@@ -8,7 +8,12 @@
 
 namespace App\Services\Implementation;
 
+use App\Models\NauModels\Offer;
+use App\Models\Timeframe;
 use App\Services\WeekDaysService as WeekDaysServiceInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class WeekDaysService
@@ -59,5 +64,37 @@ class WeekDaysService implements WeekDaysServiceInterface
         }
 
         return $weekDays;
+    }
+
+    /**
+     * @param Collection $offers
+     *
+     * @return array
+     */
+    public function convertOffersCollection(Collection $offers): array
+    {
+        return $offers->filter(function ($offer) { return $offer instanceof Offer; })
+                      ->map(function (Offer $offer) {
+                          return array_merge(
+                              $offer->toArray(),
+                              ['timeframes' => $this->convertTimeframesCollection($offer->timeframes)]
+                          );
+                      })->toArray();
+    }
+
+    /**
+     * @param Collection $timeframes
+     *
+     * @return array
+     */
+    public function convertTimeframesCollection(Collection $timeframes): array
+    {
+        return $timeframes->filter(function ($timeframe) { return $timeframe instanceof Timeframe; })
+                          ->map(function (Timeframe $timeframe) {
+                              return array_merge(
+                                  $timeframe->toArray(),
+                                  ['days' => $this->daysToWeekDays($timeframe->days)]
+                              );
+                          })->toArray();
     }
 }

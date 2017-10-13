@@ -6,13 +6,13 @@
  * Time: 14:35
  */
 
-namespace App\Models\Timeframes;
+namespace App\Models\Timeframe;
 
 use App\Helpers\WeekDays;
 
 /**
  * Trait HasWeekdays
- * @package App\Models\Timeframes
+ * @package App\Models\Timeframe
  */
 trait HasWeekdays
 {

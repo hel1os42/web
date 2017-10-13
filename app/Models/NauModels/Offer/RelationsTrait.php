@@ -9,7 +9,7 @@
 namespace App\Models\NauModels\Offer;
 
 use App\Models\ActivationCode;
-use App\Models\Timeframes;
+use App\Models\Timeframe;
 use App\Models\UserOfferPivot;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Redemption;
@@ -26,7 +26,7 @@ use Illuminate\Support\Collection;
  * @property Account                     account
  * @property Collection|ActivationCode[] activationCodes
  * @property Collection|Redemption[]     redemptions
- * @property Collection|Timeframes[]     timeframes
+ * @property Collection|Timeframe[]      timeframes
  */
 trait RelationsTrait
 {
@@ -77,6 +77,6 @@ trait RelationsTrait
      */
     public function timeframes(): HasMany
     {
-        return $this->hasMany(\App\Models\Timeframes::class);
+        return $this->hasMany(\App\Models\Timeframe::class);
     }
 }

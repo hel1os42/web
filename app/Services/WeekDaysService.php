@@ -7,6 +7,8 @@
  */
 namespace App\Services;
 
+use Illuminate\Support\Collection;
+
 /**
  * Interface WeekDaysService
  * @package App\Services
@@ -55,4 +57,18 @@ interface WeekDaysService
      * @return array
      */
     public function daysToWeekDays(int $days): array;
+
+    /**
+     * @param Collection $items
+     *
+     * @return array
+     */
+    public function convertOffersCollection(Collection $items): array;
+
+    /**
+     * @param Collection $timeframes
+     *
+     * @return array
+     */
+    public function convertTimeframesCollection(Collection $timeframes): array;
 }

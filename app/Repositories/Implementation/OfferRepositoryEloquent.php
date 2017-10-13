@@ -2,15 +2,13 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Repositories\OfferRepository;
-use App\Services\WeekDaysService;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Repositories\TimeframeRepository;
+use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
@@ -26,6 +24,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
+    protected $timeframeRepository;
+
+    public function __construct(Application $app, TimeframeRepository $timeframeRepository)
+    {
+        $this->timeframeRepository = $timeframeRepository;
+        parent::__construct($app);
+    }
+
     /**
      * Specify Model class name
      *
@@ -62,7 +68,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
 
-        $model->timeframes()->createMany($this->replaceTimeframesWeekdaysByDays($attributes['timeframes']));
+        $this->timeframeRepository->createMany($attributes['timeframes'], $model);
 
         $this->resetModel();
 
@@ -75,28 +81,26 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->where([
-            'acc_id' => $user->getAccountFor(Currency::NAU)->id
-        ])->find($identity);
+        $model = $this->model->byOwner($user)->find($identity);
         $this->resetModel();
 
         return $this->parserResult($model);
     }
 
     /**
-     * @param array $categoryIds
-     * @param float $latitude
-     * @param float $longitude
-     * @param int   $radius
+     * @param array      $categoryIds
+     * @param float|null $latitude
+     * @param float|null $longitude
+     * @param int|null   $radius
      *
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function getActiveByCategoriesAndPosition(
         array $categoryIds,
-        float $latitude,
-        float $longitude,
-        int $radius
+        ?float $latitude,
+        ?float $longitude,
+        ?int $radius
     ): Builder {
         $this->applyCriteria();
         $this->applyScope();
@@ -121,21 +125,5 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->resetModel();
 
         return $this->parserResult($model);
-    }
-
-    /**
-     * Replaces each timeframe days value: instead of an array we store in "days" its binary representation.
-     *
-     * @param array $timeframes
-     *
-     * @return array
-     */
-    protected function replaceTimeframesWeekdaysByDays(array $timeframes): array
-    {
-        foreach ($timeframes as $key => $timeframe) {
-            $timeframes[$key]['days'] = app(WeekDaysService::class)->weekDaysToDays($timeframe['days']);
-        }
-
-        return $timeframes;
     }
 }

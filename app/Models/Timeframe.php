@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class Timeframes
  * @package App\Models
  */
-class Timeframes extends Model
+class Timeframe extends Model
 {
     use Uuids;
 
@@ -51,13 +51,5 @@ class Timeframes extends Model
     public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class);
-    }
-
-    /**
-     * @return array
-     */
-    public function getDaysAttribute()
-    {
-        return app(WeekDaysService::class)->daysToWeekDays($this->attributes['days']);
     }
 }
