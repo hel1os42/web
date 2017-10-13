@@ -32,7 +32,7 @@
     </div>
 </div-->
 
-<div class="wrapper">
+<div class="wrapper perfect-scrollbar-off">
     @section('sidebar')
         @include('partials.sidebar')
     @show
