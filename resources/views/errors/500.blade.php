@@ -1,9 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.error')
 
 @section('title', trans('errors.500'))
 
-@section('content')
-    <div class="title">500</div>
-
-    <h1>{{$exception->getMessage() ?: trans('errors.500')}}</h1>
+@section('error-num')
+    500!
+@stop
+@section('error-msg')
+    <p class="heading_b">{{$exception->getMessage() ?: trans('errors.500')}}</p>
 @stop
