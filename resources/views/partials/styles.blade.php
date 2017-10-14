@@ -9,3 +9,4 @@
 <link href=" {{ asset('css/font-awesome.min.css') }} " rel="stylesheet">
 <link href=" {{ asset('css/font-muli.css') }} " rel='stylesheet' type='text/css'>
 <link href=" {{ asset('css/themify-icons.css') }} " rel="stylesheet">
+<link href=" {{ asset('css/hacks.css') }} " rel="stylesheet">

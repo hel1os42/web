@@ -117,19 +117,39 @@
                                     <label for="category">Choose category:</label>
                                     <div class="select">
                                         <select id="place-category" class="form-control" name="category_ids[]"></select>
+                                        @foreach($errors->get('category_ids') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                        @endforeach
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="latitude">Set latitude:</label>
                                     <input type="text" class="form-control" name="latitude" placeholder="40.7142540" value=""><br>
+                                    @foreach($errors->get('latitude') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
                                 </div>
                                 <div class="form-group">
                                     <label for="latitude">Set longitude</label>
                                     <input type="text" class="form-control" name="longitude" placeholder="-74.0054797" value=""><br>
+                                    @foreach($errors->get('longitude') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
                                 </div>
                                 <div class="form-group">
                                     <label for="latitude">Set radius (in meters):</label>
                                     <input type="text" class="form-control" name="radius" placeholder="1000" value=""><br>
+                                    @foreach($errors->get('radius') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
                                 </div>
                                 <input class="btn btn-rose btn-wd btn-md" type="submit">
                             </form>

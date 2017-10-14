@@ -3,21 +3,45 @@
 @section('title', 'List offers')
 
 @section('content')
-    <div class="offer">
-        @foreach ($data as $offer)
-            <form method="POST" action="{{route('offer.picture.store', ['offerId' => $offer['id']])}}" enctype="multipart/form-data">
-                {{ csrf_field() }}
-                <input type="file" name="picture">
-                <button type="submit">Set photo</button>
-            </form>
-            <hr/>
-            <img src="{{$offer['picture_url']}}" style="float:left;" />
-            <ul style="font-size: small">
-            @foreach ($offer as $val)
-                <li>{{$val}}</li>
-            @endforeach
-            </ul>
-            <hr/>
-        @endforeach
+
+<div class="col-md-12">
+    <div class="card card-very-long">
+        <div class="content">
+            <h4 class="title">Offers</h4>
+            <div class="table-responsive card-very-long-children">
+                <table class="table">
+                    <thead class="text-primary">
+						<tr>
+                            @foreach (array_keys($data[0]) as $offerField)
+							    <th> {{ $offerField }} </th>
+                            @endforeach
+						</tr>
+                        
+                    </thead>
+                    <tbody>
+
+                        @foreach ($data as $offer)
+                        <tr>
+                            @foreach($offer as $key => $row)
+                                @if (empty($row))
+                                    <td> - </td>
+                                @else
+                                    <td> 
+                                        @if ($key == 'id')
+                                            <a href="{{route('advert.offers.show', $row)}}">{{ $row }} </a>
+                                        @else
+                                            {{ $row }} 
+                                        @endif
+                                    </td>
+                                @endif
+                            @endforeach
+                            <td> @include('partials/offer-picture-filepicker', ['offerId' => $offer['id']]) </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 @stop
