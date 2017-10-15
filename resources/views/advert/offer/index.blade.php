@@ -5,9 +5,9 @@
 @section('content')
 
 <div class="col-md-12">
+    <h3 class="title">Offers</h3>
     <div class="card card-very-long">
         <div class="content">
-            <h4 class="title">Offers</h4>
             <div class="table-responsive card-very-long-children">
                 <table class="table">
                     <thead class="text-primary">

@@ -25,21 +25,25 @@
                 </li>
                 <li>
                     <a href="{{route('referrals')}}">
+                        <i class="ti-link"></i>
                         <p class="menu-txt">Referrals</p>
                     </a>
                 </li>
                 <li>
                     <a href="{{route('profile.place.show')}}">
+                        <i class="ti-location-pin"></i>
                         <p class="menu-txt">Place show</p>
                     </a>
                 </li>
                 <li>
                     <a href="{{route('profile.place.offers')}}">
+                        <i class="ti-zoom-in"></i>
                         <p class="menu-txt">Place offers</p>
                     </a>
                 </li>
 				<li>
 					<a data-toggle="collapse" href="#offers" class="collapsed" aria-expanded="false">
+                        <i class="ti-archive"></i>
 						<p>Offers
 							<b class="caret"></b>
 						</p>
@@ -60,6 +64,7 @@
 				</li>
 				<li>
 					<a data-toggle="collapse" href="#operations" class="collapsed" aria-expanded="false">
+                        <i class="ti-money"></i>
 						<p class="menu-txt">Operations
 							<b class="caret"></b>
 						</p>
@@ -77,6 +82,7 @@
 				</li>
 				<li>
 					<a data-toggle="collapse" href="#places" class="collapsed" aria-expanded="false">
+                        <i class="ti-world"></i>
 						<p class="menu-txt">Places
 							<b class="caret"></b>
 						</p>

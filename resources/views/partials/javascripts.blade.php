@@ -52,12 +52,12 @@
 <!--  Full Calendar Plugin    -->
 <script src="{{asset('js/fullcalendar.min.js')}}"</script>
 <!-- TagsInput Plugin -->
-<script src="{{asset('js/jquery.tagsinput.js')}}"</script>
+<script src="{{asset('js/jquery.tagsinput.js')}}"></script>
 <!-- Material Dashboard javascript methods -->
 <script src="{{asset('js/amaze.js')}}"</script>
 
-<script src="{{asset('js/charts/flot-charts.js')}}"</script>
-<script src="{{asset('js/charts/chartjs-charts.js')}}"</script>
+<script src="{{asset('js/charts/flot-charts.js')}}"></script>
+<script src="{{asset('js/charts/chartjs-charts.js')}}"></script>
 
 <script src=" {{ asset('jquery/jquery-ui-1.9.2.custom.js')  }} "></script>
 <script src=" {{ asset('jquery/jquery.timepicker.js')       }} "></script>
