@@ -26,10 +26,14 @@ class OfferController extends Controller
      * @param OfferRequest $request
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function index(OfferRequest $request): Response
     {
+        $this->authorize('userIndex', Offer::class);
+
         $offers = $this->offerRepository
             ->getActiveByCategoriesAndPosition($request->category_ids,
                 $request->latitude, $request->longitude, $request->radius);
@@ -43,12 +47,13 @@ class OfferController extends Controller
      * @param string $offerUuid
      *
      * @return Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
     public function show(string $offerUuid): Response
     {
-        //check is this offer have active status
+        $this->authorize('userShow', Offer::class);
+
         $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
 
         if ($offer->isOwner($this->auth->user())) {
