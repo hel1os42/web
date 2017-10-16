@@ -36,7 +36,7 @@ build:
 PHP_CodeSniffer:
   stage: test
   script:
-    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
+    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/resources/assets,/storage/framework,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
   artifacts:
     when: always
     paths:
