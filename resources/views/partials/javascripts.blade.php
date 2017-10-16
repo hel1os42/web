@@ -58,6 +58,7 @@
 
 <script src="{{asset('js/charts/flot-charts.js')}}"></script>
 <script src="{{asset('js/charts/chartjs-charts.js')}}"></script>
+<script src="{{asset('js/custom.js')}}"></script>
 
 <script src=" {{ asset('jquery/jquery-ui-1.9.2.custom.js')  }} "></script>
 <script src=" {{ asset('jquery/jquery.timepicker.js')       }} "></script>
