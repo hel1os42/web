@@ -1,0 +1,9 @@
+
+.card-very-long {
+    whitespace: nowrap;
+    overflow-x: auto;
+}
+
+.card-very-long-children {
+    display: inline-block;
+}
