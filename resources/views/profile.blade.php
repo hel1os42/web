@@ -77,6 +77,12 @@
             <input id="picture" type="file" name="picture">
             <button type="submit">Set photo</button>
         </form>
+
+        @can('adminUserList', App\Models\User::class)
+            <br>Admin<br>
+            <a href="{{ route('admin.users.index') }}">{{ route('admin.users.index') }}</a><br>
+        @endcan
+
     </div>
 
 @stop

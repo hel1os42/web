@@ -99,13 +99,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
-        'names'  => [
+        'names'      => [
             'index'  => 'advert.offers.index',
             'show'   => 'advert.offers.show',
             'create' => 'advert.offers.create',
             'store'  => 'advert.offers.store'
         ],
-        'except' => [
+        'except'     => [
             'update',
             'destroy'
         ]
@@ -175,6 +175,11 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
     $router->get('activation_codes/{code}', 'ActivationCodeController@show')
            ->name('activation_codes.show');
+
+    /**
+     * Admin pages
+     */
+    $router->get('admin/users', 'AdminController@usersList')->name('admin.users.index');
 });
 
 //---- Authorized users
