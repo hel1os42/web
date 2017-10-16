@@ -30,7 +30,6 @@ build:
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
   script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
-    - gulp
   artifacts:
     paths:
       - ./*
