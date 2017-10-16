@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="col-md-12">
-        <h3>Slaves(: </h3>
+        <h3>Referrals</h3>
         <div class="card card-very-long">
             <div class="content">
                 <div class="table-responsive card-very-long-children">
