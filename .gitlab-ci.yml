@@ -12,6 +12,7 @@ variables:
 stages:
   - build
   - test
+  - build_front
   - build_image
   - release
   - deploy
@@ -27,13 +28,25 @@ build:
     - cp .env.testing .env
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
-    - npm install
   script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
     - gulp
   artifacts:
     paths:
       - ./*
+
+build_front:
+  image: npm:latest
+  before_script:
+    - npm install
+  script:
+    - gulp
+  artifacts:
+    paths:
+      - app/public/css
+      - app/public/js
+      - app/public/fonts
+      - node_modules/
 
 PHP_CodeSniffer:
   stage: test
