@@ -32,5 +32,7 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\TransactionRepositoryEloquent::class);
         $this->app->bind(Repositories\RedemptionRepository::class,
             Implementation\RedemptionRepositoryEloquent::class);
+        $this->app->bind(Repositories\TimeframeRepository::class,
+            Implementation\TimeframeRepositoryEloquent::class);
     }
 }

@@ -24,7 +24,8 @@
     "sofa/eloquence": "^5.4",
     "tymon/jwt-auth": "0.5.*",
     "vinkla/hashids": "^3.2",
-    "webpatser/laravel-uuid": "^2.0"
+    "webpatser/laravel-uuid": "^2.0",
+    "league/fractal": "^0.17.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

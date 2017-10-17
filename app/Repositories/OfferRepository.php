@@ -20,18 +20,18 @@ interface OfferRepository extends RepositoryInterface
     public function createForAccountOrFail(array $attributes, Account $account): Offer;
 
     /**
-     * @param $categoryIds
-     * @param $latitude
-     * @param $longitude
-     * @param $radius
+     * @param array      $categoryIds
+     * @param float|null $latitude
+     * @param float|null $longitude
+     * @param int|null   $radius
      *
      * @return Builder
      */
     public function getActiveByCategoriesAndPosition(
         array $categoryIds,
-        float $latitude,
-        float $longitude,
-        int $radius
+        ?float $latitude,
+        ?float $longitude,
+        ?int $radius
     ): Builder;
 
     public function findActiveByIdOrFail(string $identity): Offer;

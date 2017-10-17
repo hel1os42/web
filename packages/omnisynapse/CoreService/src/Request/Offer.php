@@ -23,7 +23,7 @@ class Offer implements \JsonSerializable
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|null */
     public $description;
 
     /** @var string */
@@ -41,14 +41,8 @@ class Offer implements \JsonSerializable
     /** @var Carbon */
     public $startDate;
 
-    /** @var Carbon */
+    /** @var Carbon|null */
     public $endDate;
-
-    /** @var Carbon */
-    public $startTime;
-
-    /** @var Carbon */
-    public $endTime;
 
     /**
      * Offer constructor.
@@ -88,9 +82,7 @@ class Offer implements \JsonSerializable
             ->setLimits($limits)
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
-            ->setEndDate($offer->getFinishDate())
-            ->setStartTime($offer->getStartTime())
-            ->setEndTime($offer->getFinishTime());
+            ->setEndDate($offer->getFinishDate());
     }
 
     /**
@@ -108,8 +100,6 @@ class Offer implements \JsonSerializable
             'reward'            => $this->reward,
             'start_date'        => $this->startDate->format(self::DATE_FORMAT),
             'end_date'          => $this->endDate->format(self::DATE_FORMAT),
-            'start_time'        => $this->startTime->format(self::TIME_FORMAT),
-            'end_time'          => $this->endTime->format(self::TIME_FORMAT),
         ];
     }
 
@@ -134,10 +124,11 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param string $description
+     * @param null|string $description
+     *
      * @return Offer
      */
-    public function setDescription(string $description): Offer
+    public function setDescription(?string $description): Offer
     {
         $this->description = $description;
         return $this;
@@ -194,32 +185,21 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param Carbon $endDate
+     * @param Carbon|null $endDate
+     *
      * @return Offer
      */
-    public function setEndDate(Carbon $endDate): Offer
+    public function setEndDate(?Carbon $endDate): Offer
     {
         $this->endDate = $endDate;
         return $this;
     }
 
     /**
-     * @param Carbon $startTime
-     * @return Offer
+     * @return null|string
      */
-    public function setStartTime(Carbon $startTime): Offer
+    public function getEndDate(): ?string
     {
-        $this->startTime = $startTime;
-        return $this;
-    }
-
-    /**
-     * @param Carbon $endTime
-     * @return Offer
-     */
-    public function setEndTime(Carbon $endTime): Offer
-    {
-        $this->endTime = $endTime;
-        return $this;
+        return $this->endDate === null ? null : $this->endDate->format(self::DATE_FORMAT);
     }
 }
