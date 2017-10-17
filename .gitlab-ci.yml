@@ -27,10 +27,8 @@ build:
     - cp .env.testing .env
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
-    - npm install
   script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
-    - gulp
   artifacts:
     paths:
       - ./*
