@@ -20,6 +20,7 @@ build:
   image: gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
   stage: build
   before_script:
+    - rm -rf /var/cache/apk/*
     - apk update
     - apk add git
     - apk add --update bash
