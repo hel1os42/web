@@ -4,7 +4,7 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | b
     export NVM_DIR="/root/.nvm" && \
     source "$NVM_DIR/nvm.sh" && \ 
     npm config delete prefix && \
-    nvm install 6.9.1 && \
+    nvm install 6.9.1 --delete-prefix && \
     npm install && \
     npm install -g gulp && \
     npm link gulp && \
