@@ -22,7 +22,6 @@ build:
   before_script:
     - apk update
     - apk add git
-    - apk add --update nodejs
     - apk add --update bash
     - touch ~/.bashrc
     - git submodule sync --recursive
