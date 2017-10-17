@@ -17,6 +17,8 @@
     "laravel-mix": "0.*",
     "laravel-elixir": "^2.0.0",
     "lodash": "^4.17.4",
-    "vue": "^2.1.10"
+    "vue": "^2.1.10",
+    "node-sass": "^4.5.2",
+    "sass-loader": "^6.0.3"
   }
 }
