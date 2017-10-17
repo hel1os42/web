@@ -29,6 +29,7 @@ build:
     - cp .env.testing .env
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
+    - apk del node
   script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
     - ./build_front.sh
