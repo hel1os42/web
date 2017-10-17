@@ -7,7 +7,7 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | b
     nvm use system && \
     npm uninstall -g gulp && \
     npm config delete prefix && \
-    nvm use 6.9.1 --delete-prefix && \
+    nvm use  --delete-prefix 6.9.1 --silent && \
     nvm install 6.9.1 --delete-prefix && \
     npm install && \
     npm install -g gulp && \
