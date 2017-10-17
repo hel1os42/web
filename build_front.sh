@@ -1,6 +1,7 @@
 #!/bin/bash
 
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash && \
+    chsh -s /bin/bash
     export NVM_DIR="/root/.nvm" && \
     source "$NVM_DIR/nvm.sh" && \ 
     nvm use system && \
