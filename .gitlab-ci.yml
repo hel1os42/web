@@ -23,6 +23,8 @@ build:
     - apk update
     - apk add git
     - apk add --update nodejs
+    - apk add --update bash
+    - cp /etc/skel/* ~/
     - git submodule sync --recursive
     - git submodule update --init --recursive
     - cp .env.testing .env
