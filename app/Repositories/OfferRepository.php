@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -19,8 +18,6 @@ interface OfferRepository extends RepositoryInterface
     public function model(): string;
 
     public function createForAccountOrFail(array $attributes, Account $account): Offer;
-
-    public function findByIdAndOwner(string $identity, User $user): ?Offer;
 
     /**
      * @param array      $categoryIds

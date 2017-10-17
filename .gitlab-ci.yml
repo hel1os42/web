@@ -27,8 +27,10 @@ build:
     - cp .env.testing .env
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=./ --filename=composer
     - ./composer config -g github-oauth.github.com $GITHUB_KEY
+    - npm install
   script:
     - ./composer install --no-interaction --optimize-autoloader --no-plugins --dev --no-progress
+    - gulp
   artifacts:
     paths:
       - ./*
@@ -36,7 +38,7 @@ build:
 PHP_CodeSniffer:
   stage: test
   script:
-    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
+    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/resources/assets,/storage/framework,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
   artifacts:
     when: always
     paths:

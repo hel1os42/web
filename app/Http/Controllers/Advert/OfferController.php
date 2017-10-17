@@ -6,6 +6,7 @@ use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
 use App\Models\Contracts\Currency;
+use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
@@ -31,10 +32,13 @@ class OfferController extends Controller
     /**
      * Obtain a list of the offers that this user created
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
     public function index(): Response
     {
+        $this->authorize('index', Offer::class);
+
         $offers       = $this->auth->user()->getAccountFor(Currency::NAU)->offers();
         $paginator    = $offers->paginate();
         $data         = $paginator->toArray();
@@ -46,9 +50,14 @@ class OfferController extends Controller
     /**
      * Get the form/json data for creating a new offer.
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function create(): Response
     {
+        $this->authorize('create', Offer::class);
+
         return \response()->render('advert.offer.create',
             FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
     }
@@ -56,12 +65,16 @@ class OfferController extends Controller
     /**
      * Send new offer data to core to store
      *
-     * @param  Advert\OfferRequest $request
+     * @param Advert\OfferRequest $request
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function store(Advert\OfferRequest $request): Response
     {
+        $this->authorize('store', Offer::class);
+
         $newOffer = $this->offerRepository->createForAccountOrFail(
             $request->all(),
             $this->auth->user()->getAccountFor(Currency::NAU)
@@ -80,11 +93,13 @@ class OfferController extends Controller
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
     public function show(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, $this->auth->user());
+        $offer = $this->offerRepository->find($offerUuid);
+
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
@@ -92,6 +107,8 @@ class OfferController extends Controller
         if (array_key_exists('timeframes', $data)) {
             $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
         }
+
+        $this->authorize('show', $offer);
 
         return \response()->render('advert.offer.show', $data);
     }

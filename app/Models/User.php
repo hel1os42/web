@@ -29,6 +29,9 @@ use Illuminate\Support\Facades\Hash;
  * @property int        points
  * @property Collection offers
  * @property Collection accounts
+ * @property Collection roles
+ * @property Collection parents
+ * @property Collection children
  * @property CoreUser   coreUser
  * @property User       referrer
  * @property int        offers_count
@@ -343,7 +346,8 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @param string $currency
      *
-     * @return Account
+     * @return Account|null
+     * @throws TokenException
      */
     public function getAccountFor(string $currency): ?Account
     {
@@ -400,5 +404,30 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getActivationCodesCountAttribute(): int
     {
         return $this->activationCodes()->count();
+    }
+
+    /**
+     * @param array $roleNames
+     *
+     * @return bool
+     */
+    public function hasRoles(array $roleNames)
+    {
+        foreach ($this->roles as $userRole) {
+            if (in_array($userRole->name, $roleNames)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param User $parent
+     *
+     * @return mixed
+     */
+    public function hasParent(User $parent)
+    {
+        return $this->parents->contains($parent->getId());
     }
 }

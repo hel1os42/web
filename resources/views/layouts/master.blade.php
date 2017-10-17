@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>@yield('title')</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
-
-    <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
-    <link href=" {{ asset('jquery/jquery-ui-1.9.2.custom.css') }} " rel="stylesheet" type="text/css">
-    <link href=" {{ asset('jquery/jquery.timepicker.css') }} " rel="stylesheet" type="text/css">
-    <link href=" {{ asset('css/base.css') }} " rel="stylesheet" type="text/css">
-</head>
+@include('partials.head')
 <body>
-<div class="container">
+<!--div class="container">
     @section('header')
         <div class="header">
             <div class="header-logo">NAU</div>
@@ -42,23 +30,25 @@
     <div class="content">
         @yield('content')
     </div>
+</div-->
+
+<div class="wrapper perfect-scrollbar-off">
+    @section('sidebar')
+        @include('partials.sidebar')
+    @show
+    <div class="main-panel">
+        @section('main-panel')
+            @include('partials.header')        
+        @show
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    @yield('content')
+                </div>
+            </div> 
+        </div>
+    </div>
 </div>
-
-
-<!-- jQuery picker -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src=" {{ asset('jquery/jquery-1.8.3.js')            }} "></script>
-    <script src=" {{ asset('jquery/jquery-ui-1.9.2.custom.js')  }} "></script>
-    <script src=" {{ asset('jquery/jquery.timepicker.js')       }} "></script>
-    <script src=" {{ asset('jquery/moment.min.js')       }} "></script>
-
-
-<!-- Location picker -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQ81-fUpHTJ73LOtZLzZjGjkUWl0TtvWA&libraries=places"></script>
-    <script src=" {{ asset('jquery/locationpicker.jquery.js')  }} "></script>
-
-
-<!-- Main JS -->
-    <script src=" {{ asset('js/main.js')                    }} "></script>
+@include('partials.javascripts')
 </body>
 </html>

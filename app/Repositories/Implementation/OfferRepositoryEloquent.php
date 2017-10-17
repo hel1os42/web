@@ -4,7 +4,6 @@ namespace App\Repositories\Implementation;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
-use App\Models\User;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
@@ -73,16 +72,6 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->resetModel();
 
         event(new RepositoryEntityCreated($this, $model));
-
-        return $this->parserResult($model);
-    }
-
-    public function findByIdAndOwner(string $identity, User $user): ?Offer
-    {
-        $this->applyCriteria();
-        $this->applyScope();
-        $model = $this->model->byOwner($user)->find($identity);
-        $this->resetModel();
 
         return $this->parserResult($model);
     }

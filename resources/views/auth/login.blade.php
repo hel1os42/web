@@ -1,20 +1,34 @@
-@extends('layouts.ajax')
-AJAX
+@extends('layouts.auth')
 @section('content')
-    <form action="{{route('login')}}" method="post" target="_top">
-        {{ csrf_field() }}
+{!! Form::open(array('route' => 'login', 'method' => 'POST', 'class' => 'huyeta')) !!}
+    <div class="card card-login card-hidden">
+        <div class="header text-center">
+            <h3 class="title">Login</h3>
+        </div>
+        <div class="content">
+            <div class="social-line text-center">
+                @include(
+                    "form.input",
+                    [
+                        "type" => "email", 
+                        "params" => ["placeholder" => "email", "class" => "form-control input-no-border"],
+                        "name" => "email",
+                    ],
+                    ["label" => "Email"]
+                )
+                @include(
+                    "form.input",
+                    [
+                        "type" => "password",
+                        "params" => ["placeholder" => "password",
+                        "class" => "form-control input-no-border"], "name" => "password",
+                    ],
+                    ["label" => "Password"]
+                )
+                <input class="btn btn-rose btn-wd btn-lg" type="submit">
+            </div>
+        </div>
+    </div>
+{!! Form::close() !!}
 
-        <input type="email" name="email" placeholder="email" value="{{old('email')}}">
-        <input type="password" name="password" placeholder="password">
-        <input type="submit">
-    </form>
-    <br>OR<br>
-
-    <form action="{{route('login')}}" method="post" target="_top">
-        {{ csrf_field() }}
-
-        <input type="text" name="phone" placeholder="phone" value="{{old('email')}}">
-        <input type="text" name="code" placeholder="code">
-        <input type="submit">
-    </form>
 @stop
