@@ -3,6 +3,7 @@
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash && \
     export NVM_DIR="/root/.nvm" && \
     source "$NVM_DIR/nvm.sh" && \ 
+    export SHELL="/bin/bash" && \
     npm config delete prefix && \
     nvm debug && \
     nvm install 6.9.1 --delete-prefix && \
