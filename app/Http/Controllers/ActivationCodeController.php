@@ -30,6 +30,8 @@ class ActivationCodeController extends Controller
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());
         }
 
+        $this->authorize('show', $activationCode);
+
         return response()->render('activation_code.show', $activationCode->toArray());
     }
 }

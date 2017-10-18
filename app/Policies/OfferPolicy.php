@@ -5,20 +5,9 @@ namespace App\Policies;
 use App\Models\NauModels\Offer;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\AuthManager;
 
-class OfferPolicy
+class OfferPolicy extends Policy
 {
-    use HandlesAuthorization;
-
-    private $auth;
-
-    public function __construct(AuthManager $authManager)
-    {
-        $this->auth = $authManager->guard();
-    }
-
     /**
      * @return bool
      */
@@ -67,7 +56,6 @@ class OfferPolicy
         }
 
         return false;
-
     }
 
     /**
@@ -75,7 +63,7 @@ class OfferPolicy
      */
     public function userIndex()
     {
-        return $this->isUser();
+        return $this->hasAnyRole();
     }
 
     /**
@@ -83,7 +71,7 @@ class OfferPolicy
      */
     public function userShow()
     {
-        return $this->isUser();
+        return $this->hasAnyRole();
     }
 
     /**
@@ -99,16 +87,8 @@ class OfferPolicy
     /**
      * @return bool
      */
-    private function isUser()
+    public function pictureShow()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAdvertiser()
-    {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]);
+        return true;
     }
 }

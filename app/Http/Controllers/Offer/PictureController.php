@@ -63,6 +63,8 @@ class PictureController extends AbstractPictureController
      * @param string $offerId
      *
      * @return Response
+     * @throws ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
@@ -71,9 +73,18 @@ class PictureController extends AbstractPictureController
     {
         $offer = $this->offerRepository->find($offerId);
 
+        if (is_null($offer)) {
+            throw (new ModelNotFoundException)->setModel(Offer::class);
+        }
+
+        $this->authorize('pictureShow', $offer);
+
         return $this->respondWithImageFor($offer->id);
     }
 
+    /**
+     * @return string
+     */
     protected function getPath(): string
     {
         return self::OFFER_PICTURES_PATH;

@@ -16,8 +16,13 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        \App\Models\NauModels\Offer::class => \App\Policies\OfferPolicy::class,
-        \App\Models\User::class            => \App\Policies\UserPolicy::class,
+        \App\Models\NauModels\Offer::class      => \App\Policies\OfferPolicy::class,
+        \App\Models\User::class                 => \App\Policies\UserPolicy::class,
+        \App\Models\Place::class                => \App\Policies\PlacePolicy::class,
+        \App\Models\NauModels\Redemption::class => \App\Policies\RedemptionPolicy::class,
+        \App\Models\ActivationCode::class       => \App\Policies\ActivationCodePolicy::class,
+        \App\Models\Category::class             => \App\Policies\CategoryPolicy::class,
+        \App\Models\NauModels\Transact::class   => \App\Policies\TransactPolicy::class,
     ];
 
     /**

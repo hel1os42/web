@@ -6,7 +6,6 @@ use App\Helpers\Attributes;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -23,22 +22,25 @@ class ProfileController extends Controller
 
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      */
     public function index()
     {
+        $this->authorize('profileIndex', $this->userRepository->model());
+
         return \redirect()->route('profile');
     }
 
     /**
      * User profile show
      *
-     * @param Request     $request
      * @param string|null $uuid
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
@@ -47,6 +49,8 @@ class ProfileController extends Controller
         $uuid = $this->checkUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
+
+        $this->authorize('profileShow', $user);
 
         return \response()->render('profile', $user->toArray());
     }
@@ -57,11 +61,14 @@ class ProfileController extends Controller
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function update(ProfileUpdateRequest $request, string $uuid = null): Response
     {
+
+
         $uuid = $this->checkUuid($uuid);
 
         $userData = $request->all();
@@ -73,14 +80,17 @@ class ProfileController extends Controller
 
         $user = $this->userRepository->update($userData, $uuid);
 
+        $this->authorize('profileUpdate', $user);
+
         return \response()->render('profile', $user->toArray(), Response::HTTP_CREATED, route('profile'));
     }
 
     /**
      * @param string|null $uuid
      *
-     * @return Response
+     * @return mixed
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
@@ -89,6 +99,8 @@ class ProfileController extends Controller
         $uuid = $this->checkUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
+
+        $this->authorize('profileReferrals', $user);
 
         return \response()->render('user.profile.referrals', $user->referrals()->paginate());
     }

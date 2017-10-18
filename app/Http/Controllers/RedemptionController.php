@@ -42,6 +42,8 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
+        $this->authorize('getActivationCode', Redemption::class);
+
         $this->validateOffer($offerId);
 
         $offer = $this->offerRepository->find($offerId);
@@ -62,6 +64,8 @@ class RedemptionController extends Controller
      */
     public function createFromOffer(string $offerId): Response
     {
+        $this->authorize('createFromOffer', Redemption::class);
+
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         return \response()->render('redemption.create', ['offer_id' => $offer->id, 'code' => null]);
@@ -73,6 +77,8 @@ class RedemptionController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Redemption::class);
+
         return \response()->render('redemption.create', ['code' => null]);
     }
 
@@ -84,6 +90,8 @@ class RedemptionController extends Controller
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
+        $this->authorize('store', Redemption::class);
+
         $code = $request->code;
 
         $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
@@ -106,6 +114,8 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
+        $this->authorize('redemption', Redemption::class);
+
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
@@ -129,9 +139,7 @@ class RedemptionController extends Controller
     {
         $redemption = $repository->find($redemptionId);
 
-        if (!$redemption->offer->isOwner($this->auth->guard()->user())) {
-            throw (new ModelNotFoundException)->setModel(Redemption::class, $redemptionId);
-        }
+        $this->authorize('show', $redemption);
 
         return \response()->render('redemption.show', $redemption->toArray());
     }
@@ -145,6 +153,8 @@ class RedemptionController extends Controller
      */
     public function showFromOffer(string $offerId, string $rid): Response
     {
+        $this->authorize('showFromOffer', Redemption::class);
+
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         return \response()->render('redemption.show', $offer->redemptions()->findOrFail($rid)->toArray());

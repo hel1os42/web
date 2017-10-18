@@ -159,8 +159,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
 
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
-        ->where('uuid', '[a-z0-9-]+')
-        ->name('places.show');
+           ->where('uuid', '[a-z0-9-]+')
+           ->name('places.offers.show');
 
 
     $router->resource('places', 'PlaceController', [
@@ -179,7 +179,11 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     /**
      * Admin pages
      */
-    $router->get('admin/users', 'AdminController@usersList')->name('admin.users.index');
+    $router->get('users', 'AdminController@usersList')->name('admin.users.index');
+    $router->put('users/{id}/children', 'AdminController@setChildren');
+    $router->put('users/{id}/parents', 'AdminController@setParents');
+    $router->put('users/{id}/roles', 'AdminController@updateRoles');
+
 });
 
 //---- Authorized users

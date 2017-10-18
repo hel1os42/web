@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\CategoryRepository;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CategoryController extends Controller
 {
@@ -14,9 +14,10 @@ class CategoryController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
-
     /**
      * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
@@ -25,22 +26,35 @@ class CategoryController extends Controller
         $categories = $this->categoryRepository
             ->getWithNoParent();
 
+        if ($categories === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->authorize('index', $categories);
+
         return \response()->render('category.list', $categories->paginate());
     }
 
     /**
      * Category show
      *
-     * @param string  $uuid
+     * @param string $uuid
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
     public function show(string $uuid)
     {
         $category = $this->categoryRepository
             ->with(['parent'])->find($uuid);
+
+        if ($category === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->authorize('show', $category);
 
         return response()->render('category.show', $category->toArray());
     }

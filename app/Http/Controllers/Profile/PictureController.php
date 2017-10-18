@@ -35,11 +35,14 @@ class PictureController extends AbstractPictureController
      * @param PictureRequest $request
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      * @throws \RuntimeException
      */
     public function store(PictureRequest $request)
     {
+        $this->authorize('pictureStore', $this->auth->user());
+
         return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }
 
@@ -49,6 +52,8 @@ class PictureController extends AbstractPictureController
      * @param string|null $userUuid
      *
      * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
@@ -60,9 +65,14 @@ class PictureController extends AbstractPictureController
             throw new NotFoundHttpException();
         }
 
+        $this->authorize('pictureShow', $this->auth->user());
+
         return $this->respondWithImageFor($userUuid);
     }
 
+    /**
+     * @return string
+     */
     protected function getPath(): string
     {
         return self::PROFILE_PICTURES_PATH;
