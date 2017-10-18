@@ -29,23 +29,29 @@ class AdminController extends Controller
         return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
 
-    public function setChildren(string $userId): Response
+    public function setChildren(): Response
     {
-        $this->authorize('adminUserList', $this->userRepository->model());
+        $this->authorize('adminSetChildren', $this->userRepository->model());
+
+        // setChildren
 
         return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
 
-    public function setParents(string $userId): Response
+    public function setParents(): Response
     {
-        $this->authorize('adminUserList', $this->userRepository->model());
+        $this->authorize('adminSetParents', $this->userRepository->model());
+
+        // setParents
 
         return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
 
-    public function updateRoles(string $userId): Response
+    public function updateRoles(): Response
     {
-        $this->authorize('adminUserList', $this->userRepository->model());
+        $this->authorize('adminUpdateRoles', $this->userRepository->model());
+
+        // updateRoles
 
         return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
