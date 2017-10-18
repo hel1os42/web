@@ -4,129 +4,273 @@
 
 @section('content')
 
-    <section class="offer">
-        <div class="offer-form">
-            <form action="{{route('advert.offers.store')}}" method="post" target="_top">
-                {{ csrf_field() }}
+    <div class="col-md-12">
+        <div class="content">
+            <h3 class="title">Create advert</h3>
+            <div class="card">
+                <div class="content">
 
-                <div>
-                    <label for='label'>label</label>
-                    <span class="error has-error"></span>
-                    <input id="label" name="label" placeholder="label" value="{{old('label')}}">
+                    <form class="form-horizontal" action="{{route('advert.offers.store')}}" method="post" target="_top">
+                    <div class="row">
+                        {{ csrf_field() }}
+
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Label</label>
+                                <div class="col-sm-10">
+                                    <input id="label" class="form-control" name="label" placeholder="label" value="{{old('label')}}">
+                                    @foreach($errors->get('label') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Description</label>
+                                <div class="col-sm-10">
+                                    <input id="description" class="form-control" name="description" placeholder="description" value="{{old('description')}}">
+                                    @foreach($errors->get('description') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Reward</label>
+                                <div class="col-sm-10">
+                                    <input id="reward" class="form-control" type="number" name="reward" placeholder="reward" value="{{old('reward')}}">
+                                    @foreach($errors->get('reward') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Start date</label>
+                                <div class="col-sm-10">
+                                    <input id="start_date" class="form-control" name="start_date" placeholder="start date" value="{{old('start_date')}}">
+                                    @foreach($errors->get('start_date') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Finish date</label>
+                                <div class="col-sm-10">
+                                    <input id="finish_date" class="form-control" name="finish_date" placeholder="finish date" value="{{old('finish_date')}}">
+                                    @foreach($errors->get('finish_date') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Start time</label>
+                                <div class="col-sm-10">
+                                    <input id="start_time" class="form-control" type="text" name="start_time" placeholder="start time" value="{{old('start_time')}}">
+                                    @foreach($errors->get('start_time') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Finish time</label>
+                                <div class="col-sm-10">
+                                    <input id="finish_time" class="form-control" type="text" name="finish_time" placeholder="finish time" value="{{old('finish_time')}}">
+                                    @foreach($errors->get('finish_time') as $message)
+                                        <p class="text-danger">
+                                            {{$message}}
+                                        </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Offer category</label>
+                                <div class="col-sm-10">
+                                    <div class="select">
+                                        <select id="offer_category" class="form-control" name="category_id"></select>
+                                        @foreach($errors->get('category_id') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Max count</label>
+                                <div class="col-sm-10">
+                                    <input id="max_count" max="1000" min="0" class="form-control" type="number" name="max_count" placeholder="max count" value="{{old('max_count')}}">
+                                    @foreach($errors->get('max_count') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Max for user</label>
+                                <div class="col-sm-10">
+                                    <input id="max_for_user" max="1000" min="0" class="form-control" type="number" name="max_for_user" placeholder="max for user" value="{{old('max_for_user')}}">
+                                    @foreach($errors->get('max_for_user') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Max per day</label>
+                                <div class="col-sm-10">
+                                    <input id="max_per_day" max="1000" min="0" class="form-control" type="number" name="max_per_day" placeholder="max per day" value="{{old('max_per_day')}}">
+                                    @foreach($errors->get('max_per_day') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Max for user per day</label>
+                                <div class="col-sm-10">
+                                    <input id="max_for_user_per_day" max="1000" min="0" class="form-control" type="number" name="max_for_user_per_day" placeholder="max for user per day" value="{{old('max_for_user_per_day')}}">
+                                    @foreach($errors->get('max_for_user_per_day') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">User level min</label>
+                                <div class="col-sm-10">
+                                    <input id="user_level_min" max="1000" min="0" class="form-control" type="number" name="user_level_min" placeholder="user level min" value="{{old('user_level_min')}}">
+                                    @foreach($errors->get('user_level_min') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Latitude</label>
+                                <div class="col-sm-10">
+                                    <input id="latitude" class="form-control" name="latitude" placeholder="latitude" value="{{old('latitude')}}">
+                                    @foreach($errors->get('latitude') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                         <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Longitude</label>
+                                <div class="col-sm-10">
+                                    <input id="longitude" class="form-control" name="longitude" placeholder="longitude" value="{{old('longitude')}}">
+                                    @foreach($errors->get('longitude') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>                       
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Radius</label>
+                                <div class="col-sm-10">
+                                    <input id="radius" class="form-control" name="radius" placeholder="radius" value="{{old('radius')}}">
+                                    @foreach($errors->get('radius') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Country</label>
+                                <div class="col-sm-10">
+                                    <input id="country" class="form-control" name="country" placeholder="country" value="{{old('country')}}">
+                                    @foreach($errors->get('country') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">City</label>
+                                <div class="col-sm-10">
+                                    <input id="city" class="form-control" name="city" placeholder="city" value="{{old('city')}}">
+                                    @foreach($errors->get('city') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                        <div class="col-md-6"><fieldset>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Address</label>
+                                <div class="col-sm-10">
+                                    <input id="address" class="form-control" name="address" placeholder="address" value="{{old('address')}}">
+                                    @foreach($errors->get('address') as $message)
+                                            <p class="text-danger">
+                                                {{$message}}
+                                            </p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div></fieldset>
+                    </div>
+                    <input class="btn btn-rose btn-wd btn-md" type="submit">
+                    </form>
                 </div>
-
-                <div>
-                    <label for='description'>description</label>
-                    <span class="error has-error"></span>
-                    <input id="description" name="description" placeholder="description" value="{{old('description')}}">
-                </div>
-
-                <div>
-                    <label for='reward'>reward</label>
-                    <span class="error has-error"></span>
-                    <input id="reward" name="reward" type="number" placeholder="reward" value="{{old('reward')}}">
-                </div>
-
-                <div>
-                    <label for='start_date'>start date</label>
-                    <span class="error has-error"></span>
-                    <input id="start_date" name="start_date" placeholder="start_date" value="{{old('start_date')}}">
-                </div>
-
-                <div>
-                    <label for='finish_date'>finish date</label>
-                    <span class="error has-error"></span>
-                    <input id="finish_date" name="finish_date" placeholder="finish_date" value="{{old('finish_date')}}">
-                </div>
-
-                <div>
-                    <label for='start_time'>start time</label>
-                    <span class="error has-error"></span>
-                    <input id="start_time" name="start_time" type="text" placeholder="start_time" value="{{old('start_time')}}">
-                </div>
-
-                <div>
-                    <label for='finish_time'>finish time</label>
-                    <span class="error has-error"></span>
-                    <input id="finish_time" name="finish_time" type="text" placeholder="finish_time" value="{{old('finish_time')}}">
-                </div>
-
-                <div>
-                    <label for='offer_category'>offer-category</label>
-                    <span class="error has-error"></span>
-                    <select id="offer_category" name="category_id"></select>
-                </div>
-
-                <div>
-                    <label for='max_count'>max count</label>
-                    <input id="max_count" name="max_count" type="number" max="1000" min="0" placeholder="max_count" value="{{old('max_count')}}">
-                    <span class="error has-error"></span>
-                </div>
-
-                <div>
-                    <label for='max_for_user'>max for user</label>
-                    <input id="max_for_user" name="max_for_user" type="number" max="1000" min="0" placeholder="max_for_user" value="{{old('max_for_user')}}">
-                    <span class="error has-error"></span>
-                </div>
-
-                <div>
-                    <label for='max_per_day'>max per day</label>
-                    <input id="max_per_day" name="max_per_day" type="number" max="1000" min="0" placeholder="max_per_day" value="{{old('max_per_day')}}">
-                    <span class="error has-error"></span>
-                </div>
-
-                <div>
-                    <label for='max_for_user_per_day'>max for user per day</label>
-                    <span class="error has-error"></span>
-                    <input id="max_for_user_per_day" name="max_for_user_per_day" type="number" max="1000" min="0" placeholder="max_for_user_per_day"  value="{{old('max_for_user_per_day')}}">
-                </div>
-
-                <div>
-                    <label for='user_level_min'>user level min</label>
-                    <span class="error has-error"></span>
-                    <input id="user_level_min" name="user_level_min" type="number" max="1000" min="0" placeholder="user_level_min" value="{{old('user_level_min')}}">
-                </div>
-
-                <div>
-                    <label for='latitude'>latitude</label>
-                    <span class="error has-error"></span>
-                    <input id="latitude" name="latitude" placeholder="latitude" value="{{old('latitude')}}">
-                </div>
-
-                <div>
-                    <label for='longitude'>longitude</label>
-                    <span class="error has-error"></span>
-                    <input id="longitude" name="longitude" placeholder="longitude" value="{{old('longitude')}}">
-                </div>
-
-                <div>
-                    <label for='radius'>radius</label>
-                    <span class="error has-error"></span>
-                    <input id="radius" name="radius" type="number" placeholder="radius" value="{{old('radius')}}">
-                </div>
-
-                <div>
-                    <label for='country'>country</label>
-                    <span class="error has-error"></span>
-                    <input id="country" name="country" placeholder="country" value="{{old('country')}}">
-                </div>
-
-                <div>
-                    <label for='city'>city</label>
-                    <span class="error has-error"></span>
-                    <input id="city" name="city" type="text" placeholder="city" value="{{old('city')}}">
-                </div>
-
-                <div>
-                    <label for='address'>address</label>
-                    <span class="error has-error"></span>
-                    <input id="address" name="address" type="text" placeholder="address">
-                </div>
-
-                <input type="submit">
-            </form>
+            </div>
         </div>
-    </section>
+    </div>
 
     <section class="map">
             <div id="map"></div>

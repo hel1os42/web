@@ -6,23 +6,24 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Point
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property float lat
- * @property float lon
+ * @property null|float lat
+ * @property null|float lon
  */
 class Point implements \JsonSerializable
 {
-    /** @var float */
+    /** @var null|float */
     private $lat;
 
-    /** @var float */
+    /** @var null|float */
     private $lon;
 
     /**
      * Point constructor.
-     * @param float $lat
-     * @param float $lon
+     *
+     * @param float|null $lat
+     * @param float|null $lon
      */
-    public function __construct(float $lat, float $lon)
+    public function __construct(?float $lat, ?float $lon)
     {
         $this->setLat($lat)
             ->setLon($lon);
@@ -40,36 +41,38 @@ class Point implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return float|null
      */
-    public function getLat(): float
+    public function getLat(): ?float
     {
         return $this->lat;
     }
 
     /**
-     * @return float
+     * @return float|null
      */
-    public function getLon(): float
+    public function getLon(): ?float
     {
         return $this->lon;
     }
 
     /**
-     * @param float $lat
+     * @param float|null $lat
+     *
      * @return Point
      */
-    public function setLat(float $lat): Point
+    public function setLat(?float $lat): Point
     {
         $this->lat = $lat;
         return $this;
     }
 
     /**
-     * @param float $lon
+     * @param float|null $lon
+     *
      * @return Point
      */
-    public function setLon(float $lon): Point
+    public function setLon(?float $lon): Point
     {
         $this->lon = $lon;
         return $this;

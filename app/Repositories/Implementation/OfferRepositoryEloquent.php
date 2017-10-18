@@ -5,6 +5,8 @@ namespace App\Repositories\Implementation;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
+use App\Repositories\TimeframeRepository;
+use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -21,6 +23,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
+    protected $timeframeRepository;
+
+    public function __construct(Application $app, TimeframeRepository $timeframeRepository)
+    {
+        $this->timeframeRepository = $timeframeRepository;
+        parent::__construct($app);
+    }
+
     /**
      * Specify Model class name
      *
@@ -57,6 +67,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
 
+        $this->timeframeRepository->createManyForOffer($attributes['timeframes'], $model);
+
         $this->resetModel();
 
         event(new RepositoryEntityCreated($this, $model));
@@ -65,19 +77,19 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     }
 
     /**
-     * @param array $categoryIds
-     * @param float $latitude
-     * @param float $longitude
-     * @param int   $radius
+     * @param array      $categoryIds
+     * @param float|null $latitude
+     * @param float|null $longitude
+     * @param int|null   $radius
      *
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function getActiveByCategoriesAndPosition(
         array $categoryIds,
-        float $latitude,
-        float $longitude,
-        int $radius
+        ?float $latitude,
+        ?float $longitude,
+        ?int $radius
     ): Builder {
         $this->applyCriteria();
         $this->applyScope();

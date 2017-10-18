@@ -44,12 +44,6 @@ class Offer
     /** @var string */
     public $end_date;
 
-    /** @var string */
-    public $start_time;
-
-    /** @var string */
-    public $end_time;
-
     /**
      * @return string
      */
@@ -128,21 +122,5 @@ class Offer
     public function getEndDate(): Carbon
     {
         return Carbon::parse($this->end_date);
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getStartTime(): Carbon
-    {
-        return Carbon::parse($this->start_time);
-    }
-
-    /**
-     * @return Carbon
-     */
-    public function getEndTime(): Carbon
-    {
-        return Carbon::parse($this->end_time);
     }
 }
