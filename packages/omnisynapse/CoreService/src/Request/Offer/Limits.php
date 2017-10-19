@@ -6,7 +6,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Limits
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property int|null offers
+ * @property int|null maxCount
  * @property int|null perDay
  * @property int|null perUser
  * @property int      minLevel
@@ -17,7 +17,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
 class Limits implements \JsonSerializable
 {
     /** @var int|null */
-    private $offers;
+    private $maxCount;
 
     /** @var int|null */
     private $perDay;
@@ -49,7 +49,7 @@ class Limits implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'offers'             => $this->getOffers(),
+            'max_count'          => $this->getMaxCount(),
             'per_day'            => $this->getPerDay(),
             'per_user'           => $this->getPerUser(),
             'per_user_per_day'   => $this->getPerUserPerDay(),
@@ -62,9 +62,9 @@ class Limits implements \JsonSerializable
     /**
      * @return int|null
      */
-    public function getOffers(): ?int
+    public function getMaxCount(): ?int
     {
-        return $this->offers;
+        return $this->maxCount;
     }
 
     /**
@@ -120,9 +120,9 @@ class Limits implements \JsonSerializable
      *
      * @return Limits
      */
-    public function setOffers(?int $offers): Limits
+    public function setMaxCount(?int $maxCount): Limits
     {
-        $this->offers = $offers;
+        $this->maxCount = $maxCount;
         return $this;
     }
 

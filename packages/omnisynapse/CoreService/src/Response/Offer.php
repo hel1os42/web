@@ -44,6 +44,9 @@ class Offer
     /** @var string */
     public $end_date;
 
+    /** @var  @var string */
+    public $status;
+
     /**
      * @return string
      */
@@ -122,5 +125,13 @@ class Offer
     public function getEndDate(): Carbon
     {
         return Carbon::parse($this->end_date);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
 use App\Models\Traits\HasNau;
 use App\Models\User;
+use App\Traits\Uuids;
 use Carbon\Carbon;
 
 /**
@@ -40,7 +41,7 @@ use Carbon\Carbon;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -50,6 +51,7 @@ class Offer extends AbstractNauModel
         $this->table = "offer";
 
         $this->primaryKey = 'id';
+        $this->initUuid();
 
         $this->incrementing = false;
 
@@ -353,7 +355,8 @@ class Offer extends AbstractNauModel
             'user_level_min',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'status',
         ];
     }
 

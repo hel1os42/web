@@ -18,6 +18,9 @@ class Offer implements \JsonSerializable
     const TIME_FORMAT = 'H:i:sO';
 
     /** @var string */
+    public $offerId;
+
+    /** @var string */
     public $ownerId;
 
     /** @var string */
@@ -44,10 +47,15 @@ class Offer implements \JsonSerializable
     /** @var Carbon|null */
     public $endDate;
 
+    /** @var string */
+    public $status;
+
     /**
      * Offer constructor.
      *
      * @param \App\Models\NauModels\Offer $offer
+     *
+     * @throws Exception
      */
     public function __construct(\App\Models\NauModels\Offer $offer)
     {
@@ -61,7 +69,7 @@ class Offer implements \JsonSerializable
         }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
         $limits  = (new Limits)
-            ->setOffers($offer->getMaxCount())
+            ->setMaxCount($offer->getMaxCount())
             ->setPerDay($offer->getMaxPerDay())
             ->setPerUser($offer->getMaxForUser())
             ->setPerUserPerDay($offer->getMaxForUserPerDay())
@@ -74,7 +82,8 @@ class Offer implements \JsonSerializable
             throw new Exception('Offer do not have relation with account.');
         }
 
-        $this->setOwnerId($account->getOwnerId())
+        $this->setId($offer->getId())
+            ->setOwnerId($account->getOwnerId())
             ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
             ->setCategoryId($offer->getCategoryId())
@@ -82,7 +91,8 @@ class Offer implements \JsonSerializable
             ->setLimits($limits)
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
-            ->setEndDate($offer->getFinishDate());
+            ->setEndDate($offer->getFinishDate())
+            ->setStatus($offer->getStatus());
     }
 
     /**
@@ -91,6 +101,7 @@ class Offer implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
+            'id'                => $this->id,
             'owner_id'          => $this->ownerId,
             'name'              => $this->name,
             'description'       => $this->description,
@@ -100,7 +111,18 @@ class Offer implements \JsonSerializable
             'reward'            => $this->reward,
             'start_date'        => $this->startDate->format(self::DATE_FORMAT),
             'end_date'          => $this->endDate->format(self::DATE_FORMAT),
+            'status'            => $this->status,
         ];
+    }
+
+    /**
+     * @param string $offerId
+     * @return Offer
+     */
+    public function setId(string $offerId): Offer
+    {
+        $this->id = $offerId;
+        return $this;
     }
 
     /**
@@ -201,5 +223,25 @@ class Offer implements \JsonSerializable
     public function getEndDate(): ?string
     {
         return $this->endDate === null ? null : $this->endDate->format(self::DATE_FORMAT);
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Offer
+     */
+    public function setStatus(string $status): Offer
+    {
+        $this->status = in_array(
+            $status,
+            [
+                \App\Models\NauModels\Offer::STATUS_ACTIVE,
+                \App\Models\NauModels\Offer::STATUS_DEACTIVE
+            ]
+        )
+            ? $status
+            : \App\Models\NauModels\Offer::STATUS_DEACTIVE;
+
+        return $this;
     }
 }

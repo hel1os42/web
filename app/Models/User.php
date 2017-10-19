@@ -365,6 +365,15 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @return Account|null
+     * @throws TokenException
+     */
+    public function getAccountForNau(): ?Account
+    {
+        return $this->getAccountFor(Currency::NAU);
+    }
+
+    /**
      * @param User|null $user
      *
      * @return bool

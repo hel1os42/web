@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Advert;
 use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use App\Services\WeekDaysService;
+use App\Services\OfferReservation;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -39,7 +39,7 @@ class OfferController extends Controller
     {
         $this->authorize('index', Offer::class);
 
-        $offers       = $this->auth->user()->getAccountFor(Currency::NAU)->offers();
+        $offers       = $this->auth->user()->getAccountForNau()->offers();
         $paginator    = $offers->paginate();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
@@ -71,19 +71,26 @@ class OfferController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function store(Advert\OfferRequest $request): Response
+    public function store(Advert\OfferRequest $request, OfferReservation $reservationService): Response
     {
         $this->authorize('store', Offer::class);
 
+        $status = $reservationService->isReservable()
+            ? Offer::STATUS_ACTIVE
+            : Offer::STATUS_DEACTIVE;
+
+        $attributes           = $request->all();
+        $attributes['status'] = $status;
+
         $newOffer = $this->offerRepository->createForAccountOrFail(
-            $request->all(),
-            $this->auth->user()->getAccountFor(Currency::NAU)
+            $attributes,
+            $this->auth->user()->getAccountForNau()
         );
 
         return \response()->render('advert.offer.store',
-            $newOffer->toArray(),
+            null,
             Response::HTTP_ACCEPTED,
-            route('advert.offers.index'));
+            route('advert.offers.show', $newOffer->id));
     }
 
     /**
