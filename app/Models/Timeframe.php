@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Helpers\Constants;
 use App\Models\NauModels\Offer;
-use App\Services\WeekDaysService;
 use App\Traits\Uuids;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -56,5 +57,29 @@ class Timeframe extends Model
     public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class);
+    }
+
+    /**
+     * @param string $fromTime
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setFromAttribute($fromTime)
+    {
+        $this->attributes['from'] = Carbon::createFromFormat(Constants::TIME_FORMAT, $fromTime)
+                                          ->setTimezone('UTC')
+                                          ->toTimeString();
+    }
+
+    /**
+     * @param string $toTime
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setToAttribute($toTime)
+    {
+        $this->attributes['to'] = Carbon::createFromFormat(Constants::TIME_FORMAT, $toTime)
+                                          ->setTimezone('UTC')
+                                          ->toTimeString();
     }
 }
