@@ -25,6 +25,10 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
 
+    protected $fieldSearchable = [
+        'status' => '=',
+    ];
+
     public function __construct(Application $app, TimeframeRepository $timeframeRepository)
     {
         $this->timeframeRepository = $timeframeRepository;
@@ -114,5 +118,19 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return OfferRepository
+     */
+    public function scopeAccount(Account $account): OfferRepository
+    {
+        return $this->scopeQuery(
+            function (Builder $builder) use ($account) {
+                return $builder->accountOffers($account->getId());
+            }
+        );
     }
 }
