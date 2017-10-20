@@ -17,13 +17,19 @@ use App\Models\NauModels\Offer;
 interface OfferReservation
 {
     /**
-     * @param Offer $offer
-     *
-     * @return OfferReservation
-     */
-    public function setOffer(Offer $offer): OfferReservation;
-    /**
      * @return bool
      */
-    public function isReservable(): bool;
+    public function isReservable(Offer $offer): bool;
+
+    /**
+     * @param float $reward
+     *
+     * @return float
+     */
+    public function getMinReserved(float $reward): float;
+
+    /**
+     * @return int
+     */
+    public function getReservationMultiplier(): int;
 }

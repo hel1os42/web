@@ -49,7 +49,7 @@ class Limits implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'max_count'          => $this->getMaxCount(),
+            'offers'             => $this->getMaxCount(),
             'per_day'            => $this->getPerDay(),
             'per_user'           => $this->getPerUser(),
             'per_user_per_day'   => $this->getPerUserPerDay(),

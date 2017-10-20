@@ -50,6 +50,9 @@ class Offer implements \JsonSerializable
     /** @var string */
     public $status;
 
+    /** @var  @var float */
+    public $reserved;
+
     /**
      * Offer constructor.
      *
@@ -92,7 +95,8 @@ class Offer implements \JsonSerializable
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
             ->setEndDate($offer->getFinishDate())
-            ->setStatus($offer->getStatus());
+            ->setStatus($offer->getStatus())
+            ->setReserved($offer->getReserved());
     }
 
     /**
@@ -101,7 +105,7 @@ class Offer implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'                => $this->id,
+            'id'                => $this->offerId,
             'owner_id'          => $this->ownerId,
             'name'              => $this->name,
             'description'       => $this->description,
@@ -110,8 +114,9 @@ class Offer implements \JsonSerializable
             'limits'            => $this->limits->jsonSerialize(),
             'reward'            => $this->reward,
             'start_date'        => $this->startDate->format(self::DATE_FORMAT),
-            'end_date'          => $this->endDate->format(self::DATE_FORMAT),
+            'end_date'          => null === $this->endDate ? null : $this->endDate->format(self::DATE_FORMAT),
             'status'            => $this->status,
+            'reserved'          => $this->reserved,
         ];
     }
 
@@ -121,7 +126,7 @@ class Offer implements \JsonSerializable
      */
     public function setId(string $offerId): Offer
     {
-        $this->id = $offerId;
+        $this->offerId = $offerId;
         return $this;
     }
 
@@ -242,6 +247,17 @@ class Offer implements \JsonSerializable
             ? $status
             : \App\Models\NauModels\Offer::STATUS_DEACTIVE;
 
+        return $this;
+    }
+
+    /**
+     * @param float $reserved
+     *
+     * @return Offer
+     */
+    public function setReserved(float $reserved): Offer
+    {
+        $this->reserved = $reserved;
         return $this;
     }
 }

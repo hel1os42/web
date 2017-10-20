@@ -40,7 +40,7 @@ class LimitsTest extends TestCase
         $this->assertEquals($minLevel, $limits->getMinLevel(), 'minLevel');
 
         $expected = [
-            'max_count'          => $maxCount,
+            'offers'             => $maxCount,
             'per_day'            => $perDay,
             'per_user'           => $perUser,
             'per_user_per_day'   => $perUserPerDay,

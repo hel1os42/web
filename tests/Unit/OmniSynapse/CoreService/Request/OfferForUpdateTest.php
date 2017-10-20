@@ -55,6 +55,7 @@ class OfferForUpdateTest extends TestCase
         $startDate          = Carbon::parse($dates['startDate']);
         $endDate            = Carbon::parse($dates['endDate']);
         $status             = 'active';
+        $reserved           = $faker->randomFloat();
 
         /*
          * Set Offer methods
@@ -80,6 +81,7 @@ class OfferForUpdateTest extends TestCase
         $offer->method('getFinishDate')->willReturn($endDate);
         $offer->method('getAccount')->willReturn($account);
         $offer->method('getStatus')->willReturn($status);
+        $offer->method('getReserved')->willReturn($reserved);
 
         /*
          * Create Offer request and prepare jsonSerialize for comparing
@@ -97,6 +99,7 @@ class OfferForUpdateTest extends TestCase
             'start_date'        => $dates['startDate'],
             'end_date'          => $dates['endDate'],
             'status'            => $status,
+            'reserved'          => $reserved,
         ];
 
         /*

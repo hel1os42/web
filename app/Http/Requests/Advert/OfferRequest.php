@@ -71,6 +71,7 @@ class OfferRequest extends FormRequest
             'radius'               => 'integer',
             'country'              => 'string',
             'city'                 => 'string',
+            'reserved'             => 'required|numeric|min:1',
             'timeframes'           => 'required|array',
             'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,
             'timeframes.*.to'      => 'required|date_format:' . Constants::TIME_FORMAT,

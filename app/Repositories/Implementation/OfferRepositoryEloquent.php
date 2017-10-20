@@ -6,6 +6,7 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
+use App\Services\OfferReservation;
 use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -20,14 +21,21 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @package namespace App\Repositories;
  *
  * @property Offer $model
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
+    protected $reservationService;
 
-    public function __construct(Application $app, TimeframeRepository $timeframeRepository)
-    {
+    public function __construct(
+        Application $app,
+        TimeframeRepository $timeframeRepository,
+        OfferReservation $reservationService
+    ) {
         $this->timeframeRepository = $timeframeRepository;
+        $this->reservationService  = $reservationService;
         parent::__construct($app);
     }
 
@@ -62,6 +70,11 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
         $model = $this->model->newInstance($attributes);
         $model->account()->associate($account);
+
+        $status = $this->reservationService->isReservable($model)
+            ? Offer::STATUS_ACTIVE
+            : Offer::STATUS_DEACTIVE;
+        $model->setStatus($status);
 
         if (!$model->save()) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
@@ -104,6 +117,13 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
+    /**
+     * @param string $identity
+     *
+     * @return Offer
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
     public function findActiveByIdOrFail(string $identity): Offer
     {
         $this->applyCriteria();

@@ -85,6 +85,7 @@ class Offer extends AbstractNauModel
         'latitude',
         'longitude',
         'radius',
+        'reserved',
         'timeframes',
     ];
 
@@ -140,10 +141,36 @@ class Offer extends AbstractNauModel
         $this->attributes['reward'] = $this->convertFloatToInt((float)$value);
     }
 
+    /**
+     * @param int $value
+     *
+     * @return float
+     */
+    public function getReservedAttribute(?int $value): float
+    {
+        return $this->convertIntToFloat((int)$value);
+    }
+
+    /**
+     * @param float $value
+     *
+     * @return void
+     */
+    public function setReservedAttribute(?float $value): void
+    {
+        $this->attributes['reserved'] = $this->convertFloatToInt((float)$value);
+    }
+
     /** @return float */
     public function getReward(): ?float
     {
         return $this->reward;
+    }
+
+    /** @return float */
+    public function getReserved(): float
+    {
+        return $this->reserved;
     }
 
     /** @return string */
@@ -285,6 +312,17 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * @param string $status
+     *
+     * @return Offer
+     */
+    public function setStatus(string $status): Offer
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
      * @param string $code
      *
      * @return Redemption
@@ -330,7 +368,8 @@ class Offer extends AbstractNauModel
             'min_level'              => 1,
             'lat'                    => null,
             'lng'                    => null,
-            'radius'                 => null
+            'radius'                 => null,
+            'reserved'               => 10000 * (int)config('nau.reservation_multiplier'),
         ];
     }
 
@@ -357,6 +396,7 @@ class Offer extends AbstractNauModel
             'longitude',
             'radius',
             'status',
+            'reserved',
         ];
     }
 
@@ -394,26 +434,28 @@ class Offer extends AbstractNauModel
     private function initCasts(): void
     {
         $this->casts = [
-            'id'                   => 'string',
-            'account_id'           => 'integer',
-            'label'                => 'string',
-            'description'          => 'string',
-            'status'               => 'string',
-            'start_date'           => 'datetime',
-            'finish_date'          => 'datetime',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'category_id'          => 'string',
-            'max_count'            => 'integer',
-            'max_for_user'         => 'integer',
-            'max_per_day'          => 'integer',
-            'max_for_user_per_day' => 'integer',
+            'id'                     => 'string',
+            'account_id'             => 'integer',
+            'label'                  => 'string',
+            'description'            => 'string',
+            'status'                 => 'string',
+            'start_date'             => 'datetime',
+            'finish_date'            => 'datetime',
+            'country'                => 'string',
+            'city'                   => 'string',
+            'category_id'            => 'string',
+            'max_count'              => 'integer',
+            'max_for_user'           => 'integer',
+            'max_per_day'            => 'integer',
+            'max_for_user_per_day'   => 'integer',
             'max_for_user_per_week'  => 'integer',
             'max_for_user_per_month' => 'integer',
-            'user_level_min'       => 'integer',
-            'latitude'             => 'double',
-            'longitude'            => 'double',
-            'radius'               => 'integer'
+            'user_level_min'         => 'integer',
+            'latitude'               => 'double',
+            'longitude'              => 'double',
+            'radius'                 => 'integer',
+            'reward'                 => 'integer',
+            'reserved'               => 'integer',
         ];
     }
 
