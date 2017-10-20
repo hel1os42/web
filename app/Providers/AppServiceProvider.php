@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Criteria\MappableRequestCriteria;
+use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Services\NauOffersService;
 use App\Services\OffersService;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -32,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Services\WeekDaysService::class,
             \App\Services\Implementation\WeekDaysService::class
+        );
+        $this->app->bind(
+            MappableRequestCriteria::class,
+            MappableRequestCriteriaEloquent::class
         );
     }
 }
