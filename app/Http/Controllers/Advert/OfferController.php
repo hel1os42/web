@@ -10,6 +10,7 @@ use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
+use PhpParser\Builder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -38,9 +39,10 @@ class OfferController extends Controller
     public function index(): Response
     {
         $this->authorize('index', Offer::class);
-
-        $offers       = $this->auth->user()->getAccountFor(Currency::NAU)->offers();
-        $paginator    = $offers->paginate();
+        $account      = $this->auth->user()->getAccountFor(Currency::NAU);
+        $paginator    = $this->offerRepository
+            ->scopeAccount($account)
+            ->paginate();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 
