@@ -70,15 +70,15 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
     /**
-     * Profile
+     * User actions
      */
     $router->group(['prefix' => 'profile'], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('profile');
-        $router->put('', 'ProfileController@update');
-        $router->patch('', 'ProfileController@update')->name('profile.update');
-        $router->get('referrals', 'ProfileController@referrals')->name('referrals');
-        $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
-        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
+        $router->get('', 'UserController@show')->name('profile');
+        $router->put('', 'UserController@update');
+        $router->patch('', 'UserController@update')->name('profile.update');
+        $router->get('referrals', 'UserController@referrals')->name('referrals');
+        $router->post('picture', 'User\PictureController@store')->name('profile.picture.store');
+        $router->get('picture.jpg', 'User\PictureController@show')->name('profile.picture.show');
         $router->get('place', 'PlaceController@showOwnerPlace')
             ->name('profile.place.show');
         $router->put('place', 'PlaceController@update');
@@ -90,12 +90,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
     });
 
+    $router->get('users', 'UserController@show')->name('users.show');
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('users.show');
-        $router->put('', 'ProfileController@update');
-        $router->patch('', 'ProfileController@update');
-        $router->get('referrals', 'ProfileController@referrals');
-        $router->post('picture', 'Profile\PictureController@store');
+        $router->get('', 'UserController@show')->name('users.show');
+        $router->put('', 'UserController@update');
+        $router->patch('', 'UserController@update');
+        $router->get('referrals', 'UserController@referrals');
+        $router->post('picture', 'User\PictureController@store');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -175,15 +176,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
     $router->get('activation_codes/{code}', 'ActivationCodeController@show')
            ->name('activation_codes.show');
-
-    /**
-     * Admin pages
-     */
-    $router->get('users', 'AdminController@usersList')->name('admin.users.index');
-    $router->put('users/{id}/children', 'AdminController@setChildren');
-    $router->put('users/{id}/parents', 'AdminController@setParents');
-    $router->put('users/{id}/roles', 'AdminController@updateRoles');
-
 });
 
 //---- Authorized users
@@ -191,7 +183,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 /**
  * pictures
  */
-$router->get('users/{uuid}/picture.jpg', 'Profile\PictureController@show')->where('uuid',
+$router->get('users/{uuid}/picture.jpg', 'User\PictureController@show')->where('uuid',
     '[a-z0-9-]+')->name('users.picture.show');
 $router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
     '[a-z0-9-]+')->name('offer.picture.show');

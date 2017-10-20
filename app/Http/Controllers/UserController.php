@@ -9,7 +9,7 @@ use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ProfileController extends Controller
+class UserController extends Controller
 {
     private $userRepository;
     private $auth;
@@ -22,15 +22,15 @@ class ProfileController extends Controller
 
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function index()
     {
-        $this->authorize('profileIndex', $this->userRepository->model());
+        $this->authorize('index', $this->userRepository->model());
 
-        return \redirect()->route('profile');
+        return \response()->render('user.index', $this->userRepository->with('roles')->paginate());
     }
 
     /**
@@ -50,7 +50,7 @@ class ProfileController extends Controller
 
         $user = $this->userRepository->find($uuid);
 
-        $this->authorize('profileShow', $user);
+        $this->authorize('show', $user);
 
         return \response()->render('profile', $user->toArray());
     }
@@ -67,9 +67,9 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request, string $uuid = null): Response
     {
-
-
         $uuid = $this->checkUuid($uuid);
+
+        $this->authorize('update', $this->userRepository->find($uuid));
 
         $userData = $request->all();
 
@@ -79,8 +79,6 @@ class ProfileController extends Controller
         }
 
         $user = $this->userRepository->update($userData, $uuid);
-
-        $this->authorize('profileUpdate', $user);
 
         return \response()->render('profile', $user->toArray(), Response::HTTP_CREATED, route('profile'));
     }
@@ -100,7 +98,7 @@ class ProfileController extends Controller
 
         $user = $this->userRepository->find($uuid);
 
-        $this->authorize('profileReferrals', $user);
+        $this->authorize('referrals', $user);
 
         return \response()->render('user.profile.referrals', $user->referrals()->paginate());
     }

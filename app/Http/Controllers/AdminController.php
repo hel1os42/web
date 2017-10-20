@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\SetChildrenRequest;
+use App\Http\Requests\Admin\UpdateRolesRequest;
+use App\Http\Requests\Admin\UsersListRequest;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,35 +27,48 @@ class AdminController extends Controller
      */
     public function usersList(): Response
     {
-        $this->authorize('adminUserList', $this->userRepository->model());
 
-        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
     }
 
-    public function setChildren(): Response
+    public function usersRights(string $userId): Response
+    {
+
+    }
+
+    public function setChildren(SetChildrenRequest $request, string $userId): Response
     {
         $this->authorize('adminSetChildren', $this->userRepository->model());
 
-        // setChildren
+        $user = $this->userRepository->find($userId);
 
-        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
+        $user->children()->detach();
+
+        $user->children()->attach($request->user_ids);
+
+        return \response()->render('admin.users.rights', $user->toArray(), Response::HTTP_CREATED, route('admin.users.show'));
     }
 
-    public function setParents(): Response
+    public function setParents(SetChildrenRequest $request, string $userId): Response
     {
         $this->authorize('adminSetParents', $this->userRepository->model());
 
-        // setParents
+        $user = $this->userRepository->find($userId);
 
-        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
+        $user->parents()->detach();
+
+        $user->parents()->attach($request->user_ids);
     }
 
-    public function updateRoles(): Response
+    public function updateRoles(UpdateRolesRequest $request, string $userId): Response
     {
         $this->authorize('adminUpdateRoles', $this->userRepository->model());
 
-        // updateRoles
+        $user = $this->userRepository->find($userId);
 
-        return \response()->render('admin.users.index', $this->userRepository->with('roles')->paginate());
+        $user->roles()->detach();
+
+        $user->roles()->attach($request->user_ids);
+
+        return \response()->render('admin.users.rights', $user->toArray(), Response::HTTP_CREATED, route('admin.users.show'));
     }
 }

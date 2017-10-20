@@ -10,41 +10,9 @@ class UserPolicy extends Policy
     /**
      * @return bool
      */
-    public function adminUserList()
+    public function index()
     {
         return $this->isAdmin();
-    }
-
-    /**
-     * @return bool
-     */
-    public function adminSetChildren()
-    {
-        return $this->isAdmin();
-    }
-
-    /**
-     * @return bool
-     */
-    public function adminSetParents()
-    {
-        return $this->isAdmin();
-    }
-
-    /**
-     * @return bool
-     */
-    public function adminUpdateRoles()
-    {
-        return $this->isAdmin();
-    }
-
-    /**
-     * @return bool
-     */
-    public function profileIndex()
-    {
-        return $this->isUser();
     }
 
     /**
@@ -52,7 +20,7 @@ class UserPolicy extends Policy
      *
      * @return bool|mixed
      */
-    public function profileShow(User $user)
+    public function show(User $user)
     {
         if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
             return true;
@@ -74,13 +42,13 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function profileUpdate(User $user)
+    public function update(User $user)
     {
-        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
+        if ($this->isAdmin()) {
             return true;
         }
 
-        if ($this->isUser() && $user->equals($this->auth->user())) {
+        if ($this->hasAnyRole() && $user->equals($this->auth->user())) {
             return true;
         }
 
@@ -92,7 +60,7 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function profileReferrals(User $user)
+    public function referrals(User $user)
     {
         if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
             return true;
