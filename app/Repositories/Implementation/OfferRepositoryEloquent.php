@@ -4,11 +4,11 @@ namespace App\Repositories\Implementation;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
+use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
-use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Validator\Contracts\ValidatorInterface;
@@ -24,6 +24,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
+
+    protected $fieldSearchable = [
+        'status'      => '=',
+        'start_date'  => '<=',
+        'finish_date' => '>=',
+    ];
 
     public function __construct(Application $app, TimeframeRepository $timeframeRepository)
     {
@@ -46,7 +52,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      */
     public function boot()
     {
-        $this->pushCriteria(app(RequestCriteria::class));
+        $this->pushCriteria(app(MappableRequestCriteria::class));
     }
 
     public function createForAccountOrFail(array $attributes, Account $account): Offer
@@ -114,5 +120,19 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return OfferRepository
+     */
+    public function scopeAccount(Account $account): OfferRepository
+    {
+        return $this->scopeQuery(
+            function (Builder $builder) use ($account) {
+                return $builder->accountOffers($account->getId());
+            }
+        );
     }
 }

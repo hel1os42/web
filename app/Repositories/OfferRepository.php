@@ -34,5 +34,17 @@ interface OfferRepository extends RepositoryInterface
         ?int $radius
     ): Builder;
 
+    /**
+     * @param string $identity
+     *
+     * @return Offer
+     */
     public function findActiveByIdOrFail(string $identity): Offer;
+
+    /**
+     * @param Account $account
+     *
+     * @return OfferRepository
+     */
+    public function scopeAccount(Account $account): OfferRepository;
 }
