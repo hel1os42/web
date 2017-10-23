@@ -17,12 +17,13 @@ use App\Models\NauModels\Account;
 interface OfferReservation
 {
     /**
-     * @param array   $attributes
      * @param Account $account
+     * @param float   $reward
+     * @param float   $reserved
      *
      * @return bool
      */
-    public function isReservable(array $attributes, Account $account): bool;
+    public function isReservable(Account $account, float $reward, float $reserved): bool;
 
     /**
      * @param float $reward

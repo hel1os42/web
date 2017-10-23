@@ -237,15 +237,11 @@ class Offer implements \JsonSerializable
      */
     public function setStatus(string $status): Offer
     {
-        $this->status = in_array(
-            $status,
-            [
-                \App\Models\NauModels\Offer::STATUS_ACTIVE,
-                \App\Models\NauModels\Offer::STATUS_DEACTIVE
-            ]
-        )
-            ? $status
-            : \App\Models\NauModels\Offer::STATUS_DEACTIVE;
+        if ($status !== \App\Models\NauModels\Offer::STATUS_ACTIVE) {
+            $status = \App\Models\NauModels\Offer::STATUS_DEACTIVE;
+        }
+
+        $this->status = $status;
 
         return $this;
     }

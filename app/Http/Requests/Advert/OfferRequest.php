@@ -74,7 +74,7 @@ class OfferRequest extends FormRequest
             'city'                 => 'string',
             'reserved'             => sprintf(
                 'required|numeric|min:%s',
-                $offerReservation->getMinReserved($this->request->get('reward'))
+                $offerReservation->getMinReserved($this->get('reward'))
             ),
             'timeframes'           => 'required|array',
             'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,

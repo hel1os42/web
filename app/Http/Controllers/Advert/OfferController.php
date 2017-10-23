@@ -80,7 +80,11 @@ class OfferController extends Controller
         $attributes = $request->all();
         $account    = $this->auth->user()->getAccountForNau();
 
-        $attributes['status'] = $reservationService->isReservable($attributes, $account)
+        $attributes['status'] = $reservationService->isReservable(
+            $account,
+            $attributes['reward'],
+            $attributes['reserved']
+        )
             ? Offer::STATUS_ACTIVE
             : Offer::STATUS_DEACTIVE;
 

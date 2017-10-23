@@ -319,6 +319,7 @@ class Offer extends AbstractNauModel
     public function setStatus(string $status): Offer
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -348,11 +349,14 @@ class Offer extends AbstractNauModel
 
     private function initAttributes(): void
     {
+        $defaultReward         = $this->convertFloatToInt(1);
+        $reservationMultiplier = (int)config('nau.reservation_multiplier');
+
         $this->attributes = [
             'acc_id'                 => null,
             'name'                   => null,
             'descr'                  => null,
-            'reward'                 => 10000,
+            'reward'                 => $defaultReward,
             'status'                 => null,
             'dt_start'               => null,
             'dt_finish'              => null,
@@ -369,7 +373,7 @@ class Offer extends AbstractNauModel
             'lat'                    => null,
             'lng'                    => null,
             'radius'                 => null,
-            'reserved'               => 10000 * (int)config('nau.reservation_multiplier'),
+            'reserved'               => $defaultReward * $reservationMultiplier,
         ];
     }
 

@@ -17,16 +17,15 @@ use App\Services\OfferReservation;
 class NauOfferReservation implements OfferReservation
 {
     /**
-     * @param array   $attributes
      * @param Account $account
+     * @param float   $reward
+     * @param float   $reserved
      *
      * @return bool
      */
-    public function isReservable(array $attributes, Account $account): bool
+    public function isReservable(Account $account, float $reward, float $reserved): bool
     {
-        $reward      = $attributes['reward'];
         $minReserved = $this->getMinReserved($reward);
-        $reserved    = $attributes['reserved'];
 
         return $account->getOwner()->isApproved()
                && 0 !== $reward
