@@ -7,7 +7,6 @@ use App\Models\NauModels\Offer;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
-use App\Services\OfferReservation;
 use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -37,11 +36,9 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     public function __construct(
         Application $app,
-        TimeframeRepository $timeframeRepository,
-        OfferReservation $reservationService
+        TimeframeRepository $timeframeRepository
     ) {
         $this->timeframeRepository = $timeframeRepository;
-        $this->reservationService  = $reservationService;
         parent::__construct($app);
     }
 
@@ -76,11 +73,6 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
         $model = $this->model->newInstance($attributes);
         $model->account()->associate($account);
-
-        $status = $this->reservationService->isReservable($model)
-            ? Offer::STATUS_ACTIVE
-            : Offer::STATUS_DEACTIVE;
-        $model->setStatus($status);
 
         if (!$model->save()) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");

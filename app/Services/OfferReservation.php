@@ -8,7 +8,7 @@
 
 namespace App\Services;
 
-use App\Models\NauModels\Offer;
+use App\Models\NauModels\Account;
 
 /**
  * Interface OfferNauReservation
@@ -17,9 +17,12 @@ use App\Models\NauModels\Offer;
 interface OfferReservation
 {
     /**
+     * @param array   $attributes
+     * @param Account $account
+     *
      * @return bool
      */
-    public function isReservable(Offer $offer): bool;
+    public function isReservable(array $attributes, Account $account): bool;
 
     /**
      * @param float $reward

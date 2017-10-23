@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
 use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
+use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,18 +67,26 @@ class OfferController extends Controller
      * Send new offer data to core to store
      *
      * @param Advert\OfferRequest $request
+     * @param OfferReservation    $reservationService
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function store(Advert\OfferRequest $request): Response
+    public function store(Advert\OfferRequest $request, OfferReservation $reservationService): Response
     {
         $this->authorize('store', Offer::class);
 
+        $attributes = $request->all();
+        $account = $this->auth->user()->getAccountForNau();
+
+        $attributes['status'] = $reservationService->isReservable($attributes, $account)
+            ? Offer::STATUS_ACTIVE
+            : Offer::STATUS_DEACTIVE;
+
         $newOffer = $this->offerRepository->createForAccountOrFail(
-            $request->all(),
-            $this->auth->user()->getAccountForNau()
+            $attributes,
+            $account
         );
 
         return \response()->render('advert.offer.store',

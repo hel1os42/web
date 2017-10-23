@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Advert;
 
 use App\Helpers\Constants;
+use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -47,7 +48,7 @@ class OfferRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(WeekDaysService $weekDaysService, OfferReservation $offerReservation)
     {
         return [
             'label'                => 'required|string|min:3|max:128',
@@ -71,14 +72,17 @@ class OfferRequest extends FormRequest
             'radius'               => 'integer',
             'country'              => 'string',
             'city'                 => 'string',
-            'reserved'             => 'required|numeric|min:1',
+            'reserved'             => sprintf(
+                'required|numeric|min:%s',
+                $offerReservation->getMinReserved($this->request->get('reward'))
+            ),
             'timeframes'           => 'required|array',
             'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,
             'timeframes.*.to'      => 'required|date_format:' . Constants::TIME_FORMAT,
             'timeframes.*.days'    => 'required|array',
             'timeframes.*.days.*'  => sprintf(
                 'string|in:%s',
-                implode(',', app(WeekDaysService::class)->fullList())
+                implode(',', $weekDaysService->fullList())
             ),
         ];
     }
