@@ -37,9 +37,10 @@ class OfferController extends Controller
     public function index(): Response
     {
         $this->authorize('index', Offer::class);
-
-        $offers       = $this->auth->user()->getAccountForNau()->offers();
-        $paginator    = $offers->paginate();
+        $account      = $this->auth->user()->getAccountForNau();
+        $paginator    = $this->offerRepository
+            ->scopeAccount($account)
+            ->paginate();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 

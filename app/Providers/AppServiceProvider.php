@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Services\Implementation\NauOfferReservation;
+use App\Repositories\Criteria\MappableRequestCriteria;
+use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
@@ -36,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
             \App\Services\Implementation\WeekDaysService::class
         );
         $this->app->bind(OfferReservation::class, NauOfferReservation::class);
+        $this->app->bind(
+            MappableRequestCriteria::class,
+            MappableRequestCriteriaEloquent::class
+        );
     }
 }
