@@ -78,7 +78,7 @@ class OfferController extends Controller
         $this->authorize('store', Offer::class);
 
         $attributes = $request->all();
-        $account = $this->auth->user()->getAccountForNau();
+        $account    = $this->auth->user()->getAccountForNau();
 
         $attributes['status'] = $reservationService->isReservable($attributes, $account)
             ? Offer::STATUS_ACTIVE
