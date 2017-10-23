@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Hash;
  * @property string     referrer_id
  * @property int        level
  * @property int        points
- * @property bool       is_approved
+ * @property bool       approved
  * @property Collection offers
  * @property Collection accounts
  * @property Collection roles
@@ -63,16 +63,16 @@ class User extends Authenticatable implements PhoneAuthenticable
             'updated_at'     => null,
             'referrer_id'    => null,
             'invite_code'    => null,
-            'is_approved'    => false,
+            'approved'       => false,
         ];
 
         $this->casts = [
-            'name'        => 'string',
-            'email'       => 'string',
-            'phone'       => 'string',
-            'latitude'    => 'double',
-            'longitude'   => 'double',
-            'is_approved' => 'boolean',
+            'name'      => 'string',
+            'email'     => 'string',
+            'phone'     => 'string',
+            'latitude'  => 'double',
+            'longitude' => 'double',
+            'approved'  => 'boolean',
         ];
 
         $this->fillable = [
@@ -82,7 +82,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'phone',
             'latitude',
             'longitude',
-            'is_approved',
+            'approved',
         ];
 
         $this->hidden = [
@@ -221,9 +221,9 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @return bool
      */
-    public function getIsApproved(): bool
+    public function isApproved(): bool
     {
-        return $this->is_approved;
+        return $this->approved;
     }
 
     /**
