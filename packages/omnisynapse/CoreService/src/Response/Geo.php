@@ -11,16 +11,16 @@ class Geo implements \JsonSerializable
     /** @var string */
     public $type;
 
-    /** @var Point */
+    /** @var Point|null */
     public $point;
 
-    /** @var int */
+    /** @var int|null */
     public $radius;
 
-    /** @var string */
+    /** @var string|null */
     public $city;
 
-    /** @var string */
+    /** @var string|null */
     public $country;
 
     /**
@@ -29,13 +29,13 @@ class Geo implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'type'      => $this->getType(),
-            'point'     => null !== $this->getPoint()
+            'type'    => $this->getType(),
+            'point'   => null !== $this->getPoint()
                 ? $this->getPoint()->jsonSerialize()
                 : null,
-            'radius'    => $this->getRadius(),
-            'city'      => $this->getCity(),
-            'country'   => $this->getCountry(),
+            'radius'  => $this->getRadius(),
+            'city'    => $this->getCity(),
+            'country' => $this->getCountry(),
         ];
     }
 
@@ -50,31 +50,31 @@ class Geo implements \JsonSerializable
     /**
      * @return Point|null
      */
-    public function getPoint()
+    public function getPoint(): ?Point
     {
         return $this->point;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getRadius(): int
+    public function getRadius(): ?int
     {
         return $this->radius;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }

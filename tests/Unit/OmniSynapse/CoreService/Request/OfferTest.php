@@ -35,6 +35,7 @@ class OfferTest extends TestCase
          * Prepare Offer mock and params
          */
         $offer              = $this->createMock(Offer::class);
+        $offerId            = $faker->uuid;
         $name               = $faker->name;
         $description        = $faker->text();
         $categoryId         = $faker->uuid;
@@ -53,10 +54,13 @@ class OfferTest extends TestCase
         $reward             = $faker->randomFloat();
         $startDate          = Carbon::parse($dates['startDate']);
         $endDate            = Carbon::parse($dates['endDate']);
+        $status             = 'active';
+        $reserved           = $faker->randomFloat();
 
         /*
          * Set Offer methods
          */
+        $offer->method('getId')->willReturn($offerId);
         $offer->method('getLabel')->willReturn($name);
         $offer->method('getDescription')->willReturn($description);
         $offer->method('getCategoryId')->willReturn($categoryId);
@@ -76,12 +80,15 @@ class OfferTest extends TestCase
         $offer->method('getStartDate')->willReturn($startDate);
         $offer->method('getFinishDate')->willReturn($endDate);
         $offer->method('getAccount')->willReturn($account);
+        $offer->method('getStatus')->willReturn($status);
+        $offer->method('getReserved')->willReturn($reserved);
 
         /*
          * Create Offer request and prepare jsonSerialize for comparing
          */
         $offerRequest = new \OmniSynapse\CoreService\Request\Offer($offer);
         $expected     = [
+            'id'                => $offerId,
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,
             'description'       => $description,
@@ -91,6 +98,8 @@ class OfferTest extends TestCase
             'reward'            => $reward,
             'start_date'        => $dates['startDate'],
             'end_date'          => $dates['endDate'],
+            'status'            => $status,
+            'reserved'          => $reserved,
         ];
 
         /*

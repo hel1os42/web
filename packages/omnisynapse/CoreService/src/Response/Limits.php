@@ -6,9 +6,9 @@ namespace OmniSynapse\CoreService\Response;
  * Class Limits
  * @package OmniSynapse\CoreService\Response
  *
- * @property int      offers
- * @property int      per_day
- * @property int      per_user
+ * @property int|null offers
+ * @property int|null per_day
+ * @property int|null per_user
  * @property int|null per_user_per_day
  * @property int|null per_user_per_week
  * @property int|null per_user_per_month
@@ -18,29 +18,29 @@ namespace OmniSynapse\CoreService\Response;
  */
 class Limits implements \JsonSerializable
 {
-    /** @var int */
+    /** @var int|null */
     public $offers;
 
-    /** @var int */
+    /** @var int|null */
     public $per_day;
 
-    /** @var int */
+    /** @var int|null */
     public $per_user;
 
     /**
      * @var int|null
      */
-    private $per_user_per_day;
+    public $per_user_per_day;
 
     /**
      * @var int|null
      */
-    private $per_user_per_week;
+    public $per_user_per_week;
 
     /**
      * @var int|null
      */
-    private $per_user_per_month;
+    public $per_user_per_month;
 
     /** @var int */
     public $min_level;
@@ -62,25 +62,25 @@ class Limits implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getOffers(): int
+    public function getOffers(): ?int
     {
         return $this->offers;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerDay(): int
+    public function getPerDay(): ?int
     {
         return $this->per_day;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerUser(): int
+    public function getPerUser(): ?int
     {
         return $this->per_user;
     }
