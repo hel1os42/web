@@ -12,7 +12,8 @@ class UserPolicy extends Policy
      */
     public function index()
     {
-        return $this->isAdmin();
+        return $this->auth->user()->isAdmin()
+               || $this->auth->user()->isChiefAdvertiser() || $this->auth->user()->isAgent();
     }
 
     /**
@@ -22,19 +23,13 @@ class UserPolicy extends Policy
      */
     public function show(User $user)
     {
-        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
+        if ($this->auth->user()->isAdmin()
+            || ($this->auth->user()->hasAnyRole() && $user->equals($this->auth->user()))) {
             return true;
         }
 
-        if ($this->isUser() && $user->equals($this->auth->user())) {
-            return true;
-        }
-
-        if ($this->auth->user()->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT])) {
-            return $user->hasParent($this->auth->user());
-        }
-
-        return false;
+        return ($this->auth->user()->isChiefAdvertiser() || $this->auth->user()->isAgent())
+               && $user->hasParent($this->auth->user());
     }
 
     /**
@@ -44,15 +39,8 @@ class UserPolicy extends Policy
      */
     public function update(User $user)
     {
-        if ($this->isAdmin()) {
-            return true;
-        }
-
-        if ($this->hasAnyRole() && $user->equals($this->auth->user())) {
-            return true;
-        }
-
-        return false;
+        return $this->auth->user()->isAdmin()
+               || ($this->auth->user()->hasAnyRole() && $user->equals($this->auth->user()));
     }
 
     /**
@@ -62,15 +50,8 @@ class UserPolicy extends Policy
      */
     public function referrals(User $user)
     {
-        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
-            return true;
-        }
-
-        if ($this->isUser() && $user->equals($this->auth->user())) {
-            return true;
-        }
-
-        return false;
+        return $this->auth->user()->isAdmin()
+               || ($this->auth->user()->hasAnyRole() && $user->equals($this->auth->user()));
     }
 
     /**
@@ -78,7 +59,7 @@ class UserPolicy extends Policy
      */
     public function pictureStore()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 
     /**
@@ -87,5 +68,40 @@ class UserPolicy extends Policy
     public function pictureShow()
     {
         return true;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function setChildren(User $user)
+    {
+        return ($this->auth->user()->isAdmin()
+                || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user)))
+               && ($user->isAgent() || $user->isChiefAdvertiser());
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function setParents(User $user)
+    {
+        return ($this->auth->user()->isAdmin()
+                || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user)))
+               && ($user->isChiefAdvertiser() || $user->isAdvertiser());
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function updateRoles(User $user)
+    {
+        return $this->auth->user()->isAdmin()
+               || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user));
     }
 }

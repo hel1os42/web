@@ -23,14 +23,14 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
+        $this->authorize('index', $this->categoryRepository->model());
+
         $categories = $this->categoryRepository
             ->getWithNoParent();
 
         if ($categories === null) {
             throw new NotFoundHttpException();
         }
-
-        $this->authorize('index', $categories);
 
         return \response()->render('category.list', $categories->paginate());
     }
@@ -47,14 +47,14 @@ class CategoryController extends Controller
      */
     public function show(string $uuid)
     {
+        $this->authorize('show', $this->categoryRepository->model());
+
         $category = $this->categoryRepository
             ->with(['parent'])->find($uuid);
 
         if ($category === null) {
             throw new NotFoundHttpException();
         }
-
-        $this->authorize('show', $category);
 
         return response()->render('category.show', $category->toArray());
     }

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Attributes;
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\Role;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,11 @@ class UserController extends Controller
     {
         $this->authorize('index', $this->userRepository->model());
 
-        return \response()->render('user.index', $this->userRepository->with('roles')->paginate());
+        $users = $this->auth->user()->hasRoles([Role::ROLE_ADMIN])
+            ? $this->userRepository->with('roles')
+            : $this->auth->user()->children()->with('roles');
+
+        return \response()->render('user.index', $users->paginate());
     }
 
     /**
@@ -56,7 +61,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param ProfileUpdateRequest $request
+     * @param UserUpdateRequest $request
      * @param string|null          $uuid
      *
      * @return Response
@@ -65,7 +70,7 @@ class UserController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function update(ProfileUpdateRequest $request, string $uuid = null): Response
+    public function update(UserUpdateRequest $request, string $uuid = null): Response
     {
         $uuid = $this->checkUuid($uuid);
 
@@ -79,6 +84,18 @@ class UserController extends Controller
         }
 
         $user = $this->userRepository->update($userData, $uuid);
+
+        if($request->has('parent_ids')) {
+            $this->setParents($request->parent_ids, $user);
+        }
+
+        if($request->has('child_ids')) {
+            $this->setChildren($request->child_ids, $user);
+        }
+
+        if($request->has('role_ids')) {
+            $this->updateRoles($request->role_ids, $user);
+        }
 
         return \response()->render('profile', $user->toArray(), Response::HTTP_CREATED, route('profile'));
     }
@@ -120,5 +137,50 @@ class UserController extends Controller
         }
 
         return $uuid;
+    }
+
+    /**
+     * @param array $user_ids
+     * @param $user
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function setChildren(array $user_ids, $user)
+    {
+        $this->authorize('setChildren', $user);
+
+        $user->children()->detach();
+
+        $user->children()->attach($user_ids);
+    }
+
+    /**
+     * @param array $user_ids
+     * @param $user
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function setParents(array $user_ids, $user)
+    {
+        $this->authorize('setParents', $user);
+
+        $user->parents()->detach();
+
+        $user->parents()->attach($user_ids);
+    }
+
+    /**
+     * @param array $role_ids
+     * @param $user
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    protected function updateRoles(array $role_ids, $user)
+    {
+        $this->authorize('updateRoles', $user);
+
+        $user->roles()->detach();
+
+        $user->roles()->attach($role_ids);
     }
 }

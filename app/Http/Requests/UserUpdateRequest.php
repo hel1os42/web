@@ -8,10 +8,20 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class ProfileUpdateRequest
  * @package App\Http\Requests
  *
- * @property string code
+ * @property string name
+ * @property string email
+ * @property string phone
+ * @property string password
+ * @property string password_confirm
+ * @property float latitude
+ * @property float longitude
+ * @property array role_ids
+ * @property array parent_ids
+ * @property array child_ids
+ *
  *
  */
-class ProfileUpdateRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,6 +50,18 @@ class ProfileUpdateRequest extends FormRequest
             'password_confirm' => 'same:password',
             'latitude'         => 'numeric|between:-90,90',
             'longitude'        => 'numeric|between:-180,180',
+            'role_ids'         => 'array',
+            'role_ids.*'       => 'string|exists:roles,id',
+            'parent_ids'       => 'array',
+            'parent_ids.*'     => sprintf(
+                'string|regex:%s|exists:users,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
+            'child_ids'        => 'array',
+            'child_ids.*'      => sprintf(
+                'string|regex:%s|exists:users,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
         ];
     }
 } 
