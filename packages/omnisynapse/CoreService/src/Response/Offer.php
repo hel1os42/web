@@ -11,7 +11,6 @@ use Carbon\Carbon;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Offer
 {
@@ -50,18 +49,6 @@ class Offer
 
     /** @var float */
     public $reserved;
-
-    /** @var float|null */
-    public $points;
-
-    /** @var string|null */
-    public $created_at;
-
-    /** @var string|null */
-    public $updated_at;
-
-    /** @var string|null */
-    public $deleted_at;
 
     /**
      * @return string
@@ -157,37 +144,5 @@ class Offer
     public function getReserved(): float
     {
         return $this->reserved;
-    }
-
-    /**
-     * @return float|null
-     */
-    public function getPoints(): ?float
-    {
-        return $this->points;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getCreatedAt(): ?string
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getUpdatedAt(): ?string
-    {
-        return $this->updated_at;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getDeletedAt(): ?string
-    {
-        return $this->deleted_at;
     }
 }
