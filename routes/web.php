@@ -102,14 +102,14 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->resource('advert/offers', 'Advert\OfferController', [
         'names'  => [
-            'index'  => 'advert.offers.index',
-            'show'   => 'advert.offers.show',
-            'create' => 'advert.offers.create',
-            'store'  => 'advert.offers.store'
+            'index'   => 'advert.offers.index',
+            'show'    => 'advert.offers.show',
+            'create'  => 'advert.offers.create',
+            'store'   => 'advert.offers.store',
+            'destroy' => 'advert.offers.destroy',
         ],
         'except' => [
             'update',
-            'destroy'
         ]
     ]);
 

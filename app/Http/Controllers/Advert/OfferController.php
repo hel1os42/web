@@ -80,4 +80,25 @@ class OfferController extends Controller
 
         return \response()->render('advert.offer.show', $offer->toArray());
     }
+
+    /**
+     * Delete offer (for Advert) by uuid
+     *
+     * @param string $offerUuid
+     *
+     * @return Response
+     * @return HttpException
+     */
+    public function destroy(string $offerUuid): Response
+    {
+        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, $this->auth->user());
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+
+        $offer->delete();
+
+        return \response()->json([],204);
+    }
 }
