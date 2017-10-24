@@ -83,7 +83,6 @@ class Offer extends AbstractNauModel
         'latitude',
         'longitude',
         'radius',
-        'timeframes',
     ];
 
     /**
