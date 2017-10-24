@@ -14,7 +14,7 @@ class AlterUsersTableAddApproved extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_approved')->after('refferer_id')->default(false);
+            $table->boolean('is_approved')->default(false);
         });
     }
 
