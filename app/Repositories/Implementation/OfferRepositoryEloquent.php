@@ -130,7 +130,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     public function scopeAccount(Account $account): OfferRepository
     {
         return $this->scopeQuery(
-            function (Builder $builder) use ($account) {
+            function ($builder) use ($account) {
                 return $builder->accountOffers($account->getId());
             }
         );

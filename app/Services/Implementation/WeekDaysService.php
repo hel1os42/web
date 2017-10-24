@@ -75,10 +75,12 @@ class WeekDaysService implements WeekDaysServiceInterface
     {
         return $offers->filter(function ($offer) { return $offer instanceof Offer; })
                       ->map(function (Offer $offer) {
-                          return array_merge(
-                              $offer->toArray(),
-                              ['timeframes' => $this->convertTimeframesCollection($offer->timeframes)]
-                          );
+                          return $offer->relationLoaded('timeframes')
+                              ? array_merge(
+                                  $offer->toArray(),
+                                  ['timeframes' => $this->convertTimeframesCollection($offer->timeframes)]
+                              )
+                              : $offer;
                       })->toArray();
     }
 
