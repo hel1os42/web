@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\Advert;
 
+use App\Helpers\Constants;
+use App\Services\OfferReservation;
+use App\Services\WeekDaysService;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -12,14 +15,14 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string description
  * @property float reward
  * @property \Carbon\Carbon start_date
- * @property \Carbon\Carbon start_time
  * @property \Carbon\Carbon finish_date
- * @property \Carbon\Carbon finish_time
  * @property string category_id
  * @property int max_count
  * @property int max_for_user
  * @property int max_per_day
- * @property int max_for_user_per_day
+ * @property int|null max_for_user_per_day
+ * @property int|null max_for_user_per_week
+ * @property int|null max_for_user_per_month
  * @property int user_level_min
  * @property string latitude
  * @property string longitude
@@ -45,30 +48,42 @@ class OfferRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(WeekDaysService $weekDaysService, OfferReservation $offerReservation)
     {
         return [
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'string',
             'reward'               => 'required|numeric|min:1',
-            'start_date'           => 'required|date|date_format:Y-m-d H:i:s.uO',
-            'finish_date'          => 'date|date_format:Y-m-d H:i:s.uO',
-            'start_time'           => 'required|date_format:H:i:s.uO',
-            'finish_time'          => 'date_format:H:i:s.uO',
+            'start_date'           => 'required|date|date_format:' . Constants::DATE_FORMAT,
+            'finish_date'          => 'date|date_format:' . Constants::DATE_FORMAT,
             'category_id'          => sprintf(
                 'required|string|regex:%s|exists:categories,id',
-                \App\Helpers\Constants::UUID_REGEX
+                Constants::UUID_REGEX
             ),
             'max_count'            => 'integer|min:1',
             'max_for_user'         => 'integer|min:1',
             'max_per_day'          => 'integer|min:1',
             'max_for_user_per_day' => 'integer|min:1',
-            'user_level_min'       => 'integer|min:1',
+            'max_for_user_per_week'  => 'integer|min:1',
+            'max_for_user_per_month' => 'integer|min:1',
+            'user_level_min'       => 'required|integer|min:1',
             'latitude'             => 'numeric|between:-90,90',
             'longitude'            => 'numeric|between:-180,180',
             'radius'               => 'integer',
             'country'              => 'string',
-            'city'                 => 'string'
+            'city'                 => 'string',
+            'reserved'             => sprintf(
+                'required|numeric|min:%s',
+                $offerReservation->getMinReserved($this->get('reward'))
+            ),
+            'timeframes'           => 'required|array',
+            'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.to'      => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.days'    => 'required|array',
+            'timeframes.*.days.*'  => sprintf(
+                'string|in:%s',
+                implode(',', $weekDaysService->fullList())
+            ),
         ];
     }
 } 

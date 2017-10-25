@@ -27,8 +27,12 @@ use Illuminate\Support\Facades\Hash;
  * @property string     referrer_id
  * @property int        level
  * @property int        points
+ * @property bool       approved
  * @property Collection offers
  * @property Collection accounts
+ * @property Collection roles
+ * @property Collection parents
+ * @property Collection children
  * @property CoreUser   coreUser
  * @property User       referrer
  * @property int        offers_count
@@ -59,6 +63,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'updated_at'     => null,
             'referrer_id'    => null,
             'invite_code'    => null,
+            'approved'       => false,
         ];
 
         $this->casts = [
@@ -66,7 +71,8 @@ class User extends Authenticatable implements PhoneAuthenticable
             'email'     => 'string',
             'phone'     => 'string',
             'latitude'  => 'double',
-            'longitude' => 'double'
+            'longitude' => 'double',
+            'approved'  => 'boolean',
         ];
 
         $this->fillable = [
@@ -75,7 +81,8 @@ class User extends Authenticatable implements PhoneAuthenticable
             'password',
             'phone',
             'latitude',
-            'longitude'
+            'longitude',
+            'approved',
         ];
 
         $this->hidden = [
@@ -212,6 +219,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
      * Set user name
      *
      * @param null|string $name
@@ -343,7 +358,8 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @param string $currency
      *
-     * @return Account
+     * @return Account|null
+     * @throws TokenException
      */
     public function getAccountFor(string $currency): ?Account
     {
@@ -358,6 +374,15 @@ class User extends Authenticatable implements PhoneAuthenticable
             default:
                 throw new TokenException($currency);
         }
+    }
+
+    /**
+     * @return Account|null
+     * @throws TokenException
+     */
+    public function getAccountForNau(): ?Account
+    {
+        return $this->getAccountFor(Currency::NAU);
     }
 
     /**
@@ -400,5 +425,30 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getActivationCodesCountAttribute(): int
     {
         return $this->activationCodes()->count();
+    }
+
+    /**
+     * @param array $roleNames
+     *
+     * @return bool
+     */
+    public function hasRoles(array $roleNames)
+    {
+        foreach ($this->roles as $userRole) {
+            if (in_array($userRole->name, $roleNames)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param User $parent
+     *
+     * @return mixed
+     */
+    public function hasParent(User $parent)
+    {
+        return $this->parents->contains($parent->getId());
     }
 }

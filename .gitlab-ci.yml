@@ -36,7 +36,7 @@ build:
 PHP_CodeSniffer:
   stage: test
   script:
-    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
+    - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/resources/assets,/storage/framework,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
   artifacts:
     when: always
     paths:
@@ -130,7 +130,7 @@ develop deploy:
   after_script:
     - ssh deploy@dev.toavalon.com -p 665 "docker logout $REPOSITORY"
   script:
-    - ssh deploy@dev.toavalon.com -p 665 'WEB_PATH=/opt/nau/web bash -s' < deploy.sh -- $TEST_TAG
+    - ssh deploy@dev.toavalon.com -p 665 'STACK=nau-dev bash -s' < deploy.sh -- $TEST_TAG
 
 pages:
   stage: deploy

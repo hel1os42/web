@@ -14,12 +14,13 @@ use Illuminate\Support\Collection;
  * Class Category
  * @package App\Models
  *
- * @property string   id
- * @property string   name
- * @property string   parent_id
- * @property Carbon   created_at
- * @property Carbon   updated_at
- * @property Category parent
+ * @property string      id
+ * @property string      name
+ * @property string      parent_id
+ * @property Carbon      created_at
+ * @property Carbon      updated_at
+ * @property Category    parent
+ * @property RetailTypes retailTypes
  *
  * @method static Category[]|Collection|Builder withParent(Category $parent)
  * @method static Category[]|Collection|Builder withNoParent()
@@ -27,10 +28,13 @@ use Illuminate\Support\Collection;
 class Category extends Model
 {
     use Uuids;
+
     /**
      * Category constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -54,6 +58,7 @@ class Category extends Model
 
         $this->appends = [
             'children_count',
+            'retail_types_count',
         ];
 
         parent::__construct($attributes);
@@ -99,6 +104,14 @@ class Category extends Model
         return $this->children()->count();
     }
 
+    /**
+     * @return int
+     */
+    public function getRetailTypesCountAttribute(): int
+    {
+        return $this->retailTypes()->count();
+    }
+
     public function scopeWithParent(Builder $builder, Category $parent)
     {
         return $builder->where('parent_id', $parent->getId());
@@ -107,5 +120,13 @@ class Category extends Model
     public function scopeWithNoParent(Builder $builder)
     {
         return $builder->whereNull('parent_id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function retailTypes(): HasMany
+    {
+        return $this->hasMany(RetailTypes::class, 'category_id', 'id');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\EmailRequest;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
@@ -13,17 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
  * Class ForgotPasswordController
  * @package App\Http\Controllers\Auth
  */
-class ForgotPasswordController extends Controller
+class ForgotPasswordController extends AuthController
 {
     use SendsPasswordResetEmails;
-
-    /**
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
 
     /**
      * @param  string $response

@@ -40,6 +40,9 @@ class Handler extends ExceptionHandler
         if ($exception instanceof JWTException) {
             return response()->json(trans($exception->getMessage()), Response::HTTP_UNAUTHORIZED);
         }
+        if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return \response()->error(Response::HTTP_NOT_FOUND);
+        }
 
         return parent::render($request, $exception);
     }

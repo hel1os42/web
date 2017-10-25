@@ -14,23 +14,39 @@ class LimitsTest extends TestCase
     {
         $faker = Faker::create();
 
-        $offers   = $faker->randomDigitNotNull;
-        $perDay   = $faker->randomDigitNotNull;
-        $perUser  = $faker->randomDigitNotNull;
-        $minLevel = $faker->randomDigitNotNull;
+        $maxCount        = $faker->randomDigitNotNull;
+        $perDay          = $faker->randomDigitNotNull;
+        $perUser         = $faker->randomDigitNotNull;
+        $perUserPerDay   = $faker->randomDigitNotNull;
+        $perUserPerWeek  = $faker->randomDigitNotNull;
+        $perUserPerMonth = $faker->randomDigitNotNull;
+        $minLevel        = $faker->randomDigitNotNull;
 
-        $limits = new Limits($offers, $perDay, $perUser, $minLevel);
+        $limits = (new Limits)
+            ->setMaxCount($maxCount)
+            ->setPerDay($perDay)
+            ->setPerUser($perUser)
+            ->setPerUserPerDay($perUserPerDay)
+            ->setPerUserPerWeek($perUserPerWeek)
+            ->setPerUserPerMonth($perUserPerMonth)
+            ->setMinLevel($minLevel);
 
-        $this->assertEquals($offers, $limits->getOffers(), 'offers');
+        $this->assertEquals($maxCount, $limits->getMaxCount(), 'maxCount');
         $this->assertEquals($perDay, $limits->getPerDay(), 'perDay');
         $this->assertEquals($perUser, $limits->getPerUser(), 'perUser');
+        $this->assertEquals($perUserPerDay, $limits->getPerUserPerDay(), 'perUserPerDay');
+        $this->assertEquals($perUserPerWeek, $limits->getPerUserPerWeek(), 'perUserPerWeek');
+        $this->assertEquals($perUserPerMonth, $limits->getPerUserPerMonth(), 'perUserPerMonth');
         $this->assertEquals($minLevel, $limits->getMinLevel(), 'minLevel');
 
         $expected = [
-            'offers'    => $offers,
-            'per_day'   => $perDay,
-            'per_user'  => $perUser,
-            'min_level' => $minLevel,
+            'offers'             => $maxCount,
+            'per_day'            => $perDay,
+            'per_user'           => $perUser,
+            'per_user_per_day'   => $perUserPerDay,
+            'per_user_per_week'  => $perUserPerWeek,
+            'per_user_per_month' => $perUserPerMonth,
+            'min_level'          => $minLevel,
         ];
 
         $this->assertEquals($expected, $limits->jsonSerialize(), 'Expected array is not equals with LIMITS array');

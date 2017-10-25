@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\OfferRequest;
 use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
+use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -14,11 +15,16 @@ class OfferController extends Controller
 {
     private $offerRepository;
     private $auth;
+    private $weekDaysService;
 
-    public function __construct(OfferRepository $offerRepository, AuthManager $authManager)
-    {
+    public function __construct(
+        OfferRepository $offerRepository,
+        AuthManager $authManager,
+        WeekDaysService $weekDaysService
+    ) {
         $this->offerRepository = $offerRepository;
         $this->auth            = $authManager->guard();
+        $this->weekDaysService = $weekDaysService;
     }
 
     /**
@@ -27,15 +33,22 @@ class OfferController extends Controller
      * @param OfferRequest $request
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function index(OfferRequest $request): Response
     {
-        $offers = $this->offerRepository
+        $this->authorize('userIndex', Offer::class);
+
+        $offers       = $this->offerRepository
             ->getActiveByCategoriesAndPosition($request->category_ids,
                 $request->latitude, $request->longitude, $request->radius);
+        $paginator    = $offers->select(Offer::$publicAttributes)->paginate();
+        $data         = $paginator->toArray();
+        $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 
-        return response()->render('user.offer.index', $offers->select(Offer::$publicAttributes)->paginate());
+        return response()->render('user.offer.index', $data);
     }
 
     /**
@@ -44,18 +57,22 @@ class OfferController extends Controller
      * @param string $offerUuid
      *
      * @return Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
     public function show(string $offerUuid): Response
     {
-        //check is this offer have active status
+        $this->authorize('userShow', Offer::class);
+
         $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
 
         if ($offer->isOwner($this->auth->user())) {
             $offer->setVisible(Offer::$publicAttributes);
         }
-
-        return \response()->render('user.offer.show', $offer->toArray());
+        $data = $offer->toArray();
+        if (array_key_exists('timeframes', $data)) {
+            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
+        }
+        return \response()->render('user.offer.show', $data);
     }
 }

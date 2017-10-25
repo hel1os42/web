@@ -18,12 +18,15 @@ class Offer implements \JsonSerializable
     const TIME_FORMAT = 'H:i:sO';
 
     /** @var string */
+    public $offerId;
+
+    /** @var string */
     public $ownerId;
 
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|null */
     public $description;
 
     /** @var string */
@@ -41,19 +44,21 @@ class Offer implements \JsonSerializable
     /** @var Carbon */
     public $startDate;
 
-    /** @var Carbon */
+    /** @var Carbon|null */
     public $endDate;
 
-    /** @var Carbon */
-    public $startTime;
+    /** @var string */
+    public $status;
 
-    /** @var Carbon */
-    public $endTime;
+    /** @var  @var float */
+    public $reserved;
 
     /**
      * Offer constructor.
      *
      * @param \App\Models\NauModels\Offer $offer
+     *
+     * @throws Exception
      */
     public function __construct(\App\Models\NauModels\Offer $offer)
     {
@@ -66,14 +71,22 @@ class Offer implements \JsonSerializable
             $point = new Point($lat, $lon);
         }
         $geo     = new Geo($point, $offer->getRadius(), $offer->getCity(), $offer->getCountry());
-        $limits  = new Limits($offer->getMaxCount(), $offer->getMaxPerDay(), $offer->getMaxForUser(), $offer->getUserLevelMin());
+        $limits  = (new Limits)
+            ->setMaxCount($offer->getMaxCount())
+            ->setPerDay($offer->getMaxPerDay())
+            ->setPerUser($offer->getMaxForUser())
+            ->setPerUserPerDay($offer->getMaxForUserPerDay())
+            ->setPerUserPerWeek($offer->getMaxForUserPerWeek())
+            ->setPerUserPerMonth($offer->getMaxForUserPerMonth())
+            ->setMinLevel($offer->getUserLevelMin());
         $account = $offer->getAccount();
 
         if (null === $account) {
             throw new Exception('Offer do not have relation with account.');
         }
 
-        $this->setOwnerId($account->getOwnerId())
+        $this->setId($offer->getId())
+            ->setOwnerId($account->getOwnerId())
             ->setName($offer->getLabel())
             ->setDescription($offer->getDescription())
             ->setCategoryId($offer->getCategoryId())
@@ -82,8 +95,8 @@ class Offer implements \JsonSerializable
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
             ->setEndDate($offer->getFinishDate())
-            ->setStartTime($offer->getStartTime())
-            ->setEndTime($offer->getFinishTime());
+            ->setStatus($offer->getStatus())
+            ->setReserved($offer->getReserved());
     }
 
     /**
@@ -92,6 +105,7 @@ class Offer implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
+            'id'                => $this->offerId,
             'owner_id'          => $this->ownerId,
             'name'              => $this->name,
             'description'       => $this->description,
@@ -100,10 +114,20 @@ class Offer implements \JsonSerializable
             'limits'            => $this->limits->jsonSerialize(),
             'reward'            => $this->reward,
             'start_date'        => $this->startDate->format(self::DATE_FORMAT),
-            'end_date'          => $this->endDate->format(self::DATE_FORMAT),
-            'start_time'        => $this->startTime->format(self::TIME_FORMAT),
-            'end_time'          => $this->endTime->format(self::TIME_FORMAT),
+            'end_date'          => null === $this->endDate ? null : $this->endDate->format(self::DATE_FORMAT),
+            'status'            => $this->status,
+            'reserved'          => $this->reserved,
         ];
+    }
+
+    /**
+     * @param string $offerId
+     * @return Offer
+     */
+    public function setId(string $offerId): Offer
+    {
+        $this->offerId = $offerId;
+        return $this;
     }
 
     /**
@@ -127,10 +151,11 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param string $description
+     * @param null|string $description
+     *
      * @return Offer
      */
-    public function setDescription(string $description): Offer
+    public function setDescription(?string $description): Offer
     {
         $this->description = $description;
         return $this;
@@ -187,32 +212,48 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param Carbon $endDate
+     * @param Carbon|null $endDate
+     *
      * @return Offer
      */
-    public function setEndDate(Carbon $endDate): Offer
+    public function setEndDate(?Carbon $endDate): Offer
     {
         $this->endDate = $endDate;
         return $this;
     }
 
     /**
-     * @param Carbon $startTime
+     * @return null|string
+     */
+    public function getEndDate(): ?string
+    {
+        return $this->endDate === null ? null : $this->endDate->format(self::DATE_FORMAT);
+    }
+
+    /**
+     * @param string $status
+     *
      * @return Offer
      */
-    public function setStartTime(Carbon $startTime): Offer
+    public function setStatus(string $status): Offer
     {
-        $this->startTime = $startTime;
+        if ($status !== \App\Models\NauModels\Offer::STATUS_ACTIVE) {
+            $status = \App\Models\NauModels\Offer::STATUS_DEACTIVE;
+        }
+
+        $this->status = $status;
+
         return $this;
     }
 
     /**
-     * @param Carbon $endTime
+     * @param float $reserved
+     *
      * @return Offer
      */
-    public function setEndTime(Carbon $endTime): Offer
+    public function setReserved(float $reserved): Offer
     {
-        $this->endTime = $endTime;
+        $this->reserved = $reserved;
         return $this;
     }
 }

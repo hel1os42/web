@@ -29,32 +29,33 @@ class OfferForUpdateTest extends TestCase
         $dates = [
             'startDate' => '2017-01-01T00:00:00+0300',
             'endDate' => '2017-01-01T23:59:59+0300',
-            'startTime' => '12:00:00+0300',
-            'endTime' => '17:59:59+0300',
         ];
 
         /*
          * Prepare Offer mock and params
          */
-        $offer        = $this->createMock(Offer::class);
-        $offerId      = $faker->uuid;
-        $name         = $faker->name;
-        $description  = $faker->text();
-        $categoryId   = $faker->uuid;
-        $radius       = $faker->randomDigitNotNull;
-        $city         = $faker->city;
-        $country      = $faker->country;
-        $latitude     = $faker->latitude;
-        $longitude    = $faker->longitude;
-        $maxCount     = $faker->randomDigitNotNull;
-        $maxPerDay    = $faker->randomDigitNotNull;
-        $maxPerUser   = $faker->randomDigitNotNull;
-        $userMinLevel = $faker->randomDigitNotNull;
-        $reward       = $faker->randomFloat();
-        $startDate    = Carbon::parse($dates['startDate']);
-        $endDate      = Carbon::parse($dates['endDate']);
-        $startTime    = Carbon::parse($dates['startTime']);
-        $endTime      = Carbon::parse($dates['endTime']);
+        $offer              = $this->createMock(Offer::class);
+        $offerId            = $faker->uuid;
+        $name               = $faker->name;
+        $description        = $faker->text();
+        $categoryId         = $faker->uuid;
+        $radius             = $faker->randomDigitNotNull;
+        $city               = $faker->city;
+        $country            = $faker->country;
+        $latitude           = $faker->latitude;
+        $longitude          = $faker->longitude;
+        $maxCount           = $faker->randomDigitNotNull;
+        $maxPerDay          = $faker->randomDigitNotNull;
+        $maxPerUser         = $faker->randomDigitNotNull;
+        $maxPerUserPerDay   = $faker->randomDigitNotNull;
+        $maxPerUserPerWeek  = $faker->randomDigitNotNull;
+        $maxPerUserPerMonth = $faker->randomDigitNotNull;
+        $userMinLevel       = $faker->randomDigitNotNull;
+        $reward             = $faker->randomFloat();
+        $startDate          = Carbon::parse($dates['startDate']);
+        $endDate            = Carbon::parse($dates['endDate']);
+        $status             = 'active';
+        $reserved           = $faker->randomFloat();
 
         /*
          * Set Offer methods
@@ -71,19 +72,23 @@ class OfferForUpdateTest extends TestCase
         $offer->method('getMaxCount')->willReturn($maxCount);
         $offer->method('getMaxPerDay')->willReturn($maxPerDay);
         $offer->method('getMaxForUser')->willReturn($maxPerUser);
+        $offer->method('getMaxForUserPerDay')->willReturn($maxPerUserPerDay);
+        $offer->method('getMaxForUserPerWeek')->willReturn($maxPerUserPerWeek);
+        $offer->method('getMaxForUserPerMonth')->willReturn($maxPerUserPerMonth);
         $offer->method('getUserLevelMin')->willReturn($userMinLevel);
         $offer->method('getReward')->willReturn($reward);
         $offer->method('getStartDate')->willReturn($startDate);
         $offer->method('getFinishDate')->willReturn($endDate);
-        $offer->method('getStartTime')->willReturn($startTime);
-        $offer->method('getFinishTime')->willReturn($endTime);
         $offer->method('getAccount')->willReturn($account);
+        $offer->method('getStatus')->willReturn($status);
+        $offer->method('getReserved')->willReturn($reserved);
 
         /*
          * Create Offer request and prepare jsonSerialize for comparing
          */
         $offerForUpdateRequest = new OfferForUpdate($offer);
         $expected              = [
+            'id'                => $offerId,
             'owner_id'          => $account->getOwnerId(),
             'name'              => $name,
             'description'       => $description,
@@ -93,8 +98,8 @@ class OfferForUpdateTest extends TestCase
             'reward'            => $reward,
             'start_date'        => $dates['startDate'],
             'end_date'          => $dates['endDate'],
-            'start_time'        => $dates['startTime'],
-            'end_time'          => $dates['endTime'],
+            'status'            => $status,
+            'reserved'          => $reserved,
         ];
 
         /*

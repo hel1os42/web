@@ -6,39 +6,42 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Limits
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property int offers
- * @property int perDay
- * @property int perUser
- * @property int minLevel
+ * @property int|null maxCount
+ * @property int|null perDay
+ * @property int|null perUser
+ * @property int      minLevel
+ * @property int|null perUserPerDay
+ * @property int|null perUserPerWeek
+ * @property int|null perUserPerMonth
  */
 class Limits implements \JsonSerializable
 {
-    /** @var int */
-    private $offers;
+    /** @var int|null */
+    private $maxCount;
 
-    /** @var int */
+    /** @var int|null */
     private $perDay;
 
-    /** @var int */
+    /** @var int|null */
     private $perUser;
+
+    /**
+     * @var int|null
+     */
+    private $perUserPerDay;
+
+    /**
+     * @var int|null
+     */
+    private $perUserPerWeek;
+
+    /**
+     * @var int|null
+     */
+    private $perUserPerMonth;
 
     /** @var int */
     private $minLevel;
-
-    /**
-     * Limits constructor.
-     * @param int $offers
-     * @param int $perDay
-     * @param int $perUser
-     * @param int $minLevel
-     */
-    public function __construct(int $offers, int $perDay, int $perUser, int $minLevel)
-    {
-        $this->setOffers($offers)
-            ->setPerDay($perDay)
-            ->setPerUser($perUser)
-            ->setMinLevel($minLevel);
-    }
 
     /**
      * @return array
@@ -46,35 +49,62 @@ class Limits implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'offers'    => $this->getOffers(),
-            'per_day'   => $this->getPerDay(),
-            'per_user'  => $this->getPerUser(),
-            'min_level' => $this->getMinLevel(),
+            'offers'             => $this->getMaxCount(),
+            'per_day'            => $this->getPerDay(),
+            'per_user'           => $this->getPerUser(),
+            'per_user_per_day'   => $this->getPerUserPerDay(),
+            'per_user_per_week'  => $this->getPerUserPerWeek(),
+            'per_user_per_month' => $this->getPerUserPerMonth(),
+            'min_level'          => $this->getMinLevel(),
         ];
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getOffers(): int
+    public function getMaxCount(): ?int
     {
-        return $this->offers;
+        return $this->maxCount;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerDay(): int
+    public function getPerDay(): ?int
     {
         return $this->perDay;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerUser(): int
+    public function getPerUser(): ?int
     {
         return $this->perUser;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerDay(): ?int
+    {
+        return $this->perUserPerDay;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerWeek(): ?int
+    {
+        return $this->perUserPerWeek;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPerUserPerMonth(): ?int
+    {
+        return $this->perUserPerMonth;
     }
 
     /**
@@ -86,32 +116,71 @@ class Limits implements \JsonSerializable
     }
 
     /**
-     * @param int $offers
+     * @param int|null $offers
+     *
      * @return Limits
      */
-    public function setOffers(int $offers): Limits
+    public function setMaxCount(?int $maxCount): Limits
     {
-        $this->offers = $offers;
+        $this->maxCount = $maxCount;
         return $this;
     }
 
     /**
-     * @param int $perDay
+     * @param int|null $perDay
+     *
      * @return Limits
      */
-    public function setPerDay(int $perDay): Limits
+    public function setPerDay(?int $perDay): Limits
     {
         $this->perDay = $perDay;
         return $this;
     }
 
     /**
-     * @param int $perUser
+     * @param int|null $perUser
+     *
      * @return Limits
      */
-    public function setPerUser(int $perUser): Limits
+    public function setPerUser(?int $perUser): Limits
     {
         $this->perUser = $perUser;
+        return $this;
+    }
+
+    /**
+     * @param int|null $perUserPerDay
+     *
+     * @return Limits
+     */
+    public function setPerUserPerDay(?int $perUserPerDay): Limits
+    {
+        $this->perUserPerDay = $perUserPerDay;
+
+        return $this;
+    }
+
+    /**
+     * @param int|null $perUserPerWeek
+     *
+     * @return Limits
+     */
+    public function setPerUserPerWeek(?int $perUserPerWeek): Limits
+    {
+        $this->perUserPerWeek = $perUserPerWeek;
+
+        return $this;
+    }
+
+    /**
+     * @param $perUserPerMonth
+     *
+     * @return Limits
+     */
+    public function setPerUserPerMonth($perUserPerMonth): Limits
+    {
+        $this->perUserPerMonth = $perUserPerMonth;
+
         return $this;
     }
 

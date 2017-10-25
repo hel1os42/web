@@ -8,6 +8,7 @@ use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
 use App\Models\Traits\HasNau;
 use App\Models\User;
+use App\Traits\Uuids;
 use Carbon\Carbon;
 
 /**
@@ -22,8 +23,6 @@ use Carbon\Carbon;
  * @property string      status
  * @property Carbon      start_date
  * @property null|Carbon finish_date
- * @property Carbon      start_time
- * @property null|Carbon finish_time
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
@@ -31,7 +30,9 @@ use Carbon\Carbon;
  * @property null|int    max_for_user
  * @property null|int    max_per_day
  * @property null|int    max_for_user_per_day
- * @property null|int    user_level_min
+ * @property null|int    max_for_user_per_week
+ * @property null|int    max_for_user_per_month
+ * @property int         user_level_min
  * @property null|float  latitude
  * @property null|float  longitude
  * @property null|int    radius
@@ -40,7 +41,7 @@ use Carbon\Carbon;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -50,14 +51,13 @@ class Offer extends AbstractNauModel
         $this->table = "offer";
 
         $this->primaryKey = 'id';
+        $this->initUuid();
 
         $this->incrementing = false;
 
         $this->dates = [
             'dt_start',
             'dt_finish',
-            'tm_start',
-            'tm_finish',
         ];
 
         $this->initAttributes();
@@ -79,14 +79,13 @@ class Offer extends AbstractNauModel
         'description',
         'start_date',
         'finish_date',
-        'start_time',
-        'finish_time',
         'country',
         'city',
         'category_id',
         'latitude',
         'longitude',
-        'radius'
+        'radius',
+        'reserved',
     ];
 
     /**
@@ -141,10 +140,36 @@ class Offer extends AbstractNauModel
         $this->attributes['reward'] = $this->convertFloatToInt((float)$value);
     }
 
+    /**
+     * @param int $value
+     *
+     * @return float
+     */
+    public function getReservedAttribute(?int $value): float
+    {
+        return $this->convertIntToFloat((int)$value);
+    }
+
+    /**
+     * @param float $value
+     *
+     * @return void
+     */
+    public function setReservedAttribute(?float $value): void
+    {
+        $this->attributes['reserved'] = $this->convertFloatToInt((float)$value);
+    }
+
     /** @return float */
     public function getReward(): ?float
     {
         return $this->reward;
+    }
+
+    /** @return float */
+    public function getReserved(): float
+    {
+        return $this->reserved;
     }
 
     /** @return string */
@@ -167,22 +192,6 @@ class Offer extends AbstractNauModel
         return $this->finish_date;
     }
 
-    /**
-     * @return Carbon
-     */
-    public function getStartTime(): ?Carbon
-    {
-        return $this->start_time;
-    }
-
-    /**
-     * @return Carbon|null
-     */
-    public function getFinishTime(): ?Carbon
-    {
-        return $this->finish_time;
-    }
-
     /** @return string */
     public function getCountry(): ?string
     {
@@ -201,34 +210,58 @@ class Offer extends AbstractNauModel
         return $this->category_id;
     }
 
-    /** @return int */
-    public function getMaxCount(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxCount(): ?int
     {
-        return (int)$this->max_count;
+        return $this->max_count;
     }
 
-    /** @return int */
-    public function getMaxForUser(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxForUser(): ?int
     {
-        return (int)$this->max_for_user;
+        return $this->max_for_user;
     }
 
-    /** @return int */
-    public function getMaxPerDay(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxPerDay(): ?int
     {
-        return (int)$this->max_per_day;
+        return $this->max_per_day;
     }
 
-    /** @return int */
-    public function getMaxForUserPerDay(): int
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerDay(): ?int
     {
-        return (int)$this->max_for_user_per_day;
+        return $this->max_for_user_per_day;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerWeek(): ?int
+    {
+        return $this->max_for_user_per_week;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxForUserPerMonth(): ?int
+    {
+        return $this->max_for_user_per_month;
     }
 
     /** @return int */
     public function getUserLevelMin(): int
     {
-        return (int)$this->user_level_min;
+        return $this->user_level_min;
     }
 
     /** @return float */
@@ -268,41 +301,6 @@ class Offer extends AbstractNauModel
     }
 
     /**
-     * @param string $value
-     */
-    public function setDtStartAttribute(string $value)
-    {
-        $this->attributes['dt_start'] = Carbon::parse($value);
-    }
-
-    /**
-     * @param null|string $value
-     */
-    public function setDtFinishAttribute(?string $value)
-    {
-        $this->attributes['dt_finish'] = null === $value ? null : Carbon::parse($value);
-    }
-
-    /**
-     * @param string $value
-     */
-    public function setTmStartAttribute(string $value)
-    {
-        $this->attributes['tm_start'] = Carbon::parse($value)->year(1970)->month(01)->day(01);
-    }
-
-    /**
-     * @param null|string $value
-     */
-    public function setTmFinishAttribute(?string $value)
-    {
-        $this->attributes['tm_finish'] =
-            null === $value
-                ? null
-                : Carbon::parse($value)->year(1970)->month(01)->day(01);
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
@@ -310,6 +308,18 @@ class Offer extends AbstractNauModel
     public function isOwner(User $user): bool
     {
         return $user->equals($this->getOwner());
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Offer
+     */
+    public function setStatus(string $status): Offer
+    {
+        $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -338,27 +348,31 @@ class Offer extends AbstractNauModel
 
     private function initAttributes(): void
     {
+        $defaultReward         = $this->convertFloatToInt(1);
+        $reservationMultiplier = (int)config('nau.reservation_multiplier');
+
         $this->attributes = [
-            'acc_id'               => null,
-            'name'                 => null,
-            'descr'                => null,
-            'reward'               => 10000,
-            'status'               => null,
-            'dt_start'             => null,
-            'dt_finish'            => null,
-            'tm_start'             => null,
-            'tm_finish'            => null,
-            'country'              => null,
-            'city'                 => null,
-            'categ'                => null,
-            'max_count'            => null,
-            'max_for_user'         => null,
-            'max_per_day'          => null,
-            'max_for_user_per_day' => null,
-            'min_level'            => null,
-            'lat'                  => null,
-            'lng'                  => null,
-            'radius'               => null
+            'acc_id'                 => null,
+            'name'                   => null,
+            'descr'                  => null,
+            'reward'                 => $defaultReward,
+            'status'                 => null,
+            'dt_start'               => null,
+            'dt_finish'              => null,
+            'country'                => null,
+            'city'                   => null,
+            'categ'                  => null,
+            'max_count'              => null,
+            'max_for_user'           => null,
+            'max_per_day'            => null,
+            'max_for_user_per_day'   => null,
+            'max_for_user_per_week'  => null,
+            'max_for_user_per_month' => null,
+            'min_level'              => 1,
+            'lat'                    => null,
+            'lng'                    => null,
+            'radius'                 => null,
+            'reserved'               => $defaultReward * $reservationMultiplier,
         ];
     }
 
@@ -371,8 +385,6 @@ class Offer extends AbstractNauModel
             'reward',
             'start_date',
             'finish_date',
-            'start_time',
-            'finish_time',
             'country',
             'city',
             'category_id',
@@ -380,10 +392,14 @@ class Offer extends AbstractNauModel
             'max_for_user',
             'max_per_day',
             'max_for_user_per_day',
+            'max_for_user_per_week',
+            'max_for_user_per_month',
             'user_level_min',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'status',
+            'reserved',
         ];
     }
 
@@ -395,8 +411,6 @@ class Offer extends AbstractNauModel
             'descr',
             'dt_start',
             'dt_finish',
-            'tm_start',
-            'tm_finish',
             'categ',
             'min_level',
             'lat',
@@ -412,8 +426,6 @@ class Offer extends AbstractNauModel
             'description',
             'start_date',
             'finish_date',
-            'start_time',
-            'finish_time',
             'category_id',
             'user_level_min',
             'latitude',
@@ -425,26 +437,28 @@ class Offer extends AbstractNauModel
     private function initCasts(): void
     {
         $this->casts = [
-            'id'                   => 'string',
-            'account_id'           => 'integer',
-            'label'                => 'string',
-            'description'          => 'string',
-            'status'               => 'string',
-            'start_date'           => 'datetime',
-            'finish_date'          => 'datetime',
-            'start_time'           => 'datetime',
-            'finish_time'          => 'datetime',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'category_id'          => 'string',
-            'max_count'            => 'integer',
-            'max_for_user'         => 'integer',
-            'max_per_day'          => 'integer',
-            'max_for_user_per_day' => 'integer',
-            'user_level_min'       => 'integer',
-            'latitude'             => 'double',
-            'longitude'            => 'double',
-            'radius'               => 'integer'
+            'id'                     => 'string',
+            'account_id'             => 'integer',
+            'label'                  => 'string',
+            'description'            => 'string',
+            'status'                 => 'string',
+            'start_date'             => 'datetime',
+            'finish_date'            => 'datetime',
+            'country'                => 'string',
+            'city'                   => 'string',
+            'category_id'            => 'string',
+            'max_count'              => 'integer',
+            'max_for_user'           => 'integer',
+            'max_per_day'            => 'integer',
+            'max_for_user_per_day'   => 'integer',
+            'max_for_user_per_week'  => 'integer',
+            'max_for_user_per_month' => 'integer',
+            'user_level_min'         => 'integer',
+            'latitude'               => 'double',
+            'longitude'              => 'double',
+            'radius'                 => 'integer',
+            'reward'                 => 'integer',
+            'reserved'               => 'integer',
         ];
     }
 
@@ -456,8 +470,6 @@ class Offer extends AbstractNauModel
             'description'    => 'descr',
             'start_date'     => 'dt_start',
             'finish_date'    => 'dt_finish',
-            'start_time'     => 'tm_start',
-            'finish_time'    => 'tm_finish',
             'category_id'    => 'categ',
             'user_level_min' => 'min_level',
             'latitude'       => 'lat',

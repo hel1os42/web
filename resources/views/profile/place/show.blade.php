@@ -3,22 +3,24 @@
 @section('title', 'NAU show Place')
 
 @section('content')
-    <img src="{{route('place.picture.show', [$id, 'picture'])}}"><br>
-    <img src="{{route('place.picture.show', [$id, 'cover'])}}"><br>
-    <h1>{{$name}}</h1>
-    <h4>{{$description}}</h4>
-    <h4>{{$address}}</h4>
-    <p>{{$about}}</p>
-    <br>Set logo:<br>
-    <form method="POST" action="{{route('place.picture.store')}}" enctype="multipart/form-data">
-        {{ csrf_field() }}
-        <input type="file" name="picture">
-        <button type="submit">Upload</button>
-    </form>
-    <br>Set cover:<br>
-    <form method="POST" action="{{route('place.cover.store')}}" enctype="multipart/form-data">
-        {{ csrf_field() }}
-        <input type="file" name="picture">
-        <button type="submit">Upload</button>
-    </form>
+<div class="col-md-10 col-md-offset-1">
+    <div class="card">
+        <div class="content">
+                <div class="img-container text-center">
+                    <img src="{{route('place.picture.show', [$id, 'cover'])}}"><br>
+                </div>
+                <div class="img-container text-center">
+                    <img src="{{route('place.picture.show', [$id, 'picture'])}}"><br>
+                </div>
+            <h1>{{$name}}</h1>
+            <h4>{{$description}}</h4>
+            <h4>{{$address}}</h4>
+            <p>{{$about}}</p>
+            <a href="{{route('profile.place.offers')}}"></a>
+
+            @include('partials/place-picture-filepicker')
+            @include('partials/place-cover-filepicker')
+        </div>
+    </div>
+</div>
 @stop

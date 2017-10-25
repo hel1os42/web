@@ -77,9 +77,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->put('', 'ProfileController@update');
         $router->patch('', 'ProfileController@update')->name('profile.update');
         $router->get('referrals', 'ProfileController@referrals')->name('referrals');
-        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
         $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
-
+        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
         $router->get('place', 'PlaceController@showOwnerPlace')
             ->name('profile.place.show');
         $router->put('place', 'PlaceController@update');
@@ -96,25 +95,23 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->put('', 'ProfileController@update');
         $router->patch('', 'ProfileController@update');
         $router->get('referrals', 'ProfileController@referrals');
-        $router->get('picture.jpg', 'Profile\PictureController@show')->name('users.picture.show');
         $router->post('picture', 'Profile\PictureController@store');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
-        'names'  => [
-            'index'   => 'advert.offers.index',
-            'show'    => 'advert.offers.show',
-            'create'  => 'advert.offers.create',
-            'store'   => 'advert.offers.store',
-            'destroy' => 'advert.offers.destroy',
+        'names'      => [
+            'index'  => 'advert.offers.index',
+            'show'   => 'advert.offers.show',
+            'create' => 'advert.offers.create',
+            'store'  => 'advert.offers.store'
         ],
-        'except' => [
+        'except'     => [
             'update',
+            'destroy'
         ]
     ]);
 
     $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
-        $router->get('picture.jpg', 'Offer\PictureController@show')->name('offer.picture.show');
         $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
         $router->get('activation_code', 'RedemptionController@getActivationCode')->name('redemption.code');
         $router->group(['prefix' => 'redemption'], function () use ($router) {
@@ -130,6 +127,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'create',
             'store',
             'update',
+            'destroy'
         ]
     ]);
 
@@ -163,7 +161,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
         ->where('uuid', '[a-z0-9-]+')
         ->name('places.show');
-    $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->name('place.picture.show');
+
 
     $router->resource('places', 'PlaceController', [
         'except' => [
@@ -177,6 +175,23 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
     $router->get('activation_codes/{code}', 'ActivationCodeController@show')
            ->name('activation_codes.show');
+
+    /**
+     * Admin pages
+     */
+    $router->get('admin/users', 'AdminController@usersList')->name('admin.users.index');
 });
 
 //---- Authorized users
+
+/**
+ * pictures
+ */
+$router->get('users/{uuid}/picture.jpg', 'Profile\PictureController@show')->where('uuid',
+    '[a-z0-9-]+')->name('users.picture.show');
+$router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
+    '[a-z0-9-]+')->name('offer.picture.show');
+$router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
+    'uuid',
+    '[a-z0-9-]+'
+])->name('place.picture.show');
