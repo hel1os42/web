@@ -34,7 +34,17 @@ class MappableRequestCriteriaEloquent extends RequestCriteria implements Mappabl
      */
     protected function parserSearchData($search)
     {
-        $searchData = parent::parserSearchData($search);
+        $searchData = [];
+
+        if (stripos($search, ':')) {
+            $fields = explode(';', $search);
+            foreach ($fields as $row) {
+                $delimiterPosition  = stripos($row, ':');
+                $field              = substr($row, 0, $delimiterPosition);
+                $value              = substr($row, ++$delimiterPosition, strlen($row));
+                $searchData[$field] = $value;
+            }
+        }
 
         return count($searchData) > 0 ? $this->mapFields($searchData) : $searchData;
     }

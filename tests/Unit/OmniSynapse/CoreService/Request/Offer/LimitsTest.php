@@ -14,7 +14,7 @@ class LimitsTest extends TestCase
     {
         $faker = Faker::create();
 
-        $offers          = $faker->randomDigitNotNull;
+        $maxCount        = $faker->randomDigitNotNull;
         $perDay          = $faker->randomDigitNotNull;
         $perUser         = $faker->randomDigitNotNull;
         $perUserPerDay   = $faker->randomDigitNotNull;
@@ -23,7 +23,7 @@ class LimitsTest extends TestCase
         $minLevel        = $faker->randomDigitNotNull;
 
         $limits = (new Limits)
-            ->setOffers($offers)
+            ->setMaxCount($maxCount)
             ->setPerDay($perDay)
             ->setPerUser($perUser)
             ->setPerUserPerDay($perUserPerDay)
@@ -31,7 +31,7 @@ class LimitsTest extends TestCase
             ->setPerUserPerMonth($perUserPerMonth)
             ->setMinLevel($minLevel);
 
-        $this->assertEquals($offers, $limits->getOffers(), 'offers');
+        $this->assertEquals($maxCount, $limits->getMaxCount(), 'maxCount');
         $this->assertEquals($perDay, $limits->getPerDay(), 'perDay');
         $this->assertEquals($perUser, $limits->getPerUser(), 'perUser');
         $this->assertEquals($perUserPerDay, $limits->getPerUserPerDay(), 'perUserPerDay');
@@ -40,7 +40,7 @@ class LimitsTest extends TestCase
         $this->assertEquals($minLevel, $limits->getMinLevel(), 'minLevel');
 
         $expected = [
-            'offers'             => $offers,
+            'offers'             => $maxCount,
             'per_day'            => $perDay,
             'per_user'           => $perUser,
             'per_user_per_day'   => $perUserPerDay,

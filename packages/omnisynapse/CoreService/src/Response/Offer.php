@@ -23,7 +23,7 @@ class Offer
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|null */
     public $description;
 
     /** @var string */
@@ -41,8 +41,14 @@ class Offer
     /** @var string */
     public $start_date;
 
-    /** @var string */
+    /** @var string|null */
     public $end_date;
+
+    /** @var string */
+    public $status;
+
+    /** @var float */
+    public $reserved;
 
     /**
      * @return string
@@ -69,9 +75,9 @@ class Offer
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -117,10 +123,26 @@ class Offer
     }
 
     /**
-     * @return Carbon
+     * @return Carbon|null
      */
-    public function getEndDate(): Carbon
+    public function getEndDate(): ?Carbon
     {
         return Carbon::parse($this->end_date);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return float
+     */
+    public function getReserved(): float
+    {
+        return $this->reserved;
     }
 }
