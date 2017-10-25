@@ -39,6 +39,27 @@ class UserController extends Controller
     }
 
     /**
+     * @param string|null $uuid
+     *
+     * @return mixed
+     * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
+    public function edit(string $uuid = null)
+    {
+
+        $uuid = $this->getUuid($uuid);
+
+        $user = $this->userRepository->with('roles')->find($uuid);
+
+        $this->authorize('update', $user);
+
+        return \response()->render('user.edit', $user->toArray());
+    }
+
+    /**
      * User profile show
      *
      * @param string|null $uuid
@@ -51,7 +72,7 @@ class UserController extends Controller
      */
     public function show(string $uuid = null): Response
     {
-        $uuid = $this->checkUuid($uuid);
+        $uuid = $this->getUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
 
@@ -72,7 +93,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, string $uuid = null): Response
     {
-        $uuid = $this->checkUuid($uuid);
+        $uuid = $this->getUuid($uuid);
 
         $this->authorize('update', $this->userRepository->find($uuid));
 
@@ -111,7 +132,7 @@ class UserController extends Controller
      */
     public function referrals(string $uuid = null)
     {
-        $uuid = $this->checkUuid($uuid);
+        $uuid = $this->getUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
 
@@ -121,22 +142,14 @@ class UserController extends Controller
     }
 
     /**
-     * @param string $uuid
+     * @param null|string $uuid
      *
      * @return int|null|string
-     * @throws HttpException
      * @throws \InvalidArgumentException
      */
-    private function checkUuid(?string $uuid)
+    private function getUuid(?string $uuid)
     {
-        $currentId = $this->auth->guard()->id();
-        if (null === $uuid) {
-            $uuid = $currentId;
-        } elseif ($uuid !== $currentId) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
-        }
-
-        return $uuid;
+        return null === $uuid ? $this->auth->guard()->id() : $uuid;
     }
 
     /**

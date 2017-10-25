@@ -11,8 +11,6 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string name
  * @property string email
  * @property string phone
- * @property string password
- * @property string password_confirm
  * @property float latitude
  * @property float longitude
  * @property array role_ids
@@ -46,8 +44,6 @@ class UserUpdateRequest extends FormRequest
                 auth()->id()),
             'phone'            => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 auth()->id()),
-            'password'         => 'min:6|max:255',
-            'password_confirm' => 'same:password',
             'latitude'         => 'numeric|between:-90,90',
             'longitude'        => 'numeric|between:-180,180',
             'role_ids'         => 'array',
