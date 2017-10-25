@@ -12,7 +12,7 @@ class RedemptionPolicy extends Policy
      */
     public function getActivationCode()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 
     /**
@@ -20,7 +20,7 @@ class RedemptionPolicy extends Policy
      */
     public function createFromOffer()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -28,7 +28,7 @@ class RedemptionPolicy extends Policy
      */
     public function create()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 
     /**
@@ -36,7 +36,7 @@ class RedemptionPolicy extends Policy
      */
     public function store()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 
     /**
@@ -44,7 +44,7 @@ class RedemptionPolicy extends Policy
      */
     public function redemption()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 
     /**
@@ -62,6 +62,6 @@ class RedemptionPolicy extends Policy
      */
     public function showFromOffer()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 }

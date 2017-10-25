@@ -9,7 +9,7 @@ class CategoryPolicy extends Policy
      */
     public function index()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -17,6 +17,6 @@ class CategoryPolicy extends Policy
      */
     public function show()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 }

@@ -9,6 +9,6 @@ class ActivationCodePolicy extends Policy
      */
     public function show()
     {
-        return $this->isUser();
+        return $this->auth->user()->isUser();
     }
 }

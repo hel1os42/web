@@ -9,7 +9,7 @@ class PlacePolicy extends Policy
      */
     public function index()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -17,7 +17,7 @@ class PlacePolicy extends Policy
      */
     public function show()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -25,7 +25,7 @@ class PlacePolicy extends Policy
      */
     public function showOwnerPlace()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -33,7 +33,7 @@ class PlacePolicy extends Policy
      */
     public function showPlaceOffers()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -41,7 +41,7 @@ class PlacePolicy extends Policy
      */
     public function showOwnerPlaceOffers()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -49,7 +49,7 @@ class PlacePolicy extends Policy
      */
     public function create()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -57,7 +57,7 @@ class PlacePolicy extends Policy
      */
     public function store()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -65,6 +65,6 @@ class PlacePolicy extends Policy
      */
     public function update()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 }

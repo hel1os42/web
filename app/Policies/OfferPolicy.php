@@ -13,7 +13,7 @@ class OfferPolicy extends Policy
      */
     public function index()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -21,7 +21,7 @@ class OfferPolicy extends Policy
      */
     public function create()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -29,7 +29,7 @@ class OfferPolicy extends Policy
      */
     public function store()
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -40,11 +40,11 @@ class OfferPolicy extends Policy
      */
     public function show(User $user, Offer $offer)
     {
-        if ($user->hasRoles([Role::ROLE_ADMIN])) {
+        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
             return true;
         }
 
-        if ($this->isAdvertiser() && $offer->isOwner($user)) {
+        if ($this->auth->user()->isAdvertiser() && $offer->isOwner($user)) {
             return true;
         }
 
@@ -63,7 +63,7 @@ class OfferPolicy extends Policy
      */
     public function userIndex()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -71,7 +71,7 @@ class OfferPolicy extends Policy
      */
     public function userShow()
     {
-        return $this->hasAnyRole();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -79,9 +79,9 @@ class OfferPolicy extends Policy
      *
      * @return bool
      */
-    public function pictureStore(Offer $offer)
+    public function pictureStore(User $user, Offer $offer)
     {
-        return $this->isAdvertiser() && $offer->isOwner($this->auth->user());
+        return $this->auth->user()->isAdvertiser() && $offer->isOwner($this->auth->user());
     }
 
     /**
