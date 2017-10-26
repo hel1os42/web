@@ -71,6 +71,20 @@ class OfferPolicy
     }
 
     /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function destroy(User $user, Offer $offer)
+    {
+        if ($this->isAdvertiser() && $offer->isOwner($user)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public function userIndex()

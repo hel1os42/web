@@ -12,6 +12,7 @@ use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Models\Contracts\Currency;
 
 class OfferController extends Controller
 {
@@ -136,14 +137,19 @@ class OfferController extends Controller
      */
     public function destroy(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->findByIdAndOwner($offerUuid, $this->auth->user());
+        $offer = $this->offerRepository->findByIdAndOwner($offerUuid,
+            $this->auth->user()
+            ->getAccountFor(Currency::NAU)
+            ->id);
 
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
 
+        $this->authorize('destroy', $offer);
+
         $offer->delete();
 
-        return \response()->json([],204);
+        return \response()->json([], 204);
     }
 }

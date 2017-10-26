@@ -147,4 +147,24 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             }
         );
     }
+
+    /**
+     * @param string $offerId
+     * @param int $accountId
+     *
+     * @return Offer|null
+     */
+    public function findByIdAndOwner(string $offerId, int $accountId): ?Offer
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->where([
+            'acc_id' => $accountId
+        ])->find($offerId);
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
 }
