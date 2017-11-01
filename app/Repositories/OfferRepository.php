@@ -47,4 +47,12 @@ interface OfferRepository extends RepositoryInterface
      * @return OfferRepository
      */
     public function scopeAccount(Account $account): OfferRepository;
+
+    /**
+     * @param array  $attributes
+     * @param string $offerId
+     *
+     * @return Offer
+     */
+    public function update(array $attributes, $offerId): Offer;
 }

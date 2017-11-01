@@ -66,4 +66,16 @@ class TimeframeRepositoryEloquent extends BaseRepository implements TimeframeRep
 
         return $timeframes;
     }
+
+    /**
+     * @param array $timeframes
+     * @param Offer $offer
+     *
+     * @return Collection
+     */
+    public function replaceManyForOffer(array $timeframes, Offer $offer): Collection
+    {
+        $offer->timeframes()->delete();
+        return $this->createManyForOffer($timeframes, $offer);
+    }
 }

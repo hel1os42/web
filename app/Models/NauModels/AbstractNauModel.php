@@ -60,7 +60,7 @@ abstract class AbstractNauModel extends Model
      */
     protected function performUpdate(Builder $query)
     {
-        return $this->fireModelEvent('updated') !== false;
+        return $this->fireModelEvent('updating') !== false;
     }
 
     /**
