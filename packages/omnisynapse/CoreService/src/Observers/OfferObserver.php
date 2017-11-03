@@ -8,6 +8,9 @@ class OfferObserver extends AbstractJobObserver
 {
     /**
      * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
      */
     public function creating(Offer $offer)
     {
@@ -16,6 +19,9 @@ class OfferObserver extends AbstractJobObserver
 
     /**
      * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
      */
     public function updating(Offer $offer)
     {
