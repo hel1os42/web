@@ -35,11 +35,11 @@ class NauOfferReservation implements OfferReservation
     }
 
     /**
-     * @param float $reward
+     * @param float|null $reward
      *
-     * @return float
+     * @return float|null
      */
-    public function getMinReserved(float $reward): float
+    public function getMinReserved(?float $reward): ?float
     {
         return $reward * $this->getReservationMultiplier();
     }

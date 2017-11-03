@@ -26,11 +26,11 @@ interface OfferReservation
     public function isReservable(Account $account, float $reward, float $reserved): bool;
 
     /**
-     * @param float $reward
+     * @param float|null $reward
      *
-     * @return float
+     * @return float|null
      */
-    public function getMinReserved(float $reward): float;
+    public function getMinReserved(?float $reward): ?float;
 
     /**
      * @return int

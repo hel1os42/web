@@ -48,8 +48,10 @@ class OfferRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(WeekDaysService $weekDaysService, OfferReservation $offerReservation)
+    public function rules()
     {
+        $weekDaysService = app(WeekDaysService::class);
+        $offerReservation = app(OfferReservation::class);
         return [
             'label'                => 'required|string|min:3|max:128',
             'description'          => 'string',
