@@ -41,7 +41,7 @@ class NauOfferReservation implements OfferReservation
      */
     public function getMinReserved(?float $reward): ?float
     {
-        return $reward * $this->getReservationMultiplier();
+        return (null === $reward) ? null : $reward * $this->getReservationMultiplier();
     }
 
     /**
