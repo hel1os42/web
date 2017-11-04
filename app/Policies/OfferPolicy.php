@@ -91,4 +91,20 @@ class OfferPolicy extends Policy
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function updateStatus(): bool
+    {
+        return $this->isAdvertiser();
+    }
+
+    /**
+     * @return bool
+     */
+    public function update(): bool
+    {
+        return $this->isAdvertiser();
+    }
 }

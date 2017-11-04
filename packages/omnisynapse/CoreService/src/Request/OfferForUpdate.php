@@ -12,9 +12,11 @@ class OfferForUpdate extends Offer implements \JsonSerializable
     public $offerId;
 
     /**
-     * Offer constructor.
+     * OfferForUpdate constructor.
      *
      * @param \App\Models\NauModels\Offer $offer
+     *
+     * @throws \OmniSynapse\CoreService\Exception\Exception
      */
     public function __construct(\App\Models\NauModels\Offer $offer)
     {

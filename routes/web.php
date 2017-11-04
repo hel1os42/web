@@ -105,13 +105,15 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'index'  => 'advert.offers.index',
             'show'   => 'advert.offers.show',
             'create' => 'advert.offers.create',
-            'store'  => 'advert.offers.store'
+            'store'  => 'advert.offers.store',
+            'update'  => 'advert.offers.update'
         ],
         'except'     => [
-            'update',
             'destroy'
         ]
     ]);
+    $router->put('advert/offers/{offerId}/status', 'Advert\OfferController@updateStatus')
+           ->name('advert.offer.updateStatus');
 
     $router->group(['prefix' => 'offers/{offerId}'], function () use ($router) {
         $router->post('picture', 'Offer\PictureController@store')->name('offer.picture.store');
