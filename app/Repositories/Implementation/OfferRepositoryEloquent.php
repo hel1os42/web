@@ -20,10 +20,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @package namespace App\Repositories;
  *
  * @property Offer $model
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
+    protected $reservationService;
 
     protected $fieldSearchable = [
         'status'      => '=',
@@ -31,8 +34,10 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         'finish_date' => '>=',
     ];
 
-    public function __construct(Application $app, TimeframeRepository $timeframeRepository)
-    {
+    public function __construct(
+        Application $app,
+        TimeframeRepository $timeframeRepository
+    ) {
         $this->timeframeRepository = $timeframeRepository;
         parent::__construct($app);
     }
@@ -110,6 +115,13 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($model);
     }
 
+    /**
+     * @param string $identity
+     *
+     * @return Offer
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
     public function findActiveByIdOrFail(string $identity): Offer
     {
         $this->applyCriteria();
