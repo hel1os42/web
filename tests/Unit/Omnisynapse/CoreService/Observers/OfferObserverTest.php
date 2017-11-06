@@ -67,6 +67,6 @@ class OfferObserverTest extends AbstractObserversTestCase
 
         // Testing
         (new OfferObserver($coreServiceImplMock))
-            ->deleting();
+            ->deleting($offer);
     }
 }

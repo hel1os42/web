@@ -22,7 +22,15 @@ interface TimeframeRepository extends RepositoryInterface
      * @param array $timeframes
      * @param Offer $offer
      *
-     * @return mixed
+     * @return Collection
      */
     public function createManyForOffer(array $timeframes, Offer $offer): Collection;
+
+    /**
+     * @param array $timeframes
+     * @param Offer $offer
+     *
+     * @return Collection
+     */
+    public function replaceManyForOffer(array $timeframes, Offer $offer): Collection;
 }

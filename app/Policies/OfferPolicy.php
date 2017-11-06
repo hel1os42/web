@@ -125,4 +125,20 @@ class OfferPolicy
     {
         return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]);
     }
+
+    /**
+     * @return bool
+     */
+    public function updateStatus(): bool
+    {
+        return $this->isAdvertiser();
+    }
+
+    /**
+     * @return bool
+     */
+    public function update(): bool
+    {
+        return $this->isAdvertiser();
+    }
 }

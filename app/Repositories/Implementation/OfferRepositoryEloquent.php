@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Exceptions\Exception;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\Criteria\MappableRequestCriteria;
@@ -11,6 +12,7 @@ use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -164,6 +166,51 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         ])->find($offerId);
 
         $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * @param array  $attributes
+     * @param string $offerId
+     *
+     * @return Offer
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
+    public function update(array $attributes, $offerId): Offer
+    {
+        $this->applyScope();
+
+        if (!is_null($this->validator)) {
+            // we should pass data that has been casts by the model
+            // to make sure data type are same because validator may need to use
+            // this data to compare with data that fetch from database.
+            $attributes = $this->model->newInstance()->forceFill($attributes)->toArray();
+
+            $this->validator->with($attributes)->setId($offerId)->passesOrFail(ValidatorInterface::RULE_UPDATE);
+        }
+
+        $temporarySkipPresenter = $this->skipPresenter;
+
+        $this->skipPresenter(true);
+
+        $model = $this->model->find($offerId);
+
+        if (!$model->update($attributes)) {
+            throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot update your offer.");
+        }
+
+        if (array_key_exists('timeframes', $attributes)) {
+            $this->timeframeRepository->replaceManyForOffer($attributes['timeframes'], $model);
+        }
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        event(new RepositoryEntityUpdated($this, $model));
 
         return $this->parserResult($model);
     }
