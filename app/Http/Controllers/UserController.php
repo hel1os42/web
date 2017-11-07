@@ -39,27 +39,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param string|null $uuid
-     *
-     * @return mixed
-     * @throws HttpException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
-     */
-    public function edit(string $uuid = null)
-    {
-
-        $uuid = $this->getUuid($uuid);
-
-        $user = $this->userRepository->with('roles')->find($uuid);
-
-        $this->authorize('update', $user);
-
-        return \response()->render('user.edit', $user->toArray());
-    }
-
-    /**
      * User profile show
      *
      * @param string|null $uuid

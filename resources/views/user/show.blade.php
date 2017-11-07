@@ -60,7 +60,9 @@
 						    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
 						        <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a>
 							    </li>
-							    <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab"
+                                       aria-expanded="true">Edit profile</a>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a>
 							    </li>
                                 <li class=""><a href="#find_offers" aria-controls="offers" role="tab" data-toggle="tab" aria-expanded="false">Find offers</a>
 							    </li>
@@ -83,6 +85,40 @@
                                     <p><a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a></p>
                                 </div>
                             </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="edit">
+                            <form action="{{route('users.update', $id)}}">
+                                <input name="_method" type="hidden" value="PUT">
+                                <div class="row">
+                                    <div class="col-sm-6 p-5">
+                                        <p><strong>Id</strong></p>
+                                        <p><strong>Name</strong></p>
+                                        <p><strong>Email</strong></p>
+                                        <p><strong>Phone</strong></p>
+                                        <p><strong>Latitude</strong></p>
+                                        <p><strong>Longitude</strong></p>
+                                        <p><strong>Roles</strong></p>
+                                    </div>
+                                    <div class="col-sm-6 p-10 p-5">
+                                        <p>{{$id}}</p>
+                                        <p><input type="text" name="name" value="{{$name}}"></p>
+                                        <p><input type="text" name="email" value="{{$email}}"></p>
+                                        <p><input type="text" name="phone" value="{{$phone}}"></p>
+                                        <p><input type="text" name="latitude" value="{{$latitude}}"></p>
+                                        <p><input type="text" name="longitude" value="{{$longitude}}"></p>
+                                        <p>
+                                            <select name="role_ids" multiple>
+                                                @foreach($roles as $role)
+                                                    <option value="{{$role['name']}}"
+                                                            selected>{{$role['name']}}</option>
+                                                @endforeach
+                                                //
+                                            </select>
+                                        </p>
+                                    </div>
+                                    <input type="submit" value="Update">
+                                </div>
+                            </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
                             <form method="POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">
