@@ -15,15 +15,17 @@
                     <table class="table table-hover">
                         <thead class="text-primary">
 			    			<tr>
-                                @foreach (array_keys($data[0]) as $referralField)
-                                    @if ($referralField != 'id')
-                                        @if ($referralField == 'picture_url')
-    			    				        <th> picture </th>
-                                        @else
-    			    				        <th> {{ $referralField }} </th>
+                                @if (count($data) > 0)
+                                    @foreach (array_keys($data[0]) as $referralField)
+                                        @if ($referralField != 'id')
+                                            @if ($referralField == 'picture_url')
+                                                <th> picture </th>
+                                            @else
+                                                <th> {{ $referralField }} </th>
+                                            @endif
                                         @endif
-                                    @endif
-                                @endforeach
+                                    @endforeach
+                                @endif
 			    			</tr>
                             
                         </thead>
