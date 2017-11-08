@@ -23,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\ActivationCode::class       => \App\Policies\ActivationCodePolicy::class,
         \App\Models\Category::class             => \App\Policies\CategoryPolicy::class,
         \App\Models\NauModels\Transact::class   => \App\Policies\TransactPolicy::class,
+        \App\Models\Role::class                 => \App\Policies\RolePolicy::class,
     ];
 
     /**

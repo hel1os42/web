@@ -10,6 +10,7 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  * @package namespace App\Repositories;
  *
  * @method Role find($id, $columns = ['*'])
+ * @method Role all($columns = ['*'])
  */
 interface RoleRepository extends RepositoryInterface
 {

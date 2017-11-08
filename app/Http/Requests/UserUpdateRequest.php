@@ -39,22 +39,22 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'             => 'string|min:2',
-            'email'            => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
+            'name'         => 'string|min:2',
+            'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 auth()->id()),
-            'phone'            => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+            'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 auth()->id()),
-            'latitude'         => 'numeric|between:-90,90',
-            'longitude'        => 'numeric|between:-180,180',
-            'role_ids'         => 'array',
-            'role_ids.*'       => 'string|exists:roles,id',
-            'parent_ids'       => 'array',
-            'parent_ids.*'     => sprintf(
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180',
+            'role_ids'     => 'array',
+            'role_ids.*'   => 'string|exists:roles,id',
+            'parent_ids'   => 'array',
+            'parent_ids.*' => sprintf(
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'child_ids'        => 'array',
-            'child_ids.*'      => sprintf(
+            'child_ids'    => 'array',
+            'child_ids.*'  => sprintf(
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),

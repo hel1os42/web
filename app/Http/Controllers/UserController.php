@@ -51,13 +51,14 @@ class UserController extends Controller
      */
     public function show(string $uuid = null): Response
     {
+        //dd(request()->method());
         $uuid = $this->getUuid($uuid);
 
-        $user = $this->userRepository->find($uuid);
+        $user = $this->userRepository->with('roles')->find($uuid);
 
         $this->authorize('show', $user);
 
-        return \response()->render('profile', $user->toArray());
+        return \response()->render('user.show', $user->toArray());
     }
 
     /**
@@ -83,7 +84,7 @@ class UserController extends Controller
                 $userData);
         }
 
-        $user = $this->userRepository->update($userData, $uuid);
+        $user = $this->userRepository->with('roles')->update($userData, $uuid);
 
         if($request->has('parent_ids')) {
             $this->setParents($request->parent_ids, $user);
@@ -97,7 +98,7 @@ class UserController extends Controller
             $this->updateRoles($request->role_ids, $user);
         }
 
-        return \response()->render('profile', $user->toArray(), Response::HTTP_CREATED, route('profile'));
+        return \response()->render('user.show', $user->toArray(), Response::HTTP_CREATED, route('profile'));
     }
 
     /**

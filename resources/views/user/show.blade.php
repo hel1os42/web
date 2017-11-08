@@ -21,7 +21,7 @@
                         alert('There was an error 400');
                     }
                     else {
-                        alert('something else other than 200 was returned');
+                        alert( xmlhttp.status + ' was returned' );
                     }
                 }
             };
@@ -30,6 +30,27 @@
             xmlhttp.send();
         }
 
+        function loadRoles() {
+            var xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.onreadystatechange = function() {
+                if ( xmlhttp.readyState === XMLHttpRequest.DONE ) {
+                    if ( xmlhttp.status === 200 ) {
+                        let sel = document.getElementById( "roles" );
+                        sel.innerHTML = xmlhttp.responseText;
+                    } else if ( xmlhttp.status === 400 ) {
+                        alert( 'There was an error 400' );
+                    } else {
+                        alert( xmlhttp.status + ' was returned' );
+                    }
+                }
+            };
+
+            xmlhttp.open( "GET", "{{route('roles')}}", true );
+            xmlhttp.send();
+        }
+
+        loadRoles();
         loadCategory();
 
     </script>
@@ -86,37 +107,49 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane active" id="edit">
-                            <form action="{{route('users.update', $id)}}">
-                                <input name="_method" type="hidden" value="PUT">
+                        <div role="tabpanel" class="tab-pane" id="edit">
+                            @if (isset($errors))
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            @endif
+                            <form action="{{route('users.update', $id)}}" method="POST"
+                                  enctype="application/x-www-form-urlencoded">
+                                {{ csrf_field() }}
+                                {{ method_field('PUT') }}
                                 <div class="row">
                                     <div class="col-sm-6 p-5">
                                         <p><strong>Id</strong></p>
                                         <p><strong>Name</strong></p>
-                                        <p><strong>Email</strong></p>
+                                        <p><label for="email">Email</label></p>
                                         <p><strong>Phone</strong></p>
                                         <p><strong>Latitude</strong></p>
                                         <p><strong>Longitude</strong></p>
                                         <p><strong>Roles</strong></p>
                                     </div>
                                     <div class="col-sm-6 p-10 p-5">
-                                        <p>{{$id}}</p>
-                                        <p><input type="text" name="name" value="{{$name}}"></p>
-                                        <p><input type="text" name="email" value="{{$email}}"></p>
-                                        <p><input type="text" name="phone" value="{{$phone}}"></p>
-                                        <p><input type="text" name="latitude" value="{{$latitude}}"></p>
-                                        <p><input type="text" name="longitude" value="{{$longitude}}"></p>
+                                        <p style="line-height: 14px; font-size: 14px;">{{$id}}</p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="name"
+                                                  value="{{$name}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
+                                                  value="{{$email}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
+                                                  value="{{$phone}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text"
+                                                  name="latitude" value="{{$latitude}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text"
+                                                  name="longitude" value="{{$longitude}}"></p>
                                         <p>
-                                            <select name="role_ids" multiple>
-                                                @foreach($roles as $role)
-                                                    <option value="{{$role['name']}}"
-                                                            selected>{{$role['name']}}</option>
-                                                @endforeach
-                                                //
-                                            </select>
+                                            <select id="roles" name="role_ids[]" class="form-control" multiple></select>
                                         </p>
                                     </div>
-                                    <input type="submit" value="Update">
+                                    <button type="submit">Update</button>
                                 </div>
                             </form>
                         </div>
