@@ -70,7 +70,7 @@ class OfferController extends Controller
     public function create(): Response
     {
         $this->authorize('create', Offer::class);
-        dd(FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
+
         return \response()->render('advert.offer.create',
             FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
     }
