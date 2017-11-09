@@ -70,7 +70,7 @@ class OfferController extends Controller
     public function create(): Response
     {
         $this->authorize('create', Offer::class);
-
+        dd(FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
         return \response()->render('advert.offer.create',
             FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
     }
@@ -141,7 +141,7 @@ class OfferController extends Controller
      */
     public function destroy(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->findByIdAndOwner($offerUuid,
+        $offer = $this->offerRepository->findByIdAndAccountId($offerUuid,
             $this->auth->user()
             ->getAccountFor(Currency::NAU)
             ->id);

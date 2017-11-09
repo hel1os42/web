@@ -77,11 +77,7 @@ class OfferPolicy
      */
     public function destroy(User $user, Offer $offer)
     {
-        if ($this->isAdvertiser() && $offer->isOwner($user)) {
-            return true;
-        }
-
-        return false;
+        return $this->isAdvertiser() && $offer->isOwner($user);
     }
 
     /**

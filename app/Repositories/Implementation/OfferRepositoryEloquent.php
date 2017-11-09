@@ -156,7 +156,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      *
      * @return Offer|null
      */
-    public function findByIdAndOwner(string $offerId, int $accountId): ?Offer
+    public function findByIdAndAccountId(string $offerId, int $accountId): ?Offer
     {
         $this->applyCriteria();
         $this->applyScope();
