@@ -105,9 +105,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'create'  => 'advert.offers.create',
             'store'   => 'advert.offers.store',
             'destroy' => 'advert.offers.destroy',
-            'update'  => 'advert.offers.update'
-
+            'update'  => 'advert.offers.update',
+        ]
     ]);
+
     $router->put('advert/offers/{offerId}/status', 'Advert\OfferController@updateStatus')
            ->name('advert.offer.updateStatus');
 
