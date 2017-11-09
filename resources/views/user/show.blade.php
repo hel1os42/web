@@ -3,10 +3,6 @@
 @section('title', 'Profile')
 
 @section('content')
-
-
-
-    
     <script type="text/javascript">
         function loadCategory(){
             var xmlhttp = new XMLHttpRequest();
@@ -31,13 +27,21 @@
         }
 
         function loadRoles() {
-            var xmlhttp = new XMLHttpRequest();
+            let xmlhttp = new XMLHttpRequest();
+            let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
 
             xmlhttp.onreadystatechange = function() {
                 if ( xmlhttp.readyState === XMLHttpRequest.DONE ) {
                     if ( xmlhttp.status === 200 ) {
                         let sel = document.getElementById( "roles" );
                         sel.innerHTML = xmlhttp.responseText;
+                        for ( let rolesIndex = 0; rolesIndex < sel.options.length; rolesIndex++ ) {
+                            let option = sel.options[rolesIndex];
+                            if ( currentRoles.indexOf( option.value ) != -1 ) {
+                                option.selected = true;
+                                console.log( option.value );
+                            }
+                        }
                     } else if ( xmlhttp.status === 400 ) {
                         alert( 'There was an error 400' );
                     } else {
@@ -127,11 +131,12 @@
                                     <div class="col-sm-6 p-5">
                                         <p><strong>Id</strong></p>
                                         <p><strong>Name</strong></p>
-                                        <p><label for="email">Email</label></p>
+                                        <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
                                         <p><strong>Latitude</strong></p>
                                         <p><strong>Longitude</strong></p>
-                                        <p><strong>Roles</strong></p>
+                                        <p style="height: 120px;"><strong>Roles</strong></p>
+                                        <p><strong>Parents</strong></p>
                                     </div>
                                     <div class="col-sm-6 p-10 p-5">
                                         <p style="line-height: 14px; font-size: 14px;">{{$id}}</p>
@@ -146,7 +151,18 @@
                                         <p><input style="line-height: 14px; font-size: 14px;" type="text"
                                                   name="longitude" value="{{$longitude}}"></p>
                                         <p>
-                                            <select id="roles" name="role_ids[]" class="form-control" multiple></select>
+                                            <select style="height: 120px;" id="roles" name="role_ids[]"
+                                                    class="form-control" multiple></select>
+                                        </p>
+                                        <p>
+                                            @foreach($parents as $parent)
+                                                {{$parent['name']}}<br>
+                                            @endforeach
+                                        </p>
+                                        <p>
+                                            @foreach($children as $child)
+                                                {{$child['name']}}<br>
+                                            @endforeach
                                         </p>
                                     </div>
                                     <button type="submit">Update</button>

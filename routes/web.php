@@ -93,8 +93,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('users', 'UserController@index')->name('users.index');
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
         $router->get('', 'UserController@show')->name('users.show');
-        $router->put('/edit', 'UserController@update')->name('users.update');
-        $router->patch('/edit', 'UserController@update');
+        $router->put('', 'UserController@update')->name('users.update');
+        $router->patch('', 'UserController@update');
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store');
     });

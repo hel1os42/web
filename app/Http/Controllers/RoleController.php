@@ -32,7 +32,7 @@ class RoleController extends Controller
             throw new NotFoundHttpException();
         }
 
-        return \response()->render('category.list', $roles->toArray());
+        return \response()->render('role.list', ['roles' => $roles->toArray()]);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\Role;
 use App\Models\User;
 
 class UserPolicy extends Policy
@@ -102,7 +101,7 @@ class UserPolicy extends Policy
      */
     public function updateRoles(User $currentUser, User $user)
     {
-        return $this->auth->user()->isAdmin()
+        return $currentUser->isAdmin()
                || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user));
     }
 }

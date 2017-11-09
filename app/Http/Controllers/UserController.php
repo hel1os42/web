@@ -54,7 +54,7 @@ class UserController extends Controller
         //dd(request()->method());
         $uuid = $this->getUuid($uuid);
 
-        $user = $this->userRepository->with('roles')->find($uuid);
+        $user = $this->userRepository->with('roles')->with('parents')->with('children')->find($uuid);
 
         $this->authorize('show', $user);
 
@@ -75,7 +75,7 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('update', $this->userRepository->find($uuid));
+        $this->authorize('update', $this->auth->guard()->user(), $this->userRepository->find($uuid));
 
         $userData = $request->all();
 
@@ -84,7 +84,12 @@ class UserController extends Controller
                 $userData);
         }
 
-        $user = $this->userRepository->with('roles')->update($userData, $uuid);
+        $user = $this->userRepository->with('roles');
+
+        if ($this->auth->guard()->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
+            $user->with('parents')->with('children');
+        }
+        $user = $user->update($userData, $uuid);
 
         if($request->has('parent_ids')) {
             $this->setParents($request->parent_ids, $user);
@@ -134,32 +139,38 @@ class UserController extends Controller
 
     /**
      * @param array $user_ids
-     * @param $user
+     * @param       $user
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
      */
-    protected function setChildren(array $user_ids, $user)
+    private function setChildren(array $user_ids, $user)
     {
-        $this->authorize('setChildren', $user);
+        $this->authorize('setChildren', $this->auth->guard()->user(), $user);
 
         $user->children()->detach();
 
         $user->children()->attach($user_ids);
+
+        $user->save();
     }
 
     /**
      * @param array $user_ids
-     * @param $user
+     * @param       $user
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
      */
-    protected function setParents(array $user_ids, $user)
+    private function setParents(array $user_ids, $user)
     {
-        $this->authorize('setParents', $user);
+        $this->authorize('setParents', $this->auth->guard()->user(), $user);
 
         $user->parents()->detach();
 
         $user->parents()->attach($user_ids);
+
+        $user->save();
     }
 
     /**
@@ -167,13 +178,17 @@ class UserController extends Controller
      * @param $user
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
      */
-    protected function updateRoles(array $role_ids, $user)
+    private function updateRoles(array $role_ids, $user)
     {
-        $this->authorize('updateRoles', $user);
+
+        $this->authorize('updateRoles', $this->auth->guard()->user(), $user);
 
         $user->roles()->detach();
 
         $user->roles()->attach($role_ids);
+
+        $user->save();
     }
 }

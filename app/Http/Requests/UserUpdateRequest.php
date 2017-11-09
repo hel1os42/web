@@ -41,9 +41,9 @@ class UserUpdateRequest extends FormRequest
         return [
             'name'         => 'string|min:2',
             'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
-                auth()->id()),
+                request()->id),
             'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
-                auth()->id()),
+                request()->id),
             'latitude'     => 'nullable|numeric|between:-90,90',
             'longitude'    => 'nullable|numeric|between:-180,180',
             'role_ids'     => 'array',
