@@ -24,14 +24,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class RedemptionController extends Controller
 {
     private $offerRepository;
-    private $auth;
 
     public function __construct(
         OfferRepository $offerRepository,
         AuthManager $auth
     ) {
         $this->offerRepository = $offerRepository;
-        $this->auth            = $auth;
+
+        parent::__construct($auth);
     }
 
     /**
@@ -49,7 +49,7 @@ class RedemptionController extends Controller
         $offer = $this->offerRepository->find($offerId);
 
         /** @var User $user */
-        $user = $this->auth->guard()->user();
+        $user = $this->auth->user();
 
         $activationCode = $user->activationCodes()->create(['offer_id' => $offer->id]);
 
@@ -94,7 +94,7 @@ class RedemptionController extends Controller
 
         $code = $request->code;
 
-        $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
+        $redemption = $offersService->redeemByOwnerAndCode($this->auth->user(), $code);
 
         return \response()->render(
             'redemption.redeem',
@@ -185,7 +185,7 @@ class RedemptionController extends Controller
 
         $offer = $this->offerRepository->find($offerId);
 
-        if (!$offer->isOwner($this->auth->guard()->user())) {
+        if (!$offer->isOwner($this->auth->user())) {
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
 

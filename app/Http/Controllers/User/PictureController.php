@@ -17,16 +17,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PictureController extends AbstractPictureController
 {
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
-    private $auth;
 
     public function __construct(
         ImageManager $imageManager,
         Filesystem $filesystem,
         AuthManager $authManager
     ) {
-        parent::__construct($imageManager, $filesystem);
-
-        $this->auth = $authManager->guard();
+        parent::__construct($imageManager, $filesystem, $authManager);
     }
 
     /**

@@ -8,24 +8,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CategoryController extends Controller
 {
-    private $categoryRepository;
-
-    public function __construct(CategoryRepository $categoryRepository) {
-        $this->categoryRepository = $categoryRepository;
-    }
-
     /**
+     * @param CategoryRepository $categoryRepository
+     *
      * @return Response
      * @throws NotFoundHttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(): Response
+    public function index(CategoryRepository $categoryRepository): Response
     {
-        $this->authorize('index', $this->categoryRepository->model());
+        $this->authorize('index', $categoryRepository->model());
 
-        $categories = $this->categoryRepository
+        $categories = $categoryRepository
             ->getWithNoParent();
 
         if ($categories === null) {
@@ -38,18 +34,19 @@ class CategoryController extends Controller
     /**
      * Category show
      *
-     * @param string $uuid
+     * @param string             $uuid
+     * @param CategoryRepository $categoryRepository
      *
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function show(string $uuid)
+    public function show(string $uuid, CategoryRepository $categoryRepository)
     {
-        $this->authorize('show', $this->categoryRepository->model());
+        $this->authorize('show', $categoryRepository->model());
 
-        $category = $this->categoryRepository
+        $category = $categoryRepository
             ->with(['parent'])->find($uuid);
 
         if ($category === null) {

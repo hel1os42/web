@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 class OfferController extends Controller
 {
     private $offerRepository;
-    private $auth;
     private $weekDaysService;
 
     public function __construct(
@@ -22,8 +21,9 @@ class OfferController extends Controller
         WeekDaysService $weekDaysService
     ) {
         $this->offerRepository = $offerRepository;
-        $this->auth            = $authManager->guard();
         $this->weekDaysService = $weekDaysService;
+
+        parent::__construct($authManager);
     }
 
     /**

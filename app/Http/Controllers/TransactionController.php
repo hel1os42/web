@@ -18,7 +18,6 @@ class TransactionController extends Controller
 {
     private $transactionRepository;
     private $accountRepository;
-    private $auth;
 
     public function __construct(
         TransactionRepository $transactionRepository,
@@ -27,7 +26,8 @@ class TransactionController extends Controller
     ) {
         $this->transactionRepository = $transactionRepository;
         $this->accountRepository     = $accountRepository;
-        $this->auth                  = $authManager->guard();
+
+        parent::__construct($authManager);
     }
 
 

@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Offer;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
-use App\Models\NauModels\Offer;
 use App\Repositories\OfferRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +18,6 @@ class PictureController extends AbstractPictureController
 {
     const OFFER_PICTURES_PATH = 'images/offer/pictures';
     private $offerRepository;
-    private $auth;
 
     public function __construct(
         ImageManager $imageManager,
@@ -28,9 +25,8 @@ class PictureController extends AbstractPictureController
         AuthManager $authManager,
         OfferRepository $offerRepository
     ) {
-        parent::__construct($imageManager, $filesystem);
+        parent::__construct($imageManager, $filesystem, $authManager);
 
-        $this->auth            = $authManager->guard();
         $this->offerRepository = $offerRepository;
     }
 
@@ -39,7 +35,7 @@ class PictureController extends AbstractPictureController
      * @param string         $offerId
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
-     * @throws ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      * @throws \RuntimeException
      */
@@ -47,10 +43,6 @@ class PictureController extends AbstractPictureController
     {
 
         $offer = $this->offerRepository->find($offerId);
-
-        if (null === $offer) {
-            throw (new ModelNotFoundException)->setModel(Offer::class);
-        }
 
         $this->authorize('pictureStore', $offer);
 
@@ -63,7 +55,6 @@ class PictureController extends AbstractPictureController
      * @param string $offerId
      *
      * @return Response
-     * @throws ModelNotFoundException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
@@ -72,10 +63,6 @@ class PictureController extends AbstractPictureController
     public function show(string $offerId): Response
     {
         $offer = $this->offerRepository->find($offerId);
-
-        if (is_null($offer)) {
-            throw (new ModelNotFoundException)->setModel(Offer::class);
-        }
 
         $this->authorize('pictureShow', $offer);
 

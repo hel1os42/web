@@ -24,7 +24,6 @@ class PictureController extends AbstractPictureController
     const TYPE_PICTURE = 'picture';
 
     private $type = 'picture';
-    private $auth;
     private $placeRepository;
 
     public function __construct(
@@ -33,9 +32,8 @@ class PictureController extends AbstractPictureController
         AuthManager $authManager,
         PlaceRepository $placeRepository
     ) {
-        parent::__construct($imageManager, $filesystem);
+        parent::__construct($imageManager, $filesystem, $authManager);
 
-        $this->auth            = $authManager->guard();
         $this->placeRepository = $placeRepository;
     }
 

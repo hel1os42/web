@@ -24,7 +24,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OfferController extends Controller
 {
     private $offerRepository;
-    private $auth;
     private $weekDaysService;
     private $reservationService;
 
@@ -35,9 +34,10 @@ class OfferController extends Controller
         OfferReservation $reservationService
     ) {
         $this->offerRepository    = $offerRepository;
-        $this->auth               = $authManager->guard();
         $this->weekDaysService    = $weekDaysService;
         $this->reservationService = $reservationService;
+
+        parent::__construct($authManager);
     }
 
     /**

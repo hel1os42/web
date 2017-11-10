@@ -13,12 +13,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class UserController extends Controller
 {
     private $userRepository;
-    private $auth;
 
     public function __construct(UserRepository $userRepository, AuthManager $authManager)
     {
         $this->userRepository = $userRepository;
-        $this->auth           = $authManager;
+
+        parent::__construct($authManager);
     }
 
 
@@ -75,18 +75,18 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('update', $this->auth->guard()->user(), $this->userRepository->find($uuid));
+        $this->authorize('update', $this->auth->user(), $this->userRepository->find($uuid));
 
         $userData = $request->all();
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(Attributes::getFillableWithDefaults($this->auth->guard()->user(), ['password']),
+            $userData = \array_merge(Attributes::getFillableWithDefaults($this->auth->user(), ['password']),
                 $userData);
         }
 
         $user = $this->userRepository->with('roles');
 
-        if ($this->auth->guard()->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
+        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
             $user->with('parents')->with('children');
         }
         $user = $user->update($userData, $uuid);
@@ -134,7 +134,7 @@ class UserController extends Controller
      */
     private function getUuid(?string $uuid)
     {
-        return null === $uuid ? $this->auth->guard()->id() : $uuid;
+        return null === $uuid ? $this->auth->id() : $uuid;
     }
 
     /**
@@ -146,7 +146,7 @@ class UserController extends Controller
      */
     private function setChildren(array $userIds, $user)
     {
-        $this->authorize('setChildren', $this->auth->guard()->user(), $user);
+        $this->authorize('setChildren', $this->auth->user(), $user);
 
         $user->children()->detach();
 
@@ -164,7 +164,7 @@ class UserController extends Controller
      */
     private function setParents(array $userIds, $user)
     {
-        $this->authorize('setParents', $this->auth->guard()->user(), $user);
+        $this->authorize('setParents', $this->auth->user(), $user);
 
         $user->parents()->detach();
 
@@ -183,7 +183,7 @@ class UserController extends Controller
     private function updateRoles(array $roleIds, $user)
     {
 
-        $this->authorize('updateRoles', $this->auth->guard()->user(), $user);
+        $this->authorize('updateRoles', $this->auth->user(), $user);
 
         $user->roles()->detach();
 

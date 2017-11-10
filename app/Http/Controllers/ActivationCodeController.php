@@ -13,18 +13,18 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ActivationCodeController extends Controller
 {
     private $activationCodeRepository;
-    private $auth;
 
     public function __construct(ActivationCodeRepository $activationCodeRepository, AuthManager $auth)
     {
         $this->activationCodeRepository = $activationCodeRepository;
-        $this->auth                     = $auth;
+
+        parent::__construct($auth);
     }
 
     public function show($code)
     {
         $activationCode = $this->activationCodeRepository
-            ->findByCodeAndUser($code, $this->auth->guard()->user());
+            ->findByCodeAndUser($code, $this->auth->user());
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\NauModels\Redemption;
+use App\Models\Role;
 
 class RedemptionPolicy extends Policy
 {
@@ -10,9 +11,9 @@ class RedemptionPolicy extends Policy
     /**
      * @return bool
      */
-    public function getActivationCode()
+    public function getActivationCode($currentUser)
     {
-        return $this->auth->user()->isUser();
+        return $currentUser->hasRole([Role::ROLE_USER]);
     }
 
     /**
@@ -28,7 +29,7 @@ class RedemptionPolicy extends Policy
      */
     public function create()
     {
-        return $this->auth->user()->isUser();
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -36,7 +37,7 @@ class RedemptionPolicy extends Policy
      */
     public function store()
     {
-        return $this->auth->user()->isUser();
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -44,7 +45,7 @@ class RedemptionPolicy extends Policy
      */
     public function redemption()
     {
-        return $this->auth->user()->isUser();
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -62,6 +63,6 @@ class RedemptionPolicy extends Policy
      */
     public function showFromOffer()
     {
-        return $this->auth->user()->isUser();
+        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }
 }
