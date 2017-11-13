@@ -91,9 +91,9 @@ class OfferPolicy
      *
      * @return bool
      */
-    public function pictureStore(User $currentUser, Offer $offer)
+    public function pictureStore(User $user, Offer $offer)
     {
-        return $this->isAdvertiser() && $offer->isOwner($currentUser);
+        return $this->isAdvertiser() && $offer->isOwner($user);
     }
 
     /**
