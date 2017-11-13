@@ -18,5 +18,4 @@ class Controller extends BaseController
     {
         $this->auth = $authManager->guard();
     }
-
 }

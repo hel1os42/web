@@ -28,7 +28,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
                 return response()->view($view, $params, $statusCode);
             });
 
-        Response::macro('error', function (int $statusCode, string $message = null, string $location = '') {
+        Response::macro('error', function (int $statusCode, string $message = null) {
 
             if (empty($message)) {
                 $message = trans('errors.' . (string)$statusCode);
@@ -39,9 +39,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
                 abort($statusCode, $message);
             }
 
-            $response = \response()->json(['error' => true, 'message' => $message], $statusCode);
-
-            return empty($location) ? $response : $response->header('Location', $location);
+            return \response()->json(['error' => true, 'message' => $message], $statusCode);
         });
     }
 

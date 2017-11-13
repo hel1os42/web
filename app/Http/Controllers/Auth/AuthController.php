@@ -40,6 +40,6 @@ class AuthController extends Controller
 
         parent::__construct($auth);
 
-        $this->auth           = $auth;
+        $this->auth = $auth;
     }
 }

@@ -132,8 +132,7 @@ class PlaceController extends Controller
         $this->authorize('create', $placesRepository->model());
 
         if ($placesRepository->existsByUser($this->auth->user())) {
-            return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.',
-                route('profile.place.show'));
+            return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
         return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
