@@ -1,7 +1,4 @@
 <?php
-
-ini_set('post_max_size', '10M');
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -16,7 +13,6 @@ ini_set('post_max_size', '10M');
 $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
 );
-
 
 /*
 |--------------------------------------------------------------------------
