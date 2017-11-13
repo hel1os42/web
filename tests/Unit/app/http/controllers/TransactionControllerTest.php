@@ -6,20 +6,20 @@ use App\Http\Requests\TransactRequest;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use App\Models\User;
-use App\Repositories\Implementation\AccountRepositoryEloquent;
 use App\Repositories\AccountRepository;
+use App\Repositories\Implementation\AccountRepositoryEloquent;
 use App\Repositories\Implementation\TransactionRepositoryEloquent;
 use App\Repositories\TransactionRepository;
 use Faker\Factory as Faker;
 use Faker\Generator;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\ResponseFactory;
 use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TransactionControllerTest extends TestCase
 {
@@ -111,7 +111,7 @@ class TransactionControllerTest extends TestCase
     {
         $userData = [
             'id'      => $this->faker->uuid,
-            'account' => $this->account,
+            'account' => $this->account
         ];
 
         $this->user->method('getId')->willReturn($userData['id']);

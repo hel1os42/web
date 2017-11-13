@@ -72,7 +72,7 @@ class PlaceControllerTest extends TestCase
 
         $this->configureTestUser();
 
-        $this->controller = new PlaceController($this->placeRepository, $this->authManager);
+        $this->controller = new PlaceController($this->authManager);
     }
 
     private function configureTestUser()
@@ -149,7 +149,7 @@ class PlaceControllerTest extends TestCase
 
         // Test
 
-        $returnValue = $this->controller->index($request);
+        $returnValue = $this->controller->index($request, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -209,7 +209,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->show($request, $uuid);
+        $returnValue = $this->controller->show($request, $uuid, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -269,7 +269,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->showOwnerPlace($request);
+        $returnValue = $this->controller->showOwnerPlace($request, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -319,7 +319,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['user.offer.index', $pagination])
             ->willReturn($response);
 
-        $returnValue = $this->controller->showPlaceOffers($uuid);
+        $returnValue = $this->controller->showPlaceOffers($uuid, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -365,7 +365,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['advert.offer.index', $pagination])
             ->willReturn($response);
 
-        $returnValue = $this->controller->showOwnerPlaceOffers();
+        $returnValue = $this->controller->showOwnerPlaceOffers($this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -392,7 +392,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['place.create', $data])
             ->willReturn($response);
 
-        $returnValue = $this->controller->create();
+        $returnValue = $this->controller->create($this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -468,7 +468,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
             ->willReturn($response);
 
-        $returnValue = $this->controller->store($request);
+        $returnValue = $this->controller->store($request, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -563,7 +563,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
             ->willReturn($response);
 
-        $returnValue = $this->controller->update($request);
+        $returnValue = $this->controller->update($request, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
