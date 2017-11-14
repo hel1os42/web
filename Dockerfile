@@ -1,6 +1,7 @@
 FROM gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
 MAINTAINER iLyK Necromancer <necromancer@toavalon.com>
 
+COPY uploads.ini /usr/local/etc/php/conf.d/
 WORKDIR /app
 COPY . /app
 
