@@ -175,7 +175,7 @@ class PlaceController extends Controller
      */
     public function update(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('store', $placesRepository->model());
+        $this->authorize('update', $placesRepository->model());
 
         $place = $placesRepository->findByUser($this->auth->user());
 

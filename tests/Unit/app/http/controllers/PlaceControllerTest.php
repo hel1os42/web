@@ -10,6 +10,7 @@ use App\Repositories\Implementation\PlaceRepositoryEloquent;
 use App\Repositories\PlaceRepository;
 use Faker\Factory as Faker;
 use Faker\Generator;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -48,6 +49,10 @@ class PlaceControllerTest extends TestCase
      * @var Generator
      */
     private $faker;
+    /**
+     * @var Gate||PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizeGate;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -65,10 +70,13 @@ class PlaceControllerTest extends TestCase
         $this->authManager     = $this->getMockBuilder(AuthManager::class)->disableOriginalConstructor()->getMock();
         $this->guard           = $this->getMockBuilder(Guard::class)->disableOriginalConstructor()->getMock();
         $this->user            = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $this->authorizeGate   = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
 
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
         $this->guard->method('id')->with()->willReturn($this->user->method('getId'));
+
+        app()->instance(\Illuminate\Contracts\Auth\Access\Gate::class, $this->authorizeGate);
 
         $this->configureTestUser();
 
@@ -110,6 +118,12 @@ class PlaceControllerTest extends TestCase
         $response        = new Response();
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('index', $this->placeRepository->model())
+            ->willReturn(true);
 
         $this->placeRepository
             ->expects(self::once())
@@ -176,6 +190,12 @@ class PlaceControllerTest extends TestCase
 
         $placesArray = [$uuid, $withOffers];
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('show', $this->placeRepository->model())
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('find')
@@ -236,6 +256,12 @@ class PlaceControllerTest extends TestCase
 
         $placesArray = [$withOffers];
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('showOwnerPlace', $this->placeRepository->model())
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('findByUser')
@@ -295,6 +321,12 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('showPlaceOffers', $this->placeRepository->model())
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('find')
@@ -341,6 +373,12 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('showOwnerPlaceOffers', $this->placeRepository->model())
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('findByUser')
@@ -386,6 +424,12 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('create', $this->placeRepository->model())
+            ->willReturn(true);
+
         $responseFactory
             ->expects(self::once())
             ->method('__call')
@@ -415,6 +459,12 @@ class PlaceControllerTest extends TestCase
         $response        = new Response();
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('store', $this->placeRepository->model())
+            ->willReturn(true);
 
         $this->placeRepository
             ->expects(self::once())
@@ -503,6 +553,12 @@ class PlaceControllerTest extends TestCase
                 ->with()
                 ->willReturn([]);
         }
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('update', $this->placeRepository->model())
+            ->willReturn(true);
 
         $place
             ->expects(self::once())

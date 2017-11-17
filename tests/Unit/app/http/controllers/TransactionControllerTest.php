@@ -12,6 +12,7 @@ use App\Repositories\Implementation\TransactionRepositoryEloquent;
 use App\Repositories\TransactionRepository;
 use Faker\Factory as Faker;
 use Faker\Generator;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -67,6 +68,10 @@ class TransactionControllerTest extends TestCase
      * @var Generator
      */
     private $faker;
+    /**
+     * @var Gate||PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizeGate;
 
     /**
      * TransactionControllerTest constructor.
@@ -92,9 +97,12 @@ class TransactionControllerTest extends TestCase
         $this->user                  = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $this->account               = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
         $this->transaction           = $this->getMockBuilder(Transact::class)->disableOriginalConstructor()->getMock();
+        $this->authorizeGate         = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
         $this->guard->method('id')->with()->willReturn($this->user->method('getId'));
+
+        app()->instance(\Illuminate\Contracts\Auth\Access\Gate::class, $this->authorizeGate);
 
         $this->configureTestUser();
 
@@ -159,6 +167,12 @@ class TransactionControllerTest extends TestCase
 
         $data['source'] = $this->account->getAddress();
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('createTransaction', $this->transactionRepository->model())
+            ->willReturn(true);
+
         $responseFactory
             ->expects(self::once())
             ->method('__call')
@@ -188,6 +202,12 @@ class TransactionControllerTest extends TestCase
         $response = new Response();
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('listTransactions', $this->transactionRepository->model())
+            ->willReturn(true);
 
         $builder
             ->method('paginate')
@@ -239,6 +259,12 @@ class TransactionControllerTest extends TestCase
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
         $this->transasctionId = $data;
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('completeTransaction', $this->transactionRepository->model())
+            ->willReturn(true);
 
         $responseFactory
             ->expects(self::once())
