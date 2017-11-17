@@ -20,7 +20,7 @@ class Geo implements \JsonSerializable
     const TYPE_POINT   = 'point';
 
     /** @var string */
-    private $type;
+    private $type = null;
 
     /** @var null|Point */
     private $point;
@@ -173,5 +173,10 @@ class Geo implements \JsonSerializable
         }
 
         return $this->type = $type;
+    }
+
+    public function __sleep()
+    {
+        return array_keys($this->jsonSerialize());
     }
 }
