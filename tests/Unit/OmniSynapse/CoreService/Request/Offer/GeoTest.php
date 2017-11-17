@@ -133,4 +133,25 @@ class GeoTest extends TestCase
         $this->assertEquals($city, $geo->getCity(), 'city');
         $this->assertEquals($expType, $geo->getType(), 'type');
     }
+
+    public function testSerializeUnserialize()
+    {
+        $faker = Faker::create();
+
+        $radius  = $faker->randomDigitNotNull;
+        $city    = $faker->city;
+        $country = $faker->country;
+
+        $point   = new Point($faker->latitude, $faker->longitude);
+        $geo     = new Geo($point, $radius, $city, $country);
+        $expType = Geo::TYPE_CITY;
+
+        $geo = unserialize(serialize($geo));
+
+        $this->assertAttributeEquals($point, 'point', $geo, 'point');
+        $this->assertAttributeEquals($radius, 'radius', $geo, 'radius');
+        $this->assertAttributeEquals($city, 'city', $geo, 'city');
+        $this->assertAttributeEquals($country, 'country', $geo, 'country');
+        $this->assertAttributeEquals($expType, 'type', $geo, 'type attribute');
+    }
 }
