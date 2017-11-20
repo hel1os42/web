@@ -69,7 +69,6 @@ abstract class AbstractJob implements ShouldQueue
         }
 
         $responseContent = $response->getBody()->getContents();
-
         if (floor($response->getStatusCode() * 0.01) > 2) {
             throw new RequestException($this, $response, $responseContent);
         }

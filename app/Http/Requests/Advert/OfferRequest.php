@@ -53,37 +53,37 @@ class OfferRequest extends FormRequest
         $weekDaysService  = app(WeekDaysService::class);
         $offerReservation = app(OfferReservation::class);
         return [
-            'label'                => 'required|string|min:3|max:128',
-            'description'          => 'string',
-            'reward'               => 'required|numeric|min:1',
-            'start_date'           => 'required|date|date_format:' . Constants::DATE_FORMAT,
-            'finish_date'          => 'date|date_format:' . Constants::DATE_FORMAT,
-            'category_id'          => sprintf(
+            'label'                  => 'required|string|min:3|max:128',
+            'description'            => 'nullable|string',
+            'reward'                 => 'required|numeric|min:1',
+            'start_date'             => 'required|date|date_format:' . Constants::DATE_FORMAT,
+            'finish_date'            => 'nullable|date|date_format:' . Constants::DATE_FORMAT,
+            'category_id'            => sprintf(
                 'required|string|regex:%s|exists:categories,id',
                 Constants::UUID_REGEX
             ),
-            'max_count'            => 'nullable|integer|min:1',
-            'max_for_user'         => 'nullable|integer|min:1',
-            'max_per_day'          => 'nullable|integer|min:1',
-            'max_for_user_per_day' => 'nullable|integer|min:1',
+            'max_count'              => 'nullable|integer|min:1',
+            'max_for_user'           => 'nullable|integer|min:1',
+            'max_per_day'            => 'nullable|integer|min:1',
+            'max_for_user_per_day'   => 'nullable|integer|min:1',
             'max_for_user_per_week'  => 'nullable|integer|min:1',
             'max_for_user_per_month' => 'nullable|integer|min:1',
-            'user_level_min'       => 'required|integer|min:1',
-            'latitude'             => 'numeric|between:-90,90',
-            'longitude'            => 'numeric|between:-180,180',
-            'radius'               => 'integer',
-            'country'              => 'string',
-            'city'                 => 'string',
-            'reserved'             => sprintf(
+            'user_level_min'         => 'required|integer|min:1',
+            'latitude'               => 'nullable|numeric|between:-90,90',
+            'longitude'              => 'nullable|numeric|between:-180,180',
+            'radius'                 => 'nullable|integer',
+            'country'                => 'nullable|string',
+            'city'                   => 'nullable|string',
+            'reserved'               => sprintf(
                 'required|numeric|min:%s',
                 $offerReservation->getMinReserved($this->get('reward'))
             ),
-            'timeframes'           => 'required|array',
-            'timeframes.*.from'    => 'required|date_format:' . Constants::TIME_FORMAT,
-            'timeframes.*.to'      => 'required|date_format:' . Constants::TIME_FORMAT,
-            'timeframes.*.days'    => 'required|array',
-            'timeframes.*.days.*'  => sprintf(
-                'string|in:%s',
+            'timeframes'             => 'required|array',
+            'timeframes.*.from'      => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.to'        => 'required|date_format:' . Constants::TIME_FORMAT,
+            'timeframes.*.days'      => 'required|array',
+            'timeframes.*.days.*'    => sprintf(
+                'required|string|in:%s',
                 implode(',', $weekDaysService->fullList())
             ),
         ];
