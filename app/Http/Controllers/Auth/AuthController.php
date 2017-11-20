@@ -39,7 +39,5 @@ class AuthController extends Controller
         $this->jwtAuth        = $jwtAuth;
 
         parent::__construct($auth);
-
-        $this->auth = $auth;
     }
 }
