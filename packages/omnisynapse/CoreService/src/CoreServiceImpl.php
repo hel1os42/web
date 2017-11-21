@@ -15,6 +15,12 @@ use OmniSynapse\CoreService\Job\SendNau;
 use OmniSynapse\CoreService\Job\TransactionNotification;
 use OmniSynapse\CoreService\Job\UserCreated;
 
+/**
+ * Class CoreServiceImpl
+ * @package OmniSynapse\CoreService
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CoreServiceImpl implements CoreService
 {
     /** @var Client $client */
