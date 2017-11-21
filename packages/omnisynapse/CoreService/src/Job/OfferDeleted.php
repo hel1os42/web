@@ -21,7 +21,7 @@ use OmniSynapse\CoreService\Response\OfferDeleted as OfferDeletedResponse;
 class OfferDeleted extends AbstractJob
 {
     /** @var string */
-    private $offer_id;
+    private $offerId;
 
     /**
      * OfferUpdated constructor.
@@ -33,7 +33,7 @@ class OfferDeleted extends AbstractJob
     {
         parent::__construct($coreService);
 
-        $this->offer_id = $offer->id;
+        $this->offerId = $offer->id;
     }
 
     /**
@@ -42,7 +42,7 @@ class OfferDeleted extends AbstractJob
     public function __sleep()
     {
         $parentProperties = parent::__sleep();
-        return array_merge($parentProperties, ['offer_id']);
+        return array_merge($parentProperties, ['offerId']);
     }
 
     /**
@@ -58,7 +58,7 @@ class OfferDeleted extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return '/offers/'.$this->offer_id;
+        return '/offers/'.$this->offerId;
     }
 
     /**
@@ -74,7 +74,7 @@ class OfferDeleted extends AbstractJob
      */
     public function getResponseObject()
     {
-        return new OfferDeletedResponse($this->offer_id);
+        return new OfferDeletedResponse($this->offerId);
     }
 
     /**
@@ -83,6 +83,6 @@ class OfferDeleted extends AbstractJob
      */
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new FailedJob\OfferDeleted($exception, $this->offer_id);
+        return new FailedJob\OfferDeleted($exception, $this->offerId);
     }
 }

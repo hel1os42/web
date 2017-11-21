@@ -72,7 +72,11 @@ abstract class AbstractJob implements ShouldQueue
         try {
             $response        = $this->getClient()->request($method, $uri, ['json' => $jsonBody]);
             $responseContent = $response->getBody()->getContents();
-        } catch (GuzzleException | \InvalidArgumentException | \LogicException $exception) {
+        } catch (GuzzleException $exception) {
+            throw new ServiceUnavailableException(null, $exception);
+        } catch(\InvalidArgumentException $exception) {
+            throw new ServiceUnavailableException(null, $exception);
+        } catch(\LogicException $exception) {
             throw new ServiceUnavailableException(null, $exception);
         }
 
