@@ -27,6 +27,10 @@
             <directory suffix="Test.php">./tests/Integration/Omnisynapse/CoreService/Observers</directory>
         </testsuite>
 
+        <testsuite name="CoreService JOBS">
+            <directory suffix="Test.php">./tests/Integration/Omnisynapse/CoreService/Jobs</directory>
+        </testsuite>
+
         <testsuite name="App UNIT">
             <directory suffix="Test.php">./tests/Unit/app</directory>
         </testsuite>
