@@ -16,9 +16,9 @@ class OfferDeleted
 {
     private $offerId;
 
-    public function __construct($offer_id)
+    public function __construct($offerId)
     {
-        $this->offerId = $offer_id;
+        $this->offerId = $offerId;
     }
 
     /**
