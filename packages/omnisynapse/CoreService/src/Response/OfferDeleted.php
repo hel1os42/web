@@ -14,11 +14,11 @@ namespace OmniSynapse\CoreService\Response;
  */
 class OfferDeleted
 {
-    private $offer_id;
+    private $offerId;
 
     public function __construct($offer_id)
     {
-        $this->offer_id = $offer_id;
+        $this->offerId = $offer_id;
     }
 
     /**
@@ -26,6 +26,6 @@ class OfferDeleted
      */
     public function getOfferId()
     {
-        return $this->offer_id;
+        return $this->offerId;
     }
 }
