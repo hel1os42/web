@@ -11,8 +11,8 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Response\EmptyResponse;
 use OmniSynapse\CoreService\FailedJob;
+use OmniSynapse\CoreService\Response\OfferDeleted as OfferDeletedResponse;
 
 /**
  * Class OfferDeleted
@@ -20,11 +20,8 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class OfferDeleted extends AbstractJob
 {
-    /** @var null|\JsonSerializable */
-    private $requestObject = null;
-
-    /** @var Offer */
-    private $offer;
+    /** @var string */
+    private $offer_id;
 
     /**
      * OfferUpdated constructor.
@@ -36,7 +33,7 @@ class OfferDeleted extends AbstractJob
     {
         parent::__construct($coreService);
 
-        $this->offer = $offer;
+        $this->offer_id = $offer->id;
     }
 
     /**
@@ -45,7 +42,7 @@ class OfferDeleted extends AbstractJob
     public function __sleep()
     {
         $parentProperties = parent::__sleep();
-        return array_merge($parentProperties, ['requestObject', 'offer']);
+        return array_merge($parentProperties, ['offer_id']);
     }
 
     /**
@@ -61,7 +58,7 @@ class OfferDeleted extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return '/offers/'.$this->offer->getId();
+        return '/offers/'.$this->offer_id;
     }
 
     /**
@@ -69,15 +66,15 @@ class OfferDeleted extends AbstractJob
      */
     public function getRequestObject(): ?\JsonSerializable
     {
-        return $this->requestObject;
+        return null;
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return EmptyResponse::class;
+        return new OfferDeletedResponse($this->offer_id);
     }
 
     /**
@@ -86,6 +83,6 @@ class OfferDeleted extends AbstractJob
      */
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new FailedJob\OfferDeleted($exception, $this->offer);
+        return new FailedJob\OfferDeleted($exception, $this->offer_id);
     }
 }

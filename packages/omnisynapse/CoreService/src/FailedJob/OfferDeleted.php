@@ -8,7 +8,6 @@
 
 namespace OmniSynapse\CoreService\FailedJob;
 
-use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\FailedJob;
 
 /**
@@ -17,24 +16,24 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class OfferDeleted extends FailedJob
 {
-    /** @var Offer */
-    private $offer;
+    /** @var string UUID */
+    private $offerId;
 
     /**
-     * @param \Exception $exception
-     * @param Offer|null $offer
+     * @param \Exception  $exception
+     * @param string|null $offerId
      */
-    public function __construct(\Exception $exception, Offer $offer = null)
+    public function __construct(\Exception $exception, ?string $offerId = null)
     {
         parent::__construct($exception);
-        $this->offer = $offer;
+        $this->offerId = $offerId;
     }
 
     /**
-     * @return Offer|null
+     * @return string|null
      */
-    public function getOffer()
+    public function getOffer(): ?string
     {
-        return $this->offer;
+        return $this->offerId;
     }
 }

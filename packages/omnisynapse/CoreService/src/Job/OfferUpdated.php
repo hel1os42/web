@@ -5,9 +5,9 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
-use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferUpdated
@@ -71,11 +71,11 @@ class OfferUpdated extends AbstractJob
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return OfferResponse::class;
+        return new OfferResponse;
     }
 
     /**

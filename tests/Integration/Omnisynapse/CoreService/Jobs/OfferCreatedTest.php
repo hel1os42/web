@@ -48,32 +48,39 @@ class OfferCreatedTest extends TestCase
             'endTime'   => Carbon::parse($faker->time()),
         ];
         $offer          = [
+            'id' => $faker->uuid,
+
             'name'        => $faker->name,
             'description' => $faker->text,
             'categoryId'  => $faker->uuid,
             'reward'      => $faker->randomFloat(),
 
-            'radius'      => $faker->randomDigitNotNull,
-            'city'        => $faker->city,
-            'country'     => $faker->country,
-            'lat'         => $faker->latitude,
-            'lon'         => $faker->longitude,
+            'radius'  => $faker->randomDigitNotNull,
+            'city'    => $faker->city,
+            'country' => $faker->country,
+            'lat'     => $faker->latitude,
+            'lon'     => $faker->longitude,
 
-            'offers'      => $faker->randomDigitNotNull,
-            'perDay'      => $faker->randomDigitNotNull,
-            'perUser'     => $faker->randomDigitNotNull,
-            'minLevel'    => $faker->randomDigitNotNull,
+            'offers'             => $faker->randomDigitNotNull,
+            'perDay'             => $faker->randomDigitNotNull,
+            'perUser'            => $faker->randomDigitNotNull,
+            'maxForUserPerDay'   => $faker->randomDigit,
+            'maxForUserPerWeek'  => $faker->randomDigit,
+            'maxForUserPerMonth' => $faker->randomDigit,
+            'minLevel'           => $faker->randomDigitNotNull,
+
+            'status'   => 'active',
+            'reserved' => $faker->randomDigitNotNull,
         ];
 
         $offerMock = \Mockery::mock(Offer::class);
+        $offerMock->shouldReceive('getId')->once()->andReturn($offer['id']);
         $offerMock->shouldReceive('getLabel')->once()->andReturn($offer['name']);
         $offerMock->shouldReceive('getDescription')->once()->andReturn($offer['description']);
         $offerMock->shouldReceive('getCategoryId')->once()->andReturn($offer['categoryId']);
         $offerMock->shouldReceive('getReward')->once()->andReturn($offer['reward']);
         $offerMock->shouldReceive('getStartDate')->once()->andReturn($offerDateTimes['startDate']);
         $offerMock->shouldReceive('getFinishDate')->once()->andReturn($offerDateTimes['endDate']);
-        $offerMock->shouldReceive('getStartTime')->once()->andReturn($offerDateTimes['startTime']);
-        $offerMock->shouldReceive('getFinishTime')->once()->andReturn($offerDateTimes['endTime']);
         $offerMock->shouldReceive('getLatitude')->once()->andReturn($offer['lat']);
         $offerMock->shouldReceive('getLongitude')->once()->andReturn($offer['lon']);
         $offerMock->shouldReceive('getRadius')->once()->andReturn($offer['radius']);
@@ -82,8 +89,13 @@ class OfferCreatedTest extends TestCase
         $offerMock->shouldReceive('getMaxCount')->once()->andReturn($offer['offers']);
         $offerMock->shouldReceive('getMaxPerDay')->once()->andReturn($offer['perDay']);
         $offerMock->shouldReceive('getMaxForUser')->once()->andReturn($offer['perUser']);
+        $offerMock->shouldReceive('getMaxForUserPerDay')->once()->andReturn($offer['maxForUserPerDay']);
+        $offerMock->shouldReceive('getMaxForUserPerWeek')->once()->andReturn($offer['maxForUserPerWeek']);
+        $offerMock->shouldReceive('getMaxForUserPerMonth')->once()->andReturn($offer['maxForUserPerMonth']);
         $offerMock->shouldReceive('getUserLevelMin')->once()->andReturn($offer['minLevel']);
         $offerMock->shouldReceive('getAccount')->once()->andReturn($accountMock);
+        $offerMock->shouldReceive('getStatus')->once()->andReturn($offer['status']);
+        $offerMock->shouldReceive('getReserved')->once()->andReturn($offer['reserved']);
 
         /*
          * GEO
@@ -94,7 +106,11 @@ class OfferCreatedTest extends TestCase
         /*
          * Limits
          */
-        $limits = new Limits($offer['offers'], $offer['perDay'], $offer['perUser'], $offer['minLevel']);
+        $limits = (new Limits)
+            ->setMaxCount($offer['offers'])
+            ->setPerDay($offer['perDay'])
+            ->setPerUser($offer['perUser'])
+            ->setMinLevel($offer['minLevel']);
 
         $response = new Response(201, [
             'Content-Type' => 'application/json',
@@ -109,24 +125,21 @@ class OfferCreatedTest extends TestCase
             'reward'      => $offer['reward'],
             'start_date'  => $offerDateTimes['startDate']->format('Y-m-dTH:i:sO'),
             'end_date'    => $offerDateTimes['endDate']->format('Y-m-dTH:i:sO'),
-            'start_time'  => $offerDateTimes['startTime']->format('H:i:sO'),
-            'end_time'    => $offerDateTimes['endTime']->format('H:i:sO'),
         ]));
 
         $clientMock = \Mockery::mock(Client::class);
         $clientMock->shouldReceive('request')->once()->andReturn($response);
 
         $eventCalled = 0;
-        \Event::listen(\OmniSynapse\CoreService\Response\Offer::class, function ($response) use
-        (
+        \Event::listen(\OmniSynapse\CoreService\Response\Offer::class, function ($response) use (
             $offerId,
             $account,
             $offer,
             $offerDateTimes,
             $geo,
             $limits,
-            &$eventCalled)
-        {
+            &$eventCalled
+        ) {
             $this->assertEquals($offerId, $response->getId(), 'Offer id');
             $this->assertEquals($account['owner_id'], $response->getOwnerId(), 'Offer owner_id');
             $this->assertEquals($offer['name'], $response->getName(), 'Offer name');
@@ -137,24 +150,22 @@ class OfferCreatedTest extends TestCase
             $this->assertEquals($offer['reward'], $response->getReward(), 'Offer reward');
             $this->assertEquals($offerDateTimes['startDate'], $response->getStartDate(), 'Offer start_date');
             $this->assertEquals($offerDateTimes['endDate'], $response->getEndDate(), 'Offer end_date');
-            $this->assertEquals($offerDateTimes['startTime'], $response->getStartTime(), 'Offer start_time');
-            $this->assertEquals($offerDateTimes['endTime'], $response->getEndTime(), 'Offer end_time');
             $eventCalled++;
         });
 
         $exceptionEventCalled = 0;
-        \Event::listen(FailedJob\OfferCreated::class, function () use(&$exceptionEventCalled) {
+        \Event::listen(FailedJob\OfferCreated::class, function () use (&$exceptionEventCalled) {
             $exceptionEventCalled++;
         });
 
         $offerCreated = $this->app->make(CoreService::class)
-            ->setClient($clientMock)
-            ->offerCreated($offerMock);
+                                  ->setClient($clientMock)
+                                  ->offerCreated($offerMock);
 
         $offerCreated->handle();
         $offerCreated->failed((new \Exception));
 
-        $this->assertEquals( 1, $eventCalled, 'Can not listen Offer event.');
+        $this->assertEquals(1, $eventCalled, 'Can not listen Offer event.');
         $this->assertEquals(1, $exceptionEventCalled, 'Can not listen OfferCreated failed job.');
 
         $this->assertEquals([

@@ -59,4 +59,6 @@ interface CoreService
      * @return AbstractJob
      */
     public function offerDeleted(Offer $offer): AbstractJob;
+
+    public function getClient(): Client;
 }

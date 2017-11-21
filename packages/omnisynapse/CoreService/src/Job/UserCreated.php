@@ -5,9 +5,9 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
-use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class UserCreated
@@ -71,11 +71,11 @@ class UserCreated extends AbstractJob
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return UserResponse::class;
+        return new UserResponse;
     }
 
     /**

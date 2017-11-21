@@ -32,7 +32,8 @@ class UserObserverTest extends AbstractObserversTestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException
+     * @expectedException \OmniSynapse\CoreService\Exception\RequestException
+     * @throws \Exception
      */
     public function testCreatingWithException()
     {
@@ -47,6 +48,8 @@ class UserObserverTest extends AbstractObserversTestCase
             ->method('userCreated')
             ->withConsecutive([$user])
             ->willReturn($userCreatedMock);
+
+        $responseMock->method('getReasonPhrase')->willReturn('error');
 
         $this->getDispatcherMock()
             ->expects($this->once())->method('dispatch')

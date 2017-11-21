@@ -5,9 +5,9 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\NauModels\Transact;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
-use OmniSynapse\CoreService\Response\Transaction;
-use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
 use OmniSynapse\CoreService\FailedJob;
+use OmniSynapse\CoreService\Request\SendNau as SendNauRequest;
+use OmniSynapse\CoreService\Response\Transaction;
 
 /**
  * Class SendNau
@@ -71,11 +71,11 @@ class SendNau extends AbstractJob
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return Transaction::class;
+        return new Transaction;
     }
 
     /**

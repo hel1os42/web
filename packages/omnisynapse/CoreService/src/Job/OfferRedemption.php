@@ -5,9 +5,9 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\NauModels\Redemption;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
-use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class OfferRedemption
@@ -71,11 +71,11 @@ class OfferRedemption extends AbstractJob
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return OfferForRedemptionResponse::class;
+        return new OfferForRedemptionResponse;
     }
 
     /**
