@@ -150,10 +150,6 @@ class OfferController extends Controller
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
 
-        if ('active' === $offer->status) {
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, trans('errors.offer_unprocessable_entity'));
-        }
-
         $this->authorize('destroy', $offer);
 
         $offer->delete();
