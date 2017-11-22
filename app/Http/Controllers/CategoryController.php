@@ -19,7 +19,7 @@ class CategoryController extends Controller
      */
     public function index(CategoryRepository $categoryRepository): Response
     {
-        $this->authorize('index', $categoryRepository->model());
+        $this->authorize('categories.list');
 
         $categories = $categoryRepository
             ->getWithNoParent();
@@ -44,7 +44,7 @@ class CategoryController extends Controller
      */
     public function show(string $uuid, CategoryRepository $categoryRepository)
     {
-        $this->authorize('show', $categoryRepository->model());
+        $this->authorize('categories.show');
 
         $category = $categoryRepository
             ->with(['parent'])->find($uuid);

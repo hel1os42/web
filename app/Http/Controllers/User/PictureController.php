@@ -27,7 +27,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request)
     {
-        $this->authorize('pictureStore', $this->auth->user());
+        $this->authorize('users.picture.store');
 
         return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }
@@ -51,7 +51,7 @@ class PictureController extends AbstractPictureController
             throw new NotFoundHttpException();
         }
 
-        $this->authorize('pictureShow', $this->auth->user());
+        $this->authorize('users.picture.show');
 
         return $this->respondWithImageFor($userUuid);
     }

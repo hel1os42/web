@@ -11,7 +11,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
-use App\Models\NauModels\Redemption;
 use App\Models\User;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
@@ -39,10 +38,12 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function getActivationCode(string $offerId): Response
     {
-        $this->authorize('getActivationCode', Redemption::class);
+        $this->authorize('redemption.code');
 
         $this->validateOffer($offerId);
 
@@ -61,10 +62,12 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function createFromOffer(string $offerId): Response
     {
-        $this->authorize('createFromOffer', Redemption::class);
+        $this->authorize('redemption.create.from_offer');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -73,11 +76,12 @@ class RedemptionController extends Controller
 
     /**
      * @return Response
-     * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function create(): Response
     {
-        $this->authorize('create', Redemption::class);
+        $this->authorize('redemption.create');
 
         return \response()->render('redemption.create', ['code' => null]);
     }
@@ -87,10 +91,12 @@ class RedemptionController extends Controller
      * @param OffersService     $offersService
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
-        $this->authorize('store', Redemption::class);
+        $this->authorize('redemption.store');
 
         $code = $request->code;
 
@@ -111,10 +117,12 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        $this->authorize('redemption', Redemption::class);
+        $this->authorize('redemption.redeem');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -133,13 +141,14 @@ class RedemptionController extends Controller
      * @param RedemptionRepository $repository
      *
      * @return Response
-     * @throws ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function show(string $redemptionId, RedemptionRepository $repository): Response
     {
         $redemption = $repository->find($redemptionId);
 
-        $this->authorize('show', $redemption);
+        $this->authorize('redemption.show', $redemption);
 
         return \response()->render('redemption.show', $redemption->toArray());
     }
@@ -149,11 +158,14 @@ class RedemptionController extends Controller
      * @param string $rid
      *
      * @return Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws HttpException
+     * @throws ModelNotFoundException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function showFromOffer(string $offerId, string $rid): Response
     {
-        $this->authorize('showFromOffer', Redemption::class);
+        $this->authorize('redemption.show.from_offer');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -161,9 +173,9 @@ class RedemptionController extends Controller
     }
 
     /**
-     * @param $offerId
+     * @param string $offerId
      *
-     * @return void
+     * @throws HttpException
      */
     private function validateOffer(string $offerId): void
     {
@@ -179,6 +191,12 @@ class RedemptionController extends Controller
         }
     }
 
+    /**
+     * @param string $offerId
+     *
+     * @return Offer
+     * @throws HttpException
+     */
     private function validateOfferAndGetOwn(string $offerId): Offer
     {
         $this->validateOffer($offerId);

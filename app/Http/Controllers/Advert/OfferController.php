@@ -48,7 +48,7 @@ class OfferController extends Controller
      */
     public function index(): Response
     {
-        $this->authorize('index', Offer::class);
+        $this->authorize('my.offers.list');
         $account      = $this->auth->user()->getAccountForNau();
         $paginator    = $this->offerRepository
             ->scopeAccount($account)
@@ -68,7 +68,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        $this->authorize('create', Offer::class);
+        $this->authorize('my.offers.create');
 
         return \response()->render('advert.offer.create',
             FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
@@ -85,7 +85,7 @@ class OfferController extends Controller
      */
     public function store(Advert\OfferRequest $request): Response
     {
-        $this->authorize('store', Offer::class);
+        $this->authorize('my.offers.store');
 
         $attributes = $request->all();
         $account    = $this->auth->user()->getAccountForNau();
@@ -125,7 +125,7 @@ class OfferController extends Controller
             $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
         }
 
-        $this->authorize('show', $offer);
+        $this->authorize('my.offers.show', $offer);
 
         return \response()->render('advert.offer.show', $data);
     }
@@ -143,7 +143,7 @@ class OfferController extends Controller
         $offer   = $this->offerRepository->find($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
-        $this->authorize('updateStatus', $offer);
+        $this->authorize('my.offers.update', $offer);
 
         $status     = $request->get('status');
         $attributes = ['status' => $status];
@@ -170,7 +170,7 @@ class OfferController extends Controller
         $offer   = $this->offerRepository->find($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
-        $this->authorize('update', $offer);
+        $this->authorize('my.offers.update', $offer);
 
         $attributes = $request->all();
 

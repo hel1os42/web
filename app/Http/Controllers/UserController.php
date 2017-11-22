@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('index', $this->userRepository->model());
+        $this->authorize('users.list');
 
         $users = $this->auth->user()->hasRoles([Role::ROLE_ADMIN])
             ? $this->userRepository->with('roles')
@@ -51,12 +51,11 @@ class UserController extends Controller
      */
     public function show(string $uuid = null): Response
     {
-        //dd(request()->method());
         $uuid = $this->getUuid($uuid);
 
         $user = $this->userRepository->with('roles')->with('parents')->with('children')->find($uuid);
 
-        $this->authorize('show', $user);
+        $this->authorize('users.show', $user);
 
         return \response()->render('user.show', $user->toArray());
     }
@@ -75,7 +74,7 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('update', $this->auth->user(), $this->userRepository->find($uuid));
+        $this->authorize('users.update', $this->auth->user(), $this->userRepository->find($uuid));
 
         $userData = $request->all();
 
@@ -121,7 +120,7 @@ class UserController extends Controller
 
         $user = $this->userRepository->find($uuid);
 
-        $this->authorize('referrals', $user);
+        $this->authorize('users.referrals.list', $user);
 
         return \response()->render('user.profile.referrals', $user->referrals()->paginate());
     }
@@ -146,7 +145,7 @@ class UserController extends Controller
      */
     private function setChildren(array $userIds, $user)
     {
-        $this->authorize('setChildren', $this->auth->user(), $user);
+        $this->authorize('users.update.children', $this->auth->user(), $user);
 
         $user->children()->detach();
 
@@ -164,7 +163,7 @@ class UserController extends Controller
      */
     private function setParents(array $userIds, $user)
     {
-        $this->authorize('setParents', $this->auth->user(), $user);
+        $this->authorize('users.update.parents', $this->auth->user(), $user);
 
         $user->parents()->detach();
 
@@ -183,7 +182,7 @@ class UserController extends Controller
     private function updateRoles(array $roleIds, $user)
     {
 
-        $this->authorize('updateRoles', $this->auth->user(), $user);
+        $this->authorize('users.update.roles', $this->auth->user(), $user);
 
         $user->roles()->detach();
 

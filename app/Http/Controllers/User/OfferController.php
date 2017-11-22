@@ -38,7 +38,7 @@ class OfferController extends Controller
      */
     public function index(OfferRequest $request): Response
     {
-        $this->authorize('userIndex', Offer::class);
+        $this->authorize('offers.list');
 
         $offers       = $this->offerRepository
             ->getActiveByCategoriesAndPosition($request->category_ids,
@@ -61,7 +61,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $this->authorize('userShow', Offer::class);
+        $this->authorize('offers.show');
 
         $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
 

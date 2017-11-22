@@ -8,26 +8,27 @@ use App\Models\User;
 
 class OfferPolicy extends Policy
 {
+
     /**
      * @return bool
      */
     public function index()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
      * @return bool
      */
-    public function create()
+    public function show()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
      * @return bool
      */
-    public function store()
+    public function indexMy()
     {
         return $this->auth->user()->isAdvertiser();
     }
@@ -38,7 +39,7 @@ class OfferPolicy extends Policy
      *
      * @return bool
      */
-    public function show(User $user, Offer $offer)
+    public function showMy(User $user, Offer $offer)
     {
         if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN])) {
             return true;
@@ -61,44 +62,17 @@ class OfferPolicy extends Policy
     /**
      * @return bool
      */
-    public function userIndex()
+    public function create()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
      * @return bool
      */
-    public function userShow()
+    public function store()
     {
-        return $this->auth->user()->hasAnyRole();
-    }
-
-    /**
-     * @param User  $user
-     * @param Offer $offer
-     *
-     * @return bool
-     */
-    public function pictureStore(User $user, Offer $offer)
-    {
-        return $user->isAdvertiser() && $offer->isOwner($user);
-    }
-
-    /**
-     * @return bool
-     */
-    public function pictureShow()
-    {
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function updateStatus(): bool
-    {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
     }
 
     /**
@@ -106,6 +80,16 @@ class OfferPolicy extends Policy
      */
     public function update(): bool
     {
-        return $this->isAdvertiser();
+        return $this->auth->user()->isAdvertiser();
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function pictureStore(Offer $offer)
+    {
+        return $this->auth->user()->isAdvertiser() && $offer->isOwner($this->auth->user());
     }
 }

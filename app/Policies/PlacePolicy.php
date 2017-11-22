@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Models\Place;
+
 class PlacePolicy extends Policy
 {
     /**
@@ -17,31 +19,25 @@ class PlacePolicy extends Policy
      */
     public function show()
     {
-        return $this->auth->user()->isAdvertiser();
-    }
-
-    /**
-     * @return bool
-     */
-    public function showOwnerPlace()
-    {
-        return $this->auth->user()->isAdvertiser();
-    }
-
-    /**
-     * @return bool
-     */
-    public function showPlaceOffers()
-    {
         return $this->auth->user()->hasAnyRole();
     }
 
     /**
+     * @param Place $place
+     *
      * @return bool
      */
-    public function showOwnerPlaceOffers()
+    public function showMy(Place $place)
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
+    }
+
+    /**
+     * @return bool
+     */
+    public function showOffers()
+    {
+        return $this->auth->user()->hasAnyRole();
     }
 
     /**
@@ -61,10 +57,22 @@ class PlacePolicy extends Policy
     }
 
     /**
+     * @param Place $place
+     *
      * @return bool
      */
-    public function update()
+    public function pictureStore(Place $place)
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return bool
+     */
+    public function update(Place $place)
+    {
+        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
     }
 }

@@ -11,7 +11,7 @@ class RedemptionPolicy extends Policy
     /**
      * @return bool
      */
-    public function getActivationCode($currentUser)
+    public function code($currentUser)
     {
         return $currentUser->hasRole([Role::ROLE_USER]);
     }
@@ -43,7 +43,7 @@ class RedemptionPolicy extends Policy
     /**
      * @return bool
      */
-    public function redemption()
+    public function redeem()
     {
         return $this->auth->user()->hasRoles([Role::ROLE_USER]);
     }

@@ -24,7 +24,7 @@ class RoleController extends Controller
      */
     public function index(): Response
     {
-        $this->authorize('index', $this->roleRepository->model());
+        $this->authorize('roles.list');
 
         $roles = $this->roleRepository->all();
 
@@ -47,7 +47,7 @@ class RoleController extends Controller
      */
     public function show(string $uuid)
     {
-        $this->authorize('show', $this->roleRepository->model());
+        $this->authorize('roles.show');
 
         $category = $this->roleRepository->find($uuid);
 

@@ -23,14 +23,14 @@ class ActivationCodeController extends Controller
 
     public function show($code)
     {
+        $this->authorize('activation_codes.show');
+
         $activationCode = $this->activationCodeRepository
             ->findByCodeAndUser($code, $this->auth->user());
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());
         }
-
-        $this->authorize('show', $activationCode);
 
         return response()->render('activation_code.show', $activationCode->toArray());
     }

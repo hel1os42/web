@@ -28,7 +28,7 @@ class PlaceController extends Controller
      */
     public function index(PlaceFilterRequest $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('index', $placesRepository->model());
+        $this->authorize('places.list');
 
         $places = $placesRepository
             ->getByCategoriesAndPosition($request->category_ids,
@@ -48,7 +48,7 @@ class PlaceController extends Controller
      */
     public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('show', $placesRepository->model());
+        $this->authorize('places.show');
 
         $place = $placesRepository->find($uuid);
 
@@ -70,9 +70,9 @@ class PlaceController extends Controller
      */
     public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('showOwnerPlace', $placesRepository->model());
-
         $place = $placesRepository->findByUser($this->auth->user());
+
+        $this->authorize('my.places.show', $place);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -93,7 +93,7 @@ class PlaceController extends Controller
      */
     public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('showPlaceOffers', $placesRepository->model());
+        $this->authorize('places.offers.list');
 
         $offers = $placesRepository->find($uuid)->offers();
 
@@ -112,7 +112,7 @@ class PlaceController extends Controller
      */
     public function showOwnerPlaceOffers(PlaceRepository $placesRepository): Response
     {
-        $this->authorize('showOwnerPlaceOffers', $placesRepository->model());
+        $this->authorize('my.offers.list', $placesRepository->model());
 
         $place = $placesRepository->findByUser($this->auth->user());
 
@@ -129,7 +129,7 @@ class PlaceController extends Controller
      */
     public function create(PlaceRepository $placesRepository): Response
     {
-        $this->authorize('create', $placesRepository->model());
+        $this->authorize('places.create');
 
         if ($placesRepository->existsByUser($this->auth->user())) {
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
@@ -148,7 +148,7 @@ class PlaceController extends Controller
      */
     public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('store', $placesRepository->model());
+        $this->authorize('places.store');
 
         $placeData = $request->all();
 
@@ -175,9 +175,9 @@ class PlaceController extends Controller
      */
     public function update(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('update', $placesRepository->model());
-
         $place = $placesRepository->findByUser($this->auth->user());
+
+        $this->authorize('places.update', $place);
 
         $placeData = $request->all();
 

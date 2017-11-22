@@ -10,9 +10,9 @@ class UserPolicy extends Policy
     /**
      * @return bool
      */
-    public function index(User $currentUser)
+    public function index()
     {
-        return $currentUser->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
+        return $this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
     }
 
     /**
@@ -76,7 +76,7 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function setChildren(User $currentUser, User $user)
+    public function updateChildren(User $currentUser, User $user)
     {
         return ($currentUser->hasRoles([Role::ROLE_ADMIN])
                 || ($currentUser->isAgent() && $currentUser->hasChild($user)))
@@ -89,7 +89,7 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function setParents(User $currentUser, User $user)
+    public function updateParents(User $currentUser, User $user)
     {
         return ($currentUser->hasRoles([Role::ROLE_ADMIN])
                 || ($currentUser->isAgent() && $currentUser->hasChild($user)))
