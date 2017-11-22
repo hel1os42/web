@@ -77,7 +77,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * @param int $transactionId |null
+     * @param int|null $transactionId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
