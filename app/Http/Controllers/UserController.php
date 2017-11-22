@@ -63,7 +63,7 @@ class UserController extends Controller
 
     /**
      * @param UserUpdateRequest $request
-     * @param string|null          $uuid
+     * @param string|null       $uuid
      *
      * @return Response
      * @throws HttpException
@@ -91,15 +91,15 @@ class UserController extends Controller
         }
         $user = $user->update($userData, $uuid);
 
-        if($request->has('parent_ids')) {
+        if ($request->has('parent_ids')) {
             $this->setParents($request->parent_ids, $user);
         }
 
-        if($request->has('child_ids')) {
+        if ($request->has('child_ids')) {
             $this->setChildren($request->child_ids, $user);
         }
 
-        if($request->has('role_ids')) {
+        if ($request->has('role_ids')) {
             $this->updateRoles($request->role_ids, $user);
         }
 
@@ -175,7 +175,7 @@ class UserController extends Controller
 
     /**
      * @param array $roleIds
-     * @param $user
+     * @param       $user
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException

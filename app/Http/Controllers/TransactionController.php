@@ -77,7 +77,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * @param null $transactionId
+     * @param int $transactionId |null
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -85,7 +85,7 @@ class TransactionController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function listTransactions($transactionId = null): Response
+    public function listTransactions(int $transactionId = null): Response
     {
         $this->authorize('listTransactions', $this->transactionRepository->model());
 
