@@ -11,7 +11,7 @@ class PlacePolicy extends Policy
      */
     public function index()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -19,7 +19,7 @@ class PlacePolicy extends Policy
      */
     public function show()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -29,7 +29,7 @@ class PlacePolicy extends Policy
      */
     public function showMy(Place $place)
     {
-        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
     }
 
     /**
@@ -37,7 +37,7 @@ class PlacePolicy extends Policy
      */
     public function showOffers()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -45,7 +45,7 @@ class PlacePolicy extends Policy
      */
     public function create()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -53,7 +53,7 @@ class PlacePolicy extends Policy
      */
     public function store()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -63,7 +63,7 @@ class PlacePolicy extends Policy
      */
     public function pictureStore(Place $place)
     {
-        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
     }
 
     /**
@@ -73,6 +73,6 @@ class PlacePolicy extends Policy
      */
     public function update(Place $place)
     {
-        return $this->auth->user()->isAdvertiser() && $this->auth->user()->equal($place->user);
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
     }
 }

@@ -12,7 +12,7 @@ class UserPolicy extends Policy
      */
     public function index()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
+        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
     }
 
     /**
@@ -60,7 +60,7 @@ class UserPolicy extends Policy
      */
     public function pictureStore()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 
     /**

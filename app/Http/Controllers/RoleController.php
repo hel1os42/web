@@ -47,14 +47,14 @@ class RoleController extends Controller
      */
     public function show(string $uuid)
     {
-        $this->authorize('roles.show');
+        $role = $this->roleRepository->find($uuid);
 
-        $category = $this->roleRepository->find($uuid);
+        $this->authorize('roles.show', $role);
 
-        if ($category === null) {
+        if ($role === null) {
             throw new NotFoundHttpException();
         }
 
-        return response()->render('role.show', $category->toArray());
+        return response()->render('role.show', $role->toArray());
     }
 }

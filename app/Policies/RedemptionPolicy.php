@@ -21,7 +21,7 @@ class RedemptionPolicy extends Policy
      */
     public function createFromOffer()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -29,7 +29,7 @@ class RedemptionPolicy extends Policy
      */
     public function create()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -37,7 +37,7 @@ class RedemptionPolicy extends Policy
      */
     public function store()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -45,7 +45,7 @@ class RedemptionPolicy extends Policy
      */
     public function redeem()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -63,6 +63,6 @@ class RedemptionPolicy extends Policy
      */
     public function showFromOffer()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 }

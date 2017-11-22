@@ -59,7 +59,7 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $this->authorize('transactions.complete');
+        $this->authorize('transactions.create');
 
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);

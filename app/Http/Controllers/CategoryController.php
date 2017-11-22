@@ -44,14 +44,14 @@ class CategoryController extends Controller
      */
     public function show(string $uuid, CategoryRepository $categoryRepository)
     {
-        $this->authorize('categories.show');
-
         $category = $categoryRepository
             ->with(['parent'])->find($uuid);
 
         if ($category === null) {
             throw new NotFoundHttpException();
         }
+
+        $this->authorize('categories.show', $category);
 
         return response()->render('category.show', $category->toArray());
     }

@@ -48,13 +48,13 @@ class PlaceController extends Controller
      */
     public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('places.show');
-
         $place = $placesRepository->find($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
+
+        $this->authorize('places.show', $place);
 
         return \response()->render('place.show', $place->toArray());
     }

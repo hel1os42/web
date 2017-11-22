@@ -11,7 +11,7 @@ class RolePolicy extends Policy
      */
     public function index()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
     }
 
     /**
@@ -19,6 +19,6 @@ class RolePolicy extends Policy
      */
     public function show()
     {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
     }
 }

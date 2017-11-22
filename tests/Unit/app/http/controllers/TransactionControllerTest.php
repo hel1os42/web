@@ -170,7 +170,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('createTransaction', $this->transactionRepository->model())
+            ->with('transactions.create')
             ->willReturn(true);
 
         $responseFactory
@@ -206,7 +206,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('listTransactions', $this->transactionRepository->model())
+            ->with('transactions.list')
             ->willReturn(true);
 
         $builder
@@ -263,7 +263,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('completeTransaction', $this->transactionRepository->model())
+            ->with('transactions.create')
             ->willReturn(true);
 
         $responseFactory

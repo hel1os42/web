@@ -68,7 +68,6 @@ class AuthServiceProvider extends ServiceProvider
 
         'transactions.list'     => 'TransactPolicy@index',
         'transactions.create'   => 'TransactPolicy@create',
-        'transactions.complete' => 'TransactPolicy@complete',
 
         'users.list'            => 'UserPolicy@index',
         'users.show'            => 'UserPolicy@show',

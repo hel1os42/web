@@ -9,7 +9,7 @@ class TransactPolicy extends Policy
      */
     public function index()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -17,14 +17,6 @@ class TransactPolicy extends Policy
      */
     public function create()
     {
-        return $this->auth->user()->hasAnyRole();
-    }
-
-    /**
-     * @return bool
-     */
-    public function complete()
-    {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 }

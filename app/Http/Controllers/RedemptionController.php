@@ -38,8 +38,6 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function getActivationCode(string $offerId): Response
     {
@@ -62,8 +60,6 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function createFromOffer(string $offerId): Response
     {
@@ -76,8 +72,6 @@ class RedemptionController extends Controller
 
     /**
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function create(): Response
     {
@@ -91,8 +85,6 @@ class RedemptionController extends Controller
      * @param OffersService     $offersService
      *
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
@@ -117,8 +109,6 @@ class RedemptionController extends Controller
      *
      * @return Response
      * @throws HttpException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
@@ -141,8 +131,7 @@ class RedemptionController extends Controller
      * @param RedemptionRepository $repository
      *
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
+     * @throws ModelNotFoundException
      */
     public function show(string $redemptionId, RedemptionRepository $repository): Response
     {
@@ -158,10 +147,7 @@ class RedemptionController extends Controller
      * @param string $rid
      *
      * @return Response
-     * @throws HttpException
      * @throws ModelNotFoundException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
      */
     public function showFromOffer(string $offerId, string $rid): Response
     {
@@ -174,8 +160,6 @@ class RedemptionController extends Controller
 
     /**
      * @param string $offerId
-     *
-     * @throws HttpException
      */
     private function validateOffer(string $offerId): void
     {
@@ -191,12 +175,6 @@ class RedemptionController extends Controller
         }
     }
 
-    /**
-     * @param string $offerId
-     *
-     * @return Offer
-     * @throws HttpException
-     */
     private function validateOfferAndGetOwn(string $offerId): Offer
     {
         $this->validateOffer($offerId);

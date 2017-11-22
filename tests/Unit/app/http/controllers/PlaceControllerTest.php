@@ -122,7 +122,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('index', $this->placeRepository->model())
+            ->with('places.list')
             ->willReturn(true);
 
         $this->placeRepository
@@ -190,17 +190,17 @@ class PlaceControllerTest extends TestCase
 
         $placesArray = [$uuid, $withOffers];
 
-        $this->authorizeGate
-            ->expects(self::once())
-            ->method('authorize')
-            ->with('show', $this->placeRepository->model())
-            ->willReturn(true);
-
         $this->placeRepository
             ->expects(self::once())
             ->method('find')
             ->with($uuid)
             ->willReturn($place);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('places.show', $place)
+            ->willReturn(true);
 
         if ($withOffers) {
             $request
@@ -256,17 +256,17 @@ class PlaceControllerTest extends TestCase
 
         $placesArray = [$withOffers];
 
-        $this->authorizeGate
-            ->expects(self::once())
-            ->method('authorize')
-            ->with('showOwnerPlace', $this->placeRepository->model())
-            ->willReturn(true);
-
         $this->placeRepository
             ->expects(self::once())
             ->method('findByUser')
             ->with($this->user)
             ->willReturn($place);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('my.places.show', $place)
+            ->willReturn(true);
 
         if ($withOffers) {
             $request
@@ -324,7 +324,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('showPlaceOffers', $this->placeRepository->model())
+            ->with('places.offers.list')
             ->willReturn(true);
 
         $this->placeRepository
@@ -376,7 +376,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('showOwnerPlaceOffers', $this->placeRepository->model())
+            ->with('my.offers.list')
             ->willReturn(true);
 
         $this->placeRepository
@@ -427,7 +427,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('create', $this->placeRepository->model())
+            ->with('places.create')
             ->willReturn(true);
 
         $responseFactory
@@ -463,7 +463,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('store', $this->placeRepository->model())
+            ->with('places.store')
             ->willReturn(true);
 
         $this->placeRepository
@@ -557,7 +557,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('update', $this->placeRepository->model())
+            ->with('places.update', $place)
             ->willReturn(true);
 
         $place
