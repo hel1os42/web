@@ -98,9 +98,9 @@ iframe {
 	line-height: 1.4em;
 	color: #bdbdbd;
 }
-.form .control-text label span.label,
-.form .control-datetime label span.label,
-.form .control-select label span.label {
+.form .control-text label span.input-label,
+.form .control-datetime label span.input-label,
+.form .control-select label span.input-label {
 	display: block;
 	margin-bottom: 4px;
 }

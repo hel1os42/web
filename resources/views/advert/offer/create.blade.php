@@ -24,18 +24,17 @@
 				<div id="tab_step1">
 
 					<p class="title">Name and Description</p>
-					<p class="control-text valid-not-empty"><label><span class="label">Offer name</span> <input name="label" value="{{old('label')}}"</label></p>
+					<p class="control-text valid-not-empty"><label><span class="input-label">Offer name</span> <input name="label" value="{{old('label')}}"</label></p>
 					<p class="hint">Please, enter the Offer name.</p>
-					<p class="control-text valid-not-empty"><label><span class="label">Offer description</span> <textarea name="description">{{old('description')}}</textarea></label></p>
+					<p class="control-text valid-not-empty"><label><span class="input-label">Offer description</span> <textarea name="description">{{old('description')}}</textarea></label></p>
 					<p class="hint">Please, enter the Offer description.</p>
-					<!-- name="____field_name" - not used fields -->
-					<p><span class="label">Offer picture</span><br><label class="control-file"><span class="text-add">Add picture</span> <input name="____offer_picture" type="file" class="js-imgupload" id="offerImg"><img src="" alt=""><span class="text-hover">Drag it here</span></label></p>
+					<p><span class="input-label">Offer picture</span><br><label class="control-file"><span class="text-add">Add picture</span> <input name="____offer_picture" type="file" class="js-imgupload" id="offerImg"><img src="" alt=""><span class="text-hover">Drag it here</span></label></p>
 
 					<p class="title">Category &amp; Type</p>
 
 					<p class="control-select valid-not-empty">
 						<label>
-							<span class="label">Offer category</span>
+							<span class="input-label">Offer category</span>
 							<select id="offer_category" name="category_id"></select>
 						</label>
 					</p>
@@ -43,10 +42,10 @@
 
 
 					<p>Offer type</p>
-					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot1" checked value="Discount"><label for="radio_ot1"><span class="label">Discount</span> <small>Description for this item</small></label></p>
-					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot2" value="Second Free"><label for="radio_ot2"><span class="label">Second Free</span> <small>Description for this item</small></label></p>
-					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot3" value="Bonus or Gift"><label for="radio_ot3"><span class="label">Bonus or Gift</span> <small>Description for this item</small></label></p>
-					<p class="control-range" id="discount_value"><span class="label">Set discount (%)</span> <em role="button" class="more">+</em><label><input name="reward" data-min="0" data-max="99" data-default="10" value="10" class="js-numeric" value="{{old('reward')}}"></label><em role="button" class="less">-</em></p>
+					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot1" checked value="Discount"><label for="radio_ot1"><span class="input-label">Discount</span> <small>Description for this item</small></label></p>
+					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot2" value="Second Free"><label for="radio_ot2"><span class="input-label">Second Free</span> <small>Description for this item</small></label></p>
+					<p class="control-radio-left"><input name="____r2" type="radio" id="radio_ot3" value="Bonus or Gift"><label for="radio_ot3"><span class="input-label">Bonus or Gift</span> <small>Description for this item</small></label></p>
+					<p class="control-range" id="discount_value"><span class="input-label">Set discount (%)</span> <em role="button" class="more">+</em><label><input name="reward" data-min="0" data-max="99" data-default="10" value="10" class="js-numeric" value="{{old('reward')}}"></label><em role="button" class="less">-</em></p>
 
 					<p class="tab-footer">
 						<span class="btn-nau pull-right" data-tab-target="tab_step2">next step &gt;</span>
@@ -56,8 +55,8 @@
 				<div id="tab_step2">
 					<p class="title">Working dates</p>
 					<p class="row control-datetime valid-dates">
-						<label class="col-xs-6"><span class="label">from</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value="{{old('start_date')}}"></label>
-						<label class="col-xs-6"><span class="label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value="{{old('finish_date')}}"></label>
+						<label class="col-xs-6"><span class="input-label">from</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value="{{old('start_date')}}"></label>
+						<label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value="{{old('finish_date')}}"></label>
 					</p>
 					<p class="hint">Please, select the valid range of dates.</p>
 
@@ -68,12 +67,12 @@
 
 					<div class="tab-content" id="tab_wdt1">
 						<p class="title">Working days</p>
-						<p class="control-check-left"><input name="____wd_working_days" type="checkbox" id="check_wd8" checked><label for="check_wd8"><span class="label">Working Days</span></label></p>
-						<p class="control-check-left"><input name="____wd_weekend" type="checkbox" id="check_wd9"><label for="check_wd9"><span class="label">Weekend</span></label></p>
+						<p class="control-check-left"><input name="____wd_working_days" type="checkbox" id="check_wd8" checked><label for="check_wd8"><span class="input-label">Working Days</span></label></p>
+						<p class="control-check-left"><input name="____wd_weekend" type="checkbox" id="check_wd9"><label for="check_wd9"><span class="input-label">Weekend</span></label></p>
 						<p class="title">Working time</p>
 						<p class="row control-datetime">
-							<label class="col-xs-6"><span class="label">from</span> <input name="start_time" readonly class="js-timepicker" value="{{old('start_time')}}" id="time_wd8f" placeholder="__:__"></label>
-							<label class="col-xs-6"><span class="label">to</span> <input name="finish_time" readonly class="js-timepicker" value="{{old('finish_time')}}" id="time_wd8t" placeholder="__:__"></label>
+							<label class="col-xs-6"><span class="input-label">from</span> <input name="start_time" readonly class="js-timepicker" value="{{old('start_time')}}" id="time_wd8f" placeholder="__:__"></label>
+							<label class="col-xs-6"><span class="input-label">to</span> <input name="finish_time" readonly class="js-timepicker" value="{{old('finish_time')}}" id="time_wd8t" placeholder="__:__"></label>
 						</p>
 					</div>
 
@@ -182,7 +181,7 @@
 					<p class="title">Working area</p>
 					<p class="control-select valid-not-empty">
 						<label>
-							<span class="label">Your place</span>
+							<span class="input-label">Your place</span>
 							<select name="____place">
 								<option value="" selected>Select a place</option>
 								<option value="Place 1">Place 1</option>
@@ -192,15 +191,6 @@
 						</label>
 					</p>
 					<p class="hint">Please, select a place.</p>
-
-					<!--
-					<input name="latitude" value="{{old('latitude')}}">
-					<input name="longitude" value="{{old('longitude')}}">
-					<input name="radius" value="{{old('radius')}}">
-					<input name="country" value="{{old('country')}}">
-					<input name="city" value="{{old('city')}}">
-					<input name="address" value="{{old('address')}}">
-					-->
 					
 					<p class="title">Setting map radius</p>
 					[ insert map here ]
@@ -214,23 +204,23 @@
 
 				<div id="tab_step4">
 					<p class="title">Max redemption total <small>Zero is infinity</small></p>
-					<p class="control-range max-redemption"><span class="label">Overral</span> <em role="button" class="more">+</em><label><input name="max_count" data-min="0" data-max="1000" data-default="0" value="{{old('max_count')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Daily</span> <em role="button" class="more">+</em><label><input name="max_per_day" data-min="0" data-max="1000" data-default="0" value="{{old('max_per_day')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Weekly</span> <em role="button" class="more">+</em><label><input name="max_per_week" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Monthly</span> <em role="button" class="more">+</em><label><input name="max_per_month" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Overral</span> <em role="button" class="more">+</em><label><input name="max_count" data-min="0" data-max="1000" data-default="0" value="{{old('max_count')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Daily</span> <em role="button" class="more">+</em><label><input name="max_per_day" data-min="0" data-max="1000" data-default="0" value="{{old('max_per_day')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Weekly</span> <em role="button" class="more">+</em><label><input name="max_per_week" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Monthly</span> <em role="button" class="more">+</em><label><input name="max_per_month" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
 
 					<p class="title">Max redemption per user <small>Zero is infinity</small></p>
-					<p class="control-range max-redemption"><span class="label">Overral</span> <em role="button" class="more">+</em><label><input name="max_for_user" data-min="0" data-max="1000" data-default="0" value="{{old('max_for_user')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Daily</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_day" data-min="0" data-max="1000" data-default="0" value="{{old('max_for_user_per_day')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Weekly</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_week" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range max-redemption"><span class="label">Monthly</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_month" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Overral</span> <em role="button" class="more">+</em><label><input name="max_for_user" data-min="0" data-max="1000" data-default="0" value="{{old('max_for_user')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Daily</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_day" data-min="0" data-max="1000" data-default="0" value="{{old('max_for_user_per_day')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Weekly</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_week" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range max-redemption"><span class="input-label">Monthly</span> <em role="button" class="more">+</em><label><input name="max_for_user_per_month" data-min="0" data-max="1000" data-default="0" value="0" class="js-numeric"></label><em role="button" class="less">-</em></p>
 
 					<p class="title">Other limits</p>
-					<p class="control-range"><span class="label">Minimal user level</span> <em role="button" class="more">+</em><label><input name="user_level_min" data-min="0" data-max="99" data-default="0" value="{{old('user_level_min')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range"><span class="input-label">Minimal user level</span> <em role="button" class="more">+</em><label><input name="user_level_min" data-min="0" data-max="99" data-default="0" value="{{old('user_level_min')}}" class="js-numeric"></label><em role="button" class="less">-</em></p>
 
 					<p class="title">Reward options</p>
-					<p class="control-range"><span class="label">Reward for redemption</span> <em role="button" class="more">+</em><label><input name="____reward_redemption" data-min="0" data-max="999999" data-default="10" value="10" class="js-numeric"></label><em role="button" class="less">-</em></p>
-					<p class="control-range"><span class="label">Token reservation</span> <em role="button" class="more">+</em><label><input name="____token_reservation" data-min="0" data-max="999999" data-default="55" value="55" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range"><span class="input-label">Reward for redemption</span> <em role="button" class="more">+</em><label><input name="____reward_redemption" data-min="0" data-max="999999" data-default="10" value="10" class="js-numeric"></label><em role="button" class="less">-</em></p>
+					<p class="control-range"><span class="input-label">Token reservation</span> <em role="button" class="more">+</em><label><input name="____token_reservation" data-min="0" data-max="999999" data-default="55" value="55" class="js-numeric"></label><em role="button" class="less">-</em></p>
 
 					<p class="tokens-total"><strong>235</strong> <span>You have tokens on your account</span></p>
 
@@ -241,12 +231,6 @@
 				</div>
 
 			</form>					
-
-			<!--
-			<section class="map">
-				<div id="map"></div>
-			</section>
-			-->
 
 			<script type="text/javascript">
 				/* offer_category */
