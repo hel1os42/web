@@ -75,9 +75,10 @@ class TransactionControllerTest extends TestCase
 
     /**
      * TransactionControllerTest constructor.
+     *
      * @param string|null $name
-     * @param array $data
-     * @param string $dataName
+     * @param array       $data
+     * @param string      $dataName
      */
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -112,7 +113,8 @@ class TransactionControllerTest extends TestCase
 
         $this->configureTransactionRepository();
 
-        $this->controller = new TransactionController($this->transactionRepository, $this->accountRepository, $this->authManager);
+        $this->controller = new TransactionController($this->transactionRepository, $this->accountRepository,
+            $this->authManager);
     }
 
     private function configureTestUser()
@@ -226,8 +228,7 @@ class TransactionControllerTest extends TestCase
                 ->method('__call')
                 ->with('render', ['transaction.transactionInfo', $this->transaction])
                 ->willReturn($response);
-        }
-        else {
+        } else {
             $responseFactory
                 ->method('__call')
                 ->with('render', ['transaction.list', $pagination])
@@ -269,10 +270,11 @@ class TransactionControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['transaction.complete', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
+            ->with('render', ['transactions.complete', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
             ->willReturn($response);
 
         $returnValue = $this->controller->completeTransaction($request);
+
         self::assertSame($response, $returnValue);
     }
 
