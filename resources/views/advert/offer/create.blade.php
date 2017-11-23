@@ -230,40 +230,43 @@
 					</p>
 				</div>
 
-			</form>					
+			</form>
 
-			<script type="text/javascript">
-				/* offer_category */
-				var xmlhttp = new XMLHttpRequest();
+            <div id="formOverlay">
+                <div id="formInformationModal"><p class="msg">Sending...</p><img src="{{ asset('img/loading.gif') }}" alt="loading..." class="loading"></div>
+            </div>
 
-				xmlhttp.onreadystatechange = function () {
-					if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-						if (xmlhttp.status == 200) {
-							document.getElementById("offer_category").innerHTML = xmlhttp.responseText;
-						}
-						else if (xmlhttp.status == 400) {
-							alert('There was an error 400');
-						}
-						else {
-							alert('something else other than 200 was returned');
-						}
-					}
-				};
+            @push('scripts')
+                <script type="text/javascript">
+                    /* offer_category */
+                    var xmlhttp = new XMLHttpRequest();
 
-				xmlhttp.open("GET", "{{route('categories')}}", true);
-				xmlhttp.send();
-			</script>
+                    xmlhttp.onreadystatechange = function () {
+                        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                            if (xmlhttp.status == 200) {
+                                document.getElementById("offer_category").innerHTML = xmlhttp.responseText;
+                            }
+                            else if (xmlhttp.status == 400) {
+                                alert('There was an error 400');
+                            }
+                            else {
+                                alert('something else other than 200 was returned');
+                            }
+                        }
+                    };
 
-			
-			<div id="formOverlay">
-				<div id="formInformationModal"><p class="msg">Sending...</p><img src="{{ asset('img/loading.gif') }}" alt="loading..." class="loading"></div>
-			</div>
+                    xmlhttp.open("GET", "{{route('categories')}}", true);
+                    xmlhttp.send();
+                </script>
 
-			<script src="{{ asset('js/datetimepicker.js') }}"></script>
-			<script src="{{ asset('js/create-offer.js') }}"></script>
-	
-			<link href="{{ asset('css/datetimepicker.css') }}" rel="stylesheet" type="text/css">
-					
+                <script src="{{ asset('js/datetimepicker.js') }}"></script>
+                <script src="{{ asset('js/create-offer.js') }}"></script>
+			@endpush
+
+            @push('styles')
+			    <link href="{{ asset('css/datetimepicker.css') }}" rel="stylesheet" type="text/css">
+			@endpush
+
 		</div>
 	</div>
 </div>
