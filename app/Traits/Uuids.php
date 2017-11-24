@@ -11,8 +11,13 @@ trait Uuids
      */
     protected static function bootUuids()
     {
-        static::creating(function ($model) {
-            $model->{$model->getKeyName()} = Uuid::generate(4)->string;
+        static::saving(function ($model) {
+            /** @var Uuids $model */
+            if (null !== $model->primaryKey) {
+                return;
+            }
+
+            $model->primaryKey = (string)Uuid::generate(4);
         });
     }
 
