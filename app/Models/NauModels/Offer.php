@@ -100,6 +100,7 @@ class Offer extends AbstractNauModel
      */
     protected static function boot()
     {
+        parent::boot();
         self::bootGlobalScopes();
     }
 
