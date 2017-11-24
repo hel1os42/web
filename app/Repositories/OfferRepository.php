@@ -35,13 +35,6 @@ interface OfferRepository extends RepositoryInterface
     ): Builder;
 
     /**
-     * @param string $identity
-     *
-     * @return Offer
-     */
-    public function findActiveByIdOrFail(string $identity): Offer;
-
-    /**
      * @param Account $account
      *
      * @return OfferRepository
@@ -55,4 +48,12 @@ interface OfferRepository extends RepositoryInterface
      * @return Offer
      */
     public function update(array $attributes, $offerId): Offer;
+
+    /**
+     * @param string $offerId
+     * @param array  $columns
+     *
+     * @return Offer|null
+     */
+    public function findWithoutGlobalScopes(string $offerId, array $columns = ['*']): Offer;
 }

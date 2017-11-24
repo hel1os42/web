@@ -88,6 +88,12 @@ class Offer extends AbstractNauModel
         'reserved',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::bootGlobalScopes();
+    }
     /**
      * @return Account
      */
