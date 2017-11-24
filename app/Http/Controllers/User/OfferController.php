@@ -63,7 +63,7 @@ class OfferController extends Controller
     {
         $this->authorize('userShow', Offer::class);
 
-        $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
+        $offer = $this->offerRepository->find($offerUuid);
 
         if ($offer->isOwner($this->auth->user())) {
             $offer->setVisible(Offer::$publicAttributes);

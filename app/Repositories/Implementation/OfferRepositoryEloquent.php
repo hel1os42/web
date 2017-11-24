@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Exceptions\Exception;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\Criteria\MappableRequestCriteria;
@@ -108,28 +107,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
 
         $model = $this->model
-            ->active()
             ->filterByCategories($categoryIds)
             ->filterByPosition($latitude, $longitude, $radius);
-
-        $this->resetModel();
-
-        return $this->parserResult($model);
-    }
-
-    /**
-     * @param string $identity
-     *
-     * @return Offer
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Prettus\Repository\Exceptions\RepositoryException
-     */
-    public function findActiveByIdOrFail(string $identity): Offer
-    {
-        $this->applyCriteria();
-        $this->applyScope();
-
-        $model = $this->model->active()->findOrFail($identity);
 
         $this->resetModel();
 
@@ -155,8 +134,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      * @param string $offerId
      *
      * @return Offer
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws HttpException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
@@ -177,7 +155,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
         $this->skipPresenter(true);
 
-        $model = $this->model->find($offerId);
+        $model = $this->builderWithoutGlobalScopes()
+                      ->find($offerId);
 
         if (!$model->update($attributes)) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot update your offer.");
@@ -193,5 +172,52 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         event(new RepositoryEntityUpdated($this, $model));
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param string $offerId
+     * @param array  $columns
+     *
+     * @return Offer
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function findWithoutGlobalScopes(string $offerId, array $columns = ['*']): Offer
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->builderWithoutGlobalScopes()
+                      ->findOrFail($offerId, $columns);
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * @param null   $limit
+     * @param array  $columns
+     * @param string $method
+     *
+     * @return mixed
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function paginateWithoutGlobalScopes($limit = null, $columns = ['*'], $method = "paginate")
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $limit   = is_null($limit) ? config('repository.pagination.limit', 15) : $limit;
+        $results = $this->builderWithoutGlobalScopes()
+                        ->{$method}($limit, $columns);
+        $results->appends(app('request')->query());
+        $this->resetModel();
+
+        return $this->parserResult($results);
+    }
+
+    protected function builderWithoutGlobalScopes(): Builder
+    {
+        return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);
     }
 }
