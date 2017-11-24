@@ -83,7 +83,7 @@ abstract class AbstractJob implements ShouldQueue
 
         $jsonMapper                                = new \JsonMapper();
         $jsonMapper->bExceptionOnMissingData       = true;
-        $jsonMapper->bExceptionOnUndefinedProperty = true;
+        $jsonMapper->bExceptionOnUndefinedProperty = false;
         $jsonMapper->bStrictObjectTypeChecking     = true;
 
         try {
