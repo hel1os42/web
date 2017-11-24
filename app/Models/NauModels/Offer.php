@@ -41,11 +41,21 @@ use Carbon\Carbon;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuids;
+    use RelationsTrait, ScopesTrait, HasNau;
+    use Uuids {
+        boot as bootUuids;
+    }
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
 
+    /**
+     * Offer constructor.
+     *
+     * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
     public function __construct(array $attributes = [])
     {
         $this->table = "offer";
@@ -88,12 +98,15 @@ class Offer extends AbstractNauModel
         'reserved',
     ];
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     protected static function boot()
     {
-        parent::boot();
-
+        self::bootUuids();
         self::bootGlobalScopes();
     }
+
     /**
      * @return Account
      */
