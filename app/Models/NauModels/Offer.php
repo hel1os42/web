@@ -41,10 +41,7 @@ use Carbon\Carbon;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau;
-    use Uuids {
-        boot as bootUuids;
-    }
+    use RelationsTrait, ScopesTrait, HasNau, Uuids;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -103,7 +100,6 @@ class Offer extends AbstractNauModel
      */
     protected static function boot()
     {
-        self::bootUuids();
         self::bootGlobalScopes();
     }
 
