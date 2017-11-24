@@ -270,22 +270,28 @@ class Offer extends AbstractNauModel
         return $this->user_level_min;
     }
 
-    /** @return float */
-    public function getLatitude(): float
+    /**
+     * @return float|null
+     */
+    public function getLatitude(): ?float
     {
-        return (float)$this->latitude;
+        return $this->latitude;
     }
 
-    /** @return float */
-    public function getLongitude(): float
+    /**
+     * @return float|null
+     */
+    public function getLongitude(): ?float
     {
-        return (float)$this->longitude;
+        return $this->longitude;
     }
 
-    /** @return int */
-    public function getRadius(): int
+    /**
+     * @return int|null
+     */
+    public function getRadius(): ?int
     {
-        return (int)$this->radius;
+        return $this->radius;
     }
 
     /**
