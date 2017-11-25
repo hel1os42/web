@@ -7,7 +7,7 @@ use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Models\NauModels\Offer;
-use App\Repositories\Implementation\OfferRepositoryEloquent;
+use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthManager;
@@ -32,23 +32,32 @@ class PlaceController extends Controller
     /**
      * @param PlaceFilterRequest $request
      *
+     * @param OfferRepository    $offerRepository
+     *
      * @return Response
+     * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request, OfferRepositoryEloquent $offerRepository): Response
+    public function index(PlaceFilterRequest $request, OfferRepository $offerRepository): Response
     {
-        $offers    = $offerRepository
+        $offers = $offerRepository
+            ->skipCriteria()
             ->getActiveByCategoriesAndPosition($request->category_ids,
                 $request->latitude, $request->longitude, $request->radius)
             ->select('acc_id')
-            ->orderByRaw(sprintf('(6371000 * 2 * 
+            ->groupBy('acc_id', 'lat', 'lng');
+
+        if (isset($request->latitude, $request->longitude)) {
+            $offers->orderByRaw(sprintf('(6371000 * 2 * 
         ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
         PI()/180 / 2), 2) + COS(lat * PI()/180) * 
         COS(ABS(%1$s) * PI()/180) * 
         POWER(SIN((lng - %2$s) * 
         PI()/180 / 2), 2))))',
-            \DB::connection()->getPdo()->quote($request->latitude),
-            \DB::connection()->getPdo()->quote($request->longitude)))
-            ->groupBy('acc_id', 'lat', 'lng');
+                \DB::connection()->getPdo()->quote($request->latitude),
+                \DB::connection()->getPdo()->quote($request->longitude)))
+                   ->groupBy('lat', 'lng');
+        }
+
         $paginator = $offers->paginate();
 
         $array         = $paginator->toArray();

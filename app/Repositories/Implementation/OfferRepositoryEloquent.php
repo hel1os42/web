@@ -102,6 +102,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      *
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \InvalidArgumentException
      */
     public function getActiveByCategoriesAndPosition(
         array $categoryIds,
@@ -129,6 +130,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     private function getChildCategoryIds(array $categoryIds = []): array
     {
         $result = [];
+
+        $this->categoryRepository->skipCriteria();
 
         foreach ($categoryIds as $categoryId) {
             $result[] = $categoryId;
