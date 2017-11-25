@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Contracts\Currency;
+use App\Models\NauModels\Offer;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ use Illuminate\Support\Collection;
  * @property string                       picture_url
  * @property string                       cover_url
  * @property int                          offers_count
+ * @property int                          active_offers_count
  *
  * @property User                         user
  * @property Collection                   testimonials
@@ -97,6 +99,7 @@ class Place extends Model
             'categories_count',
             'testimonials_count',
             'offers_count',
+            'active_offers_count',
             'picture_url',
             'cover_url'
         ];
@@ -158,13 +161,18 @@ class Place extends Model
         return $this->stars;
     }
 
+    public function getActiveOffersCountAttribute(): int
+    {
+        return $this->offers()->count();
+    }
+
     /**
      * @return int
      * @throws \App\Exceptions\TokenException
      */
     public function getOffersCountAttribute(): int
     {
-        return $this->offers()->count();
+        return $this->offers()->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()])->count();
     }
 
     /**
