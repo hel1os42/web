@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Models\Category;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\CategoryRepository;
@@ -112,7 +113,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
 
         $model = $this->model
-            ->filterByCategories($this->getChildCategoryIds($categoryIds))
+            ->whereIn('category_id', $this->getChildCategoryIds($categoryIds))
             ->filterByPosition($latitude, $longitude, $radius);
 
         $this->resetModel();
