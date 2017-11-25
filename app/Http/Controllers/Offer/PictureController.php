@@ -46,7 +46,7 @@ class PictureController extends AbstractPictureController
     public function store(PictureRequest $request, string $offerId)
     {
 
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
         if (null === $offer) {
             throw (new ModelNotFoundException)->setModel(Offer::class);
@@ -69,7 +69,7 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $offerId): Response
     {
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
         return $this->respondWithImageFor($offer->id);
     }
