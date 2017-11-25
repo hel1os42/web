@@ -4,11 +4,13 @@ namespace App\Repositories\Implementation;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
+use App\Repositories\CategoryRepository;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
@@ -27,6 +29,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
+    protected $categoryRepository;
     protected $reservationService;
 
     protected $fieldSearchable = [
@@ -37,9 +40,11 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     public function __construct(
         Application $app,
-        TimeframeRepository $timeframeRepository
+        TimeframeRepository $timeframeRepository,
+        CategoryRepository $categoryRepository
     ) {
         $this->timeframeRepository = $timeframeRepository;
+        $this->categoryRepository  = $categoryRepository;
         parent::__construct($app);
     }
 
@@ -107,12 +112,39 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
 
         $model = $this->model
-            ->filterByCategories($categoryIds)
+            ->filterByCategories($this->getChildCategoryIds($categoryIds))
             ->filterByPosition($latitude, $longitude, $radius);
 
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param array $categoryIds
+     *
+     * @return array
+     */
+    private function getChildCategoryIds(array $categoryIds = []): array
+    {
+        $result = [];
+
+        foreach ($categoryIds as $categoryId) {
+            $result[] = $categoryId;
+
+            /** @var Category $category */
+            try {
+                $category = $this->categoryRepository->find($categoryId);
+            } catch (ModelNotFoundException $exception) {
+                continue;
+            }
+
+            if ($category->children()->count() > 0) {
+                $result = array_merge($result, $category->children()->pluck('id')->toArray());
+            }
+        }
+
+        return $result;
     }
 
     /**

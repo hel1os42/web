@@ -6,6 +6,8 @@ use App\Helpers\Attributes;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
+use App\Models\NauModels\Offer;
+use App\Repositories\Implementation\OfferRepositoryEloquent;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthManager;
@@ -32,13 +34,21 @@ class PlaceController extends Controller
      *
      * @return Response
      */
-    public function index(PlaceFilterRequest $request): Response
+    public function index(PlaceFilterRequest $request, OfferRepositoryEloquent $offerRepository): Response
     {
-        $places = $this->placesRepository
-            ->getByCategoriesAndPosition($request->category_ids,
-                $request->latitude, $request->longitude, $request->radius);
+        $offers    = $offerRepository
+            ->getActiveByCategoriesAndPosition($request->category_ids,
+                $request->latitude, $request->longitude, $request->radius)
+            ->select('acc_id')
+            ->groupBy('acc_id');
+        $paginator = $offers->paginate();
 
-        return response()->render('place.index', $places->paginate());
+        $array         = $paginator->toArray();
+        $array['data'] = $offers->get()->map(function (Offer $offer) {
+            return $offer->getOwner()->place;
+        });
+
+        return response()->render('place.index', $array);
     }
 
     /**
