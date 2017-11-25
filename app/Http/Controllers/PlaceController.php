@@ -35,7 +35,6 @@ class PlaceController extends Controller
      * @param OfferRepository    $offerRepository
      *
      * @return Response
-     * @throws \LogicException
      */
     public function index(PlaceFilterRequest $request, OfferRepository $offerRepository): Response
     {
