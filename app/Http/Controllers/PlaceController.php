@@ -59,14 +59,14 @@ class PlaceController extends Controller
 
         $paginator = $offers->paginate();
 
-        $with = $this->request->get(config('repository.criteria.params.with', 'with'), null);
+        $with = request()->get(config('repository.criteria.params.with', 'with'), null);
 
         $array         = $paginator->toArray();
         $array['data'] = $offers->get()->map(function (Offer $offer) use ($with) {
             if (null !== $with) {
                 $with = explode(';', $with);
 
-                return $offer->getOwner()->place->with($with);
+                return $offer->getOwner()->place()->with($with)->get();
             }
 
             return $offer->getOwner()->place;
