@@ -66,7 +66,7 @@ class PlaceController extends Controller
             if (null !== $with) {
                 $with = explode(';', $with);
 
-                return $offer->getOwner()->place()->with($with)->get();
+                return $offer->getOwner()->place()->with($with)->first();
             }
 
             return $offer->getOwner()->place;
