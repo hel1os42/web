@@ -40,7 +40,15 @@ class PlaceController extends Controller
             ->getActiveByCategoriesAndPosition($request->category_ids,
                 $request->latitude, $request->longitude, $request->radius)
             ->select('acc_id')
-            ->groupBy('acc_id');
+            ->orderByRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((lng - %2$s) * 
+        PI()/180 / 2), 2))))',
+            \DB::connection()->getPdo()->quote($request->latitude),
+            \DB::connection()->getPdo()->quote($request->longitude)))
+            ->groupBy('acc_id', 'lat', 'lng');
         $paginator = $offers->paginate();
 
         $array         = $paginator->toArray();
