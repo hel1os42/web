@@ -6,7 +6,7 @@ namespace OmniSynapse\CoreService\Request\Offer;
  * Class Geo
  * @package OmniSynapse\CoreService\Request\Offer
  *
- * @property string type
+ * @property string      type
  * @property null|Point  point
  * @property null|int    radius
  * @property null|string city
@@ -20,7 +20,7 @@ class Geo implements \JsonSerializable
     const TYPE_POINT   = 'point';
 
     /** @var string */
-    private $type;
+    private $type = null;
 
     /** @var null|Point */
     private $point;
@@ -44,22 +44,10 @@ class Geo implements \JsonSerializable
      */
     public function __construct(?Point $point, ?int $radius, ?string $city, ?string $country)
     {
-        $this->setRadius($radius)
-             ->setCity($city)
-             ->setCountry($country);
-
-        $type = self::TYPE_WORLD;
-        $this->setPoint($point);
-
-        if (null !== $point) {
-            $type = self::TYPE_POINT;
-        } elseif (!empty($city) && !empty($country)) {
-            $type = self::TYPE_CITY;
-        } elseif (!empty($country)) {
-            $type = self::TYPE_COUNTRY;
-        }
-
-        $this->setType($type);
+        $this->setPoint($point)
+             ->setRadius($radius)
+             ->setCountry($country)
+             ->setCity($city);
     }
 
     /**
@@ -83,7 +71,7 @@ class Geo implements \JsonSerializable
      */
     public function getType(): ?string
     {
-        return $this->type;
+        return $this->identifyType();
     }
 
     /**
@@ -116,18 +104,6 @@ class Geo implements \JsonSerializable
     public function getCountry(): ?string
     {
         return $this->country;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return Geo
-     */
-    public function setType(string $type): Geo
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -176,5 +152,31 @@ class Geo implements \JsonSerializable
         $this->country = $country;
 
         return $this;
+    }
+
+    /**
+     * Detects current Geo type
+     *
+     * @return string
+     */
+    protected function identifyType(): string
+    {
+        $type = self::TYPE_WORLD;
+        if (null !== $this->getPoint()) {
+            $type = self::TYPE_POINT;
+            if (null !== $this->getCountry()) {
+                $type = self::TYPE_COUNTRY;
+                if (null !== $this->getCity()) {
+                    $type = self::TYPE_CITY;
+                }
+            }
+        }
+
+        return $this->type = $type;
+    }
+
+    public function __sleep()
+    {
+        return array_keys($this->jsonSerialize());
     }
 }

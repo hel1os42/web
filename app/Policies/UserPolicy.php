@@ -10,26 +10,26 @@ class UserPolicy extends Policy
     /**
      * @return bool
      */
-    public function index(User $currentUser)
+    public function index()
     {
-        return $currentUser->isAdmin()
-               || $this->auth->user()->isChiefAdvertiser() || $this->auth->user()->isAgent();
+        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
     }
 
     /**
+     * @param User $currentUser
      * @param User $user
      *
-     * @return bool|mixed
+     * @return bool
      */
     public function show(User $currentUser, User $user)
     {
-        if ($this->auth->user()->isAdmin()
-            || ($this->auth->user()->hasAnyRole() && $user->equals($this->auth->user()))) {
+        if ($currentUser->hasRoles([Role::ROLE_ADMIN])
+            || ($currentUser->hasAnyRole() && $user->equals($currentUser))) {
             return true;
         }
 
-        return ($this->auth->user()->isChiefAdvertiser() || $this->auth->user()->isAgent())
-               && $user->hasParent($this->auth->user());
+        return ($currentUser->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
+               && $user->hasParent($currentUser);
     }
 
     /**
@@ -39,7 +39,7 @@ class UserPolicy extends Policy
      */
     public function update(User $currentUser, User $user)
     {
-        return $currentUser->isAdmin()
+        return $currentUser->hasRoles([Role::ROLE_ADMIN])
                || ($currentUser->isAgent() && $currentUser->hasChild($user))
                || ($currentUser->hasAnyRole() && $user->equals($currentUser));
     }
@@ -51,8 +51,8 @@ class UserPolicy extends Policy
      */
     public function referrals(User $currentUser, User $user)
     {
-        return $this->auth->user()->isAdmin()
-               || ($this->auth->user()->hasAnyRole() && $user->equals($this->auth->user()));
+        return $currentUser->hasRoles([Role::ROLE_ADMIN])
+               || ($currentUser->hasAnyRole() && $user->equals($currentUser));
     }
 
     /**
@@ -60,7 +60,7 @@ class UserPolicy extends Policy
      */
     public function pictureStore()
     {
-        return $this->auth->user()->isUser();
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
@@ -76,33 +76,35 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function setChildren(User $currentUser, User $user)
+    public function updateChildren(User $currentUser, User $user)
     {
-        return ($this->auth->user()->isAdmin()
-                || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user)))
-               && ($user->isAgent() || $user->isChiefAdvertiser());
+        return ($currentUser->hasRoles([Role::ROLE_ADMIN])
+                || ($currentUser->isAgent() && $currentUser->hasChild($user)))
+               && ($user->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
     }
 
     /**
+     * @param User $currentUser
      * @param User $user
      *
      * @return bool
      */
-    public function setParents(User $currentUser, User $user)
+    public function updateParents(User $currentUser, User $user)
     {
-        return ($this->auth->user()->isAdmin()
-                || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user)))
-               && ($user->isChiefAdvertiser() || $user->isAdvertiser());
+        return ($currentUser->hasRoles([Role::ROLE_ADMIN])
+                || ($currentUser->isAgent() && $currentUser->hasChild($user)))
+               && ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
     }
 
     /**
+     * @param User $currentUser
      * @param User $user
      *
      * @return bool
      */
     public function updateRoles(User $currentUser, User $user)
     {
-        return $this->auth->user()->isAdmin()
-               || ($this->auth->user()->isAgent() && $this->auth->user()->hasChild($user));
+        return $currentUser->hasRoles([Role::ROLE_ADMIN])
+               || ($currentUser->isAgent() && $currentUser->hasChild($user));
     }
 }

@@ -6,20 +6,21 @@ use App\Http\Requests\TransactRequest;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use App\Models\User;
-use App\Repositories\Implementation\AccountRepositoryEloquent;
 use App\Repositories\AccountRepository;
+use App\Repositories\Implementation\AccountRepositoryEloquent;
 use App\Repositories\Implementation\TransactionRepositoryEloquent;
 use App\Repositories\TransactionRepository;
 use Faker\Factory as Faker;
 use Faker\Generator;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\ResponseFactory;
 use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TransactionControllerTest extends TestCase
 {
@@ -67,12 +68,17 @@ class TransactionControllerTest extends TestCase
      * @var Generator
      */
     private $faker;
+    /**
+     * @var Gate||PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizeGate;
 
     /**
      * TransactionControllerTest constructor.
+     *
      * @param string|null $name
-     * @param array $data
-     * @param string $dataName
+     * @param array       $data
+     * @param string      $dataName
      */
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -92,9 +98,12 @@ class TransactionControllerTest extends TestCase
         $this->user                  = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $this->account               = $this->getMockBuilder(Account::class)->disableOriginalConstructor()->getMock();
         $this->transaction           = $this->getMockBuilder(Transact::class)->disableOriginalConstructor()->getMock();
+        $this->authorizeGate         = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
         $this->guard->method('id')->with()->willReturn($this->user->method('getId'));
+
+        app()->instance(\Illuminate\Contracts\Auth\Access\Gate::class, $this->authorizeGate);
 
         $this->configureTestUser();
 
@@ -104,14 +113,15 @@ class TransactionControllerTest extends TestCase
 
         $this->configureTransactionRepository();
 
-        $this->controller = new TransactionController($this->transactionRepository, $this->accountRepository, $this->authManager);
+        $this->controller = new TransactionController($this->transactionRepository, $this->accountRepository,
+            $this->authManager);
     }
 
     private function configureTestUser()
     {
         $userData = [
             'id'      => $this->faker->uuid,
-            'account' => $this->account,
+            'account' => $this->account
         ];
 
         $this->user->method('getId')->willReturn($userData['id']);
@@ -159,6 +169,12 @@ class TransactionControllerTest extends TestCase
 
         $data['source'] = $this->account->getAddress();
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('transactions.create')
+            ->willReturn(true);
+
         $responseFactory
             ->expects(self::once())
             ->method('__call')
@@ -189,6 +205,12 @@ class TransactionControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('transactions.list')
+            ->willReturn(true);
+
         $builder
             ->method('paginate')
             ->willReturn($pagination);
@@ -206,8 +228,7 @@ class TransactionControllerTest extends TestCase
                 ->method('__call')
                 ->with('render', ['transaction.transactionInfo', $this->transaction])
                 ->willReturn($response);
-        }
-        else {
+        } else {
             $responseFactory
                 ->method('__call')
                 ->with('render', ['transaction.list', $pagination])
@@ -240,13 +261,20 @@ class TransactionControllerTest extends TestCase
 
         $this->transasctionId = $data;
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('transactions.create')
+            ->willReturn(true);
+
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['transaction.complete', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
+            ->with('render', ['transactions.complete', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
             ->willReturn($response);
 
         $returnValue = $this->controller->completeTransaction($request);
+
         self::assertSame($response, $returnValue);
     }
 

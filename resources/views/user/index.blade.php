@@ -22,7 +22,7 @@
             <option value="advertiser">Advertiser</option>
             <option value="user">User</option>
         </select>
-        <form method="get" action="{{route('admin.users.index')}}" id="search-form">
+        <form method="get" action="{{route('users.index')}}" id="search-form">
             <input type="hidden" name="search" id="search-field" value="">
             <input type="hidden" name="searchJoin" value="and">
             <button type="submit">Search</button>
@@ -46,7 +46,7 @@
                 <td>{{$user['email']}}</td>
                 <td>{{$user['phone']}}</td>
                 <td>{{implode(', ', array_column($user['roles'], 'name'))}}</td>
-                <td><a href="">edit rights</a> | <a href="">login as</a></td>
+                <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a href="">login as</a></td>
             </tr>
         @endforeach
     </table>

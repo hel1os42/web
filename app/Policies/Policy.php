@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Role;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\AuthManager;
 
@@ -10,10 +10,28 @@ class Policy
 {
     use HandlesAuthorization;
 
-    protected $auth;
+    protected $user;
 
+    /**
+     * Policy constructor.
+     *
+     * @param AuthManager $authManager
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct(AuthManager $authManager)
     {
-        $this->auth = $authManager->guard();
+        $this->user = $this->getUser($authManager);
+    }
+
+    /**
+     * @param AuthManager $authManager
+     *
+     * @return User
+     * @throws \InvalidArgumentException
+     */
+    private function getUser(AuthManager $authManager): User
+    {
+        return $authManager->guard()->user();
     }
 }

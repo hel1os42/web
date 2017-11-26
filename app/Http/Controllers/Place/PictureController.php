@@ -24,7 +24,6 @@ class PictureController extends AbstractPictureController
     const TYPE_PICTURE = 'picture';
 
     private $type = 'picture';
-    private $auth;
     private $placeRepository;
 
     public function __construct(
@@ -33,9 +32,8 @@ class PictureController extends AbstractPictureController
         AuthManager $authManager,
         PlaceRepository $placeRepository
     ) {
-        parent::__construct($imageManager, $filesystem);
+        parent::__construct($imageManager, $filesystem, $authManager);
 
-        $this->auth            = $authManager->guard();
         $this->placeRepository = $placeRepository;
     }
 
@@ -77,6 +75,8 @@ class PictureController extends AbstractPictureController
     {
         $place = $this->placeRepository->findByUser($this->auth->user());
 
+        $this->authorize('places.picture.store', $place);
+
         return $this->storeImageFor($request, $place->getId(),
             route('place.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
     }
@@ -94,6 +94,8 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $placeId, string $type): Response
     {
+        $this->authorize('picture.show.public');
+
         $this->type = $type;
         $place      = $this->placeRepository->find($placeId);
 

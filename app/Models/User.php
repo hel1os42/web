@@ -445,33 +445,9 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @return bool
      */
-    public function isAdmin()
-    {
-        return $this->hasRoles([Role::ROLE_ADMIN]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUser()
-    {
-        return $this->hasRoles([Role::ROLE_USER]);
-    }
-
-    /**
-     * @return bool
-     */
     public function isAdvertiser()
     {
         return $this->hasRoles([Role::ROLE_ADVERTISER]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isChiefAdvertiser()
-    {
-        return $this->hasRoles([Role::ROLE_CHIEF_ADVERTISER]);
     }
 
     /**

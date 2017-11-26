@@ -18,7 +18,6 @@ class TransactionController extends Controller
 {
     private $transactionRepository;
     private $accountRepository;
-    private $auth;
 
     public function __construct(
         TransactionRepository $transactionRepository,
@@ -27,7 +26,8 @@ class TransactionController extends Controller
     ) {
         $this->transactionRepository = $transactionRepository;
         $this->accountRepository     = $accountRepository;
-        $this->auth                  = $authManager->guard();
+
+        parent::__construct($authManager);
     }
 
 
@@ -39,7 +39,7 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $this->authorize('createTransaction', $this->transactionRepository->model());
+        $this->authorize('transactions.create');
 
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
@@ -59,7 +59,7 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $this->authorize('completeTransaction', $this->transactionRepository->model());
+        $this->authorize('transactions.create');
 
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
@@ -68,7 +68,7 @@ class TransactionController extends Controller
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
-        return response()->render('transaction.complete', $transaction->toArray(),
+        return response()->render('transactions.complete', $transaction->toArray(),
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
@@ -77,7 +77,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * @param null $transactionId
+     * @param int|null $transactionId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -85,9 +85,9 @@ class TransactionController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function listTransactions($transactionId = null): Response
+    public function listTransactions(int $transactionId = null): Response
     {
-        $this->authorize('listTransactions', $this->transactionRepository->model());
+        $this->authorize('transactions.list');
 
         $user         = $this->auth->user();
         $transactions = $this->transactionRepository->getBySenderOrRecepient($user);

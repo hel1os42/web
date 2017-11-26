@@ -4,9 +4,6 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,17 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PictureController extends AbstractPictureController
 {
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
-    private $auth;
-
-    public function __construct(
-        ImageManager $imageManager,
-        Filesystem $filesystem,
-        AuthManager $authManager
-    ) {
-        parent::__construct($imageManager, $filesystem);
-
-        $this->auth = $authManager->guard();
-    }
 
     /**
      * Saves profile image from request
@@ -41,7 +27,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request)
     {
-        $this->authorize('pictureStore', $this->auth->user());
+        $this->authorize('users.picture.store');
 
         return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }
@@ -65,7 +51,7 @@ class PictureController extends AbstractPictureController
             throw new NotFoundHttpException();
         }
 
-        $this->authorize('pictureShow', $this->auth->user());
+        $this->authorize('users.picture.show');
 
         return $this->respondWithImageFor($userUuid);
     }

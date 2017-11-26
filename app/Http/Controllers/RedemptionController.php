@@ -11,7 +11,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
-use App\Models\NauModels\Redemption;
 use App\Models\User;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
@@ -24,14 +23,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class RedemptionController extends Controller
 {
     private $offerRepository;
-    private $auth;
 
     public function __construct(
         OfferRepository $offerRepository,
         AuthManager $auth
     ) {
         $this->offerRepository = $offerRepository;
-        $this->auth            = $auth;
+
+        parent::__construct($auth);
     }
 
     /**
@@ -42,14 +41,14 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
-        $this->authorize('getActivationCode', Redemption::class);
+        $this->authorize('redemption.code');
 
         $this->validateOffer($offerId);
 
         $offer = $this->offerRepository->find($offerId);
 
         /** @var User $user */
-        $user = $this->auth->guard()->user();
+        $user = $this->auth->user();
 
         $activationCode = $user->activationCodes()->create(['offer_id' => $offer->id]);
 
@@ -64,7 +63,7 @@ class RedemptionController extends Controller
      */
     public function createFromOffer(string $offerId): Response
     {
-        $this->authorize('createFromOffer', Redemption::class);
+        $this->authorize('redemption.create.from_offer');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -73,11 +72,10 @@ class RedemptionController extends Controller
 
     /**
      * @return Response
-     * @throws HttpException
      */
     public function create(): Response
     {
-        $this->authorize('create', Redemption::class);
+        $this->authorize('redemption.create');
 
         return \response()->render('redemption.create', ['code' => null]);
     }
@@ -90,11 +88,11 @@ class RedemptionController extends Controller
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
-        $this->authorize('store', Redemption::class);
+        $this->authorize('redemption.store');
 
         $code = $request->code;
 
-        $redemption = $offersService->redeemByOwnerAndCode($this->auth->guard()->user(), $code);
+        $redemption = $offersService->redeemByOwnerAndCode($this->auth->user(), $code);
 
         return \response()->render(
             'redemption.redeem',
@@ -114,7 +112,7 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        $this->authorize('redemption', Redemption::class);
+        $this->authorize('redemption.redeem');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -139,7 +137,7 @@ class RedemptionController extends Controller
     {
         $redemption = $repository->find($redemptionId);
 
-        $this->authorize('show', $redemption);
+        $this->authorize('redemption.show', $redemption);
 
         return \response()->render('redemption.show', $redemption->toArray());
     }
@@ -149,11 +147,11 @@ class RedemptionController extends Controller
      * @param string $rid
      *
      * @return Response
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws ModelNotFoundException
      */
     public function showFromOffer(string $offerId, string $rid): Response
     {
-        $this->authorize('showFromOffer', Redemption::class);
+        $this->authorize('redemption.show.from_offer');
 
         $offer = $this->validateOfferAndGetOwn($offerId);
 
@@ -161,9 +159,7 @@ class RedemptionController extends Controller
     }
 
     /**
-     * @param $offerId
-     *
-     * @return void
+     * @param string $offerId
      */
     private function validateOffer(string $offerId): void
     {
@@ -185,7 +181,7 @@ class RedemptionController extends Controller
 
         $offer = $this->offerRepository->find($offerId);
 
-        if (!$offer->isOwner($this->auth->guard()->user())) {
+        if (!$offer->isOwner($this->auth->user())) {
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
 

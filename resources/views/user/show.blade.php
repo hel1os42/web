@@ -3,10 +3,6 @@
 @section('title', 'Profile')
 
 @section('content')
-
-
-
-    
     <script type="text/javascript">
         function loadCategory(){
             var xmlhttp = new XMLHttpRequest();
@@ -21,7 +17,7 @@
                         alert('There was an error 400');
                     }
                     else {
-                        alert('something else other than 200 was returned');
+                        alert( xmlhttp.status + ' was returned' );
                     }
                 }
             };
@@ -30,6 +26,35 @@
             xmlhttp.send();
         }
 
+        function loadRoles() {
+            let xmlhttp = new XMLHttpRequest();
+            let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
+
+            xmlhttp.onreadystatechange = function() {
+                if ( xmlhttp.readyState === XMLHttpRequest.DONE ) {
+                    if ( xmlhttp.status === 200 ) {
+                        let sel = document.getElementById( "roles" );
+                        sel.innerHTML = xmlhttp.responseText;
+                        for ( let rolesIndex = 0; rolesIndex < sel.options.length; rolesIndex++ ) {
+                            let option = sel.options[rolesIndex];
+                            if ( currentRoles.indexOf( option.value ) != -1 ) {
+                                option.selected = true;
+                                console.log( option.value );
+                            }
+                        }
+                    } else if ( xmlhttp.status === 400 ) {
+                        alert( 'There was an error 400' );
+                    } else {
+                        alert( xmlhttp.status + ' was returned' );
+                    }
+                }
+            };
+
+            xmlhttp.open( "GET", "{{route('roles')}}", true );
+            xmlhttp.send();
+        }
+
+        loadRoles();
         loadCategory();
 
     </script>
@@ -60,7 +85,9 @@
 						    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
 						        <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a>
 							    </li>
-							    <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab"
+                                       aria-expanded="true">Edit profile</a>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a>
 							    </li>
                                 <li class=""><a href="#find_offers" aria-controls="offers" role="tab" data-toggle="tab" aria-expanded="false">Find offers</a>
 							    </li>
@@ -83,6 +110,64 @@
                                     <p><a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a></p>
                                 </div>
                             </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="edit">
+                            @if (isset($errors))
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            @endif
+                            <form action="{{route('users.update', $id)}}" method="POST"
+                                  enctype="application/x-www-form-urlencoded">
+                                {{ csrf_field() }}
+                                {{ method_field('PUT') }}
+                                <div class="row">
+                                    <div class="col-sm-6 p-5">
+                                        <p><strong>Id</strong></p>
+                                        <p><strong>Name</strong></p>
+                                        <p><strong>Email</strong></p>
+                                        <p><strong>Phone</strong></p>
+                                        <p><strong>Latitude</strong></p>
+                                        <p><strong>Longitude</strong></p>
+                                        <p style="height: 120px;"><strong>Roles</strong></p>
+                                        <p><strong>Parents</strong></p>
+                                    </div>
+                                    <div class="col-sm-6 p-10 p-5">
+                                        <p style="line-height: 14px; font-size: 14px;">{{$id}}</p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="name"
+                                                  value="{{$name}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
+                                                  value="{{$email}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
+                                                  value="{{$phone}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text"
+                                                  name="latitude" value="{{$latitude}}"></p>
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text"
+                                                  name="longitude" value="{{$longitude}}"></p>
+                                        <p>
+                                            <select style="height: 120px;" id="roles" name="role_ids[]"
+                                                    class="form-control" multiple></select>
+                                        </p>
+                                        <p>
+                                            @foreach($parents as $parent)
+                                                {{$parent['name']}}<br>
+                                            @endforeach
+                                        </p>
+                                        <p>
+                                            @foreach($children as $child)
+                                                {{$child['name']}}<br>
+                                            @endforeach
+                                        </p>
+                                    </div>
+                                    <button type="submit">Update</button>
+                                </div>
+                            </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
                             <form method="POST" action="{{route('profile.picture.store')}}" enctype="multipart/form-data">

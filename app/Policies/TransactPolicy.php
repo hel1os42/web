@@ -7,24 +7,16 @@ class TransactPolicy extends Policy
     /**
      * @return bool
      */
-    public function createTransaction()
+    public function index()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
      * @return bool
      */
-    public function completeTransaction()
+    public function create()
     {
-        return $this->auth->user()->hasAnyRole();
-    }
-
-    /**
-     * @return bool
-     */
-    public function listTransactions()
-    {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 }

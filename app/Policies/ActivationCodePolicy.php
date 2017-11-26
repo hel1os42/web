@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Models\Role;
+
 class ActivationCodePolicy extends Policy
 {
     /**
@@ -9,6 +11,6 @@ class ActivationCodePolicy extends Policy
      */
     public function show()
     {
-        return $this->auth->user()->isUser();
+        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 }

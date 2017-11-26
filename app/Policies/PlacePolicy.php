@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Models\Place;
+
 class PlacePolicy extends Policy
 {
     /**
@@ -9,7 +11,7 @@ class PlacePolicy extends Policy
      */
     public function index()
     {
-        return $this->auth->user()->hasAnyRole();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -17,31 +19,25 @@ class PlacePolicy extends Policy
      */
     public function show()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->hasAnyRole();
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return bool
+     */
+    public function showMy(Place $place)
+    {
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
     }
 
     /**
      * @return bool
      */
-    public function showOwnerPlace()
+    public function showOffers()
     {
-        return $this->auth->user()->isAdvertiser();
-    }
-
-    /**
-     * @return bool
-     */
-    public function showPlaceOffers()
-    {
-        return $this->auth->user()->hasAnyRole();
-    }
-
-    /**
-     * @return bool
-     */
-    public function showOwnerPlaceOffers()
-    {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->hasAnyRole();
     }
 
     /**
@@ -49,7 +45,7 @@ class PlacePolicy extends Policy
      */
     public function create()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -57,14 +53,26 @@ class PlacePolicy extends Policy
      */
     public function store()
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
+     * @param Place $place
+     *
      * @return bool
      */
-    public function update()
+    public function pictureStore(Place $place)
     {
-        return $this->auth->user()->isAdvertiser();
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return bool
+     */
+    public function update(Place $place)
+    {
+        return $this->user->isAdvertiser() && $this->user->equal($place->user);
     }
 }
