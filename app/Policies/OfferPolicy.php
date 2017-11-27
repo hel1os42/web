@@ -70,14 +70,6 @@ class OfferPolicy extends Policy
     /**
      * @return bool
      */
-    public function store()
-    {
-        return $this->user->isAdvertiser();
-    }
-
-    /**
-     * @return bool
-     */
     public function update(): bool
     {
         return $this->user->isAdvertiser();

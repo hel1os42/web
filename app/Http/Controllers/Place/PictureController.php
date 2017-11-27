@@ -78,7 +78,7 @@ class PictureController extends AbstractPictureController
         $this->authorize('places.picture.store', $place);
 
         return $this->storeImageFor($request, $place->getId(),
-            route('place.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
+            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
     }
 
     /**
@@ -94,10 +94,10 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $placeId, string $type): Response
     {
-        $this->authorize('picture.show.public');
-
         $this->type = $type;
         $place      = $this->placeRepository->find($placeId);
+
+        $this->authorize('places.picture.show', $place);
 
         return $this->respondWithImageFor($place->id);
     }

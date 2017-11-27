@@ -7,10 +7,10 @@
     <div class="card">
         <div class="content">
                 <div class="img-container text-center">
-                    <img src="{{route('place.picture.show', [$id, 'cover'])}}"><br>
+                    <img src="{{route('places.picture.show', [$id, 'cover'])}}"><br>
                 </div>
                 <div class="img-container text-center">
-                    <img src="{{route('place.picture.show', [$id, 'picture'])}}"><br>
+                    <img src="{{route('places.picture.show', [$id, 'picture'])}}"><br>
                 </div>
             <h1>{{$name}}</h1>
             <h4>{{$description}}</h4>

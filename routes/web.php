@@ -84,7 +84,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->put('place', 'PlaceController@update');
         $router->patch('place', 'PlaceController@update')
             ->name('profile.place.update');
-        $router->get('place/offers', 'PlaceController@showOwnerPlaceOffers')
+        $router->get('place/offers', 'Advert\OfferController@index')
             ->name('profile.place.offers');
         $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
@@ -200,4 +200,4 @@ $router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->wh
 $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
     'uuid',
     '[a-z0-9-]+'
-])->name('place.picture.show');
+])->name('places.picture.show');

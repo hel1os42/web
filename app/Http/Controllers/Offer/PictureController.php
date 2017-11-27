@@ -44,7 +44,7 @@ class PictureController extends AbstractPictureController
 
         $offer = $this->offerRepository->find($offerId);
 
-        $this->authorize('my.offers.picture.store', $offer);
+        $this->authorize('offers.picture.store', $offer);
 
         return $this->storeImageFor($request, $offer->id, route('offer.picture.show', ['offerId' => $offer->id]));
     }
@@ -62,9 +62,9 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $offerId): Response
     {
-        $this->authorize('picture.show.public');
-
         $offer = $this->offerRepository->find($offerId);
+
+        $this->authorize('offers.picture.show', $offer);
 
         return $this->respondWithImageFor($offer->id);
     }

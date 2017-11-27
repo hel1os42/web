@@ -49,14 +49,6 @@ class PlacePolicy extends Policy
     }
 
     /**
-     * @return bool
-     */
-    public function store()
-    {
-        return $this->user->isAdvertiser();
-    }
-
-    /**
      * @param Place $place
      *
      * @return bool

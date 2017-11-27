@@ -74,7 +74,7 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('users.update', $this->auth->user(), $this->userRepository->find($uuid));
+        $this->authorize('users.update', $this->userRepository->find($uuid));
 
         $userData = $request->all();
 
@@ -145,7 +145,7 @@ class UserController extends Controller
      */
     private function setChildren(array $userIds, $user)
     {
-        $this->authorize('users.update.children', $this->auth->user(), $user);
+        $this->authorize('users.update.children', $user);
 
         $user->children()->detach();
 
@@ -163,7 +163,7 @@ class UserController extends Controller
      */
     private function setParents(array $userIds, $user)
     {
-        $this->authorize('users.update.parents', $this->auth->user(), $user);
+        $this->authorize('users.update.parents', $user);
 
         $user->parents()->detach();
 
@@ -182,7 +182,7 @@ class UserController extends Controller
     private function updateRoles(array $roleIds, $user)
     {
 
-        $this->authorize('users.update.roles', $this->auth->user(), $user);
+        $this->authorize('users.update.roles', $user);
 
         $user->roles()->detach();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\RoleRepository;
+use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -10,9 +11,11 @@ class RoleController extends Controller
 {
     private $roleRepository;
 
-    public function __construct(RoleRepository $roleRepository)
+    public function __construct(RoleRepository $roleRepository, AuthManager $auth)
     {
         $this->roleRepository = $roleRepository;
+
+        parent::__construct($auth);
     }
 
     /**

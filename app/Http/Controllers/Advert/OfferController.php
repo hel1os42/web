@@ -68,7 +68,7 @@ class OfferController extends Controller
      */
     public function create(): Response
     {
-        $this->authorize('my.offers.create');
+        $this->authorize('offers.create');
 
         return \response()->render('advert.offer.create',
             FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
@@ -85,7 +85,7 @@ class OfferController extends Controller
      */
     public function store(Advert\OfferRequest $request): Response
     {
-        $this->authorize('my.offers.store');
+        $this->authorize('offers.store');
 
         $attributes = $request->all();
         $account    = $this->auth->user()->getAccountForNau();
@@ -125,7 +125,7 @@ class OfferController extends Controller
             $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
         }
 
-        $this->authorize('my.offers.show', $offer);
+        $this->authorize('my.offer.show', $offer);
 
         return \response()->render('advert.offer.show', $data);
     }
@@ -143,7 +143,7 @@ class OfferController extends Controller
         $offer   = $this->offerRepository->find($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
-        $this->authorize('my.offers.update', $offer);
+        $this->authorize('offers.update', $offer);
 
         $status     = $request->get('status');
         $attributes = ['status' => $status];
@@ -170,7 +170,7 @@ class OfferController extends Controller
         $offer   = $this->offerRepository->find($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
-        $this->authorize('my.offers.update', $offer);
+        $this->authorize('offers.update', $offer);
 
         $attributes = $request->all();
 

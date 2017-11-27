@@ -70,9 +70,10 @@ class PlaceController extends Controller
      */
     public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
     {
-        $place = $placesRepository->findByUser($this->auth->user());
 
-        $this->authorize('my.places.show', $place);
+        $this->authorize('my.place.show');
+
+        $place = $placesRepository->findByUser($this->auth->user());
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -93,30 +94,13 @@ class PlaceController extends Controller
      */
     public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('places.offers.list');
+        $place = $placesRepository->find($uuid);
 
-        $offers = $placesRepository->find($uuid)->offers();
+        $this->authorize('places.offers.list', $place);
+
+        $offers = $place->offers();
 
         return \response()->render('user.offer.index', $offers->paginate());
-    }
-
-    /**
-     * @param PlaceRepository $placesRepository
-     *
-     * @return Response
-     * @throws AuthorizationException
-     * @throws \App\Exceptions\TokenException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
-     */
-    public function showOwnerPlaceOffers(PlaceRepository $placesRepository): Response
-    {
-        $this->authorize('my.offers.list', $placesRepository->model());
-
-        $place = $placesRepository->findByUser($this->auth->user());
-
-        return \response()->render('advert.offer.index', $place->offers()->paginate());
     }
 
     /**
@@ -129,7 +113,7 @@ class PlaceController extends Controller
      */
     public function create(PlaceRepository $placesRepository): Response
     {
-        $this->authorize('places.create');
+        $this->authorize('my.place.create');
 
         if ($placesRepository->existsByUser($this->auth->user())) {
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
@@ -148,7 +132,7 @@ class PlaceController extends Controller
      */
     public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $this->authorize('places.store');
+        $this->authorize('my.place.create');
 
         $placeData = $request->all();
 
@@ -175,9 +159,9 @@ class PlaceController extends Controller
      */
     public function update(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $place = $placesRepository->findByUser($this->auth->user());
+        $this->authorize('my.place.update');
 
-        $this->authorize('places.update', $place);
+        $place = $placesRepository->findByUser($this->auth->user());
 
         $placeData = $request->all();
 

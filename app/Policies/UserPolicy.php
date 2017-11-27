@@ -16,20 +16,19 @@ class UserPolicy extends Policy
     }
 
     /**
-     * @param User $currentUser
      * @param User $user
      *
      * @return bool
      */
-    public function show(User $currentUser, User $user)
+    public function show(User $user)
     {
-        if ($currentUser->hasRoles([Role::ROLE_ADMIN])
-            || ($currentUser->hasAnyRole() && $user->equals($currentUser))) {
+        if ($this->user->hasRoles([Role::ROLE_ADMIN])
+            || ($this->user->hasAnyRole() && $user->equals($this->user))) {
             return true;
         }
 
-        return ($currentUser->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
-               && $user->hasParent($currentUser);
+        return ($this->user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
+               && $user->hasParent($this->user);
     }
 
     /**
@@ -37,11 +36,11 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function update(User $currentUser, User $user)
+    public function update(User $user)
     {
-        return $currentUser->hasRoles([Role::ROLE_ADMIN])
-               || ($currentUser->isAgent() && $currentUser->hasChild($user))
-               || ($currentUser->hasAnyRole() && $user->equals($currentUser));
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->isAgent() && $this->user->hasChild($user))
+               || ($this->user->hasAnyRole() && $user->equals($this->user));
     }
 
     /**
@@ -49,10 +48,10 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function referrals(User $currentUser, User $user)
+    public function referrals(User $user)
     {
-        return $currentUser->hasRoles([Role::ROLE_ADMIN])
-               || ($currentUser->hasAnyRole() && $user->equals($currentUser));
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->hasAnyRole() && $user->equals($this->user));
     }
 
     /**
@@ -76,35 +75,33 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function updateChildren(User $currentUser, User $user)
+    public function updateChildren(User $user)
     {
-        return ($currentUser->hasRoles([Role::ROLE_ADMIN])
-                || ($currentUser->isAgent() && $currentUser->hasChild($user)))
+        return ($this->user->hasRoles([Role::ROLE_ADMIN])
+                || ($this->user->isAgent() && $this->user->hasChild($user)))
                && ($user->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
     }
 
     /**
-     * @param User $currentUser
      * @param User $user
      *
      * @return bool
      */
-    public function updateParents(User $currentUser, User $user)
+    public function updateParents(User $user)
     {
-        return ($currentUser->hasRoles([Role::ROLE_ADMIN])
-                || ($currentUser->isAgent() && $currentUser->hasChild($user)))
+        return ($this->user->hasRoles([Role::ROLE_ADMIN])
+                || ($this->user->isAgent() && $this->user->hasChild($user)))
                && ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
     }
 
     /**
-     * @param User $currentUser
      * @param User $user
      *
      * @return bool
      */
-    public function updateRoles(User $currentUser, User $user)
+    public function updateRoles(User $user)
     {
-        return $currentUser->hasRoles([Role::ROLE_ADMIN])
-               || ($currentUser->isAgent() && $currentUser->hasChild($user));
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->isAgent() && $this->user->hasChild($user));
     }
 }

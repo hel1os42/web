@@ -7,27 +7,10 @@ use App\Models\Role;
 
 class RedemptionPolicy extends Policy
 {
-
     /**
      * @return bool
      */
-    public function code($currentUser)
-    {
-        return $currentUser->hasRole([Role::ROLE_USER]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function createFromOffer()
-    {
-        return $this->user->isAdvertiser();
-    }
-
-    /**
-     * @return bool
-     */
-    public function create()
+    public function index()
     {
         return $this->user->hasRoles([Role::ROLE_USER]);
     }
@@ -35,15 +18,7 @@ class RedemptionPolicy extends Policy
     /**
      * @return bool
      */
-    public function store()
-    {
-        return $this->user->hasRoles([Role::ROLE_USER]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function redeem()
+    public function confirm()
     {
         return $this->user->hasRoles([Role::ROLE_USER]);
     }
@@ -56,13 +31,5 @@ class RedemptionPolicy extends Policy
     public function show(Redemption $redemption)
     {
         return $redemption->offer->isOwner($this->auth->guard()->user());
-    }
-
-    /**
-     * @return bool
-     */
-    public function showFromOffer()
-    {
-        return $this->user->hasRoles([Role::ROLE_USER]);
     }
 }

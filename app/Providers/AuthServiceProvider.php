@@ -39,46 +39,41 @@ class AuthServiceProvider extends ServiceProvider
         'offers.list' => 'OfferPolicy@index',
         'offers.show' => 'OfferPolicy@show',
 
-        'my.offers.list'          => 'OfferPolicy@indexMy',
-        'my.offers.show'          => 'OfferPolicy@showMy',
-        'my.offers.create'        => 'OfferPolicy@create',
-        'my.offers.store'         => 'OfferPolicy@store',
-        'my.offers.update'        => 'OfferPolicy@update',
-        'my.offers.picture.store' => 'OfferPolicy@pictureStore',
+        'my.offers.list'       => 'OfferPolicy@indexMy',
+        'my.offer.show'        => 'OfferPolicy@showMy',
+        'offers.create'        => 'OfferPolicy@create',
+        'offers.update'        => 'OfferPolicy@update',
+        'offers.picture.show'  => 'UserPolicy@pictureShow',
+        'offers.picture.store' => 'OfferPolicy@pictureStore',
 
         'places.list'          => 'PlacePolicy@index',
         'places.show'          => 'PlacePolicy@show',
-        'my.places.show'       => 'PlacePolicy@showMy',
+        'my.place.show'        => 'PlacePolicy@showMy',
         'places.offers.list'   => 'PlacePolicy@showOffers',
-        'places.create'        => 'PlacePolicy@create',
-        'places.store'         => 'PlacePolicy@store',
-        'places.update'        => 'PlacePolicy@update',
+        'my.place.create'      => 'PlacePolicy@create',
+        'my.place.update'      => 'PlacePolicy@update',
+        'places.picture.show'  => 'UserPolicy@pictureShow',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
-        'redemption.code'              => 'RedemptionPolicy@code',
-        'redemption.create.from_offer' => 'RedemptionPolicy@createFromOffer',
-        'redemption.create'            => 'RedemptionPolicy@create',
-        'redemption.store'             => 'RedemptionPolicy@store',
-        'redemption.redeem'            => 'RedemptionPolicy@redeem',
-        'redemption.show'              => 'RedemptionPolicy@show',
-        'redemption.show.from_offer'   => 'RedemptionPolicy@showFromOffer',
+        'offers.redemption'         => 'RedemptionPolicy@index',
+        'offers.redemption.confirm' => 'RedemptionPolicy@confirm',
+        'offers.redemption.show'    => 'RedemptionPolicy@show',
 
         'roles.list' => 'RolePolicy@index',
         'roles.show' => 'RolePolicy@show',
 
-        'transactions.list'     => 'TransactPolicy@index',
-        'transactions.create'   => 'TransactPolicy@create',
+        'transactions.list'   => 'TransactPolicy@index',
+        'transactions.create' => 'TransactPolicy@create',
 
         'users.list'            => 'UserPolicy@index',
         'users.show'            => 'UserPolicy@show',
         'users.update'          => 'UserPolicy@update',
         'users.referrals.list'  => 'UserPolicy@referrals',
+        'users.picture.show'    => 'UserPolicy@pictureShow',
         'users.picture.store'   => 'UserPolicy@pictureStore',
         'users.update.children' => 'UserPolicy@updateChildren',
         'users.update.parents'  => 'UserPolicy@updateParents',
         'users.update.roles'    => 'UserPolicy@updateRoles',
-
-        'picture.show.public' => 'UserPolicy@pictureShow',
     ];
 
     /**
@@ -91,7 +86,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         foreach ($this->abilities as $ability => $callback) {
-            $gate->define($ability, $callback);
+            $gate->define($ability, '\App\Policies\\' . $callback);
         }
 
         /** @var AuthManager $authManager */
