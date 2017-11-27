@@ -47,9 +47,7 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, Uuids {
-        Uuids::boot as uuidsBoot;
-    }
+    use Notifiable, RelationsTrait, Uuids;
 
     public function __construct(array $attributes = [])
     {
@@ -305,8 +303,6 @@ class User extends Authenticatable implements PhoneAuthenticable
                 $model->invite_code = $model->generateInvite();
             }
         });
-
-        self::uuidsBoot();
     }
 
     /**

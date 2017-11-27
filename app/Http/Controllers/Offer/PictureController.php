@@ -42,7 +42,7 @@ class PictureController extends AbstractPictureController
     public function store(PictureRequest $request, string $offerId)
     {
 
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
         $this->authorize('offers.picture.store', $offer);
 
@@ -62,7 +62,7 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $offerId): Response
     {
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
         $this->authorize('offers.picture.show', $offer);
 

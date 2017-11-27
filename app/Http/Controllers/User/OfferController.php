@@ -61,7 +61,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
+        $offer = $this->offerRepository->find($offerUuid);
 
         $this->authorize('offers.show', $offer);
 

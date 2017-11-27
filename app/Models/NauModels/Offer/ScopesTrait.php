@@ -8,9 +8,10 @@
 
 namespace App\Models\NauModels\Offer;
 
-use App\Models\NauModels\Offer;
+use App\Models\Scopes\OfferDateActual;
+use App\Models\Scopes\OfferStatusActive;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -24,10 +25,18 @@ use Ramsey\Uuid\Uuid;
  * @method static static|Builder filterByCategory(string $categoryId = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder byOwner(User $user)
- * @method static static|Builder active()
  */
 trait ScopesTrait
 {
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected static function bootGlobalScopes()
+    {
+        static::addGlobalScope(new OfferStatusActive());
+        static::addGlobalScope(new OfferDateActual());
+    }
+
     /**
      * @param Builder $builder
      * @param int     $accountId
@@ -99,16 +108,24 @@ trait ScopesTrait
         return $builder->whereIn('account_id', $owner->accounts->pluck('id'));
     }
 
-    public function scopeActive(Builder $builder): Builder
+    /**
+     * @return string
+     */
+    public static function statusActiveScope(): string
     {
-        $now = Carbon::now()->format(Carbon::ISO8601);
+        return OfferStatusActive::class;
+    }
 
-        return $builder->where('status', Offer::STATUS_ACTIVE)
-            ->where('start_date', '<=', $now)
-            ->where(function(Builder $builder) use ($now) {
-                $builder
-                    ->whereNull('finish_date')
-                    ->orWhere('finish_date', '>', $now);
-            });
+    /**
+     * @return string
+     */
+    public static function dateActualScope(): string
+    {
+        return OfferDateActual::class;
+    }
+
+    public function withoutAllGlobalScopes(Builder $builder): Builder
+    {
+        return $builder->withoutGlobalScopes([self::statusActiveScope(), self::dateActualScope()]);
     }
 }

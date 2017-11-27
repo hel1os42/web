@@ -52,7 +52,7 @@ class OfferController extends Controller
         $account      = $this->auth->user()->getAccountForNau();
         $paginator    = $this->offerRepository
             ->scopeAccount($account)
-            ->paginate();
+            ->paginateWithoutGlobalScopes();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 
@@ -115,7 +115,7 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $offer = $this->offerRepository->find($offerUuid);
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
 
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
@@ -140,7 +140,7 @@ class OfferController extends Controller
      */
     public function updateStatus(UpdateStatusRequest $request, string $offerUuid): Response
     {
-        $offer   = $this->offerRepository->find($offerUuid);
+        $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
         $this->authorize('offers.update', $offer);
@@ -167,7 +167,7 @@ class OfferController extends Controller
      */
     public function update(Advert\OfferRequest $request, string $offerUuid)
     {
-        $offer   = $this->offerRepository->find($offerUuid);
+        $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
         $account = $this->auth->user()->getAccountForNau();
 
         $this->authorize('offers.update', $offer);

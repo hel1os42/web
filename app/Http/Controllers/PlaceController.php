@@ -6,6 +6,8 @@ use App\Helpers\Attributes;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
+use App\Models\NauModels\Offer;
+use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -21,20 +23,52 @@ class PlaceController extends Controller
      * @param PlaceFilterRequest $request
      * @param PlaceRepository    $placesRepository
      *
+     * @param OfferRepository    $offerRepository
+     *
      * @return Response
      * @throws AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request, PlaceRepository $placesRepository): Response
+    public function index(PlaceFilterRequest $request, PlaceRepository $placesRepository, OfferRepository $offerRepository): Response
     {
         $this->authorize('places.list');
 
-        $places = $placesRepository
-            ->getByCategoriesAndPosition($request->category_ids,
-                $request->latitude, $request->longitude, $request->radius);
+        $offers = $offerRepository
+            ->skipCriteria()
+            ->getActiveByCategoriesAndPosition($request->category_ids,
+                $request->latitude, $request->longitude, $request->radius)
+            ->select('acc_id')
+            ->groupBy('acc_id', 'lat', 'lng');
 
-        return response()->render('place.index', $places->paginate());
+        if (isset($request->latitude, $request->longitude)) {
+            $offers->orderByRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((lng - %2$s) * 
+        PI()/180 / 2), 2))))',
+                \DB::connection()->getPdo()->quote($request->latitude),
+                \DB::connection()->getPdo()->quote($request->longitude)))
+                   ->groupBy('lat', 'lng');
+        }
+
+        $paginator = $offers->paginate();
+
+        $with = request()->get(config('repository.criteria.params.with', 'with'), null);
+
+        $array         = $paginator->toArray();
+        $array['data'] = $offers->get()->map(function (Offer $offer) use ($with) {
+            if (null !== $with) {
+                $with = explode(';', $with);
+
+                return $offer->getOwner()->place()->with($with)->first();
+            }
+
+            return $offer->getOwner()->place;
+        });
+
+        return response()->render('place.index', $array);
     }
 
     /**

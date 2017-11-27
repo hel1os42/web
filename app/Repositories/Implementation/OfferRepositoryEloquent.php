@@ -2,14 +2,16 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Exceptions\Exception;
+use App\Models\Category;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
+use App\Repositories\CategoryRepository;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
@@ -28,6 +30,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
     protected $timeframeRepository;
+    protected $categoryRepository;
     protected $reservationService;
 
     protected $fieldSearchable = [
@@ -38,9 +41,11 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     public function __construct(
         Application $app,
-        TimeframeRepository $timeframeRepository
+        TimeframeRepository $timeframeRepository,
+        CategoryRepository $categoryRepository
     ) {
         $this->timeframeRepository = $timeframeRepository;
+        $this->categoryRepository  = $categoryRepository;
         parent::__construct($app);
     }
 
@@ -97,6 +102,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      *
      * @return Builder
      * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \InvalidArgumentException
      */
     public function getActiveByCategoriesAndPosition(
         array $categoryIds,
@@ -108,8 +114,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
 
         $model = $this->model
-            ->active()
-            ->filterByCategories($categoryIds)
+            ->whereIn('category_id', $this->getChildCategoryIds($categoryIds))
             ->filterByPosition($latitude, $longitude, $radius);
 
         $this->resetModel();
@@ -118,22 +123,32 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     }
 
     /**
-     * @param string $identity
+     * @param array $categoryIds
      *
-     * @return Offer
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @return array
      */
-    public function findActiveByIdOrFail(string $identity): Offer
+    private function getChildCategoryIds(array $categoryIds = []): array
     {
-        $this->applyCriteria();
-        $this->applyScope();
+        $result = [];
 
-        $model = $this->model->active()->findOrFail($identity);
+        $this->categoryRepository->skipCriteria();
 
-        $this->resetModel();
+        foreach ($categoryIds as $categoryId) {
+            $result[] = $categoryId;
 
-        return $this->parserResult($model);
+            /** @var Category $category */
+            try {
+                $category = $this->categoryRepository->find($categoryId);
+            } catch (ModelNotFoundException $exception) {
+                continue;
+            }
+
+            if ($category->children()->count() > 0) {
+                $result = array_merge($result, $category->children()->pluck('id')->toArray());
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -155,8 +170,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      * @param string $offerId
      *
      * @return Offer
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws HttpException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
@@ -177,7 +191,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
         $this->skipPresenter(true);
 
-        $model = $this->model->find($offerId);
+        $model = $this->builderWithoutGlobalScopes()
+                      ->find($offerId);
 
         if (!$model->update($attributes)) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot update your offer.");
@@ -193,5 +208,52 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         event(new RepositoryEntityUpdated($this, $model));
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param string $offerId
+     * @param array  $columns
+     *
+     * @return Offer
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function findWithoutGlobalScopes(string $offerId, array $columns = ['*']): Offer
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->builderWithoutGlobalScopes()
+                      ->findOrFail($offerId, $columns);
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * @param null   $limit
+     * @param array  $columns
+     * @param string $method
+     *
+     * @return mixed
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function paginateWithoutGlobalScopes($limit = null, $columns = ['*'], $method = "paginate")
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $limit   = is_null($limit) ? config('repository.pagination.limit', 15) : $limit;
+        $results = $this->builderWithoutGlobalScopes()
+                        ->{$method}($limit, $columns);
+        $results->appends(app('request')->query());
+        $this->resetModel();
+
+        return $this->parserResult($results);
+    }
+
+    protected function builderWithoutGlobalScopes(): Builder
+    {
+        return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);
     }
 }
