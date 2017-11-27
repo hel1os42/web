@@ -123,4 +123,9 @@ trait ScopesTrait
     {
         return OfferDateActual::class;
     }
+
+    public function withoutAllGlobalScopes(Builder $builder): Builder
+    {
+        return $builder->withoutGlobalScopes([self::statusActiveScope(), self::dateActualScope()]);
+    }
 }
