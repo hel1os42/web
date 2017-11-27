@@ -26,16 +26,6 @@ class FixZeroReservedOffers extends Command
     protected $description = 'Fix offers with reserved === 0';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * @param OfferRepository  $offerRepository
      * @param OfferReservation $offerReservation
      *
