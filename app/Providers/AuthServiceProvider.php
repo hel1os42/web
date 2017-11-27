@@ -17,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-//        \App\Models\User::class                 => \App\Policies\UserPolicy::class,
+        //\App\Models\User::class => \App\Policies\UserPolicy::class,
     ];
 
     /**
@@ -79,7 +79,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         foreach ($this->abilities as $ability => $callback) {
-            $gate->define($ability, '\\App\\Policies\\'. $callback);
+            $gate->define($ability, '\\App\\Policies\\' . $callback);
         }
 
         /** @var AuthManager $authManager */
