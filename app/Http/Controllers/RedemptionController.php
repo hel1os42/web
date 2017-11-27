@@ -88,11 +88,9 @@ class RedemptionController extends Controller
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
-        $this->authorize('offers.redemption.confirm');
-
         $code = $request->code;
 
-        $redemption = $offersService->redeemByOwnerAndCode($this->auth->user(), $code);
+        $redemption = $offersService->redeemByCode($code);
 
         return \response()->render(
             'redemption.redeem',

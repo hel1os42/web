@@ -14,5 +14,5 @@ interface OffersService
 {
     public function redeemByOfferAndCode(Offer $offer, string $code): Redemption;
 
-    public function redeemByOwnerAndCode(User $owner, string $code);
+    public function redeemByCode(string $code);
 }

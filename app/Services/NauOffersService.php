@@ -10,6 +10,7 @@ use App\Models\NauModels\Redemption;
 use App\Models\User;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -21,11 +22,16 @@ class NauOffersService implements OffersService
 {
     private $activationCodeRepository;
     private $offerRepository;
+    /**
+     * @var Gate
+     */
+    private $gate;
 
-    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository)
+    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository, Gate $gate)
     {
         $this->activationCodeRepository = $activationCodeRepository;
         $this->offerRepository          = $offerRepository;
+        $this->gate                     = $gate;
     }
 
     /**
@@ -48,7 +54,7 @@ class NauOffersService implements OffersService
         return $this->redeem($activationCode);
     }
 
-    public function redeemByOwnerAndCode(User $owner, string $code)
+    public function redeemByCode(string $code)
     {
         $activationCode = $this->activationCodeRepository
             ->findByCodeAndNotRedeemed($code);
@@ -58,9 +64,11 @@ class NauOffersService implements OffersService
         }
 
         $offer = $activationCode->offer;
-        if (null === $offer || !$offer->isOwner($owner)) {
+        if (null === $offer) {
             throw new BadActivationCodeException($offer, $code);
         }
+
+        $this->gate->authorize('offers.redemption.confirm', $offer);
 
         return $this->redeem($activationCode);
     }
