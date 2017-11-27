@@ -268,7 +268,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('my.places.show', $place)
+            ->with('my.place.show')
             ->willReturn(true);
 
         if ($withOffers) {
@@ -378,7 +378,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('places.create')
+            ->with('my.place.create')
             ->willReturn(true);
 
         $responseFactory
@@ -414,7 +414,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('places.store')
+            ->with('my.place.create')
             ->willReturn(true);
 
         $this->placeRepository
@@ -508,7 +508,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('places.update', $place)
+            ->with('my.place.update')
             ->willReturn(true);
 
         $place

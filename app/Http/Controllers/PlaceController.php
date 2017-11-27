@@ -30,7 +30,7 @@ class PlaceController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request, PlaceRepository $placesRepository, OfferRepository $offerRepository): Response
+    public function index(PlaceFilterRequest $request, OfferRepository $offerRepository): Response
     {
         $this->authorize('places.list');
 
