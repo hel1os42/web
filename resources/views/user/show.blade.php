@@ -25,7 +25,7 @@
             xmlhttp.open("GET", "{{route('categories')}}", true);
             xmlhttp.send();
         }
-
+        @can('users.update.roles')
         function loadRoles() {
             let xmlhttp = new XMLHttpRequest();
             let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
@@ -55,6 +55,8 @@
         }
 
         loadRoles();
+        @endcan
+
         loadCategory();
 
     </script>
@@ -135,8 +137,15 @@
                                         <p><strong>Phone</strong></p>
                                         <p><strong>Latitude</strong></p>
                                         <p><strong>Longitude</strong></p>
+                                        @can('users.update.roles')
                                         <p style="height: 120px;"><strong>Roles</strong></p>
+                                        @endcan
+                                        @can('users.update.parents')
                                         <p><strong>Parents</strong></p>
+                                        @endcan
+                                        @can('users.update.children')
+                                        <p><strong>Children</strong></p>
+                                        @endcan
                                     </div>
                                     <div class="col-sm-6 p-10 p-5">
                                         <p style="line-height: 14px; font-size: 14px;">{{$id}}</p>
@@ -150,20 +159,26 @@
                                                   name="latitude" value="{{$latitude}}"></p>
                                         <p><input style="line-height: 14px; font-size: 14px;" type="text"
                                                   name="longitude" value="{{$longitude}}"></p>
+                                        @can('users.update.roles')
                                         <p>
                                             <select style="height: 120px;" id="roles" name="role_ids[]"
                                                     class="form-control" multiple></select>
                                         </p>
+                                        @endcan
+                                        @can('users.update.parents')
                                         <p>
                                             @foreach($parents as $parent)
                                                 {{$parent['name']}}<br>
                                             @endforeach
                                         </p>
+                                        @endcan
+                                        @can('users.update.children')
                                         <p>
                                             @foreach($children as $child)
                                                 {{$child['name']}}<br>
                                             @endforeach
                                         </p>
+                                        @endcan
                                     </div>
                                     <button type="submit">Update</button>
                                 </div>
