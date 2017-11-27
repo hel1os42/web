@@ -357,58 +357,6 @@ class PlaceControllerTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \App\Exceptions\TokenException
-     * @throws \InvalidArgumentException
-     * @throws \PHPUnit_Framework_Exception
-     * @throws \PHPUnit_Framework_MockObject_RuntimeException
-     */
-    public function showOwnerPlaceOffersTest()
-    {
-        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
-        $builder         = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock();
-        $pagination      = $this->getMockBuilder(LengthAwarePaginator::class)->disableOriginalConstructor()->getMock();
-        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
-        $response        = new Response();
-
-        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
-
-        $this->authorizeGate
-            ->expects(self::once())
-            ->method('authorize')
-            ->with('my.offers.list')
-            ->willReturn(true);
-
-        $this->placeRepository
-            ->expects(self::once())
-            ->method('findByUser')
-            ->with($this->user)
-            ->willReturn($place);
-
-        $place
-            ->expects(self::once())
-            ->method('offers')
-            ->with()
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('paginate')
-            ->with()
-            ->willReturn($pagination);
-
-        $responseFactory
-            ->expects(self::once())
-            ->method('__call')
-            ->with('render', ['advert.offer.index', $pagination])
-            ->willReturn($response);
-
-        $returnValue = $this->controller->showOwnerPlaceOffers($this->placeRepository);
-        self::assertSame($response, $returnValue);
-    }
-
-    /**
-     * @test
      * @dataProvider createData
      *
      * @param array $data

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Attributes;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\Role;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -138,56 +139,53 @@ class UserController extends Controller
 
     /**
      * @param array $userIds
-     * @param       $user
+     * @param User  $user
      *
+     * @return User
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      */
-    private function setChildren(array $userIds, $user)
+    private function setChildren(array $userIds, User $user): User
     {
         $this->authorize('users.update.children', $user);
 
-        $user->children()->detach();
-
-        $user->children()->attach($userIds);
-
+        $user->children()->sync($userIds, true);
         $user->save();
+
+        return $user->fresh();
     }
 
     /**
      * @param array $userIds
-     * @param       $user
+     * @param User  $user
      *
+     * @return User
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      */
-    private function setParents(array $userIds, $user)
+    private function setParents(array $userIds, User $user): User
     {
         $this->authorize('users.update.parents', $user);
 
-        $user->parents()->detach();
-
-        $user->parents()->attach($userIds);
-
+        $user->parents()->sync($userIds, true);
         $user->save();
+
+        return $user->fresh();
     }
 
     /**
      * @param array $roleIds
-     * @param       $user
+     * @param User  $user
      *
+     * @return User
      * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \InvalidArgumentException
      */
-    private function updateRoles(array $roleIds, $user)
+    private function updateRoles(array $roleIds, User $user): User
     {
-
         $this->authorize('users.update.roles', $user);
 
-        $user->roles()->detach();
+        $user->roles()->sync($roleIds, true);
 
-        $user->roles()->attach($roleIds);
-
-        $user->save();
+        return $user->fresh();
     }
 }

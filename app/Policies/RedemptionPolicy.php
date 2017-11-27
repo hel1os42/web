@@ -30,6 +30,6 @@ class RedemptionPolicy extends Policy
      */
     public function show(Redemption $redemption)
     {
-        return $redemption->offer->isOwner($this->auth->guard()->user());
+        return $redemption->offer->isOwner($this->user);
     }
 }

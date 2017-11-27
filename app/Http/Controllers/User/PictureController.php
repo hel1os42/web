@@ -28,7 +28,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request)
     {
-        $this->authorize('users.picture.store', $this->auth()->user());
+        $this->authorize('users.picture.store', $this->auth->user());
 
         return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }

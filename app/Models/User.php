@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\Hash;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany children
  */
 class User extends Authenticatable implements PhoneAuthenticable
 {

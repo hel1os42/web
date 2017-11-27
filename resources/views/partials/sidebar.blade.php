@@ -93,7 +93,7 @@
 						</ul>
 					</div>
 				</li>
-                @can('update', auth()->user())
+                @can('users.list')
                 <li>
                     <a data-toggle="collapse" href="#admin" class="collapsed" aria-expanded="false">
                         <i class="ti-crown"></i>

@@ -27,9 +27,9 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function showMy(Place $place)
+    public function showMy()
     {
-        return $this->user->isAdvertiser() && $this->user->equal($place->user);
+        return $this->user->isAdvertiser();
     }
 
     /**
