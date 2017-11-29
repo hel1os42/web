@@ -48,6 +48,4 @@ interface PlaceRepository extends RepositoryInterface
     public function countByUser(User $user): int;
 
     public function existsByUser(User $user): bool;
-
-    public function getFilledPlaceData(Place $fillableDefaults, array $placeData): array;
 }

@@ -133,15 +133,4 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
 
         return $result;
     }
-
-    /**
-     * @param Place $fillableDefaults
-     * @param array $placeData
-     *
-     * @return array
-     */
-    public function getFilledPlaceData(Place $fillableDefaults, array $placeData): array
-    {
-        return array_merge(Attributes::getFillableWithDefaults($fillableDefaults), $placeData);
-    }
 }
