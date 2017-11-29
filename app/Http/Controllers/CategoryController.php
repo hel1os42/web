@@ -24,10 +24,6 @@ class CategoryController extends Controller
         $categories = $categoryRepository
             ->getWithNoParent();
 
-        if ($categories === null) {
-            throw new NotFoundHttpException();
-        }
-
         return \response()->render('category.list', $categories->paginate());
     }
 

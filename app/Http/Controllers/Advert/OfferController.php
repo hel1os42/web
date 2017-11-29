@@ -85,7 +85,7 @@ class OfferController extends Controller
      */
     public function store(Advert\OfferRequest $request): Response
     {
-        $this->authorize('offers.store');
+        $this->authorize('offers.create');
 
         $attributes = $request->all();
         $account    = $this->auth->user()->getAccountForNau();
