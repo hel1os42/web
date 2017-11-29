@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Helpers\Attributes;
 use App\Http\Exceptions\InternalServerErrorException;
 use App\Models\Place;
 use App\Models\User;
@@ -131,5 +132,16 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->resetModel();
 
         return $result;
+    }
+
+    /**
+     * @param Place $fillableDefaults
+     * @param array $placeData
+     *
+     * @return array
+     */
+    public function getFilledPlaceData(Place $fillableDefaults, array $placeData): array
+    {
+        return array_merge(Attributes::getFillableWithDefaults($fillableDefaults), $placeData);
     }
 }
