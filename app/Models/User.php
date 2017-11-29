@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\Hash;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany children
  */
 class User extends Authenticatable implements PhoneAuthenticable
 {
@@ -439,6 +443,30 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @return bool
+     */
+    public function isAdvertiser()
+    {
+        return $this->hasRoles([Role::ROLE_ADVERTISER]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAgent()
+    {
+        return $this->hasRoles([Role::ROLE_AGENT]);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function hasAnyRole()
+    {
+        return $this->hasRoles(Role::getAllRoles());
+    }
+
+    /**
      * @param User $parent
      *
      * @return mixed
@@ -446,5 +474,15 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function hasParent(User $parent)
     {
         return $this->parents->contains($parent->getId());
+    }
+
+    /**
+     * @param User $child
+     *
+     * @return bool
+     */
+    public function hasChild(User $child)
+    {
+        return $this->children->contains($child->getId());
     }
 }

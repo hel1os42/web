@@ -5,42 +5,32 @@ namespace App\Policies;
 use App\Models\NauModels\Offer;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\AuthManager;
 
-class OfferPolicy
+class OfferPolicy extends Policy
 {
-    use HandlesAuthorization;
-
-    private $auth;
-
-    public function __construct(AuthManager $authManager)
-    {
-        $this->auth = $authManager->guard();
-    }
 
     /**
      * @return bool
      */
     public function index()
     {
-        return $this->isAdvertiser();
+        return $this->user->hasAnyRole();
     }
 
     /**
      * @return bool
      */
-    public function create()
+    public function show()
     {
-        return $this->isAdvertiser();
+        return $this->user->hasAnyRole();
     }
 
     /**
      * @return bool
      */
-    public function store()
+    public function indexMy()
     {
-        return $this->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -49,13 +39,13 @@ class OfferPolicy
      *
      * @return bool
      */
-    public function show(User $user, Offer $offer)
+    public function showMy(User $user, Offer $offer)
     {
-        if ($user->hasRoles([Role::ROLE_ADMIN])) {
+        if ($this->user->hasRoles([Role::ROLE_ADMIN])) {
             return true;
         }
 
-        if ($this->isAdvertiser() && $offer->isOwner($user)) {
+        if ($this->user->isAdvertiser() && $offer->isOwner($user)) {
             return true;
         }
 
@@ -67,57 +57,14 @@ class OfferPolicy
         }
 
         return false;
-
     }
 
     /**
      * @return bool
      */
-    public function userIndex()
+    public function create()
     {
-        return $this->isUser();
-    }
-
-    /**
-     * @return bool
-     */
-    public function userShow()
-    {
-        return $this->isUser();
-    }
-
-    /**
-     * @param Offer $offer
-     *
-     * @return bool
-     */
-    public function pictureStore(User $user, Offer $offer)
-    {
-        return $this->isAdvertiser() && $offer->isOwner($user);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isUser()
-    {
-        return $this->auth->user()->hasRoles([Role::ROLE_USER]);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAdvertiser()
-    {
-        return $this->auth->user()->hasRoles([Role::ROLE_ADVERTISER]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function updateStatus(): bool
-    {
-        return $this->isAdvertiser();
+        return $this->user->isAdvertiser();
     }
 
     /**
@@ -125,6 +72,16 @@ class OfferPolicy
      */
     public function update(): bool
     {
-        return $this->isAdvertiser();
+        return $this->user->isAdvertiser();
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function pictureStore(Offer $offer)
+    {
+        return $this->user->isAdvertiser() && $offer->isOwner($this->user);
     }
 }

@@ -3,17 +3,105 @@
 namespace App\Policies;
 
 use App\Models\Role;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\User;
 
-class UserPolicy
+class UserPolicy extends Policy
 {
-    use HandlesAuthorization;
+    /**
+     * @return bool
+     */
+    public function index()
+    {
+        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function show(User $user)
+    {
+        if ($this->user->hasRoles([Role::ROLE_ADMIN])
+            || ($this->user->hasAnyRole() && $user->equals($this->user))) {
+            return true;
+        }
+
+        return ($this->user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
+               && $user->hasParent($this->user);
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function update(User $user)
+    {
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->isAgent() && $this->user->hasChild($user))
+               || ($this->user->hasAnyRole() && $user->equals($this->user));
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function referrals(User $user)
+    {
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->hasAnyRole() && $user->equals($this->user));
+    }
 
     /**
      * @return bool
      */
-    public function adminUserList()
+    public function pictureStore()
     {
-        return auth()->user()->hasRoles([Role::ROLE_ADMIN]);
+        return $this->user->hasRoles([Role::ROLE_USER]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function pictureShow()
+    {
+        return true;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function updateChildren(User $user)
+    {
+        return ($this->user->hasRoles([Role::ROLE_ADMIN])
+                || ($this->user->isAgent() && $this->user->hasChild($user)))
+               && ($user->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function updateParents(User $user)
+    {
+        return ($this->user->hasRoles([Role::ROLE_ADMIN])
+                || ($this->user->isAgent() && $this->user->hasChild($user)))
+               && ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function updateRoles(User $user)
+    {
+        return $this->user->hasRoles([Role::ROLE_ADMIN])
+               || ($this->user->isAgent() && $this->user->hasChild($user));
     }
 }

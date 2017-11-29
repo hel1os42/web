@@ -23,21 +23,23 @@ class AuthController extends Controller
      * @var JWTAuth
      */
     protected $jwtAuth;
-    /**
-     * @var AuthManager
-     */
-    protected $auth;
 
     /**
      * AuthController constructor.
+     *
      * @param UserRepository $userRepository
-     * @param JWTAuth $jwtAuth
-     * @param AuthManager $auth
+     * @param JWTAuth        $jwtAuth
+     * @param AuthManager    $auth
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
     {
         $this->userRepository = $userRepository;
         $this->jwtAuth        = $jwtAuth;
-        $this->auth           = $auth;
+
+        parent::__construct($auth);
+
+        $this->auth = $auth;
     }
 }

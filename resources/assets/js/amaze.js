@@ -316,7 +316,7 @@
 				bootstrap_nav_initialized = true;
 			}
 		}, 500),
-	}
+	};
 
 
 	// Returns a function, that, as long as it continues to be invoked, will not
@@ -335,6 +335,5 @@
 			}, wait);
 			if (immediate && !timeout) func.apply(context, args);
 		};
-	};
-
+    }
 })();

@@ -25,7 +25,7 @@ var bootstrapWizardCreate = function(element, options) {
 	this.rebindClick = function(selector, fn)
 	{
 		selector.unbind('click', fn).bind('click', fn);
-	}
+	};
 
 	this.fixNavigationButtons = function() {
 		// Get the current active tab
@@ -245,7 +245,7 @@ var bootstrapWizardCreate = function(element, options) {
 $.fn.bootstrapWizard = function(options) {
 	//expose methods
 	if (typeof options == 'string') {
-		var args = Array.prototype.slice.call(arguments, 1)
+		var args = Array.prototype.slice.call(arguments, 1);
 		if(args.length === 1) {
 			args.toString();
 		}

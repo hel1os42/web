@@ -201,7 +201,7 @@ class Place extends Model
      */
     public function getPictureUrlAttribute(): string
     {
-        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
     }
 
     /**
@@ -209,7 +209,7 @@ class Place extends Model
      */
     public function getCoverUrlAttribute(): string
     {
-        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
     }
 
     /** @return bool */

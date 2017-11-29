@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Intervention\Image\ImageManager;
+use App\Repositories\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,17 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PictureController extends AbstractPictureController
 {
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
-    private $auth;
-
-    public function __construct(
-        ImageManager $imageManager,
-        Filesystem $filesystem,
-        AuthManager $authManager
-    ) {
-        parent::__construct($imageManager, $filesystem);
-
-        $this->auth = $authManager->guard();
-    }
 
     /**
      * Saves profile image from request
@@ -35,11 +22,14 @@ class PictureController extends AbstractPictureController
      * @param PictureRequest $request
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      * @throws \RuntimeException
      */
     public function store(PictureRequest $request)
     {
+        $this->authorize('users.picture.store', $this->auth->user());
+
         return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
     }
 
@@ -49,20 +39,27 @@ class PictureController extends AbstractPictureController
      * @param string|null $userUuid
      *
      * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $userUuid = null): Response
+    public function show(string $userUuid = null, UserRepository $userRepository): Response
     {
         $userUuid = $userUuid ?? $this->auth->id();
         if ($userUuid === null) {
             throw new NotFoundHttpException();
         }
 
+        $this->authorize('users.picture.show', $userRepository->find($userUuid));
+
         return $this->respondWithImageFor($userUuid);
     }
 
+    /**
+     * @return string
+     */
     protected function getPath(): string
     {
         return self::PROFILE_PICTURES_PATH;

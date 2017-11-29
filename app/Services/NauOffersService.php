@@ -7,9 +7,9 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\User;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -21,11 +21,16 @@ class NauOffersService implements OffersService
 {
     private $activationCodeRepository;
     private $offerRepository;
+    /**
+     * @var Gate
+     */
+    private $gate;
 
-    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository)
+    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository, Gate $gate)
     {
         $this->activationCodeRepository = $activationCodeRepository;
         $this->offerRepository          = $offerRepository;
+        $this->gate                     = $gate;
     }
 
     /**
@@ -48,7 +53,13 @@ class NauOffersService implements OffersService
         return $this->redeem($activationCode);
     }
 
-    public function redeemByOwnerAndCode(User $owner, string $code)
+    /**
+     * @param string $code
+     *
+     * @return ActivationCode
+     * @throws BadActivationCodeException
+     */
+    public function getActivationCodeByCode(string $code): ActivationCode
     {
         $activationCode = $this->activationCodeRepository
             ->findByCodeAndNotRedeemed($code);
@@ -57,9 +68,21 @@ class NauOffersService implements OffersService
             throw new BadActivationCodeException(null, $code);
         }
 
+        return $activationCode;
+    }
+
+    /**
+     * @param ActivationCode $activationCode
+     *
+     * @return Redemption
+     * @throws BadActivationCodeException
+     * @throws CannotRedeemException
+     */
+    public function redeemByActivationCode(ActivationCode $activationCode)
+    {
         $offer = $activationCode->offer;
-        if (null === $offer || !$offer->isOwner($owner)) {
-            throw new BadActivationCodeException($offer, $code);
+        if (null === $offer) {
+            throw new BadActivationCodeException($offer, $activationCode->code);
         }
 
         return $this->redeem($activationCode);

@@ -93,7 +93,7 @@
 						</ul>
 					</div>
 				</li>
-                @can('adminUserList', App\Models\User::class)
+                @can('users.list')
                 <li>
                     <a data-toggle="collapse" href="#admin" class="collapsed" aria-expanded="false">
                         <i class="ti-crown"></i>
@@ -104,7 +104,7 @@
                     <div class="collapse" id="admin" role="navigation" aria-expanded="false" style="height: 0px;">
 						<ul class="nav">
                             <li>
-                                <a href="{{ route('admin.users.index') }}">Users</a>
+                                <a href="{{ route('users.index') }}">Users</a>
                             </li>
 						</ul>
 					</div>

@@ -95,7 +95,7 @@
                 }
             }
         }
-    }
+    };
 
     var getScrollBarWidth = function () {
         if (cachedWidth === null) {

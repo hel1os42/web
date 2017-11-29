@@ -10,6 +10,7 @@ use App\Repositories\Implementation\PlaceRepositoryEloquent;
 use App\Repositories\PlaceRepository;
 use Faker\Factory as Faker;
 use Faker\Generator;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -48,6 +49,10 @@ class PlaceControllerTest extends TestCase
      * @var Generator
      */
     private $faker;
+    /**
+     * @var Gate||PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizeGate;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -65,14 +70,17 @@ class PlaceControllerTest extends TestCase
         $this->authManager     = $this->getMockBuilder(AuthManager::class)->disableOriginalConstructor()->getMock();
         $this->guard           = $this->getMockBuilder(Guard::class)->disableOriginalConstructor()->getMock();
         $this->user            = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
+        $this->authorizeGate   = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
 
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
         $this->guard->method('id')->with()->willReturn($this->user->method('getId'));
 
+        app()->instance(\Illuminate\Contracts\Auth\Access\Gate::class, $this->authorizeGate);
+
         $this->configureTestUser();
 
-        $this->controller = new PlaceController($this->placeRepository, $this->authManager);
+        $this->controller = new PlaceController($this->authManager);
     }
 
     private function configureTestUser()
@@ -114,6 +122,12 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('places.list')
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('getByCategoriesAndPosition')
@@ -152,7 +166,7 @@ class PlaceControllerTest extends TestCase
 
         // Test
 
-        $returnValue = $this->controller->index($request);
+        $returnValue = $this->controller->index($request, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -185,6 +199,12 @@ class PlaceControllerTest extends TestCase
             ->with($uuid)
             ->willReturn($place);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('places.show', $place)
+            ->willReturn(true);
+
         if ($withOffers) {
             $request
                 ->expects(self::once())
@@ -212,7 +232,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->show($request, $uuid);
+        $returnValue = $this->controller->show($request, $uuid, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -245,6 +265,12 @@ class PlaceControllerTest extends TestCase
             ->with($this->user)
             ->willReturn($place);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('my.place.show')
+            ->willReturn(true);
+
         if ($withOffers) {
             $request
                 ->expects(self::once())
@@ -272,7 +298,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->showOwnerPlace($request);
+        $returnValue = $this->controller->showOwnerPlace($request, $this->placeRepository);
 
         self::assertSame($response, $returnValue);
     }
@@ -298,6 +324,12 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('places.offers.list')
+            ->willReturn(true);
+
         $this->placeRepository
             ->expects(self::once())
             ->method('find')
@@ -322,53 +354,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['user.offer.index', $pagination])
             ->willReturn($response);
 
-        $returnValue = $this->controller->showPlaceOffers($uuid);
-        self::assertSame($response, $returnValue);
-    }
-
-    /**
-     * @test
-     *
-     * @throws \App\Exceptions\TokenException
-     * @throws \InvalidArgumentException
-     * @throws \PHPUnit_Framework_Exception
-     * @throws \PHPUnit_Framework_MockObject_RuntimeException
-     */
-    public function showOwnerPlaceOffersTest()
-    {
-        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
-        $builder         = $this->getMockBuilder(Builder::class)->disableOriginalConstructor()->getMock();
-        $pagination      = $this->getMockBuilder(LengthAwarePaginator::class)->disableOriginalConstructor()->getMock();
-        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
-        $response        = new Response();
-
-        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
-
-        $this->placeRepository
-            ->expects(self::once())
-            ->method('findByUser')
-            ->with($this->user)
-            ->willReturn($place);
-
-        $place
-            ->expects(self::once())
-            ->method('offers')
-            ->with()
-            ->willReturn($builder);
-
-        $builder
-            ->expects(self::once())
-            ->method('paginate')
-            ->with()
-            ->willReturn($pagination);
-
-        $responseFactory
-            ->expects(self::once())
-            ->method('__call')
-            ->with('render', ['advert.offer.index', $pagination])
-            ->willReturn($response);
-
-        $returnValue = $this->controller->showOwnerPlaceOffers();
+        $returnValue = $this->controller->showPlaceOffers($uuid, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -389,13 +375,19 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('my.place.create')
+            ->willReturn(true);
+
         $responseFactory
             ->expects(self::once())
             ->method('__call')
             ->with('render', ['place.create', $data])
             ->willReturn($response);
 
-        $returnValue = $this->controller->create();
+        $returnValue = $this->controller->create($this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -418,6 +410,12 @@ class PlaceControllerTest extends TestCase
         $response        = new Response();
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('my.place.create')
+            ->willReturn(true);
 
         $this->placeRepository
             ->expects(self::once())
@@ -471,7 +469,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
             ->willReturn($response);
 
-        $returnValue = $this->controller->store($request);
+        $returnValue = $this->controller->store($request, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -506,6 +504,12 @@ class PlaceControllerTest extends TestCase
                 ->with()
                 ->willReturn([]);
         }
+
+        $this->authorizeGate
+            ->expects(self::once())
+            ->method('authorize')
+            ->with('my.place.update')
+            ->willReturn(true);
 
         $place
             ->expects(self::once())
@@ -566,7 +570,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
             ->willReturn($response);
 
-        $returnValue = $this->controller->update($request);
+        $returnValue = $this->controller->update($request, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 

@@ -96,6 +96,9 @@ class RegisterController extends AuthController
         }
 
         $user->roles()->attach([Role::findByName(Role::ROLE_USER)->getId(), Role::findByName(Role::ROLE_ADVERTISER)->getId()]);
+        $user->save();
+
+        $user = $user->fresh('roles');
 
         return request()->wantsJson()
             ? response()->render('', $user, Response::HTTP_CREATED, route('users.show', [$user->getId()]))

@@ -18,7 +18,6 @@ class TransactionController extends Controller
 {
     private $transactionRepository;
     private $accountRepository;
-    private $auth;
 
     public function __construct(
         TransactionRepository $transactionRepository,
@@ -27,15 +26,21 @@ class TransactionController extends Controller
     ) {
         $this->transactionRepository = $transactionRepository;
         $this->accountRepository     = $accountRepository;
-        $this->auth                  = $authManager->guard();
+
+        parent::__construct($authManager);
     }
 
 
     /**
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function createTransaction(): Response
     {
+        $this->authorize('transactions.create');
+
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
             'source' => $this->auth
@@ -49,9 +54,13 @@ class TransactionController extends Controller
      * @param TransactRequest $request
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
      */
     public function completeTransaction(TransactRequest $request): Response
     {
+        $this->authorize('transactions.create');
+
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
@@ -59,7 +68,7 @@ class TransactionController extends Controller
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
-        return response()->render('transaction.complete', $transaction->toArray(),
+        return response()->render('transactions.complete', $transaction->toArray(),
             null === $transaction->id ?
                 Response::HTTP_ACCEPTED :
                 Response::HTTP_CREATED,
@@ -68,12 +77,18 @@ class TransactionController extends Controller
     }
 
     /**
-     * @param int $transactionId |null
+     * @param int|null $transactionId
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function listTransactions($transactionId = null): Response
+    public function listTransactions(int $transactionId = null): Response
     {
+        $this->authorize('transactions.list');
+
         $user         = $this->auth->user();
         $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
 

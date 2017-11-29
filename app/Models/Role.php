@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
@@ -73,5 +72,19 @@ class Role extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'users_roles');
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllRoles()
+    {
+        return [
+            self::ROLE_USER,
+            self::ROLE_ADVERTISER,
+            self::ROLE_CHIEF_ADVERTISER,
+            self::ROLE_AGENT,
+            self::ROLE_ADMIN,
+        ];
     }
 }

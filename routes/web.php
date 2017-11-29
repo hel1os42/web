@@ -70,32 +70,33 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
     /**
-     * Profile
+     * User actions
      */
     $router->group(['prefix' => 'profile'], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('profile');
-        $router->put('', 'ProfileController@update');
-        $router->patch('', 'ProfileController@update')->name('profile.update');
-        $router->get('referrals', 'ProfileController@referrals')->name('referrals');
-        $router->post('picture', 'Profile\PictureController@store')->name('profile.picture.store');
-        $router->get('picture.jpg', 'Profile\PictureController@show')->name('profile.picture.show');
+        $router->get('', 'UserController@show')->name('profile');
+        $router->put('', 'UserController@update');
+        $router->patch('', 'UserController@update')->name('profile.update');
+        $router->get('referrals', 'UserController@referrals')->name('referrals');
+        $router->post('picture', 'User\PictureController@store')->name('profile.picture.store');
+        $router->get('picture.jpg', 'User\PictureController@show')->name('profile.picture.show');
         $router->get('place', 'PlaceController@showOwnerPlace')
             ->name('profile.place.show');
         $router->put('place', 'PlaceController@update');
         $router->patch('place', 'PlaceController@update')
             ->name('profile.place.update');
-        $router->get('place/offers', 'PlaceController@showOwnerPlaceOffers')
+        $router->get('place/offers', 'Advert\OfferController@index')
             ->name('profile.place.offers');
         $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
     });
 
+    $router->get('users', 'UserController@index')->name('users.index');
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
-        $router->get('', 'ProfileController@show')->name('users.show');
-        $router->put('', 'ProfileController@update');
-        $router->patch('', 'ProfileController@update');
-        $router->get('referrals', 'ProfileController@referrals');
-        $router->post('picture', 'Profile\PictureController@store');
+        $router->get('', 'UserController@show')->name('users.show');
+        $router->put('', 'UserController@update')->name('users.update');
+        $router->patch('', 'UserController@update');
+        $router->get('referrals', 'UserController@referrals');
+        $router->post('picture', 'User\PictureController@store');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -161,14 +162,13 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
      */
 
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
-        ->where('uuid', '[a-z0-9-]+')
-        ->name('places.show');
+           ->where('uuid', '[a-z0-9-]+')
+           ->name('places.offers.show');
 
 
     $router->resource('places', 'PlaceController', [
         'except' => [
-            'destroy',
-            'update'
+            'destroy'
         ]
     ]);
 
@@ -179,9 +179,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('activation_codes.show');
 
     /**
-     * Admin pages
+     * Roles
      */
-    $router->get('admin/users', 'AdminController@usersList')->name('admin.users.index');
+    $router->get('roles', 'RoleController@index')
+           ->name('roles');
+    $router->get('roles/{uuid}', 'RoleController@show')
+           ->name('roles.show');
 });
 
 //---- Authorized users
@@ -189,11 +192,11 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 /**
  * pictures
  */
-$router->get('users/{uuid}/picture.jpg', 'Profile\PictureController@show')->where('uuid',
+$router->get('users/{uuid}/picture.jpg', 'User\PictureController@show')->where('uuid',
     '[a-z0-9-]+')->name('users.picture.show');
 $router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
     '[a-z0-9-]+')->name('offer.picture.show');
 $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
     'uuid',
     '[a-z0-9-]+'
-])->name('place.picture.show');
+])->name('places.picture.show');

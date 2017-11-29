@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\User;
 
 /**
  * Interface OffersService
@@ -14,5 +14,7 @@ interface OffersService
 {
     public function redeemByOfferAndCode(Offer $offer, string $code): Redemption;
 
-    public function redeemByOwnerAndCode(User $owner, string $code);
+    public function getActivationCodeByCode(string $code): ActivationCode;
+
+    public function redeemByActivationCode(ActivationCode $activationCode);
 }
