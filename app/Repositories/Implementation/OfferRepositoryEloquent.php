@@ -237,6 +237,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
      * @param string $method
      *
      * @return mixed
+     * @throws \InvalidArgumentException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function paginateWithoutGlobalScopes($limit = null, $columns = ['*'], $method = "paginate")
@@ -245,6 +246,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyScope();
         $limit   = is_null($limit) ? config('repository.pagination.limit', 15) : $limit;
         $results = $this->builderWithoutGlobalScopes()
+                        ->withCount('redemptions')
                         ->{$method}($limit, $columns);
         $results->appends(app('request')->query());
         $this->resetModel();
