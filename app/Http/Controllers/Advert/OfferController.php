@@ -154,7 +154,7 @@ class OfferController extends Controller
 
         $offer->delete();
 
-        return \response()->json([], 204);
+        return \response(null, 204);
     }
 
     /**
