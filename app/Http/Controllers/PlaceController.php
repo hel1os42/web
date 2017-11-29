@@ -54,11 +54,11 @@ class PlaceController extends Controller
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function show(string $uuid, PlaceRepository $placesRepository): Response
+    public function show($request, string $uuid, PlaceRepository $placesRepository): Response
     {
         $place = $placesRepository->find($uuid);
 
-        if (in_array('offers', explode(',', request()->get('with', '')))) {
+        if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
 
@@ -75,14 +75,13 @@ class PlaceController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function showOwnerPlace(PlaceRepository $placesRepository): Response
+    public function showOwnerPlace($request, PlaceRepository $placesRepository): Response
     {
-
         $this->authorize('my.place.show');
 
         $place = $placesRepository->findByUser($this->auth->user());
 
-        if (in_array('offers', explode(',', request()->get('with', '')))) {
+        if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
 
