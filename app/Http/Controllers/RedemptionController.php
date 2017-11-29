@@ -90,7 +90,11 @@ class RedemptionController extends Controller
     {
         $code = $request->code;
 
-        $redemption = $offersService->redeemByCode($code);
+        $activationCode = $offersService->getActivationCodeByCode($code);
+
+        $this->authorize('offers.redemption.confirm', $activationCode->offer);
+
+        $redemption = $offersService->redeemByActivationCode($activationCode);
 
         return \response()->render(
             'redemption.redeem',

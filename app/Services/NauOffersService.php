@@ -7,7 +7,6 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\User;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -54,7 +53,13 @@ class NauOffersService implements OffersService
         return $this->redeem($activationCode);
     }
 
-    public function redeemByCode(string $code)
+    /**
+     * @param string $code
+     *
+     * @return ActivationCode
+     * @throws BadActivationCodeException
+     */
+    public function getActivationCodeByCode(string $code): ActivationCode
     {
         $activationCode = $this->activationCodeRepository
             ->findByCodeAndNotRedeemed($code);
@@ -63,12 +68,22 @@ class NauOffersService implements OffersService
             throw new BadActivationCodeException(null, $code);
         }
 
+        return $activationCode;
+    }
+
+    /**
+     * @param ActivationCode $activationCode
+     *
+     * @return Redemption
+     * @throws BadActivationCodeException
+     * @throws CannotRedeemException
+     */
+    public function redeemByActivationCode(ActivationCode $activationCode)
+    {
         $offer = $activationCode->offer;
         if (null === $offer) {
-            throw new BadActivationCodeException($offer, $code);
+            throw new BadActivationCodeException($offer, $activationCode->code);
         }
-
-        $this->gate->authorize('offers.redemption.confirm', $offer);
 
         return $this->redeem($activationCode);
     }
