@@ -9,7 +9,6 @@ use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -48,7 +47,6 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param Request         $request
      * @param string          $uuid
      * @param PlaceRepository $placesRepository
      *
@@ -56,11 +54,11 @@ class PlaceController extends Controller
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
+    public function show(string $uuid, PlaceRepository $placesRepository): Response
     {
         $place = $placesRepository->find($uuid);
 
-        if (in_array('offers', explode(',', $request->get('with', '')))) {
+        if (in_array('offers', explode(',', request()->get('with', '')))) {
             $place->append('offers');
         }
 
@@ -70,7 +68,6 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param Request         $request
      * @param PlaceRepository $placesRepository
      *
      * @return Response
@@ -78,14 +75,14 @@ class PlaceController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
+    public function showOwnerPlace(PlaceRepository $placesRepository): Response
     {
 
         $this->authorize('my.place.show');
 
         $place = $placesRepository->findByUser($this->auth->user());
 
-        if (in_array('offers', explode(',', $request->get('with', '')))) {
+        if (in_array('offers', explode(',', request()->get('with', '')))) {
             $place->append('offers');
         }
 

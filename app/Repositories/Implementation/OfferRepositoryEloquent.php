@@ -123,56 +123,6 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     }
 
     /**
-     * @param float|null $latitude
-     * @param float|null $longitude
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     * @throws \Prettus\Repository\Exceptions\RepositoryException
-     */
-    public function groupAndOrderByPosition($latitude = null, $longitude = null): Builder
-    {
-        $this->applyCriteria();
-        $this->applyScope();
-
-        $model = $this->model;
-
-        if (isset($latitude, $longitude)) {
-            $model->orderByRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
-        COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((lng - %2$s) * 
-        PI()/180 / 2), 2))))',
-                \DB::connection()->getPdo()->quote($latitude),
-                \DB::connection()->getPdo()->quote($longitude)))
-                  ->groupBy('lat', 'lng');
-        }
-
-        $this->resetModel();
-
-        return $this->parserResult($model);
-    }
-
-    /**
-     * @param string $with
-     *
-     * @return array
-     */
-    public function getPlaces(string $with): array
-    {
-        return $this->get()->map(function (Offer $offer) use ($with) {
-            if (null !== $with) {
-                $with = explode(';', $with);
-
-                return $offer->getOwner()->place()->with($with)->first();
-            }
-
-            return $offer->getOwner()->place;
-        });
-    }
-
-    /**
      * @param array $categoryIds
      *
      * @return array

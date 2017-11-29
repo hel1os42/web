@@ -35,21 +35,6 @@ interface OfferRepository extends RepositoryInterface
     ): Builder;
 
     /**
-     * @param null $latitude
-     * @param null $longitude
-     *
-     * @return Builder
-     */
-    public function groupAndOrderByPosition($latitude = null, $longitude = null): Builder;
-
-    /**
-     * @param string $with
-     *
-     * @return array
-     */
-    public function getPlaces(string $with): array;
-
-    /**
      * @param Account $account
      *
      * @return OfferRepository
