@@ -498,11 +498,11 @@ class PlaceControllerTest extends TestCase
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
         if ($isPut) {
-            $place
+            $this->placeRepository
                 ->expects(self::once())
-                ->method('getFillable')
-                ->with()
-                ->willReturn([]);
+                ->method('getFilledPlaceData')
+                ->with($place, $data)
+                ->willReturn($data);
         }
 
         $this->authorizeGate
