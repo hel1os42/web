@@ -500,7 +500,7 @@ class PlaceControllerTest extends TestCase
         if ($isPut) {
             $place
                 ->expects(self::once())
-                ->method('getFillable')
+                ->method('getFillableWithDefaults')
                 ->with()
                 ->willReturn([]);
         }
