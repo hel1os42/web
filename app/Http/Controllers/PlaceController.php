@@ -174,7 +174,7 @@ class PlaceController extends Controller
         $placeData = $request->all();
 
         if ($request->isMethod('put')) {
-            $placeData = array_merge($place::getFillableWithDefaults(), $placeData);
+            $placeData = array_merge($place->getFillableWithDefaults(), $placeData);
         }
 
         $place = $placesRepository->update($placeData, $place->id);

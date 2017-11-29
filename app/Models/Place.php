@@ -422,8 +422,8 @@ class Place extends Model
     /**
      * @return array
      */
-    public static function getFillableWithDefaults(): array
+    public function getFillableWithDefaults(): array
     {
-        return Attributes::getFillableWithDefaults(self::getModel());
+        return $this->getFillableWithDefaults();
     }
 }
