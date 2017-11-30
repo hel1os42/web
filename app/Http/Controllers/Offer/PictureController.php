@@ -64,8 +64,6 @@ class PictureController extends AbstractPictureController
     {
         $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
-        $this->authorize('offers.picture.show', $offer);
-
         return $this->respondWithImageFor($offer->id);
     }
 

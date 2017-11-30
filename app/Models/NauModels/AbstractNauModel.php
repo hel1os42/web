@@ -73,4 +73,12 @@ abstract class AbstractNauModel extends Model
     {
         return $this->fireModelEvent('creating') !== false;
     }
+
+    /**
+     * @return bool
+     */
+    public function delete()
+    {
+        return $this->fireModelEvent('deleting') !== false;
+    }
 }

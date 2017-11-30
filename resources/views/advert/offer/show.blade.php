@@ -28,6 +28,11 @@
                             @endif
                         @endforeach
                     </div>
+                    <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-rose btn-wd btn-md">Delete offer</button>
+                    </form>
                 </div>
             </div>
         </div>

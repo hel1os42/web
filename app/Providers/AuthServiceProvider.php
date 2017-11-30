@@ -36,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         'my.offer.show'        => 'OfferPolicy@showMy',
         'offers.create'        => 'OfferPolicy@create',
         'offers.update'        => 'OfferPolicy@update',
-        'offers.picture.show'  => 'UserPolicy@pictureShow',
+        'offers.delete'        => 'OfferPolicy@destroy',
         'offers.picture.store' => 'OfferPolicy@pictureStore',
 
         'places.list'          => 'PlacePolicy@index',
@@ -45,7 +45,6 @@ class AuthServiceProvider extends ServiceProvider
         'places.offers.list'   => 'PlacePolicy@showOffers',
         'my.place.create'      => 'PlacePolicy@create',
         'my.place.update'      => 'PlacePolicy@update',
-        'places.picture.show'  => 'UserPolicy@pictureShow',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
         'offers.redemption'         => 'RedemptionPolicy@index',
@@ -62,7 +61,6 @@ class AuthServiceProvider extends ServiceProvider
         'users.show'            => 'UserPolicy@show',
         'users.update'          => 'UserPolicy@update',
         'users.referrals.list'  => 'UserPolicy@referrals',
-        'users.picture.show'    => 'UserPolicy@pictureShow',
         'users.picture.store'   => 'UserPolicy@pictureStore',
         'users.update.children' => 'UserPolicy@updateChildren',
         'users.update.parents'  => 'UserPolicy@updateParents',

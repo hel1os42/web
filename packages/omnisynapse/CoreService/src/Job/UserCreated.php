@@ -5,9 +5,9 @@ namespace OmniSynapse\CoreService\Job;
 use App\Models\User;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
+use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\User as UserRequest;
 use OmniSynapse\CoreService\Response\User as UserResponse;
-use OmniSynapse\CoreService\FailedJob;
 
 /**
  * Class UserCreated
@@ -15,7 +15,7 @@ use OmniSynapse\CoreService\FailedJob;
  */
 class UserCreated extends AbstractJob
 {
-    /** @var UserRequest */
+    /** @var null|UserRequest */
     public $requestObject;
 
     /** @var User */
@@ -63,19 +63,19 @@ class UserCreated extends AbstractJob
     }
 
     /**
-     * @return \JsonSerializable
+     * @return null|\JsonSerializable
      */
-    public function getRequestObject(): \JsonSerializable
+    public function getRequestObject(): ?\JsonSerializable
     {
         return $this->requestObject;
     }
 
     /**
-     * @return string
+     * @return object
      */
-    public function getResponseClass(): string
+    public function getResponseObject()
     {
-        return UserResponse::class;
+        return new UserResponse;
     }
 
     /**

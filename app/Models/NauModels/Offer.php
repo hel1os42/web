@@ -10,6 +10,7 @@ use App\Models\Traits\HasNau;
 use App\Models\User;
 use App\Traits\Uuids;
 use Carbon\Carbon;
+use app\Observers\OfferObserver;
 
 /**
  * Class Offer
@@ -76,6 +77,15 @@ class Offer extends AbstractNauModel
 
         parent::__construct($attributes);
     }
+
+    /**
+     * The event map for the model Offers.
+     *
+     * @var array
+     */
+    protected $events = [
+        'deleting' => OfferObserver::class,
+    ];
 
     /**
      * @var array
