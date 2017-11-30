@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Attributes;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -47,6 +47,7 @@ class PlaceController extends Controller
     }
 
     /**
+     * @param Request         $request
      * @param string          $uuid
      * @param PlaceRepository $placesRepository
      *
@@ -54,7 +55,7 @@ class PlaceController extends Controller
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function show($request, string $uuid, PlaceRepository $placesRepository): Response
+    public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
     {
         $place = $placesRepository->find($uuid);
 
@@ -68,6 +69,7 @@ class PlaceController extends Controller
     }
 
     /**
+     * @param Request         $request
      * @param PlaceRepository $placesRepository
      *
      * @return Response
@@ -75,7 +77,7 @@ class PlaceController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function showOwnerPlace($request, PlaceRepository $placesRepository): Response
+    public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
     {
         $this->authorize('my.place.show');
 
@@ -172,7 +174,7 @@ class PlaceController extends Controller
         $placeData = $request->all();
 
         if ($request->isMethod('put')) {
-            $placeData = array_merge(Attributes::getFillableWithDefaults($place), $placeData);
+            $placeData = array_merge($place->getFillableWithDefaults(), $placeData);
         }
 
         $place = $placesRepository->update($placeData, $place->id);

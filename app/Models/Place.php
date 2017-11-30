@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
 use App\Traits\Uuids;
@@ -416,5 +417,13 @@ class Place extends Model
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
             $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
         });
+    }
+
+    /**
+     * @return array
+     */
+    public function getFillableWithDefaults(): array
+    {
+        return Attributes::getFillableWithDefaults($this);
     }
 }
