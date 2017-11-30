@@ -44,6 +44,8 @@ class PictureController extends AbstractPictureController
 
         $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
+        $this->authorize('offers.picture.store', $offer);
+
         return $this->storeImageFor($request, $offer->id, route('offer.picture.show', ['offerId' => $offer->id]));
     }
 
@@ -61,8 +63,6 @@ class PictureController extends AbstractPictureController
     public function show(string $offerId): Response
     {
         $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
-
-        $this->authorize('offers.picture.show', $offer);
 
         return $this->respondWithImageFor($offer->id);
     }
