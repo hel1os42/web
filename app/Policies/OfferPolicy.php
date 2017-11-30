@@ -66,7 +66,7 @@ class OfferPolicy extends Policy
      */
     public function destroy(User $user, Offer $offer)
     {
-        return $this->isAdvertiser() && $offer->isOwner($user);
+        return $this->user->isAdvertiser() && $offer->isOwner($user);
     }
 
     /**

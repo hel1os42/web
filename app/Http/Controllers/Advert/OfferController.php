@@ -150,7 +150,7 @@ class OfferController extends Controller
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
 
-        $this->authorize('destroy', $offer);
+        $this->authorize('offers.delete', $offer);
 
         $offer->delete();
 

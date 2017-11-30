@@ -176,7 +176,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->applyCriteria();
         $this->applyScope();
 
-        $model = $this->model->where([
+        $model = $this->builderWithoutGlobalScopes()->where([
             'acc_id' => $accountId
         ])->find($offerId);
 
