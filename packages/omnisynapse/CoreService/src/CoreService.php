@@ -52,4 +52,13 @@ interface CoreService
      * @return AbstractJob
      */
     public function transactionNotification(Transact $transaction, $category): AbstractJob;
+
+    /**
+     * @param Offer $offer
+     *
+     * @return AbstractJob
+     */
+    public function offerDeleted(Offer $offer): AbstractJob;
+
+    public function getClient(): Client;
 }

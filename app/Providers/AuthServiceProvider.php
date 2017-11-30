@@ -36,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         'my.offer.show'        => 'OfferPolicy@showMy',
         'offers.create'        => 'OfferPolicy@create',
         'offers.update'        => 'OfferPolicy@update',
+        'offers.delete'        => 'OfferPolicy@destroy',
         'offers.picture.store' => 'OfferPolicy@pictureStore',
 
         'places.list'          => 'PlacePolicy@index',

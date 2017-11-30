@@ -8,12 +8,19 @@ use App\Models\NauModels\Transact;
 use App\Models\User;
 use GuzzleHttp\Client;
 use OmniSynapse\CoreService\Job\OfferCreated;
+use OmniSynapse\CoreService\Job\OfferDeleted;
 use OmniSynapse\CoreService\Job\OfferRedemption;
 use OmniSynapse\CoreService\Job\OfferUpdated;
 use OmniSynapse\CoreService\Job\SendNau;
 use OmniSynapse\CoreService\Job\TransactionNotification;
 use OmniSynapse\CoreService\Job\UserCreated;
 
+/**
+ * Class CoreServiceImpl
+ * @package OmniSynapse\CoreService
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CoreServiceImpl implements CoreService
 {
     /** @var Client $client */
@@ -118,5 +125,15 @@ class CoreServiceImpl implements CoreService
     public function transactionNotification(Transact $transaction, $category): AbstractJob
     {
         return new TransactionNotification($transaction, $category, $this);
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return AbstractJob
+     */
+    public function offerDeleted(Offer $offer): AbstractJob
+    {
+        return new OfferDeleted($offer, $this);
     }
 }

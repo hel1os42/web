@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\NauModels\Offer;
+use App\Observers\OfferObserver;
 use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'users' => \App\Models\User::class
         ]);
+
+        Offer::observe(OfferObserver::class);
     }
 
     /**

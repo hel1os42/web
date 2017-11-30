@@ -60,6 +60,16 @@ class OfferPolicy extends Policy
     }
 
     /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function destroy(User $user, Offer $offer)
+    {
+        return $this->user->isAdvertiser() && $offer->isOwner($user);
+    }
+
+    /**
      * @return bool
      */
     public function create()

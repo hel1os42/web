@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\CoreService;
 
+use Faker\Factory as Faker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use OmniSynapse\CoreService\AbstractJob;
@@ -10,7 +11,6 @@ use OmniSynapse\CoreService\Exception\RequestException;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Response\Point;
 use Tests\TestCase;
-use Faker\Factory as Faker;
 
 class ExceptionsTest extends TestCase
 {
@@ -50,8 +50,8 @@ class ExceptionsTest extends TestCase
             {
                 return $this->requestObject;
             }
-            public function getResponseClass(): string {
-                return Point::class;
+            public function getResponseObject(): object {
+                return new Point;
             }
             public function getFailedResponseObject(\Exception $exception): FailedJob
             {

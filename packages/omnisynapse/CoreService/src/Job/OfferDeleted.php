@@ -1,4 +1,10 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: skido
+ * Date: 05.10.17
+ * Time: 14:25
+ */
 
 namespace OmniSynapse\CoreService\Job;
 
@@ -6,23 +12,19 @@ use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
-use OmniSynapse\CoreService\Request\Offer as OfferRequest;
-use OmniSynapse\CoreService\Response\Offer as OfferResponse;
+use OmniSynapse\CoreService\Response\OfferDeleted as OfferDeletedResponse;
 
 /**
- * Class OfferCreated
+ * Class OfferDeleted
  * @package OmniSynapse\CoreService\Job
  */
-class OfferCreated extends AbstractJob
+class OfferDeleted extends AbstractJob
 {
-    /** @var null|OfferRequest\ */
-    private $requestObject;
-
-    /** @var Offer */
-    private $offer;
+    /** @var string */
+    private $offerId;
 
     /**
-     * OfferCreated constructor.
+     * OfferUpdated constructor.
      *
      * @param Offer $offer
      * @param CoreService $coreService
@@ -31,10 +33,7 @@ class OfferCreated extends AbstractJob
     {
         parent::__construct($coreService);
 
-        $this->offer = $offer;
-
-        /** @var OfferRequest requestObject */
-        $this->requestObject = new OfferRequest($offer);
+        $this->offerId = $offer->id;
     }
 
     /**
@@ -43,7 +42,7 @@ class OfferCreated extends AbstractJob
     public function __sleep()
     {
         $parentProperties = parent::__sleep();
-        return array_merge($parentProperties, ['requestObject', 'offer']);
+        return array_merge($parentProperties, ['offerId']);
     }
 
     /**
@@ -51,7 +50,7 @@ class OfferCreated extends AbstractJob
      */
     public function getHttpMethod(): string
     {
-        return 'POST';
+        return 'DELETE';
     }
 
     /**
@@ -59,7 +58,7 @@ class OfferCreated extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return '/offers';
+        return '/offers/'.$this->offerId;
     }
 
     /**
@@ -67,7 +66,7 @@ class OfferCreated extends AbstractJob
      */
     public function getRequestObject(): ?\JsonSerializable
     {
-        return $this->requestObject;
+        return null;
     }
 
     /**
@@ -75,7 +74,7 @@ class OfferCreated extends AbstractJob
      */
     public function getResponseObject()
     {
-        return new OfferResponse;
+        return new OfferDeletedResponse($this->offerId);
     }
 
     /**
@@ -84,6 +83,6 @@ class OfferCreated extends AbstractJob
      */
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
-        return new FailedJob\OfferCreated($exception, $this->offer);
+        return new FailedJob\OfferDeleted($exception, $this->offerId);
     }
 }

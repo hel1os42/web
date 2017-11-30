@@ -27,4 +27,15 @@ class OfferObserver extends AbstractJobObserver
     {
         return $this->queue($this->getCoreService()->offerUpdated($offer));
     }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     * @throws \OmniSynapse\CoreService\Exception\RequestException
+     */
+    public function deleting(Offer $offer)
+    {
+        return $this->queue($this->getCoreService()->offerDeleted($offer));
+    }
 }

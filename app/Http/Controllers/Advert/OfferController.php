@@ -14,6 +14,7 @@ use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Models\Contracts\Currency;
 
 /**
  * Class OfferController
@@ -128,6 +129,32 @@ class OfferController extends Controller
         $this->authorize('my.offer.show', $offer);
 
         return \response()->render('advert.offer.show', $data);
+    }
+
+    /**
+     * Delete offer (for Advert) by uuid
+     *
+     * @param string $offerUuid
+     *
+     * @return Response
+     * @return HttpException
+     */
+    public function destroy(string $offerUuid): Response
+    {
+        $offer = $this->offerRepository->findByIdAndAccountId($offerUuid,
+            $this->auth->user()
+            ->getAccountFor(Currency::NAU)
+            ->id);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+
+        $this->authorize('offers.delete', $offer);
+
+        $offer->delete();
+
+        return \response(null, 204);
     }
 
     /**
