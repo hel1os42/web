@@ -97,8 +97,6 @@ class PictureController extends AbstractPictureController
         $this->type = $type;
         $place      = $this->placeRepository->find($placeId);
 
-        $this->authorize('places.picture.show', $place);
-
         return $this->respondWithImageFor($place->id);
     }
 

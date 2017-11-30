@@ -52,8 +52,6 @@ class PictureController extends AbstractPictureController
             throw new NotFoundHttpException();
         }
 
-        $this->authorize('users.picture.show', $userRepository->find($userUuid));
-
         return $this->respondWithImageFor($userUuid);
     }
 
