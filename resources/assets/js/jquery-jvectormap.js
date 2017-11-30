@@ -511,7 +511,7 @@ jvm.AbstractCanvasElement = function(container, width, height){
   this.rootElement = new jvm[this.classPrefix+'GroupElement']();
   this.node.appendChild( this.rootElement.node );
   this.container.appendChild(this.node);
-}
+};
 
 /**
  * Add element to the certain group inside of the canvas.
@@ -522,7 +522,7 @@ jvm.AbstractCanvasElement.prototype.add = function(element, group){
   group = group || this.rootElement;
   group.add(element);
   element.canvas = this;
-}
+};
 
 /**
  * Create path and add it to the canvas.
@@ -651,7 +651,7 @@ jvm.AbstractShapeElement.mergeStyles = function(styles, newStyles){
       styles[key] = newStyles[key];
     }
   }
-}/**
+};/**
  * Wrapper for SVG element.
  * @constructor
  * @extends jvm.AbstractElement
@@ -661,7 +661,7 @@ jvm.AbstractShapeElement.mergeStyles = function(styles, newStyles){
 
 jvm.SVGElement = function(name, config){
   jvm.SVGElement.parentClass.apply(this, arguments);
-}
+};
 
 jvm.inherits(jvm.SVGElement, jvm.AbstractElement);
 
@@ -700,7 +700,7 @@ jvm.SVGElement.prototype.getBBox = function(){
   return this.node.getBBox();
 };jvm.SVGGroupElement = function(){
   jvm.SVGGroupElement.parentClass.call(this, 'g');
-}
+};
 
 jvm.inherits(jvm.SVGGroupElement, jvm.SVGElement);
 
@@ -714,7 +714,7 @@ jvm.SVGGroupElement.prototype.add = function(element){
   this.node.appendChild( this.defsElement.node );
 
   jvm.AbstractCanvasElement.apply(this, arguments);
-}
+};
 
 jvm.inherits(jvm.SVGCanvasElement, jvm.SVGElement);
 jvm.mixin(jvm.SVGCanvasElement, jvm.AbstractCanvasElement);
@@ -782,7 +782,7 @@ jvm.SVGShapeElement.imageCounter = 1;
 jvm.SVGShapeElement.images = {};jvm.SVGPathElement = function(config, style){
   jvm.SVGPathElement.parentClass.call(this, 'path', config, style);
   this.node.setAttribute('fill-rule', 'evenodd');
-}
+};
 
 jvm.inherits(jvm.SVGPathElement, jvm.SVGShapeElement);jvm.SVGCircleElement = function(config, style){
   jvm.SVGCircleElement.parentClass.call(this, 'circle', config, style);
@@ -825,7 +825,7 @@ jvm.SVGImageElement.prototype.applyAttr = function(attr, value){
   }
 };jvm.SVGTextElement = function(config, style){
   jvm.SVGTextElement.parentClass.call(this, 'text', config, style);
-}
+};
 
 jvm.inherits(jvm.SVGTextElement, jvm.SVGShapeElement);
 
@@ -1397,7 +1397,7 @@ jvm.NumericScale.prototype = {
 };
 jvm.ColorScale = function(colors, normalizeFunction, minValue, maxValue) {
   jvm.ColorScale.parentClass.apply(this, arguments);
-}
+};
 
 jvm.inherits(jvm.ColorScale, jvm.NumericScale);
 
@@ -1464,7 +1464,7 @@ jvm.Legend = function(params) {
   }
 
   this.render();
-}
+};
 
 jvm.Legend.prototype.render = function(){
   var ticks = this.series.scale.getTicks(),
@@ -1520,7 +1520,7 @@ jvm.Legend.prototype.render = function(){
     inner.append(tick);
   }
   inner.append( jvm.$('<div/>').css('clear', 'both') );
-}/**
+};/**
  * Creates data series.
  * @constructor
  * @param {Object} params Parameters to initialize series with.
@@ -1873,7 +1873,7 @@ jvm.MapObject.prototype.getLabelText = function(key){
     text = null;
   }
   return text;
-}
+};
 
 jvm.MapObject.prototype.getLabelOffsets = function(key){
   var offsets;
@@ -1886,7 +1886,7 @@ jvm.MapObject.prototype.getLabelOffsets = function(key){
     }
   }
   return offsets || [0, 0];
-}
+};
 
 /**
  * Set hovered state to the element. Hovered state means mouse cursor is over element. Styles will be updates respectively.
@@ -2184,7 +2184,7 @@ jvm.Map = function(params) {
 
   this.onResize = function(){
     map.updateSize();
-  }
+  };
   jvm.$(window).resize(this.onResize);
 
   for (e in jvm.Map.apiEvents) {
@@ -2436,7 +2436,7 @@ jvm.Map.prototype = {
                 touchStartScale * scale,
                 centerTouchX,
                 centerTouchY
-              )
+              );
               map.tip.hide();
               e.preventDefault();
             } else {
@@ -2497,7 +2497,7 @@ jvm.Map.prototype = {
               map.scale * e.scale,
               e.offsetX,
               e.offsetY
-            )
+            );
             map.tip.hide();
             e.preventDefault();
           }
@@ -2724,7 +2724,7 @@ jvm.Map.prototype = {
                 y: Math.min(bbox.y, itemBbox.y),
                 width: Math.max(bbox.x + bbox.width, itemBbox.x + itemBbox.width) - Math.min(bbox.x, itemBbox.x),
                 height: Math.max(bbox.y + bbox.height, itemBbox.y + itemBbox.height) - Math.min(bbox.y, itemBbox.y)
-              }
+              };
               bbox = newBbox;
             }
           }
@@ -2819,9 +2819,8 @@ jvm.Map.prototype = {
 
     for (i = 0; i < selected.length; i++) {
       select[selected[i]] = false;
-    };
-
-    this.setSelected(type, select);
+    }
+      this.setSelected(type, select);
   },
 
   /**
@@ -3004,7 +3003,7 @@ jvm.Map.prototype = {
     this.createMarkers(markers);
     for (i = 0; i < seriesData.length; i++) {
       this.series.markers[i].setValues(seriesData[i] || {});
-    };
+    }
   },
 
   /**
@@ -3017,7 +3016,7 @@ jvm.Map.prototype = {
     for (i = 0; i < markers.length; i++) {
       this.markers[ markers[i] ].element.remove();
       delete this.markers[ markers[i] ];
-    };
+    }
   },
 
   /**
@@ -3372,7 +3371,7 @@ jvm.MultiMap.defaultParams = {
   mapUrlByCode: function(code, multiMap){
     return 'jquery-jvectormap-data-'+code.toLowerCase()+'-'+multiMap.defaultProjection+'-en.js';
   }
-}
+};
 
 
 

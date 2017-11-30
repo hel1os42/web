@@ -310,7 +310,7 @@ $(function () {
 							text: 'Chart.js Bar Chart'
 						}
 					}
-                }
+                };
 
     
 	if($('#barChart')[0]){
@@ -389,7 +389,7 @@ $(function () {
 							text: 'Chart.js Bar Chart'
 						}
 					}
-                }
+                };
 
     
 	if($('#barlinecomboChart')[0]){

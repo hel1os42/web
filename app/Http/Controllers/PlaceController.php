@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Attributes;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
+use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,55 +17,71 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PlaceController extends Controller
 {
-    private $placesRepository;
-    private $auth;
-
-    public function __construct(PlaceRepository $placesRepository, AuthManager $authManager)
-    {
-        $this->placesRepository = $placesRepository;
-        $this->auth             = $authManager->guard();
-    }
-
     /**
      * @param PlaceFilterRequest $request
+     * @param OfferRepository    $offerRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request): Response
+    public function index(PlaceFilterRequest $request, OfferRepository $offerRepository): Response
     {
-        $places = $this->placesRepository
-            ->getByCategoriesAndPosition($request->category_ids,
-                $request->latitude, $request->longitude, $request->radius);
+        $this->authorize('places.list');
 
-        return response()->render('place.index', $places->paginate());
+        $offers = $offerRepository
+            ->skipCriteria()
+            ->getActiveByCategoriesAndPosition($request->category_ids,
+                $request->latitude, $request->longitude, $request->radius)
+            ->select('acc_id')
+            ->groupBy('acc_id', 'lat', 'lng')
+            ->groupAndOrderByPosition($request->latitude, $request->longitude);
+
+        $with = request()->get(config('repository.criteria.params.with', 'with'), null);
+
+        $array         = $offers->paginate()->toArray();
+        $array['data'] = $offers->getPlaces($with);
+
+        return response()->render('place.index', $array);
     }
 
     /**
-     * @param Request $request
-     * @param string  $uuid
+     * @param Request         $request
+     * @param string          $uuid
+     * @param PlaceRepository $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \LogicException
      */
-    public function show(Request $request, string $uuid): Response
+    public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
     {
-        $place = $this->placesRepository
-            ->find($uuid);
+        $place = $placesRepository->find($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
 
+        $this->authorize('places.show', $place);
+
         return \response()->render('place.show', $place->toArray());
     }
 
     /**
-     * @param Request $request
+     * @param Request         $request
+     * @param PlaceRepository $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \LogicException
      */
-    public function showOwnerPlace(Request $request): Response
+    public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
     {
-        $place = $this->placesRepository->findByUser($this->auth->user());
+        $this->authorize('my.place.show');
+
+        $place = $placesRepository->findByUser($this->auth->user());
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -76,36 +91,40 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param string|null $uuid
+     * @param string          $uuid
+     * @param PlaceRepository $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \App\Exceptions\TokenException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function showPlaceOffers(string $uuid): Response
+    public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository): Response
     {
-        $offers = $this->placesRepository->find($uuid)->offers();
+        $place = $placesRepository->find($uuid);
+
+        $this->authorize('places.offers.list', $place);
+
+        $offers = $place->offers();
 
         return \response()->render('user.offer.index', $offers->paginate());
     }
 
     /**
-     * @return Response
-     */
-    public function showOwnerPlaceOffers(): Response
-    {
-        $place = $this->placesRepository->findByUser($this->auth->user());
-
-        return \response()->render('advert.offer.index', $place->offers()->paginate());
-    }
-
-    /**
-     * @param CreateUpdateRequest $request
+     * @param PlaceRepository $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
-    public function create(): Response
+    public function create(PlaceRepository $placesRepository): Response
     {
-        if ($this->placesRepository->existsByUser($this->auth->user())) {
-            throw new AuthorizationException('This action is unauthorized.');
+        $this->authorize('my.place.create');
+
+        if ($placesRepository->existsByUser($this->auth->user())) {
+            return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
         return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
@@ -113,14 +132,19 @@ class PlaceController extends Controller
 
     /**
      * @param CreateUpdateRequest $request
+     * @param PlaceRepository     $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \LogicException
      */
-    public function store(CreateUpdateRequest $request): Response
+    public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
+        $this->authorize('my.place.create');
+
         $placeData = $request->all();
 
-        $place = $this->placesRepository->createForUserOrFail($placeData, $this->auth->user());
+        $place = $placesRepository->createForUserOrFail($placeData, $this->auth->user());
 
         if ($request->has('category_ids') === true) {
             $place->categories()->attach($request->category_ids);
@@ -134,20 +158,26 @@ class PlaceController extends Controller
 
     /**
      * @param CreateUpdateRequest $request
+     * @param PlaceRepository     $placesRepository
      *
      * @return Response
+     * @throws AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \LogicException
      */
-    public function update(CreateUpdateRequest $request): Response
+    public function update(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
     {
-        $place = $this->placesRepository->findByUser($this->auth->user());
+        $this->authorize('my.place.update');
+
+        $place = $placesRepository->findByUser($this->auth->user());
 
         $placeData = $request->all();
 
         if ($request->isMethod('put')) {
-            $placeData = array_merge(Attributes::getFillableWithDefaults($place), $placeData);
+            $placeData = array_merge($place->getFillableWithDefaults(), $placeData);
         }
 
-        $place = $this->placesRepository->update($placeData, $place->id);
+        $place = $placesRepository->update($placeData, $place->id);
         $place->categories()->sync($request->category_ids);
 
         return \response()->render('profile.place.show', $place->toArray(), Response::HTTP_CREATED,

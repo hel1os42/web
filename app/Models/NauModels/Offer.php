@@ -47,6 +47,13 @@ class Offer extends AbstractNauModel
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
 
+    /**
+     * Offer constructor.
+     *
+     * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
     public function __construct(array $attributes = [])
     {
         $this->table = "offer";
@@ -97,6 +104,15 @@ class Offer extends AbstractNauModel
         'radius',
         'reserved',
     ];
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        self::bootGlobalScopes();
+    }
 
     /**
      * @return Account

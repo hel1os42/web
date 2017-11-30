@@ -9,8 +9,10 @@
 namespace App\Models\NauModels\Offer;
 
 use App\Models\NauModels\Offer;
+use App\Models\Scopes\OfferDateActual;
+use App\Models\Scopes\OfferStatusActive;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -24,10 +26,20 @@ use Ramsey\Uuid\Uuid;
  * @method static static|Builder filterByCategory(string $categoryId = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder byOwner(User $user)
- * @method static static|Builder active()
+ * @method static|Builder groupAndOrderByPosition(string $latitude, string $longitude): Builder
+ * @method static|Builder getPlaces(string $with): Collection
  */
 trait ScopesTrait
 {
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected static function bootGlobalScopes()
+    {
+        static::addGlobalScope(new OfferStatusActive());
+        static::addGlobalScope(new OfferDateActual());
+    }
+
     /**
      * @param Builder $builder
      * @param int     $accountId
@@ -70,6 +82,42 @@ trait ScopesTrait
             $radius));
     }
 
+
+    public function scopeGroupAndOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
+    {
+        if (isset($lat, $lng)) {
+            return $builder->orderByRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((lat - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(lat * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((lng - %2$s) * 
+        PI()/180 / 2), 2))))',
+                \DB::connection()->getPdo()->quote($lat),
+                \DB::connection()->getPdo()->quote($lng)))
+                           ->groupBy('lat', 'lng');
+        }
+
+        return $builder;
+    }
+
+    /**
+     * @param string|null $with
+     *
+     * @return Collection
+     */
+    public function scopeGetPlaces(Builder $builder, ?string $with): Collection
+    {
+        return $builder->get()->map(function (Offer $offer) use ($with) {
+            if (null !== $with) {
+                $with = explode(';', $with);
+
+                return $offer->getOwner()->place()->with($with)->first();
+            }
+
+            return $offer->getOwner()->place;
+        });
+    }
+
     /**
      * @param Builder     $builder
      * @param string|null $categoryId
@@ -99,16 +147,24 @@ trait ScopesTrait
         return $builder->whereIn('account_id', $owner->accounts->pluck('id'));
     }
 
-    public function scopeActive(Builder $builder): Builder
+    /**
+     * @return string
+     */
+    public static function statusActiveScope(): string
     {
-        $now = Carbon::now()->format(Carbon::ISO8601);
+        return OfferStatusActive::class;
+    }
 
-        return $builder->where('status', Offer::STATUS_ACTIVE)
-            ->where('start_date', '<=', $now)
-            ->where(function(Builder $builder) use ($now) {
-                $builder
-                    ->whereNull('finish_date')
-                    ->orWhere('finish_date', '>', $now);
-            });
+    /**
+     * @return string
+     */
+    public static function dateActualScope(): string
+    {
+        return OfferDateActual::class;
+    }
+
+    public function withoutAllGlobalScopes(Builder $builder): Builder
+    {
+        return $builder->withoutGlobalScopes([self::statusActiveScope(), self::dateActualScope()]);
     }
 }

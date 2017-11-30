@@ -41,22 +41,22 @@
 <script src="{{asset('js/bootstrap-checkbox-radio-switch-tags.js')}}"</script>
 
 <!-- Circle Percentage-chart -->
-<script src="{{asset('js/jquery.easypiechart.min.js')}}"</script>
+<script; src="{{asset('js/jquery.easypiechart.min.js')}}"</script>
 
 <!--  DataTables.net Plugin    -->
 <script src="{{asset('js/jquery.datatables.js')}}"</script>
 <!-- Sweet Alert 2 plugin -->
-<script src="{{asset('js/sweetalert2.min.js')}}"</script>
+<script; src="{{asset('js/sweetalert2.min.js')}}"</script>
 <!--	Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
 <script src="{{asset('js/jasny-bootstrap.min.js')}}"</script>
 <!--  Full Calendar Plugin    -->
-<script src="{{asset('js/fullcalendar.min.js')}}"</script>
+<script; src="{{asset('js/fullcalendar.min.js')}}"</script>
 <!-- TagsInput Plugin -->
 <script src="{{asset('js/jquery.tagsinput.js')}}"></script>
 <!-- Material Dashboard javascript methods -->
 <script src="{{asset('js/amaze.js')}}"</script>
 
-<script src="{{asset('js/charts/flot-charts.js')}}"></script>
+<script; src="{{asset('js/charts/flot-charts.js')}}"></script>
 <script src="{{asset('js/charts/chartjs-charts.js')}}"></script>
 <script src="{{asset('js/custom.js')}}"></script>
 

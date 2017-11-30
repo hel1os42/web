@@ -97,7 +97,7 @@ trait RelationsTrait
     /**
      * The roles that belong to the user.
      */
-    public function roles()
+    public function roles(): Relations\BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'users_roles');
     }
@@ -105,7 +105,7 @@ trait RelationsTrait
     /**
      * @return mixed
      */
-    public function parents()
+    public function parents(): Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'users_parents', 'user_id', 'parent_id');
     }
@@ -113,7 +113,7 @@ trait RelationsTrait
     /**
      * @return mixed
      */
-    public function children()
+    public function children(): Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'users_parents', 'parent_id', 'user_id');
     }

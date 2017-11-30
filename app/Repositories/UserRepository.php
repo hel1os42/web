@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
 

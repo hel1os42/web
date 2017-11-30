@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 class OfferController extends Controller
 {
     private $offerRepository;
-    private $auth;
     private $weekDaysService;
 
     public function __construct(
@@ -22,8 +21,9 @@ class OfferController extends Controller
         WeekDaysService $weekDaysService
     ) {
         $this->offerRepository = $offerRepository;
-        $this->auth            = $authManager->guard();
         $this->weekDaysService = $weekDaysService;
+
+        parent::__construct($authManager);
     }
 
     /**
@@ -38,7 +38,7 @@ class OfferController extends Controller
      */
     public function index(OfferRequest $request): Response
     {
-        $this->authorize('userIndex', Offer::class);
+        $this->authorize('offers.list');
 
         $offers       = $this->offerRepository
             ->getActiveByCategoriesAndPosition($request->category_ids,
@@ -61,9 +61,9 @@ class OfferController extends Controller
      */
     public function show(string $offerUuid): Response
     {
-        $this->authorize('userShow', Offer::class);
+        $offer = $this->offerRepository->find($offerUuid);
 
-        $offer = $this->offerRepository->findActiveByIdOrFail($offerUuid);
+        $this->authorize('offers.show', $offer);
 
         if ($offer->isOwner($this->auth->user())) {
             $offer->setVisible(Offer::$publicAttributes);

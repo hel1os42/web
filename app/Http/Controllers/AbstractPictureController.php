@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Profile\PictureRequest;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Response;
 use Intervention\Image\ImageManager;
@@ -39,10 +40,12 @@ abstract class AbstractPictureController extends Controller
      * @param ImageManager $imageManager
      * @param Filesystem   $filesystem
      */
-    public function __construct(ImageManager $imageManager, Filesystem $filesystem)
+    public function __construct(ImageManager $imageManager, Filesystem $filesystem, AuthManager $authManager)
     {
         $this->imageManager = $imageManager;
         $this->filesystem   = $filesystem;
+
+        parent::__construct($authManager);
     }
 
     /**

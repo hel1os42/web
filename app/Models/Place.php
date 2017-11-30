@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
+use App\Models\NauModels\Offer;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +31,7 @@ use Illuminate\Support\Collection;
  * @property string                       picture_url
  * @property string                       cover_url
  * @property int                          offers_count
+ * @property int                          active_offers_count
  *
  * @property User                         user
  * @property Collection                   testimonials
@@ -97,6 +100,7 @@ class Place extends Model
             'categories_count',
             'testimonials_count',
             'offers_count',
+            'active_offers_count',
             'picture_url',
             'cover_url'
         ];
@@ -158,13 +162,18 @@ class Place extends Model
         return $this->stars;
     }
 
+    public function getActiveOffersCountAttribute(): int
+    {
+        return $this->offers()->count();
+    }
+
     /**
      * @return int
      * @throws \App\Exceptions\TokenException
      */
     public function getOffersCountAttribute(): int
     {
-        return $this->offers()->count();
+        return $this->offers()->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()])->count();
     }
 
     /**
@@ -193,7 +202,7 @@ class Place extends Model
      */
     public function getPictureUrlAttribute(): string
     {
-        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
     }
 
     /**
@@ -201,7 +210,7 @@ class Place extends Model
      */
     public function getCoverUrlAttribute(): string
     {
-        return route('place.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
     }
 
     /** @return bool */
@@ -408,5 +417,13 @@ class Place extends Model
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
             $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
         });
+    }
+
+    /**
+     * @return array
+     */
+    public function getFillableWithDefaults(): array
+    {
+        return Attributes::getFillableWithDefaults($this);
     }
 }

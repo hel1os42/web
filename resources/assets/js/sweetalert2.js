@@ -114,7 +114,7 @@
     } else {
       elem.style.removeAttribute(property);
     }
-  }
+  };
 
   var isDescendant = function(parent, child) {
     var node = child.parentNode;
