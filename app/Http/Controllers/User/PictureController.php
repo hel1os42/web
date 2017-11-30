@@ -45,14 +45,12 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $userUuid = null, UserRepository $userRepository): Response
+    public function show(string $userUuid = null): Response
     {
         $userUuid = $userUuid ?? $this->auth->id();
         if ($userUuid === null) {
             throw new NotFoundHttpException();
         }
-
-        $this->authorize('users.picture.show', $userRepository->find($userUuid));
 
         return $this->respondWithImageFor($userUuid);
     }

@@ -63,14 +63,6 @@ class UserPolicy extends Policy
     }
 
     /**
-     * @return bool
-     */
-    public function pictureShow()
-    {
-        return true;
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
