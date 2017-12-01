@@ -172,7 +172,7 @@ class PlaceController extends Controller
             ? $placesRepository->findByUser($this->auth->user())
             : $placesRepository->find($uuid);
 
-        $this->authorize('my.place.update', $place);
+        $this->authorize('places.update', $place);
 
         $placeData = $request->all();
 
