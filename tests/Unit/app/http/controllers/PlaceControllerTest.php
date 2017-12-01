@@ -508,7 +508,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('my.place.update')
+            ->with('places.update', $place)
             ->willReturn(true);
 
         $place
@@ -586,6 +586,47 @@ class PlaceControllerTest extends TestCase
         ];
     }
 
+    /**
+     * @param bool $withCategories
+     *
+     * @return array
+     */
+    private function fakePlaceData($withCategories = false): array
+    {
+        $data = [
+            'name'        => $this->faker->name,
+            'description' => $this->faker->text,
+            'about'       => $this->faker->text,
+            'address'     => $this->faker->address,
+            'latitude'    => $this->faker->latitude,
+            'longitude'   => $this->faker->longitude,
+            'radius'      => $this->faker->randomNumber()
+        ];
+
+        if ($withCategories) {
+            $categories = [];
+            for ($i = 0; $i < $this->faker->randomDigit; ++$i) {
+                $categories[] = $this->faker->uuid;
+            }
+            $data['category_ids'] = $categories;
+        }
+
+        return $data;
+    }
+
+    private function fakeArray()
+    {
+        $array = [];
+
+        $count = $this->faker->numberBetween(1, 10);
+
+        for ($i = 0; $i < $count; ++$i) {
+            $array[$this->faker->randomAscii] = $this->faker->randomAscii;
+        }
+
+        return $array;
+    }
+
     public function storeData()
     {
         return [
@@ -627,6 +668,15 @@ class PlaceControllerTest extends TestCase
         ];
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    private function generateUuid(): string
+    {
+        return Uuid::generate(4)->__toString();
+    }
+
     public function showOwnerPlaceData()
     {
         return [
@@ -644,34 +694,12 @@ class PlaceControllerTest extends TestCase
         ];
     }
 
-    /**
-     * @return string
-     * @throws \Exception
-     */
-    private function generateUuid(): string
-    {
-        return Uuid::generate(4)->__toString();
-    }
-
     public function indexData()
     {
         return [
             [[$this->generateUuid(), $this->generateUuid()], 49, 27, 10],
             [[$this->generateUuid()], 100, 450, 10],
         ];
-    }
-
-    private function fakeArray()
-    {
-        $array = [];
-
-        $count = $this->faker->numberBetween(1, 10);
-
-        for ($i = 0; $i < $count; ++$i) {
-            $array[$this->faker->randomAscii] = $this->faker->randomAscii;
-        }
-
-        return $array;
     }
 
     private function fakeNullValueArray()
@@ -685,33 +713,5 @@ class PlaceControllerTest extends TestCase
         }
 
         return $array;
-    }
-
-    /**
-     * @param bool $withCategories
-     *
-     * @return array
-     */
-    private function fakePlaceData($withCategories = false): array
-    {
-        $data = [
-            'name'        => $this->faker->name,
-            'description' => $this->faker->text,
-            'about'       => $this->faker->text,
-            'address'     => $this->faker->address,
-            'latitude'    => $this->faker->latitude,
-            'longitude'   => $this->faker->longitude,
-            'radius'      => $this->faker->randomNumber()
-        ];
-
-        if ($withCategories) {
-            $categories = [];
-            for ($i = 0; $i < $this->faker->randomDigit; ++$i) {
-                $categories[] = $this->faker->uuid;
-            }
-            $data['category_ids'] = $categories;
-        }
-
-        return $data;
     }
 }
