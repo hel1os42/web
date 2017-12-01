@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Place;
+use App\Models\User;
 
 class PlacePolicy extends Policy
 {
@@ -49,13 +50,14 @@ class PlacePolicy extends Policy
     }
 
     /**
+     * @param User  $user
      * @param Place $place
      *
      * @return bool
      */
-    public function pictureStore(Place $place)
+    public function pictureStore(User $user, Place $place)
     {
-        return $this->user->isAdvertiser() && $this->user->equal($place->user);
+        return $user->isAdvertiser() && $user->equals($place->user);
     }
 
     /**
@@ -65,6 +67,6 @@ class PlacePolicy extends Policy
      */
     public function update(Place $place)
     {
-        return $this->user->isAdvertiser() && $this->user->equal($place->user);
+        return $this->user->isAdvertiser() && $this->user->equals($place->user);
     }
 }
