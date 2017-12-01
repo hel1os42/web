@@ -10,6 +10,9 @@ class Policy
 {
     use HandlesAuthorization;
 
+    /**
+     * @var User
+     */
     protected $user;
 
     /**

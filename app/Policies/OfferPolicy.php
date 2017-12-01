@@ -86,12 +86,13 @@ class OfferPolicy extends Policy
     }
 
     /**
+     * @param User  $user
      * @param Offer $offer
      *
      * @return bool
      */
-    public function pictureStore(Offer $offer)
+    public function pictureStore(User $user, Offer $offer)
     {
-        return $this->user->isAdvertiser() && $offer->isOwner($this->user);
+        return $user->isAdvertiser() && $offer->isOwner($user);
     }
 }
