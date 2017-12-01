@@ -8,27 +8,56 @@ use App\Models\User;
 class UserPolicy extends Policy
 {
     /**
-     * @return bool
-     */
-    public function index()
-    {
-        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
      */
-    public function show(User $user)
+    public function index(User $user)
     {
-        if ($this->user->hasRoles([Role::ROLE_ADMIN])
-            || ($this->user->hasAnyRole() && $user->equals($this->user))) {
+        return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]);
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function show(User $user, User $anotherUser)
+    {
+        if ($user->hasRoles([Role::ROLE_ADMIN])
+            || ($user->hasAnyRole() && $anotherUser->equals($user))
+        ) {
             return true;
         }
 
-        return ($this->user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
-               && $user->hasParent($this->user);
+        return ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT]))
+               && $anotherUser->hasParent($user);
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function update(User $user, User $anotherUser)
+    {
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->isAgent() && $user->hasChild($anotherUser))
+               || ($user->hasAnyRole() && $anotherUser->equals($user));
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function referrals(User $user, User $anotherUser)
+    {
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->hasAnyRole() && $anotherUser->equals($user));
     }
 
     /**
@@ -36,64 +65,46 @@ class UserPolicy extends Policy
      *
      * @return bool
      */
-    public function update(User $user)
+    public function pictureStore(User $user)
     {
-        return $this->user->hasRoles([Role::ROLE_ADMIN])
-               || ($this->user->isAgent() && $this->user->hasChild($user))
-               || ($this->user->hasAnyRole() && $user->equals($this->user));
+        return $user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
      * @param User $user
+     * @param User $anotherUser
      *
      * @return bool
      */
-    public function referrals(User $user)
+    public function updateChildren(User $user, User $anotherUser)
     {
-        return $this->user->hasRoles([Role::ROLE_ADMIN])
-               || ($this->user->hasAnyRole() && $user->equals($this->user));
-    }
-
-    /**
-     * @return bool
-     */
-    public function pictureStore()
-    {
-        return $this->user->hasRoles([Role::ROLE_USER]);
+        return ($user->hasRoles([Role::ROLE_ADMIN])
+                || ($user->isAgent() && $user->hasChild($anotherUser)))
+               && ($anotherUser->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
     }
 
     /**
      * @param User $user
+     * @param User $anotherUser
      *
      * @return bool
      */
-    public function updateChildren(User $user)
+    public function updateParents(User $user, User $anotherUser)
     {
-        return ($this->user->hasRoles([Role::ROLE_ADMIN])
-                || ($this->user->isAgent() && $this->user->hasChild($user)))
-               && ($user->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
+        return ($user->hasRoles([Role::ROLE_ADMIN])
+                || ($user->isAgent() && $user->hasChild($anotherUser)))
+               && ($anotherUser->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
     }
 
     /**
-     * @param User $user
+     * @param User      $user
+     * @param User|null $anotherUser
      *
      * @return bool
      */
-    public function updateParents(User $user)
+    public function updateRoles(User $user, User $anotherUser)
     {
-        return ($this->user->hasRoles([Role::ROLE_ADMIN])
-                || ($this->user->isAgent() && $this->user->hasChild($user)))
-               && ($user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function updateRoles(User $user)
-    {
-        return $this->user->hasRoles([Role::ROLE_ADMIN])
-               || ($this->user->isAgent() && $this->user->hasChild($user));
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->isAgent() && $user->hasChild($anotherUser));
     }
 }

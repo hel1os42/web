@@ -5,32 +5,39 @@ namespace App\Policies;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\Role;
+use App\Models\User;
 
 class RedemptionPolicy extends Policy
 {
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function index()
+    public function index(User $user)
     {
-        return $this->user->hasRoles([Role::ROLE_USER]);
+        return $user->hasRoles([Role::ROLE_USER]);
     }
 
     /**
+     * @param User  $user
+     * @param Offer $offer
+     *
      * @return bool
      */
-    public function confirm(Offer $offer)
+    public function confirm(User $user, Offer $offer)
     {
-        return $this->user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($this->user);
+        return $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
     }
 
     /**
+     * @param User       $user
      * @param Redemption $redemption
      *
      * @return bool
      */
-    public function show(Redemption $redemption)
+    public function show(User $user, Redemption $redemption)
     {
-        return $redemption->offer->isOwner($this->user);
+        return $redemption->offer->isOwner($user);
     }
 }

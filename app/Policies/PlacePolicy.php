@@ -8,45 +8,53 @@ use App\Models\User;
 class PlacePolicy extends Policy
 {
     /**
-     * @return bool
+     * @param User $user
+     *
+     * @return mixed
      */
-    public function index()
+    public function index(User $user)
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
-     * @return bool
+     * @param User $user
+     *
+     * @return mixed
      */
-    public function show()
+    public function show(User $user)
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
-     * @param Place $place
+     * @param User $user
      *
      * @return bool
      */
-    public function showMy()
+    public function showMy(User $user)
     {
-        return $this->user->isAdvertiser();
+        return $user->isAdvertiser();
     }
 
     /**
-     * @return bool
+     * @param User $user
+     *
+     * @return mixed
      */
-    public function showOffers()
+    public function showOffers(User $user)
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function create()
+    public function create(User $user)
     {
-        return $this->user->isAdvertiser();
+        return $user->isAdvertiser();
     }
 
     /**
@@ -61,12 +69,13 @@ class PlacePolicy extends Policy
     }
 
     /**
+     * @param User  $user
      * @param Place $place
      *
      * @return bool
      */
-    public function update(Place $place)
+    public function update(User $user, Place $place)
     {
-        return $this->user->isAdvertiser() && $this->user->equals($place->user);
+        return $user->isAdvertiser() && $user->equals($place->user);
     }
 }
