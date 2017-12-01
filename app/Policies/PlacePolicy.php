@@ -52,7 +52,7 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function create(User $user)
+    public function createMy(User $user)
     {
         return $user->isAdvertiser();
     }
@@ -70,11 +70,12 @@ class PlacePolicy extends Policy
 
     /**
      * @param User  $user
+     * @param Place $place
      *
      * @return bool
      */
-    public function update(User $user)
+    public function update(User $user, Place $place)
     {
-        return $user->isAdvertiser();
+        return $user->isAdvertiser() && $user->equals($place->user);
     }
 }
