@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Place;
+use App\Models\Role;
 use App\Models\User;
 
 class PlacePolicy extends Policy
@@ -65,7 +66,8 @@ class PlacePolicy extends Policy
      */
     public function pictureStore(User $user, Place $place)
     {
-        return $user->isAdvertiser() && $user->equals($place->user);
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->isAdvertiser() && $user->equals($place->user));
     }
 
     /**
@@ -76,6 +78,7 @@ class PlacePolicy extends Policy
      */
     public function update(User $user, Place $place)
     {
-        return $user->isAdvertiser() && $user->equals($place->user);
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->isAdvertiser() && $user->equals($place->user));
     }
 }
