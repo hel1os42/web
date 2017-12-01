@@ -167,6 +167,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->resource('places', 'PlaceController', [
         'except' => [
+            'update',
             'destroy'
         ]
     ]);

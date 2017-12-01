@@ -70,12 +70,11 @@ class PlacePolicy extends Policy
 
     /**
      * @param User  $user
-     * @param Place $place
      *
      * @return bool
      */
-    public function update(User $user, Place $place)
+    public function update(User $user)
     {
-        return $user->isAdvertiser() && $user->equals($place->user);
+        return $user->isAdvertiser();
     }
 }
