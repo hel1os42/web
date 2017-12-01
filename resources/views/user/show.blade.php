@@ -1,7 +1,9 @@
 @extends('layouts.master')
 
 @section('title', 'Profile')
-
+@php
+    $user = \App\Models\User::query()->find($id);
+@endphp
 @section('content')
     <script type="text/javascript">
         function loadCategory(){
@@ -25,7 +27,7 @@
             xmlhttp.open("GET", "{{route('categories')}}", true);
             xmlhttp.send();
         }
-        @can('users.update.roles')
+        @can('users.update.roles', $user)
         function loadRoles() {
             let xmlhttp = new XMLHttpRequest();
             let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
@@ -137,13 +139,13 @@
                                         <p><strong>Phone</strong></p>
                                         <p><strong>Latitude</strong></p>
                                         <p><strong>Longitude</strong></p>
-                                        @can('users.update.roles')
+                                        @can('users.update.roles', $user)
                                         <p style="height: 120px;"><strong>Roles</strong></p>
                                         @endcan
-                                        @can('users.update.parents')
+                                        @can('users.update.parents', $user)
                                         <p><strong>Parents</strong></p>
                                         @endcan
-                                        @can('users.update.children')
+                                        @can('users.update.children', $user)
                                         <p><strong>Children</strong></p>
                                         @endcan
                                     </div>
@@ -159,20 +161,20 @@
                                                   name="latitude" value="{{$latitude}}"></p>
                                         <p><input style="line-height: 14px; font-size: 14px;" type="text"
                                                   name="longitude" value="{{$longitude}}"></p>
-                                        @can('users.update.roles')
+                                        @can('users.update.roles', $user)
                                         <p>
                                             <select style="height: 120px;" id="roles" name="role_ids[]"
                                                     class="form-control" multiple></select>
                                         </p>
                                         @endcan
-                                        @can('users.update.parents')
+                                        @can('users.update.parents', $user)
                                         <p>
                                             @foreach($parents as $parent)
                                                 {{$parent['name']}}<br>
                                             @endforeach
                                         </p>
                                         @endcan
-                                        @can('users.update.children')
+                                        @can('users.update.children', $user)
                                         <p>
                                             @foreach($children as $child)
                                                 {{$child['name']}}<br>

@@ -3,22 +3,27 @@
 namespace App\Policies;
 
 use App\Models\Role;
+use App\Models\User;
 
 class RolePolicy extends Policy
 {
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function index()
+    public function index(User $user)
     {
-        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+        return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function show()
+    public function show(User $user)
     {
-        return $this->user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+        return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
     }
 }

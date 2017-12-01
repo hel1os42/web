@@ -10,27 +10,33 @@ class OfferPolicy extends Policy
 {
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function index()
+    public function index(User $user): bool
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function show()
+    public function show(User $user): bool
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function indexMy()
+    public function indexMy(User $user): bool
     {
-        return $this->user->isAdvertiser();
+        return $user->isAdvertiser();
     }
 
     /**
@@ -39,13 +45,13 @@ class OfferPolicy extends Policy
      *
      * @return bool
      */
-    public function showMy(User $user, Offer $offer)
+    public function showMy(User $user, Offer $offer): bool
     {
-        if ($this->user->hasRoles([Role::ROLE_ADMIN])) {
+        if ($user->hasRoles([Role::ROLE_ADMIN])) {
             return true;
         }
 
-        if ($this->user->isAdvertiser() && $offer->isOwner($user)) {
+        if ($user->isAdvertiser() && $offer->isOwner($user)) {
             return true;
         }
 
@@ -60,29 +66,34 @@ class OfferPolicy extends Policy
     }
 
     /**
+     * @param User  $user
      * @param Offer $offer
      *
      * @return bool
      */
-    public function destroy(User $user, Offer $offer)
+    public function destroy(User $user, Offer $offer): bool
     {
-        return $this->user->isAdvertiser() && $offer->isOwner($user);
+        return $user->isAdvertiser() && $offer->isOwner($user);
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function create()
+    public function create(User $user): bool
     {
-        return $this->user->isAdvertiser();
+        return $user->isAdvertiser();
     }
 
     /**
+     * @param User $user
+     *
      * @return bool
      */
-    public function update(): bool
+    public function update(User $user): bool
     {
-        return $this->user->isAdvertiser();
+        return $user->isAdvertiser();
     }
 
     /**
@@ -91,7 +102,7 @@ class OfferPolicy extends Policy
      *
      * @return bool
      */
-    public function pictureStore(User $user, Offer $offer)
+    public function pictureStore(User $user, Offer $offer): bool
     {
         return $user->isAdvertiser() && $offer->isOwner($user);
     }

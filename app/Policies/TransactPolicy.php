@@ -2,21 +2,27 @@
 
 namespace App\Policies;
 
+use App\Models\User;
+
 class TransactPolicy extends Policy
 {
     /**
-     * @return bool
+     * @param User $user
+     *
+     * @return mixed
      */
-    public function index()
+    public function index(User $user)
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
-     * @return bool
+     * @param User $user
+     *
+     * @return mixed
      */
-    public function create()
+    public function create(User $user)
     {
-        return $this->user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 }
