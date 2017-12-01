@@ -166,7 +166,11 @@ class PlaceController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function update(CreateUpdateRequest $request, ?string $uuid, PlaceRepository $placesRepository): Response
+    public function update(
+        CreateUpdateRequest $request,
+        PlaceRepository $placesRepository,
+        string $uuid = null
+    ): Response
     {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->auth->user())
