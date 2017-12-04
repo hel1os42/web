@@ -8,7 +8,7 @@ COPY . /app
 #RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 #RUN composer install
 
-RUN php artisan config:clear &&\
+CMD php artisan config:clear &&\
     php artisan optimize &&\
     php artisan config:cache &&\
     php artisan migrate &&\
