@@ -11,15 +11,8 @@ use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
-/**
- * Class AppServiceProvider
- * @package App\Providers
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
         Relation::morphMap([
             'users' => \App\Models\User::class
         ]);
