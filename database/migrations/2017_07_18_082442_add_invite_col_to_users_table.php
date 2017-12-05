@@ -23,7 +23,7 @@ class AddInviteColToUsersTable extends Migration
                 ->update(['invite_code' => $this->generateInvite()]);
         }
         Schema::table('users', function (Blueprint $table) {
-            $table->string('invite_code')->unique()->index()->change();
+            $table->string('invite_code', 191)->unique()->index()->change();
         });
     }
 

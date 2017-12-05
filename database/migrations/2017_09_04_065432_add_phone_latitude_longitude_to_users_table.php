@@ -27,7 +27,7 @@ class AddPhoneLatitudeLongitudeToUsersTable extends Migration
             $i++;
         }
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone')->unique()->index()->change();
+            $table->string('phone', 191)->unique()->index()->change();
         });
     }
 
