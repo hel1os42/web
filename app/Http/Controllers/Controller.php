@@ -12,10 +12,16 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    /**
+     * @var AuthManager $auth
+     */
     protected $auth;
+
+    protected $guard;
 
     public function __construct(AuthManager $authManager)
     {
-        $this->auth = $authManager->guard();
+        $this->auth  = $authManager;
+        $this->guard = $this->auth->guard();
     }
 }

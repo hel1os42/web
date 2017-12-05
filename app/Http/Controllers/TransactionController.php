@@ -89,7 +89,7 @@ class TransactionController extends Controller
     {
         $this->authorize('transactions.list');
 
-        $user         = $this->auth->user();
+        $user         = $this->guard->user();
         $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
 
         if (null === $transactionId) {

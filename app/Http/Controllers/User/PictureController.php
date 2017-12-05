@@ -4,7 +4,6 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
-use App\Repositories\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -28,9 +27,9 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request)
     {
-        $this->authorize('users.picture.store', $this->auth->user());
+        $this->authorize('users.picture.store', $this->guard->user());
 
-        return $this->storeImageFor($request, $this->auth->id(), route('profile.picture.show'));
+        return $this->storeImageFor($request, $this->guard->id(), route('profile.picture.show'));
     }
 
     /**
@@ -47,7 +46,7 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $userUuid = null): Response
     {
-        $userUuid = $userUuid ?? $this->auth->id();
+        $userUuid = $userUuid ?? $this->guard->id();
         if ($userUuid === null) {
             throw new NotFoundHttpException();
         }

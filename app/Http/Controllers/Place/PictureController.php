@@ -73,7 +73,7 @@ class PictureController extends AbstractPictureController
 
     private function store(PictureRequest $request)
     {
-        $place = $this->placeRepository->findByUser($this->auth->user());
+        $place = $this->placeRepository->findByUser($this->guard->user());
 
         $this->authorize('places.picture.store', $place);
 

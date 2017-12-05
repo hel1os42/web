@@ -8,7 +8,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Routing\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
@@ -17,7 +16,8 @@ class LoginController extends AuthController
     use ThrottlesLogins;
 
     /**
-     * @return Response
+     * @return mixed
+     * @throws \LogicException
      */
     public function getLogin()
     {
@@ -32,6 +32,7 @@ class LoginController extends AuthController
      * @param string  $phone
      *
      * @return Response
+     * @throws \LogicException
      */
     public function getOtpCode(OtpAuth $otpAuth, string $phone): Response
     {
@@ -49,7 +50,9 @@ class LoginController extends AuthController
     }
 
     /**
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function logout()
     {
@@ -61,7 +64,9 @@ class LoginController extends AuthController
     }
 
     /**
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \LogicException
+     * @throws \Tymon\JWTAuth\Exceptions\JWTException
      */
     public function tokenRefresh()
     {
@@ -75,12 +80,12 @@ class LoginController extends AuthController
     }
 
     /**
-     * @param LoginRequest    $request
-     * @param ResponseFactory $response
-     * @param Session         $session
+     * @param LoginRequest $request
+     * @param Session      $session
      *
      * @return Response
-     *
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function login(LoginRequest $request, Session $session)
     {
@@ -122,6 +127,7 @@ class LoginController extends AuthController
      * @param Authenticatable $user
      *
      * @return Response
+     * @throws \LogicException
      */
     private function postLoginJwt(Authenticatable $user): Response
     {
@@ -133,7 +139,9 @@ class LoginController extends AuthController
     /**
      * @param Authenticatable $user
      *
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     private function postLoginSession(Authenticatable $user)
     {
