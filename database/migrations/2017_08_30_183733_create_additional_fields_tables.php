@@ -27,7 +27,7 @@ class CreateAdditionalFieldsTables extends Migration
         Schema::create('additional_field_values', function (Blueprint $table) {
             $table->increments('id', 10)->unique()->unsigned();
             $table->integer('additional_field_id');
-            $table->string('parent_id')->index();
+            $table->string('parent_id', 191)->index();
             $table->string('parent_type');
             $table->string('value');
             $table->timestamps();
