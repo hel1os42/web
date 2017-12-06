@@ -90,6 +90,7 @@ build image:
     - docker push $REPOSITORY/$IMAGE:$TEST_TAG
   only:
     - develop
+    - testing
     - master
 
 release image:
@@ -134,7 +135,7 @@ develop deploy:
 
 testing deploy:
   stage: deploy
-  image: silintl/ecs-deploy
+  image: hublogix/aws-ecs-deploy
   only:
     - testing
   tags:
@@ -143,7 +144,7 @@ testing deploy:
     name: testing
     url: http://nau-lb-1973257514.eu-central-1.elb.amazonaws.com/
   script:
-    - ecs-deploy -c $AWS_CLUSTER_NAME -n $AWS_SERVICE_NAME -i $REPOSITORY/$IMAGE:$RELEASE_TAG -k $AWS_KEY -s $AWS_SECRET -r $AWS_REGION
+    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:$TEST_TAG
 
 pages:
   stage: deploy
