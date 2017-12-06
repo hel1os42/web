@@ -132,6 +132,19 @@ develop deploy:
   script:
     - ssh deploy@dev.toavalon.com -p 665 'STACK=nau-dev bash -s' < deploy.sh -- $TEST_TAG
 
+testing deploy:
+  stage: deploy
+  image: silintl/ecs-deploy
+  only:
+    - test
+  tags:
+    - docker
+  environment:
+    name: testing
+    url: http://nau-lb-1973257514.eu-central-1.elb.amazonaws.com/
+  script:
+    - ecs-deploy -c $AWS_CLUSTER_NAME -n $AWS_SERVICE_NAME -i $REPOSITORY/$IMAGE:$RELEASE_TAG -k $AWS_KEY -s $AWS_SECRET -r $AWS_REGION
+
 pages:
   stage: deploy
   dependencies:
