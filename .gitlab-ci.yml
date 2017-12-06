@@ -6,7 +6,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   REPOSITORY: gitlab.toavalon.com:5000
   IMAGE: codename-nau/web/laravel
-  TEST_TAG: $CI_COMMIT_REF_NAME
+  TEST_TAG: $CI_JOB_ID
   RELEASE_TAG: latest
 
 stages:
