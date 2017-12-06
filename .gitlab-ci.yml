@@ -136,7 +136,7 @@ testing deploy:
   stage: deploy
   image: silintl/ecs-deploy
   only:
-    - test
+    - testing
   tags:
     - docker
   environment:
