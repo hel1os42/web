@@ -14,9 +14,9 @@ class EditNameAndPasswordColInUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('name')->nullable()->change();
+            $table->string('name', 191)->nullable()->change();
             $table->string('password')->nullable()->change();
-            $table->string('email')->nullable()->change();
+            $table->string('email', 191)->nullable()->change();
         });
     }
 

@@ -6,7 +6,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   REPOSITORY: gitlab.toavalon.com:5000
   IMAGE: codename-nau/web/laravel
-  TEST_TAG: $CI_COMMIT_REF_NAME
+  TEST_TAG: $CI_JOB_ID
   RELEASE_TAG: latest
 
 stages:
@@ -90,6 +90,7 @@ build image:
     - docker push $REPOSITORY/$IMAGE:$TEST_TAG
   only:
     - develop
+    - testing
     - master
 
 release image:
@@ -131,6 +132,19 @@ develop deploy:
     - ssh deploy@dev.toavalon.com -p 665 "docker logout $REPOSITORY"
   script:
     - ssh deploy@dev.toavalon.com -p 665 'STACK=nau-dev bash -s' < deploy.sh -- $TEST_TAG
+
+testing deploy:
+  stage: deploy
+  image: hublogix/aws-ecs-deploy
+  only:
+    - testing
+  tags:
+    - docker
+  environment:
+    name: testing
+    url: http://nau-lb-1973257514.eu-central-1.elb.amazonaws.com/
+  script:
+    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:$TEST_TAG
 
 pages:
   stage: deploy
