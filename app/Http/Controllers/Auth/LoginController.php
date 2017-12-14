@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -53,7 +54,10 @@ class LoginController extends AuthController
      */
     public function logout()
     {
-        $this->auth->user()->leaveImpersonation();
+
+        if (false === $this->jwtAuth->getToken()) {
+            $this->auth->user()->leaveImpersonation();
+        }
 
         $this->auth->guard()->logout();
 
@@ -137,7 +141,6 @@ class LoginController extends AuthController
      * @param Authenticatable $user
      *
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     private function postLoginSession(Authenticatable $user)
@@ -148,37 +151,42 @@ class LoginController extends AuthController
     }
 
     /**
-     * @param string $uuid
+     * @param string       $uuid
+     * @param UrlGenerator $urlGenerator
      *
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse|Response
      * @throws \LogicException
+     * @throws \RuntimeException
      */
-    public function impersonate(string $uuid)
+    public function impersonate(string $uuid, UrlGenerator $urlGenerator)
     {
         $user = $this->userRepository->find($uuid);
 
         $this->authorize('impersonate', $user);
 
-        $this->auth->user()->impersonate($user);
-
         if (false !== $this->jwtAuth->getToken()) {
-            return \response()->render('', []);
+            return $this->postLoginJwt($user);
         }
 
-        \request()->session()->put('impersonate_last_url', app('Illuminate\Routing\UrlGenerator')->previous());
+        $this->auth->user()->impersonate($user);
 
-        return \response()->redirectTo(route('home'));
+        \request()->session()->put('impersonate_last_url', $urlGenerator->previous());
+
+        return \request()->wantsJson()
+            ? \response()->render('', $this->auth->user()->toArray())
+            : \response()->redirectTo(route('home'));
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|Response
      * @throws \LogicException
+     * @throws \RuntimeException
      */
     public function stopImpersonate()
     {
         $this->auth->user()->leaveImpersonation();
 
-        return false !== $this->jwtAuth->getToken()
+        return \request()->wantsJson()
             ? \response()->render('', [])
             : \response()->redirectTo(\request()->session()->get('impersonate_last_url'));
     }
