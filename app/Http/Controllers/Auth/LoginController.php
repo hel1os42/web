@@ -53,6 +53,8 @@ class LoginController extends AuthController
      */
     public function logout()
     {
+        $this->auth->user()->leaveImpersonation();
+
         $this->auth->guard()->logout();
 
         return \request()->wantsJson()
@@ -122,6 +124,7 @@ class LoginController extends AuthController
      * @param Authenticatable $user
      *
      * @return Response
+     * @throws \LogicException
      */
     private function postLoginJwt(Authenticatable $user): Response
     {
@@ -133,12 +136,50 @@ class LoginController extends AuthController
     /**
      * @param Authenticatable $user
      *
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     private function postLoginSession(Authenticatable $user)
     {
         $this->auth->guard('web')->login($user);
 
         return \response()->redirectTo(\request()->get('redirect_to', '/'));
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return Response
+     * @throws \LogicException
+     */
+    public function impersonate(string $uuid)
+    {
+        $user = $this->userRepository->find($uuid);
+
+        $this->authorize('impersonate', $user);
+
+        $this->auth->user()->impersonate($user);
+
+        if (false !== $this->jwtAuth->getToken()) {
+            return \response()->render('', []);
+        }
+
+        \request()->session()->put('impersonate_last_url', app('Illuminate\Routing\UrlGenerator')->previous());
+
+        return \response()->redirectTo(route('home'));
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \LogicException
+     */
+    public function stopImpersonate()
+    {
+        $this->auth->user()->leaveImpersonation();
+
+        return false !== $this->jwtAuth->getToken()
+            ? \response()->render('', [])
+            : \response()->redirectTo(\request()->session()->get('impersonate_last_url'));
     }
 }

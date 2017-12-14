@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Lab404\Impersonate\Models\Impersonate;
 
 /**
  * Class User
@@ -47,7 +48,7 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, Uuids;
+    use Notifiable, RelationsTrait, Impersonate, Uuids;
 
     public function __construct(array $attributes = [])
     {

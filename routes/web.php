@@ -69,6 +69,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
+    $router->get('auth/impersonate/{uuid}', 'Auth\LoginController@impersonate')->where('uuid',
+        '[a-z0-9-]+')->name('impersonate');
+    $router->get('auth/stop_impersonate', 'Auth\LoginController@stopImpersonate')->name('stop_impersonate');
+
     /**
      * User actions
      */
