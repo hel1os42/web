@@ -165,12 +165,15 @@ class LoginController extends AuthController
         $this->authorize('impersonate', $user);
 
         if (false !== $this->jwtAuth->getToken()) {
-            return $this->postLoginJwt($user);
+            $token = $this->jwtAuth->fromUser($user,
+                [config('laravel-impersonate.session_key') => $this->auth->user()->getKey()]);
+
+            return \response()->render('', \compact('token'));
         }
 
         $this->auth->user()->impersonate($user);
 
-        \request()->session()->put('impersonate_last_url', $urlGenerator->previous());
+        session()->put('impersonate_last_url', $urlGenerator->previous());
 
         return \request()->wantsJson()
             ? \response()->render('', $this->auth->user()->toArray())

@@ -486,4 +486,17 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         return $this->children->contains($child->getId());
     }
+
+    /**
+     * @return bool
+     */
+    public function isImpersonated(): bool
+    {
+        $keyName = config('laravel-impersonate.session_key');
+
+        $payload = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->getPayload();
+
+        return session()->has($keyName, false) !== false || $payload->get($keyName) !== false;
+
+    }
 }
