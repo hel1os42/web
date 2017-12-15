@@ -46,7 +46,8 @@
                 <td>{{$user['email']}}</td>
                 <td>{{$user['phone']}}</td>
                 <td>{{implode(', ', array_column($user['roles'], 'name'))}}</td>
-                <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a href="">login as</a></td>
+                <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a
+                            href="{{route('impersonate', $user['id'])}}">login as</a></td>
             </tr>
         @endforeach
     </table>
