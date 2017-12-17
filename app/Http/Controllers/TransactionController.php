@@ -43,8 +43,7 @@ class TransactionController extends Controller
 
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
-            'source' => $this->auth
-                ->user()
+            'source' => $this->user()
                 ->getAccountFor(Currency::NAU)
                 ->getAddress()
         ]));
@@ -89,8 +88,7 @@ class TransactionController extends Controller
     {
         $this->authorize('transactions.list');
 
-        $user         = $this->guard->user();
-        $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
+        $transactions = $this->transactionRepository->getBySenderOrRecepient($this->user());
 
         if (null === $transactionId) {
             return response()->render('transaction.list', $transactions->paginate());

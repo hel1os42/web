@@ -50,7 +50,7 @@ class OfferController extends Controller
     public function index(): Response
     {
         $this->authorize('my.offers.list');
-        $account      = $this->guard->user()->getAccountForNau();
+        $account      = $this->user()->getAccountForNau();
         $paginator    = $this->offerRepository
             ->scopeAccount($account)
             ->paginateWithoutGlobalScopes();
@@ -89,7 +89,7 @@ class OfferController extends Controller
         $this->authorize('offers.create');
 
         $attributes = $request->all();
-        $account    = $this->guard->user()->getAccountForNau();
+        $account    = $this->user()->getAccountForNau();
 
         $attributes['status'] = $this->inquireStatus($account, $attributes['reward'], $attributes['reserved']);
 
@@ -142,9 +142,7 @@ class OfferController extends Controller
     public function destroy(string $offerUuid): Response
     {
         $offer = $this->offerRepository->findByIdAndAccountId($offerUuid,
-            $this->guard->user()
-                        ->getAccountFor(Currency::NAU)
-            ->id);
+            $this->user()->getAccountFor(Currency::NAU)->id);
 
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
@@ -168,7 +166,7 @@ class OfferController extends Controller
     public function updateStatus(UpdateStatusRequest $request, string $offerUuid): Response
     {
         $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
-        $account = $this->guard->user()->getAccountForNau();
+        $account = $this->user()->getAccountForNau();
 
         $this->authorize('offers.update', $offer);
 
@@ -195,7 +193,7 @@ class OfferController extends Controller
     public function update(Advert\OfferRequest $request, string $offerUuid)
     {
         $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
-        $account = $this->guard->user()->getAccountForNau();
+        $account = $this->user()->getAccountForNau();
 
         $this->authorize('offers.update', $offer);
 

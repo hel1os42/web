@@ -32,9 +32,9 @@ class UserController extends Controller
     {
         $this->authorize('users.list');
 
-        $users = $this->guard->user()->hasRoles([Role::ROLE_ADMIN])
+        $users = $this->user()->hasRoles([Role::ROLE_ADMIN])
             ? $this->userRepository->with('roles')
-            : $this->guard->user()->children()->with('roles');
+            : $this->user()->children()->with('roles');
 
         return \response()->render('user.index', $users->paginate());
     }
@@ -80,13 +80,13 @@ class UserController extends Controller
         $userData = $request->all();
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(Attributes::getFillableWithDefaults($this->guard->user(), ['password']),
+            $userData = \array_merge(Attributes::getFillableWithDefaults($this->user(), ['password']),
                 $userData);
         }
 
         $user = $this->userRepository->with('roles');
 
-        if ($this->guard->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
+        if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
             $user->with('parents')->with('children');
         }
         $user = $user->update($userData, $uuid);

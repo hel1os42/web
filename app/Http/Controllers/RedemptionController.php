@@ -47,10 +47,7 @@ class RedemptionController extends Controller
 
         $this->authorize('offers.redemption', $offer);
 
-        /** @var User $user */
-        $user = $this->guard->user();
-
-        $activationCode = $user->activationCodes()->create(['offer_id' => $offer->id]);
+        $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
 
         return \response()->render('redemption.code', $activationCode->toArray());
     }
@@ -185,7 +182,7 @@ class RedemptionController extends Controller
 
         $offer = $this->offerRepository->find($offerId);
 
-        if (!$offer->isOwner($this->guard->user())) {
+        if (!$offer->isOwner($this->user())) {
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
 
