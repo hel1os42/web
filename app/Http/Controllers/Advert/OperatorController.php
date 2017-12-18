@@ -30,10 +30,10 @@ class OperatorController extends Controller
         AuthManager $authManager
     ) {
         $this->operatorRepository = $operatorRepository;
-        $this->placeRepository = $placeRepository;
+        $this->placeRepository    = $placeRepository;
 
         parent::__construct($authManager);
-    }
+        }
 
     /**
      * Obtain a list of the offers that this user created
