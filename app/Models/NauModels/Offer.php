@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuidsgit, SoftDeletes;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
