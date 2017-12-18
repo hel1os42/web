@@ -6,8 +6,10 @@ use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
 use App\Http\Requests\Offer\UpdateStatusRequest;
+use App\Http\Requests\OperatorRequest;
 use App\Models\NauModels\Offer;
 use App\Repositories\OperatorRepository;
+use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -24,9 +26,11 @@ class OperatorController extends Controller
 
     public function __construct(
         OperatorRepository $operatorRepository,
+        PlaceRepository $placeRepository,
         AuthManager $authManager
     ) {
         $this->operatorRepository = $operatorRepository;
+        $this->placeRepository = $placeRepository;
 
         parent::__construct($authManager);
     }
@@ -42,14 +46,14 @@ class OperatorController extends Controller
         //$this->authorize('');
         //$account      = $this->auth->user()->getAccountForNau();
 
-        $operators    = $this->operatorRepository->all();
-        $data['data'] = $operators->toArray();
+        $operators      = $this->operatorRepository->all();
+        $result['data'] = $operators->toArray();
 
-        return \response()->render('advert.operator.index', $data);
+        return \response()->render('advert.operator.index', $result);
     }
 
     /**
-     * Get the form/json data for creating a new offer.
+     * Get the form/json data for creating a new operator.
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
@@ -57,10 +61,10 @@ class OperatorController extends Controller
      */
     public function create(): Response
     {
-        $this->authorize('offers.create');
+        //$this->authorize('operators.create');
 
-        return \response()->render('advert.offer.create',
-            FormRequest::preFilledFormRequest(Advert\OfferRequest::class));
+        return \response()->render('advert.operator.create',
+            FormRequest::preFilledFormRequest(OperatorRequest::class));
     }
 
     /**
@@ -72,127 +76,48 @@ class OperatorController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function store(Advert\OfferRequest $request): Response
+    public function store(OperatorRequest $request): Response
     {
-        $this->authorize('offers.create');
+        //$this->authorize('offers.create');
 
         $attributes = $request->all();
-        $account    = $this->auth->user()->getAccountForNau();
 
-        $attributes['status'] = $this->inquireStatus($account, $attributes['reward'], $attributes['reserved']);
+        $user = $this->auth->user();
 
-        $newOffer = $this->offerRepository->createForAccountOrFail(
-            $attributes,
-            $account
-        );
+        $place = $this->placeRepository->findByUser($user);
 
-        return \response()->render('advert.offer.store',
-            null,
+        $newOperator = $this->operatorRepository
+            ->createForPlaceOrFail($attributes, $place)
+            ->first();
+
+        $result['data'] = $newOperator->toArray();
+        return \response()->render('advert.operator.show',
+            $result,
             Response::HTTP_ACCEPTED,
-            route('advert.offers.show', $newOffer->id));
-    }
+            route('advert.operators.show', $newOperator->id));
+        }
 
     /**
-     * Get offer full info(for Advert) by it uuid
+     * Get offer full info(for Operator) by it uuid
      *
-     * @param string $offerUuid
+     * @param string $OperatorUuid
      *
      * @return Response
      * @throws HttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function show(string $offerUuid): Response
+    public function show(string $operatorUuid): Response
     {
-        $offer = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
+        $operator = $this->operatorRepository->find($operatorUuid);
 
-        if (null === $offer) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        if (null === $operator) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.operator_not_found'));
         }
-        $data = $offer->toArray();
-        if (array_key_exists('timeframes', $data)) {
-            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
-        }
+        $result['data'] = $operator->toArray();
 
-        $this->authorize('my.offer.show', $offer);
+        //$this->authorize('advert.operators.show', $offer);
 
-        return \response()->render('advert.offer.show', $data);
-    }
-
-    /**
-     * Delete offer (for Advert) by uuid
-     *
-     * @param string $offerUuid
-     *
-     * @return Response
-     * @return HttpException
-     */
-    public function destroy(string $offerUuid): Response
-    {
-        $offer = $this->offerRepository->findByIdAndAccountId($offerUuid,
-            $this->auth->user()
-                       ->getAccountFor(Currency::NAU)
-                ->id);
-
-        if (null === $offer) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
-        }
-
-        $this->authorize('offers.delete', $offer);
-
-        $offer->delete();
-
-        return \response(null, 204);
-    }
-
-    /**
-     * @param UpdateStatusRequest $request
-     * @param string              $offerUuid
-     *
-     * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
-     */
-    public function updateStatus(UpdateStatusRequest $request, string $offerUuid): Response
-    {
-        $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
-        $account = $this->auth->user()->getAccountForNau();
-
-        $this->authorize('offers.update', $offer);
-
-        $status     = $request->get('status');
-        $attributes = ['status' => $status];
-
-        if (Offer::STATUS_ACTIVE == $status) {
-            $attributes['status'] = $this->inquireStatus($account, $offer->getReward(), $offer->getReserved());
-        }
-
-        $this->offerRepository->update($attributes, $offer->getId());
-
-        return $this->acceptedResponse('advert.offers.show', $offerUuid);
-    }
-
-    /**
-     * @param Advert\OfferRequest $request
-     * @param string              $offerUuid
-     *
-     * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \LogicException
-     */
-    public function update(Advert\OfferRequest $request, string $offerUuid)
-    {
-        $offer   = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
-        $account = $this->auth->user()->getAccountForNau();
-
-        $this->authorize('offers.update', $offer);
-
-        $attributes = $request->all();
-
-        $attributes['status'] = $this->inquireStatus($account, $attributes['reward'], $attributes['reserved']);
-
-        $this->offerRepository->update($attributes, $offer->getId());
-
-        return $this->acceptedResponse('advert.offers.show', $offerUuid);
+        return \response()->render('advert.operator.show', $result);
     }
 }

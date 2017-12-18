@@ -16,7 +16,7 @@ class CreateOperatorsTable extends Migration
         Schema::create('operators', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('place_uuid');
-            $table->string('login', 60)->unique();
+            $table->string('login', 60)->unique('place_uuid', 'login');
             $table->string('password');
             $table->boolean('is_active')->default('false');
             $table->rememberToken();

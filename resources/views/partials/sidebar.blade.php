@@ -60,7 +60,13 @@
 								<a href="{{route('offers.index')}}">Index</a>
 							</li>
                             <li>
-                                <a href="{{ route('advert.operators.index') }}">Operators creae/view</a>
+                                <a href="{{ route('advert.operators.create') }}">Operators create</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('advert.operators.index') }}">Operators list</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('advert.operators.show', '6024eeb1-d28c-44da-a83d-b95f7e3a2402') }}">Operators view ID</a>
                             </li>
 						</ul>
 					</div>
