@@ -6,7 +6,6 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   REPOSITORY: gitlab.toavalon.com:5000
   IMAGE: codename-nau/web/laravel
-  TEST_TAG: $CI_JOB_ID
   RELEASE_TAG: latest
 
 stages:
@@ -20,6 +19,7 @@ build:
   image: gitlab.toavalon.com:5000/omnisynapse/php-postgres-mysql:latest
   stage: build
   before_script:
+    - echo $CI_JOB_ID > ./VERSION
     - apk update
     - apk add git
     - git submodule sync --recursive
@@ -86,8 +86,8 @@ build image:
   after_script:
     - docker logout $REPOSITORY
   script:
-    - docker build --pull -t $REPOSITORY/$IMAGE:$TEST_TAG .
-    - docker push $REPOSITORY/$IMAGE:$TEST_TAG
+    - docker build --pull -t $REPOSITORY/$IMAGE:`cat ./VERSION` .
+    - docker push $REPOSITORY/$IMAGE:`cat ./VERSION`
   only:
     - develop
     - testing
@@ -102,7 +102,7 @@ release image:
     - docker
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
-    - docker pull $REPOSITORY/$IMAGE:$TEST_TAG
+    - docker pull $REPOSITORY/$IMAGE:`cat ./VERSION`
   before_script:
     - docker logout $REPOSITORY
   script:
@@ -131,7 +131,7 @@ develop deploy:
   after_script:
     - ssh deploy@dev.toavalon.com -p 665 "docker logout $REPOSITORY"
   script:
-    - ssh deploy@dev.toavalon.com -p 665 'STACK=nau-dev bash -s' < deploy.sh -- $TEST_TAG
+    - ssh deploy@dev.toavalon.com -p 665 'STACK=nau-dev bash -s' < deploy.sh -- `cat ./VERSION`
 
 testing deploy:
   stage: deploy
@@ -144,7 +144,7 @@ testing deploy:
     name: testing
     url: http://nau-lb-1973257514.eu-central-1.elb.amazonaws.com/
   script:
-    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:$TEST_TAG
+    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:`cat ./VERSION`
 
 pages:
   stage: deploy
