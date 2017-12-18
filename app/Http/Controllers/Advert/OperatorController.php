@@ -33,7 +33,7 @@ class OperatorController extends Controller
         $this->placeRepository    = $placeRepository;
 
         parent::__construct($authManager);
-        }
+    }
 
     /**
      * Obtain a list of the offers that this user created
@@ -95,7 +95,7 @@ class OperatorController extends Controller
             $result,
             Response::HTTP_ACCEPTED,
             route('advert.operators.show', $newOperator->id));
-        }
+    }
 
     /**
      * Get offer full info(for Operator) by it uuid
