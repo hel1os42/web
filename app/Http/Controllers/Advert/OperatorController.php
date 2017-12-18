@@ -42,8 +42,8 @@ class OperatorController extends Controller
         //$this->authorize('');
         //$account      = $this->auth->user()->getAccountForNau();
 
-        $operators = $this->operatorRepository->all();
-        $data['data'] = $operators;
+        $operators    = $this->operatorRepository->all();
+        $data['data'] = $operators->toArray();
 
         return \response()->render('advert.operator.index', $data);
     }
@@ -131,7 +131,7 @@ class OperatorController extends Controller
     {
         $offer = $this->offerRepository->findByIdAndAccountId($offerUuid,
             $this->auth->user()
-                ->getAccountFor(Currency::NAU)
+                       ->getAccountFor(Currency::NAU)
                 ->id);
 
         if (null === $offer) {

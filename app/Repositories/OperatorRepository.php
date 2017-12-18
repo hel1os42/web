@@ -11,5 +11,4 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 interface OperatorRepository extends RepositoryInterface
 {
     public function model(): string;
-
 }
