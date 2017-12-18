@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Offer
@@ -42,7 +43,7 @@ use app\Observers\OfferObserver;
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuids;
+    use RelationsTrait, ScopesTrait, HasNau, Uuidsgit, SoftDeletes;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
