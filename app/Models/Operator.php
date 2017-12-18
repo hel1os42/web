@@ -3,17 +3,25 @@
 namespace App\Models;
 
 use App\Traits\Uuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class Operator extends Model
+class Operator extends Model implements
+    AuthenticatableContract,
+    AuthorizableContract
 {
-    use Uuids;
+    use Uuids, Authenticatable, Authorizable;
 
     /**
-     * Operators constructor.
+     * Operator constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -27,25 +35,19 @@ class Operator extends Model
         $this->casts = [
             'place_uuid' => 'string',
             'login'      => 'string',
-            'pin'        => 'string',
+            'password'   => 'string',
             'is_active'  => 'boolean',
         ];
 
         $this->hidden = [
-            'pin',
+            'password',
             'remember_token',
         ];
 
         $this->fillable = [
             'place_uuid',
             'login',
-            'pin',
-            'is_active',
-        ];
-
-        $this->appends = [
-            'place_uuid',
-            'login',
+            'password',
             'is_active',
         ];
 
@@ -64,7 +66,7 @@ class Operator extends Model
      *
      * @return string
      */
-    public function getPlace_uuid(): string
+    public function getPlaceUuid(): string
     {
         return $this->place_uuid;
     }
@@ -84,17 +86,17 @@ class Operator extends Model
      *
      * @return bool
      */
-    public function getIs_active(): boolean
+    public function isActive(): boolean
     {
-        return $this->is_active();
+        return $this->is_active;
     }
 
     /**
      * Get operator parent place object
      *
-     * @return Place
+     * @return BelongsTo
      */
-    public function place_uuid(): BelongsTo
+    public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class, 'place_uuid', 'id');
     }

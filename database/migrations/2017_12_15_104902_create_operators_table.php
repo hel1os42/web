@@ -17,7 +17,7 @@ class CreateOperatorsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('place_uuid');
             $table->string('login', 60)->unique();
-            $table->string('pin', 10);
+            $table->string('password');
             $table->boolean('is_active')->default('false');
             $table->rememberToken();
             $table->timestamps();
