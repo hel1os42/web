@@ -16,6 +16,7 @@
                     </div>
                     <div class="collapse navbar-collapse">
                         <ul class="nav navbar-nav navbar-right">
+                            @if(!is_null(auth()->user()))
                             @if(auth()->user()->isImpersonated())
                             <li>
                                 <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle">
@@ -23,6 +24,7 @@
                                     <p>Leave impersonation</p>
                                 </a>
                             </li>
+                            @endif
                             @endif
                             <li>
                                 @auth
