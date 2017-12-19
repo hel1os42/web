@@ -157,7 +157,7 @@ master deploy:
     name: production
     url: http://nau-prod-1113076617.eu-central-1.elb.amazonaws.com/
   script:
-    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:`cat ./VERSION`
+    - aws-ecs-deploy $AWS_PROD_CLUSTER_NAME $AWS_PROD_SERVICE_NAME $REPOSITORY/$IMAGE:`cat ./VERSION`
 
 pages:
   stage: deploy
