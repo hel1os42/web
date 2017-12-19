@@ -106,7 +106,7 @@ release image:
   before_script:
     - docker logout $REPOSITORY
   script:
-    - docker tag $CONTAINER_TEST_IMAGE $REPOSITORY/$IMAGE:$RELEASE_TAG
+    - docker tag $REPOSITORY/$IMAGE:`cat ./VERSION` $REPOSITORY/$IMAGE:$RELEASE_TAG
     - docker push $REPOSITORY/$IMAGE:$RELEASE_TAG
   only:
     - master
