@@ -146,6 +146,19 @@ testing deploy:
   script:
     - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:`cat ./VERSION`
 
+master deploy:
+  stage: deploy
+  image: hublogix/aws-ecs-deploy
+  only:
+    - master
+  tags:
+    - docker
+  environment:
+    name: production
+    url: http://nau-prod-1113076617.eu-central-1.elb.amazonaws.com/
+  script:
+    - aws-ecs-deploy $AWS_CLUSTER_NAME $AWS_SERVICE_NAME $REPOSITORY/$IMAGE:`cat ./VERSION`
+
 pages:
   stage: deploy
   dependencies:
