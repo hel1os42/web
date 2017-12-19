@@ -1,5 +1,15 @@
 <?php
 
+// Hack for proxy forwarded from https to http
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'http') {
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 301);
+        exit;
+    }
+
+    $_SERVER['HTTPS'] = 'on';
+}
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
@@ -19,7 +29,7 @@
 |
 */
 
-require __DIR__.'/../bootstrap/autoload.php';
+require __DIR__ . '/../bootstrap/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +43,7 @@ require __DIR__.'/../bootstrap/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
 /*
 |--------------------------------------------------------------------------

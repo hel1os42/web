@@ -61,10 +61,23 @@ return [
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'schema' => 'public',
-            'sslmode' => 'prefer',
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => env('DB_PREFIX', ''),
+            'schema' => env('DB_SCHEMA', 'public'),
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
+        ],
+
+        'pgsql_nau' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_NAU_HOST', '127.0.0.1'),
+            'port' => env('DB_NAU_PORT', '5432'),
+            'database' => env('DB_NAU_DATABASE', 'forge'),
+            'username' => env('DB_NAU_USERNAME', 'forge'),
+            'password' => env('DB_NAU_PASSWORD', ''),
+            'charset' => env('DB_NAU_CHARSET', 'utf8'),
+            'prefix' => env('DB_NAU_PREFIX', ''),
+            'schema' => env('DB_NAU_SCHEMA', 'public'),
+            'sslmode' => env('DB_NAU_SSLMODE', 'prefer'),
         ],
 
         'sqlsrv' => [

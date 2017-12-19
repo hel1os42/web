@@ -3,8 +3,10 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
+use Illuminate\Session\TokenMismatchException;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class Handler extends ExceptionHandler
 {
@@ -20,46 +22,64 @@ class Handler extends ExceptionHandler
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        \Tymon\JWTAuth\Exceptions\TokenExpiredException::class,
     ];
-
-    /**
-     * Report or log an exception.
-     *
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-     *
-     * @param  \Exception  $exception
-     * @return void
-     */
-    public function report(Exception $exception)
-    {
-        parent::report($exception);
-    }
-
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
-     */
-    public function render($request, Exception $exception)
-    {
-        return parent::render($request, $exception);
-    }
 
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return Response
+     * @throws \LogicException
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated($request)
     {
         if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
+            return response()->error(Response::HTTP_UNAUTHORIZED);
         }
 
-        return redirect()->guest(route('login'));
+        return redirect()->guest(route('loginForm'));
+    }
+
+    /**
+     * Render an exception into a response.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param Exception                 $exception
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function render($request, Exception $exception)
+    {
+        if ($exception instanceof JWTException) {
+            return response()->json(trans($exception->getMessage()), Response::HTTP_UNAUTHORIZED);
+        }
+        if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return \response()->error(Response::HTTP_NOT_FOUND);
+        }
+
+        return parent::render($request, $exception);
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Exception                                  $exception
+     *
+     * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     */
+    protected function toIlluminateResponse($response, Exception $exception)
+    {
+        if (request()->expectsJson()) {
+            return response()->error($response->getStatusCode(), $exception->getMessage());
+        }
+
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()->back()->withErrors(['msg', $exception->getMessage()]);
+        }
+
+        return parent::toIlluminateResponse($response, $exception);
     }
 }
