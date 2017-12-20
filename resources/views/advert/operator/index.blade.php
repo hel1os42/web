@@ -20,7 +20,7 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $operator)
-                            <tr class="clickable-table-row">
+                            <tr class="clickable-table-row" data-uuid="{{route('advert.operators.show', $operator['id'])}}">
                                 @foreach($operator as $field)
                                     @if (empty($field))
                                         <td> - </td>

@@ -5,15 +5,12 @@ namespace App\Http\Controllers\Advert;
 use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Advert;
-use App\Http\Requests\Offer\UpdateStatusRequest;
 use App\Http\Requests\OperatorRequest;
-use App\Models\NauModels\Offer;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Models\Contracts\Currency;
 
 /**
  * Class OperatorController
@@ -62,9 +59,11 @@ class OperatorController extends Controller
     public function create(): Response
     {
         //$this->authorize('operators.create');
+        $result = FormRequest::preFilledFormRequest(OperatorRequest::class);
 
-        return \response()->render('advert.operator.create',
-            FormRequest::preFilledFormRequest(OperatorRequest::class));
+        $result['place_uuid'] = $this->placeRepository->findByUser($this->auth->user())->id;
+
+        return \response()->render('advert.operator.create',$result);
     }
 
     /**
@@ -78,7 +77,7 @@ class OperatorController extends Controller
      */
     public function store(OperatorRequest $request): Response
     {
-        //$this->authorize('offers.create');
+        //$this->authorize('operators.create');
 
         $attributes = $request->all();
 
@@ -119,5 +118,30 @@ class OperatorController extends Controller
         //$this->authorize('advert.operators.show', $offer);
 
         return \response()->render('advert.operator.show', $result);
+    }
+
+    /**
+     * Delete operator (for Advert) by uuid
+     *
+     * @param string $operatorUuid
+     *
+     * @return Response
+     * @return HttpException
+     */
+    public function destroy(string $operatorUuid): Response
+    {
+        $user = $this->auth->user();
+        $placeUuid = $this->placeRepository->findByUser($user)->id;
+        $operator = $this->operatorRepository->findByIdAndPlaceId($operatorUuid, $placeUuid);
+
+        if (null === $operator) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.operator_not_found'));
+        }
+
+        //$this->authorize('offers.delete', $offer);
+
+        $operator->delete();
+
+        return \response(null, 204);
     }
 }

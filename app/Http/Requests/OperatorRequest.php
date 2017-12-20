@@ -33,9 +33,10 @@ class OperatorRequest extends FormRequest
     public function rules()
     {
         return [
-            'login'    => 'required',
-            'password' => 'required',
-            'confirm'  => 'required|same:password',
+            'place_uuid' => 'required',
+            'login'      => sprintf('required|min:3|unique:operators,login,%s,place_uuid', request()->place_uuid),
+            'password'   => 'required',
+            'confirm'    => 'required|same:password',
         ];
     }
 }

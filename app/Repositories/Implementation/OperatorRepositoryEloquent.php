@@ -24,8 +24,6 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         return Operator::class;
     }
 
-    
-
     /**
      * Boot up the repository, pushing criteria
      */
@@ -57,6 +55,18 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         }
 
         //event(new RepositoryEntityCreated($this, $model));
+
+        return $this->parserResult($model);
+    }
+
+    public function findByIdAndPlaceId(string $operatorUuid, string $PlaceUuid): ?Operator
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->where(['place_uuid' => $PlaceUuid])->find($operatorUuid);
+
+        $this->resetModel();
 
         return $this->parserResult($model);
     }
