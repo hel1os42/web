@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Request;
 
+use App\Models\Role;
 use Faker\Factory as Faker;
 use Tests\TestCase;
 
@@ -17,9 +18,10 @@ class UserTest extends TestCase
         /*
          * Prepare params
          */
-        $userId     = $faker->uuid;
-        $name       = $faker->name;
-        $referrerId = $faker->uuid;
+        $userId      = $faker->uuid;
+        $name        = $faker->name;
+        $referrerId  = $faker->uuid;
+        $defaultRole = Role::ROLE_ADMIN;
 
         /*
          * Referrer relation
@@ -38,20 +40,23 @@ class UserTest extends TestCase
         $user->method('getId')->willReturn($userId);
         $user->method('getName')->willReturn($name);
         $user->method('getReferrer')->willReturn($referrer);
+        $user->method('isAdmin')->willReturn(true);
 
         /*
          * Create User request and prepare jsonSerialize for comparing
          */
         $userCreatedRequest = new User($user);
         $expected           = [
-            'id'          => $userId,
-            'username'    => $name,
-            'referrer_id' => $referrerId,
+            'id'           => $userId,
+            'username'     => $name,
+            'referrer_id'  => $referrerId,
+            'default_role' => $defaultRole,
         ];
 
         /*
          * Compare arrays
          */
-        $this->assertEquals($expected, $userCreatedRequest->jsonSerialize(), 'Expected array is not equals with userCreated array');
+        $this->assertEquals($expected, $userCreatedRequest->jsonSerialize(),
+            'Expected array is not equals with userCreated array');
     }
 }
