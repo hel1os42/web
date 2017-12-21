@@ -8,7 +8,8 @@
             padding:10px;
         }
     </style>
-    <h1>Admin users list page.</h1>
+    <h1>Users list page.</h1>
+    <a href="{{route('users.create')}}">+ Add new user</a>
     <h4>Search:</h4>
     <div id="admin-users-search">
         <label for="phone">By phone:</label>
