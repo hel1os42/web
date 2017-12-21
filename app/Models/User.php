@@ -446,6 +446,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @return bool
      */
+    public function isUser()
+    {
+        return $this->hasRoles([Role::ROLE_USER]);
+    }
+
+    /**
+     * @return bool
+     */
     public function isAdvertiser()
     {
         return $this->hasRoles([Role::ROLE_ADVERTISER]);
@@ -457,6 +465,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function isAgent()
     {
         return $this->hasRoles([Role::ROLE_AGENT]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->hasRoles([Role::ROLE_ADMIN]);
     }
 
     /**
