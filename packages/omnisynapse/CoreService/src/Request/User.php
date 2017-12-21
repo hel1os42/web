@@ -9,7 +9,6 @@ use App\Models\Role;
  * @package OmniSynapse\CoreService\Request
  *
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class User implements \JsonSerializable
 {
