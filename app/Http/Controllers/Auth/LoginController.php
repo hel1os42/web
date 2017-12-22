@@ -9,7 +9,6 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Routing\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
@@ -56,7 +55,7 @@ class LoginController extends AuthController
     {
 
         if (false === $this->jwtAuth->getToken()) {
-            $this->auth->user()->leaveImpersonation();
+            $this->user()->leaveImpersonation();
         }
 
         $this->auth->guard()->logout();
@@ -81,12 +80,12 @@ class LoginController extends AuthController
     }
 
     /**
-     * @param LoginRequest    $request
-     * @param ResponseFactory $response
-     * @param Session         $session
+     * @param LoginRequest $request
+     * @param Session      $session
      *
      * @return Response
-     *
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function login(LoginRequest $request, Session $session)
     {
@@ -166,17 +165,17 @@ class LoginController extends AuthController
 
         if (false !== $this->jwtAuth->getToken()) {
             $token = $this->jwtAuth->fromUser($user,
-                [config('laravel-impersonate.session_key') => $this->auth->user()->getKey()]);
+                [config('laravel-impersonate.session_key') => $this->user()->getKey()]);
 
             return \response()->render('', \compact('token'));
         }
 
-        $this->auth->user()->impersonate($user);
+        $this->user()->impersonate($user);
 
         session()->put('impersonate_last_url', $urlGenerator->previous());
 
         return \request()->wantsJson()
-            ? \response()->render('', $this->auth->user()->toArray())
+            ? \response()->render('', $this->user()->toArray())
             : \response()->redirectTo(route('home'));
     }
 
@@ -187,7 +186,7 @@ class LoginController extends AuthController
      */
     public function stopImpersonate()
     {
-        $this->auth->user()->leaveImpersonation();
+        $this->user()->leaveImpersonation();
 
         return \request()->wantsJson()
             ? \response()->render('', [])
