@@ -40,6 +40,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @property Place      place
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -494,9 +495,13 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         $keyName = config('laravel-impersonate.session_key');
 
-        $payload = \Tymon\JWTAuth\Facades\JWTAuth::parseToken()->getPayload();
+        if (\Tymon\JWTAuth\Facades\JWTAuth::getToken() !== false) {
+            $payload = \Tymon\JWTAuth\Facades\JWTAuth::getPayload();
 
-        return session()->has($keyName, false) !== false || $payload->get($keyName) !== false;
+            return $payload->get($keyName) !== false;
+        }
+
+        return session()->has($keyName) !== false;
 
     }
 }
