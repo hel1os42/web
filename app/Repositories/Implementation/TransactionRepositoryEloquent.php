@@ -30,18 +30,29 @@ class TransactionRepositoryEloquent extends BaseRepository implements Transactio
 
     /**
      * Boot up the repository, pushing criteria
+     *
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * @param float   $amount
+     * @param Account $sourceAccount
+     * @param Account $destinationAccount
+     *
+     * @return Transact
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
     public function createWithAmountSourceDestination(float $amount, Account $sourceAccount, Account $destinationAccount): Transact
     {
         $attributes = [
             'amount' => $amount,
             'source_account_id' => $sourceAccount->id,
-            'destination_account_id' => $sourceAccount->id
+            'destination_account_id' => $destinationAccount->id,
+            'type' => Transact::TYPE_P2P
         ];
 
         return $this->create($attributes);

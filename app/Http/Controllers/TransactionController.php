@@ -33,6 +33,7 @@ class TransactionController extends Controller
 
     /**
      * @return Response
+     * @throws \App\Exceptions\TokenException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -44,8 +45,8 @@ class TransactionController extends Controller
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
             'source' => $this->user()
-                ->getAccountFor(Currency::NAU)
-                ->getAddress()
+                             ->getAccountFor(Currency::NAU)
+                             ->getAddress()
         ]));
     }
 
@@ -67,16 +68,20 @@ class TransactionController extends Controller
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
-        return response()->render('transactions.complete', $transaction->toArray(),
-            null === $transaction->id ?
-                Response::HTTP_ACCEPTED :
-                Response::HTTP_CREATED,
+        return response()->render(
+            null === $transaction->id
+                ? 'transaction.in-progress'
+                : 'transaction.complete',
+            $transaction->toArray(),
+            null === $transaction->id
+                ? Response::HTTP_ACCEPTED
+                : Response::HTTP_CREATED,
             route('transaction.complete')
         );
     }
 
     /**
-     * @param int|null $transactionId
+     * @param string|null $transactionId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -84,9 +89,9 @@ class TransactionController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function listTransactions(int $transactionId = null): Response
+    public function listTransactions(string $transactionId = null): Response
     {
-        $this->authorize('transactions.list');
+        $this->authorize('my.transactions.list');
 
         $transactions = $this->transactionRepository->getBySenderOrRecepient($this->user());
 
@@ -95,6 +100,8 @@ class TransactionController extends Controller
         }
 
         $transaction = $transactions->findOrFail($transactionId);
+
+        $this->authorize('my.transaction.show', $transaction);
 
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }

@@ -2,6 +2,7 @@
 <html>
     @include('partials.head')
     <body>
+    @include('partials.msg')
         <div class="wrapper perfect-scrollbar-off">
             @section('sidebar')
                 @include('partials.sidebar')
