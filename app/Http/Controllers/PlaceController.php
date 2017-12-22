@@ -70,7 +70,7 @@ class PlaceController extends Controller
     {
         $this->authorize('my.place.show');
 
-        $place = $placesRepository->findByUser($this->auth->user());
+        $place = $placesRepository->findByUser($this->user());
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -112,7 +112,7 @@ class PlaceController extends Controller
     {
         $this->authorize('my.place.create');
 
-        if ($placesRepository->existsByUser($this->auth->user())) {
+        if ($placesRepository->existsByUser($this->user())) {
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
@@ -133,7 +133,7 @@ class PlaceController extends Controller
 
         $placeData = $request->all();
 
-        $place = $placesRepository->createForUserOrFail($placeData, $this->auth->user());
+        $place = $placesRepository->createForUserOrFail($placeData, $this->user());
 
         if ($request->has('category_ids') === true) {
             $place->categories()->attach($request->category_ids);
@@ -162,7 +162,7 @@ class PlaceController extends Controller
     ): Response
     {
         $place = is_null($uuid)
-            ? $placesRepository->findByUser($this->auth->user())
+            ? $placesRepository->findByUser($this->user())
             : $placesRepository->find($uuid);
 
         $this->authorize('places.update', $place);
