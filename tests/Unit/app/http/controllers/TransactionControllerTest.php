@@ -206,10 +206,18 @@ class TransactionControllerTest extends TestCase
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
         $this->authorizeGate
-            ->expects(self::once())
+            ->expects(self::at(0))
             ->method('authorize')
-            ->with('transactions.list')
+            ->with('my.transactions.list')
             ->willReturn(true);
+
+        if ($data) {
+            $this->authorizeGate
+                ->expects(self::at(1))
+                ->method('authorize')
+                ->with('my.transaction.show', $this->transaction)
+                ->willReturn(true);
+        }
 
         $builder
             ->method('paginate')
@@ -270,7 +278,7 @@ class TransactionControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['transactions.complete', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
+            ->with('render', ['transaction.in-progress', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
             ->willReturn($response);
 
         $returnValue = $this->controller->completeTransaction($request);

@@ -185,6 +185,11 @@ class Transact extends AbstractNauModel
         return $this->getType() === self::TYPE_INCOMING;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
     public function setTypeAttribute(string $type)
     {
         switch ($type) {
@@ -197,10 +202,11 @@ class Transact extends AbstractNauModel
             case self::TYPE_REDEMPTION:
                 $type = self::TYPE_REDEMPTION;
                 break;
-            default :
+            default:
                 $type = self::TYPE_REDEMPTION;
                 break;
         }
+
         return $this->attributes['type'] = $type;
     }
 
