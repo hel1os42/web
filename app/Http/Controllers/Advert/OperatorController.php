@@ -61,7 +61,7 @@ class OperatorController extends Controller
 
         $result['place_uuid'] = $this->placeRepository->findByUser($this->auth->user())->id;
 
-        return \response()->render('advert.operator.create',$result);
+        return \response()->render('advert.operator.create', $result);
     }
 
     /**
