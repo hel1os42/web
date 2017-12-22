@@ -28,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
+ * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
  * @property int                          offers_count
@@ -40,6 +41,7 @@ use Illuminate\Support\Collection;
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
+ * @method static static|Builder filterByActiveOffersAvailability()
  */
 class Place extends Model
 {
@@ -213,6 +215,14 @@ class Place extends Model
         return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
     }
 
+    /**
+     * @return bool
+     */
+    public function hasActiveOffers(): bool
+    {
+        return $this->has_active_offers;
+    }
+
     /** @return bool */
     public function isFeatured(): bool
     {
@@ -328,6 +338,18 @@ class Place extends Model
     }
 
     /**
+     * @param bool $hasActiveOffers
+     *
+     * @return Place
+     */
+    public function setHasActiveOffers(bool $hasActiveOffers): Place
+    {
+        $this->has_active_offers = $hasActiveOffers;
+
+        return $this;
+    }
+
+    /**
      * @param Builder $builder
      * @param User    $user
      *
@@ -418,6 +440,18 @@ class Place extends Model
             $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
         });
     }
+
+    /**
+     * @param Builder $builder
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeFilterByActiveOffersAvailability(Builder $builder): Builder
+    {
+        return $builder->where('has_active_offers', '=', true);
+    }
+
 
     /**
      * @return array
