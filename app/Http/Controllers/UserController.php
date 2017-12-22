@@ -129,7 +129,14 @@ class UserController extends Controller
     {
         $this->authorize('users.create');
 
-        $user = $this->userRepository->create($request->all());
+        $newUserData = $request->all();
+
+        $registrator = $request->getRegistrator();
+        if (null !== $registrator) {
+            $newUserData['referrer_id'] = $registrator->id;
+        }
+
+        $user = $this->userRepository->create();
 
         $success = $user->exists;
 
