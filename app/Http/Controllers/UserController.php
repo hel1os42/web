@@ -145,8 +145,8 @@ class UserController extends Controller
         }
 
         return response()->render(
-            $request->getRegistrator() ? 'user.show' : 'auth.registered',
-            $user->fresh($request->getRegistrator() ? 'roles' : ''),
+            null !== $registrator ? 'user.show' : 'auth.registered',
+            $user->fresh(),
             Response::HTTP_CREATED,
             route('users.show', [$user->getId()]));
     }
