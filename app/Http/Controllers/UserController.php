@@ -122,7 +122,6 @@ class UserController extends Controller
      *
      * @return Response
      * @throws UnprocessableEntityHttpException
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -130,13 +129,7 @@ class UserController extends Controller
     {
         $this->authorize('users.create');
 
-        $newUserData = $request->all();
-
-        if (!is_null($this->auth->user())) {
-            $newUserData['referrer_id'] = $this->auth->user()->id;
-        }
-
-        $user = $this->userRepository->create($newUserData);
+        $user = $this->userRepository->create($request->all());
 
         $success = $user->exists;
 
@@ -144,38 +137,11 @@ class UserController extends Controller
             throw new UnprocessableEntityHttpException();
         }
 
-        $view = 'user.show';
-
-        if (is_null($this->auth->user())) {
-            $view = 'auth.registered';
-
-            $user->roles()->attach([
-                Role::findByName(Role::ROLE_USER)->getId(),
-                Role::findByName(Role::ROLE_ADVERTISER)->getId()
-            ]);
-            $user->save();
-        }
-
-        $result = $user->fresh('roles');
-
-        $parents = $newUserData['parent_ids'];
-        if ($this->auth->user()->isAgent()) {
-            $parents = [$this->auth->user()->id];
-        }
-
-        if (!is_null($parents)) {
-            $result = $this->setParents($parents, $user);
-        }
-
-        if (isset($newUserData['child_ids'])) {
-            $result = $this->setChildren($newUserData['child_ids'], $user);
-        }
-
-        if (isset($newUserData['role_ids'])) {
-            $result = $this->updateRoles($newUserData['role_ids'], $user);
-        }
-
-        return response()->render($view, $result, Response::HTTP_CREATED, route('users.show', [$user->getId()]));
+        return response()->render(
+            $request->getRegistrator() ? 'user.show' : 'auth.registered',
+            $user->fresh($request->getRegistrator() ? 'roles' : ''),
+            Response::HTTP_CREATED,
+            route('users.show', [$user->getId()]));
     }
 
     /**

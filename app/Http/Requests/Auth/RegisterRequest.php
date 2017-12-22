@@ -41,37 +41,34 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
-        if (is_null(auth()->user())) {
+        if ($this->getRegistrator()) {
             return [
+                'name'             => 'string|min:2',
                 'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
+                'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
                 'password'         => 'required_with:email|nullable|min:6|max:255',
                 'password_confirm' => 'required_with:email|nullable|same:password',
-                'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
-                'code'             => 'required_with:phone|nullable|digits:6|otp',
+                'latitude'         => 'nullable|numeric|between:-90,90',
+                'longitude'        => 'nullable|numeric|between:-180,180',
                 'referrer_id'      => 'required|string|exists:users,id'
             ];
         }
 
         return [
-            'name'             => 'string|min:2',
             'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
-            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'password'         => 'required_with:email|nullable|min:6|max:255',
             'password_confirm' => 'required_with:email|nullable|same:password',
-            'latitude'         => 'nullable|numeric|between:-90,90',
-            'longitude'        => 'nullable|numeric|between:-180,180',
-            'role_ids'         => 'array',
-            'role_ids.*'       => 'string|exists:roles,id',
-            'parent_ids'       => 'array',
-            'parent_ids.*'     => sprintf(
-                'string|regex:%s|exists:users,id',
-                \App\Helpers\Constants::UUID_REGEX
-            ),
-            'child_ids'        => 'array',
-            'child_ids.*'      => sprintf(
-                'string|regex:%s|exists:users,id',
-                \App\Helpers\Constants::UUID_REGEX
-            ),
+            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
+            'code'             => 'required_with:phone|nullable|digits:6|otp',
+            'referrer_id'      => 'required|string|exists:users,id'
         ];
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public function getRegistrator()
+    {
+        return is_null(auth()->user()) ? null : auth()->user();
     }
 }
