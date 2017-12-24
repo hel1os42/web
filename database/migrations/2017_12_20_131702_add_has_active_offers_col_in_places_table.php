@@ -47,12 +47,8 @@ class AddHasActiveOffersColInPlacesTable extends Migration
      */
     public function down()
     {
-        DB::beginTransaction();
-
         Schema::table('places', function (Blueprint $table) {
             $table->dropColumn('has_active_offers');
         });
-
-        DB::commit();
     }
 }
