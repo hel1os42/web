@@ -20,17 +20,34 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $operator)
-                            <tr class="clickable-table-row" data-uuid="{{route('advert.operators.show', $operator['id'])}}">
-                                @foreach($operator as $field)
-                                    @if (empty($field))
-                                        <td> - </td>
+                            <tr class="clickable-table-row" data-uuid="">
+                                @foreach($operator as $key => $field)
+                                    <td>
+                                    @if('is_active' === $key)
+                                        @if(true === $field)
+                                            Active
+                                        @else
+                                            Deactive
+                                        @endif
                                     @else
-                                        <td>
+                                        @if (empty($field))
+                                            <td> - </td>
+                                        @else
                                             {{ $field }}
-                                        </td>
+                                        @endif
                                     @endif
                                 @endforeach
-                                <td></td>
+                                <td>
+                                    <form method="post" action="{{ route('advert.operators.destroy', $operator['id']) }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-rose btn-wd btn-md">Delete</button></form>
+                                </td>
+                                    <td>
+                                        <form method="get" action="{{ route('advert.operators.edit', $operator['id']) }}">
+                                            <button type="submit" class="btn btn-rose btn-wd btn-md">Edit</button>
+                                        </form>
+                                    </td>
                             </tr>
                             @endforeach
                         </tbody>

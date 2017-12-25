@@ -2,11 +2,15 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Http\Exceptions\InternalServerErrorException;
 use App\Repositories\OperatorRepository;
+use Illuminate\Foundation\Testing\HttpException;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Models\Operator;
 use App\Models\Place;
+use Prettus\Validator\Contracts\ValidatorInterface;
+
 
 /**
  * Class OperatorRepositoryEloquent
@@ -32,6 +36,14 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * @param array $attributes
+     * @param Place $place
+     *
+     * @return Operator
+     * @return InternalServerErrorException
+     * @return HttpException
+     */
     public function createForPlaceOrFail(array $attributes, Place $place): Operator
     {
         if (!is_null($this->validator)) {
@@ -54,11 +66,15 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
             throw new InternalServerErrorException('Cannot save operator');
         }
 
-        //event(new RepositoryEntityCreated($this, $model));
-
         return $this->parserResult($model);
     }
 
+    /**
+     * @param string $operatorUuid
+     * @param string $placeUuid
+     *
+     * @return Operator|null
+     */
     public function findByIdAndPlaceId(string $operatorUuid, string $placeUuid): ?Operator
     {
         $this->applyCriteria();

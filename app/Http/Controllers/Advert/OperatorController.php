@@ -10,6 +10,7 @@ use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class OperatorController
@@ -19,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OperatorController extends Controller
 {
     private $operatorRepository;
+    private $placeRepository;
 
     public function __construct(
         OperatorRepository $operatorRepository,
@@ -59,7 +61,8 @@ class OperatorController extends Controller
         $this->authorize('operators.create');
         $result = FormRequest::preFilledFormRequest(OperatorRequest::class);
 
-        $result['place_uuid'] = $this->placeRepository->findByUser($this->auth->user())->id;
+        $result['place_uuid'] = $this->placeRepository->findByUser($this->user())->getId();
+        $result['is_active']  = false;
 
         return \response()->render('advert.operator.create', $result);
     }
@@ -77,19 +80,20 @@ class OperatorController extends Controller
     {
         $this->authorize('operators.create');
 
-        $attributes = $request->all();
-        $user       = $this->auth->user();
-        $place      = $this->placeRepository->findByUser($user);
-
-        $newOperator = $this->operatorRepository
-            ->createForPlaceOrFail($attributes, $place)
-            ->first();
+        $attributes             = $request->all();
+        $attributes['password'] = Hash::make($attributes['password']);
+        $user                   = $this->user();
+        $place                  = $this->placeRepository->findByUser($user);
+        $newOperator            = $this->operatorRepository
+            ->createForPlaceOrFail($attributes, $place);
 
         $result['data'] = $newOperator->toArray();
+        unset($result['data']['place']);
+
         return \response()->render('advert.operator.show',
             $result,
             Response::HTTP_ACCEPTED,
-            route('advert.operators.show', $newOperator->id));
+            route('advert.operators.show', $newOperator->getId()));
     }
 
     /**
@@ -126,8 +130,8 @@ class OperatorController extends Controller
      */
     public function destroy(string $operatorUuid): Response
     {
-        $user      = $this->auth->user();
-        $placeUuid = $this->placeRepository->findByUser($user)->id;
+        $user      = $this->user();
+        $placeUuid = $this->placeRepository->findByUser($user)->getId();
         $operator  = $this->operatorRepository->findByIdAndPlaceId($operatorUuid, $placeUuid);
 
         if (null === $operator) {
@@ -174,16 +178,17 @@ class OperatorController extends Controller
      */
     public function update(OperatorRequest $request): Response
     {
-        $placeUuid = $this->placeRepository->findByUser($this->auth->user())->id;
+        $placeUuid = $this->placeRepository->findByUser($this->user())->getId();
         $operator  = $this->operatorRepository->findByIdAndPlaceId($request->id, $placeUuid);
 
         $this->authorize('operators.update', $operator);
 
         $attributes = request()->all();
+        $attributes['password'] = Hash::make($attributes['password']);
 
-        $this->operatorRepository->update($attributes, $operator->id);
+        $this->operatorRepository->update($attributes, $operator->getId());
 
-        return $this->acceptedResponse('advert.operators.show', $operator->id);
+        return $this->acceptedResponse('advert.operators.show', $operator->getId());
     }
 
     /**

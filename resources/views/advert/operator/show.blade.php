@@ -10,7 +10,16 @@
                 <div class="content">
                     <div class="col-sm-6 p-5">
                             @foreach($data as $field => $value)
-                                <p><strong>{{ $field }}</strong></p> <p>{{ $value }}</p>
+                                <p><strong>{{ $field }}</strong></p>
+                                @if('is_active' === $field)
+                                    @if(true === $value)
+                                        <p>Active</p>
+                                    @else
+                                        <p>Deactive</p>
+                                    @endif
+                                @else
+                                    <p>{{ $value }}</p>
+                                @endif
                             @endforeach
                     </div>
                 </div>

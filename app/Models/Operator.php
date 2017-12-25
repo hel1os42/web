@@ -62,6 +62,16 @@ class Operator extends Model implements
     public $incrementing = false;
 
     /**
+     * Get operator uuid
+     *
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
      * Get operator parent place uuid
      *
      * @return string
