@@ -445,8 +445,8 @@ class Place extends Model
         COS(ABS(%1$s) * PI()/180) * 
         POWER(SIN((longitude - %2$s) * 
         PI()/180 / 2), 2))))',
-                \DB::connection()->getPdo()->quote($lat),
-                \DB::connection()->getPdo()->quote($lng)));
+                $this->getConnection()->getPdo()->quote($lat),
+                $this->getConnection()->getPdo()->quote($lng)));
         }
 
         return $builder;
