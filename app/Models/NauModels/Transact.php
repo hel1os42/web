@@ -192,19 +192,8 @@ class Transact extends AbstractNauModel
      */
     public function setTypeAttribute(string $type)
     {
-        switch ($type) {
-            case self::TYPE_P2P:
-                $type = self::TYPE_P2P;
-                break;
-            case self::TYPE_INCOMING:
-                $type = self::TYPE_INCOMING;
-                break;
-            case self::TYPE_REDEMPTION:
-                $type = self::TYPE_REDEMPTION;
-                break;
-            default:
-                $type = self::TYPE_REDEMPTION;
-                break;
+        if (!in_array($type, [self::TYPE_P2P, self::TYPE_INCOMING, self::TYPE_REDEMPTION])) {
+            $type = self::TYPE_REDEMPTION;
         }
 
         return $this->attributes['type'] = $type;
