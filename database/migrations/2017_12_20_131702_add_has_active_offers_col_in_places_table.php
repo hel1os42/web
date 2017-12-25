@@ -13,6 +13,8 @@ class AddHasActiveOffersColInPlacesTable extends Migration
      */
     public function up()
     {
+        DB::beginTransaction();
+
         Schema::table('places', function (Blueprint $table) {
             $table->boolean('has_active_offers')->index()->default(0);
         });
@@ -22,9 +24,9 @@ class AddHasActiveOffersColInPlacesTable extends Migration
         foreach ($places as $place) {
             $accountId = DB::connection('pgsql_nau')->table('account')->where('owner_id', $place->user_id)->get(['id']);
 
-            if (count($accountId)) {
+            if (isset($accountId[0])) {
                 $activeOffers = DB::connection('pgsql_nau')->table('offer')
-                                  ->where('acc_id', $accountId)
+                                  ->where('acc_id', $accountId[0]->id)
                                   ->where('status', 'active')
                                   ->get();
                 if (count($activeOffers) > 0) {
@@ -35,6 +37,7 @@ class AddHasActiveOffersColInPlacesTable extends Migration
             }
         }
 
+        DB::commit();
     }
 
     /**
