@@ -20,6 +20,9 @@
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-rose btn-wd btn-md">Delete operator</button>
             </form>
+            <form method="get" action="{{ route('advert.operators.edit', $data['id']) }}">
+                <button type="submit" class="btn btn-rose btn-wd btn-md">Edit operator</button>
+            </form>
         </div>
     </div>
 @stop

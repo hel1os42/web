@@ -3,7 +3,7 @@
 @section('title', 'NAU show Place list')
 
 @section('content')
-    <h1>Offers:</h1>
+    <h1>Places:</h1>
     <ul style="font-size: small; color:black; font-size: 21px;">
         @foreach ($data as $place)
             @if($place['offers_count'] > 0)

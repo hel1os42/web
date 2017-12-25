@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Lab404\Impersonate\Models\Impersonate;
 
 /**
  * Class User
@@ -39,6 +40,7 @@ use Illuminate\Support\Facades\Hash;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @property Place      place
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -47,7 +49,7 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, Uuids;
+    use Notifiable, RelationsTrait, Impersonate, Uuids;
 
     public function __construct(array $attributes = [])
     {
@@ -484,5 +486,22 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function hasChild(User $child)
     {
         return $this->children->contains($child->getId());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isImpersonated(): bool
+    {
+        $keyName = config('laravel-impersonate.session_key');
+
+        if (\Tymon\JWTAuth\Facades\JWTAuth::getToken() !== false) {
+            $payload = \Tymon\JWTAuth\Facades\JWTAuth::getPayload();
+
+            return $payload->get($keyName) !== false;
+        }
+
+        return session()->has($keyName) !== false;
+
     }
 }

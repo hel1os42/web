@@ -8,11 +8,10 @@
             padding:10px;
         }
     </style>
-    <h1>Admin users list page.</h1>
     <h4>Search:</h4>
     <div id="admin-users-search">
-        <label for="phone">By phone:</label>
-        <input type="text" name="phone" id="phone" value="">
+        <label for="phone">By email:</label>
+        <input type="text" name="email" id="email" value="">
         <label for="role">By role:</label>
         <select name="role" id="role">
             <option value="" selected>All</option>
@@ -46,7 +45,8 @@
                 <td>{{$user['email']}}</td>
                 <td>{{$user['phone']}}</td>
                 <td>{{implode(', ', array_column($user['roles'], 'name'))}}</td>
-                <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a href="">login as</a></td>
+                <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a
+                            href="{{route('impersonate', $user['id'])}}">login as</a></td>
             </tr>
         @endforeach
     </table>
@@ -54,13 +54,13 @@
 
     <script type="text/javascript">
         let searchBlock = document.getElementById( 'admin-users-search' );
-        let phoneInput = searchBlock.querySelector( '#phone' );
+        let phoneInput = searchBlock.querySelector( '#email' );
         let roleSelect = searchBlock.querySelector( '#role' );
 
         var updateAdminUsersSearchForm = function() {
             let result = '';
             if ( phoneInput.value !== '' ) {
-                result = 'phone:' + phoneInput.value;
+                result = 'email:' + phoneInput.value;
             }
             if ( phoneInput.value !== '' && roleSelect.value !== '' ) {
                 result += ';';

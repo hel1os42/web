@@ -50,7 +50,7 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         $this->resetModel();
 
         if (!$model->exists) {
-            logger()->error('cannot save opertaor', $attributes);
+            logger()->error('cannot save operator', $attributes);
             throw new InternalServerErrorException('Cannot save operator');
         }
 
@@ -59,12 +59,12 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         return $this->parserResult($model);
     }
 
-    public function findByIdAndPlaceId(string $operatorUuid, string $PlaceUuid): ?Operator
+    public function findByIdAndPlaceId(string $operatorUuid, string $placeUuid): ?Operator
     {
         $this->applyCriteria();
         $this->applyScope();
 
-        $model = $this->model->where(['place_uuid' => $PlaceUuid])->find($operatorUuid);
+        $model = $this->model->where(['place_uuid' => $placeUuid])->find($operatorUuid);
 
         $this->resetModel();
 

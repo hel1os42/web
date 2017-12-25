@@ -65,7 +65,7 @@ class OfferController extends Controller
 
         $this->authorize('offers.show', $offer);
 
-        if ($offer->isOwner($this->auth->user())) {
+        if ($offer->isOwner($this->user())) {
             $offer->setVisible(Offer::$publicAttributes);
         }
         $data = $offer->toArray();
