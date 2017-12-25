@@ -4,15 +4,22 @@ namespace App\Providers;
 
 use App\Models\NauModels\Offer;
 use App\Observers\OfferObserver;
-use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
+use App\Services\Implementation\NauOfferReservation;
+use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class AppServiceProvider
+ * @package App\Providers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -45,6 +52,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             MappableRequestCriteria::class,
             MappableRequestCriteriaEloquent::class
+        );
+        $this->app->bind(
+            InvestorAreaService::class,
+            \App\Services\Implementation\InvestorAreaService::class
         );
     }
 }
