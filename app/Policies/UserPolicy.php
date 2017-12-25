@@ -18,6 +18,16 @@ class UserPolicy extends Policy
     }
 
     /**
+     * @param User|null $user
+     *
+     * @return bool
+     */
+    public function create(?User $user)
+    {
+        return $user !== null ? $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]) : true;
+    }
+
+    /**
      * @param User $user
      * @param User $anotherUser
      *
@@ -97,15 +107,13 @@ class UserPolicy extends Policy
     }
 
     /**
-     * @param User      $user
-     * @param User|null $anotherUser
+     * @param User $user
      *
      * @return bool
      */
-    public function updateRoles(User $user, User $anotherUser)
+    public function updateRoles(User $user)
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
-               || ($user->isAgent() && $user->hasChild($anotherUser));
+        return $user->hasRoles([Role::ROLE_ADMIN]);
     }
 
     /**

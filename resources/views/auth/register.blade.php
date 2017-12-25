@@ -12,7 +12,7 @@
 @stop
 @extends('layouts.auth')
 @section('content')
-{!! Form::open(array('route' => 'register', 'method' => 'POST', 'class' => 'huyeta')) !!}
+    {!! Form::open(array('route' => 'register', 'method' => 'POST')) !!}
     <div class="card card-login card-hidden">
         <div class="header text-center">
             <h3 class="title">Register</h3>
