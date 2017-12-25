@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html>
+
     @include('partials.head')
+
     <body>
-        <div class="wrapper perfect-scrollbar-off">
-            @section('sidebar')
-                @include('partials.sidebar')
-            @show
-            <div class="main-panel">
-                @section('main-panel')
+
+        <div id="mainwrapper">
+            <header>
+                @section('header')
                     @include('partials.header')
                 @show
-                <div class="content">
-                    <div class="container-fluid">
-                        <div class="row">
-                            @yield('content')
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </header>
+
+            <main class="clearfix">
+                @yield('content')
+            </main>
         </div>
+
+        <footer>
+            @section('footer')
+                @include('partials.footer')
+            @show
+        </footer>
+
     </body>
-    @stack('scripts')
+
     @include('partials.javascripts')
+    @stack('scripts')
+
 </html>

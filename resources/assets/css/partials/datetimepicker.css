@@ -18,6 +18,10 @@
 #timepicker th {
 	font-size: 80%;
 }
+.picker table {
+	border-collapse: separate;
+	border-spacing: 2px;
+}
 .picker td {
 	padding: 6px 8px;
 	line-height: 1em;
@@ -41,6 +45,10 @@
 }
 #datepicker td.not-this-month {
 	opacity: 0.3;
+}
+#datepicker td.not-active {
+	background: #e0e0e0;
+	opacity: 0.5;
 }
 #datepicker td.today {
 	background: rgba(255, 90, 0, 0.2);
