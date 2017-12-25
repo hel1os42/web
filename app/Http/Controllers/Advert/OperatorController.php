@@ -183,7 +183,7 @@ class OperatorController extends Controller
 
         $this->authorize('operators.update', $operator);
 
-        $attributes = request()->all();
+        $attributes             = request()->all();
         $attributes['password'] = Hash::make($attributes['password']);
 
         $this->operatorRepository->update($attributes, $operator->getId());

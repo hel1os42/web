@@ -36,16 +36,16 @@ class OperatorRequest extends FormRequest
     {
         if ($this->method() === 'PUT')
         {
-            $login_rule = 'required|exists:operators,login';
+            $loginRule = 'required|exists:operators,login';
         }
         else
         {
-            $login_rule = $this->getLoginRule();
+            $loginRule = $this->getLoginRule();
         }
         return [
             'is_active'  => 'required',
             'place_uuid' => 'required',
-            'login'      => $login_rule,
+            'login'      => $loginRule,
             'password'   => 'required',
             'confirm'    => 'required|same:password',
         ];

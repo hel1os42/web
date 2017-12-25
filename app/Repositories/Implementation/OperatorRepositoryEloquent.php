@@ -11,7 +11,6 @@ use App\Models\Operator;
 use App\Models\Place;
 use Prettus\Validator\Contracts\ValidatorInterface;
 
-
 /**
  * Class OperatorRepositoryEloquent
  * @package namespace App\Repositories;
