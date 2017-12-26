@@ -10,7 +10,6 @@ use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * Class OperatorController
@@ -82,18 +81,17 @@ class OperatorController extends Controller
         $this->authorize('operators.create');
 
         $attributes             = $request->all();
-        $attributes['password'] = Hash::make($attributes['password']);
         $user                   = $this->user();
         $place                  = $this->placeRepository->findByUser($user);
         $newOperator            = $this->operatorRepository
             ->createForPlaceOrFail($attributes, $place);
 
-        $result['data'] = $newOperator->fresh()->toArray();
+        $newOperator = $newOperator->fresh()->toArray();
 
         return \response()->render('advert.operator.show',
-            $result,
-            Response::HTTP_ACCEPTED,
-            route('advert.operators.show', $newOperator->getId()));
+            $newOperator,
+            Response::HTTP_CREATED,
+            route('advert.operators.show', $newOperator['id']));
     }
 
     /**
@@ -113,11 +111,11 @@ class OperatorController extends Controller
         if (null === $operator) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.operator_not_found'));
         }
-        $result['data'] = $operator->toArray();
 
         $this->authorize('operators.show', $operator);
+        $operator = $operator->toArray();
 
-        return \response()->render('advert.operator.show', $result);
+        return \response()->render('advert.operator.show', $operator);
     }
 
     /**
@@ -161,11 +159,10 @@ class OperatorController extends Controller
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.operator_not_found'));
         }
 
-        $result['data'] = $operator->toArray();
-
         $this->authorize('operators.update', $operator);
+        $operator = $operator->toArray();
 
-        return \response()->render('advert.operator.edit', $result);
+        return \response()->render('advert.operator.edit', $operator);
     }
 
     /**
@@ -182,29 +179,11 @@ class OperatorController extends Controller
         $operator  = $this->operatorRepository->findByIdAndPlaceId($request->id, $placeUuid);
 
         $this->authorize('operators.update', $operator);
-
-        $attributes             = request()->all();
-        $attributes['password'] = Hash::make($attributes['password']);
-
+        $attributes = request()->all();
         $this->operatorRepository->update($attributes, $operator->getId());
+        $operator = $operator->fresh()->toArray();
 
-        return $this->acceptedResponse('advert.operators.show', $operator->getId());
-    }
-
-    /**
-     * @param string $route
-     * @param string $opertorUuid
-     *
-     * @return Response
-     * @throws \LogicException
-     */
-    private function acceptedResponse(string $route, string $operatorUuid): Response
-    {
-        $route = route($route, $operatorUuid);
-        if (request()->wantsJson()) {
-            return response()->json(null, 202)->header('Location', $route);
-        }
-
-        return response(null, 202)->header('Location', $route);
+        return \response()->render('advert.operator.show', $operator, Response::HTTP_CREATED,
+            route('advert.operators.show', $operator));
     }
 }

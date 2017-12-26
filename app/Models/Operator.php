@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Support\Facades\Hash;
 
 class Operator extends Model implements
     AuthenticatableContract,
@@ -109,5 +110,15 @@ class Operator extends Model implements
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class, 'place_uuid', 'id');
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return Void
+     */
+    public function setPasswordAttribute(string $password)
+    {
+        $this->attributes['password'] = Hash::make($password);
     }
 }

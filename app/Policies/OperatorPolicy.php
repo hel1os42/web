@@ -26,7 +26,7 @@ class OperatorPolicy extends Policy
     public function show(User $user, Operator $operator): bool
     {
         return $user->isAdvertiser() &&
-            $user->equals($operator->place()->firstOrFail()->User()->firstOrFail());
+            $user->equals($operator->place->user);
     }
 
     /**
@@ -38,7 +38,7 @@ class OperatorPolicy extends Policy
     public function destroy(User $user, Operator $operator): bool
     {
         return $user->isAdvertiser() &&
-            $user->equals($operator->place()->firstOrFail()->User()->firstOrFail());
+            $user->equals($operator->place->user);
     }
 
     /**
@@ -60,6 +60,6 @@ class OperatorPolicy extends Policy
     public function update(User $user, Operator $operator): bool
     {
         return $user->isAdvertiser() &&
-            $user->equals($operator->place()->firstOrFail()->User()->firstOrFail());
+            $user->equals($operator->place->user);
     }
 }

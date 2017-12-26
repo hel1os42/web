@@ -34,13 +34,13 @@ class OperatorRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->method() === 'PUT')
+        if ($this->method() === 'POST')
         {
-            $loginRule = 'required|exists:operators,login';
+            $loginRule = $this->getLoginRule();
         }
         else
         {
-            $loginRule = $this->getLoginRule();
+            $loginRule = 'required|min:3|exists:operators,login';
         }
         return [
             'is_active'  => 'required',
