@@ -23,9 +23,10 @@ class OperatorPolicy extends Policy
      *
      * @return bool
      */
-    public function show(User $user): bool
+    public function show(User $user, Operator $operator): bool
     {
-        return $user->isAdvertiser();
+        return $user->isAdvertiser() &&
+            $user->equals($operator->place()->firstOrFail()->User()->firstOrFail());
     }
 
     /**
