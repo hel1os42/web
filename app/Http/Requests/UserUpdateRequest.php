@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property array role_ids
  * @property array parent_ids
  * @property array child_ids
- *
+ * @property bool  approve
  *
  */
 class UserUpdateRequest extends FormRequest

@@ -88,7 +88,7 @@ class UserController extends Controller
 
         $this->authorize('users.update', $editableUser);
 
-        $userData = $request->all();
+        $userData = $request->except(['approve']);
 
         if ($request->isMethod('put')) {
             $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
@@ -106,21 +106,13 @@ class UserController extends Controller
         $user   = $user->update($userData, $uuid);
         $result = $user->fresh($with);
 
-        if ($request->has('parent_ids')) {
-            $result = $this->setParents($request->parent_ids, $user);
-        }
-
-        if ($request->has('child_ids')) {
-            $result = $this->setChildren($request->child_ids, $user);
-        }
-
-        if ($request->has('role_ids')) {
-            $result = $this->updateRoles($request->role_ids, $user);
-        }
-
         if ($request->has('approve')) {
             $this->approve($user, $request->approve);
         }
+
+        $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
+        $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
+        $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
 
         return \response()->render('user.show', $result, Response::HTTP_CREATED, route('profile'));
     }
