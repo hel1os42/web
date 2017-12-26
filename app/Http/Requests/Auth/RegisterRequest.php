@@ -43,7 +43,7 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'             => 'string|min:2',
+            'name'             => 'nullable|string|min:2',
             'phone'            => 'nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
             'password'         => 'required_with:email|nullable|min:6|max:255',
