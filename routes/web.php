@@ -3,6 +3,11 @@
 /** @var \Illuminate\Routing\Router $router */
 $router = app('router');
 
+/**
+ * register
+ */
+$router->post('users', 'UserController@register')->name('register');
+
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
@@ -52,11 +57,6 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
-
-    /**
-     * register
-     */
-    $router->post('users', 'UserController@register')->name('register');
 });
 
 //---- Unauthorized users

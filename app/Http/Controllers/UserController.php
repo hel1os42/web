@@ -127,12 +127,13 @@ class UserController extends Controller
      */
     public function register(Requests\Auth\RegisterRequest $request)
     {
-        $this->authorize('users.create');
-
         $newUserData = $request->all();
 
         $registrator = $request->getRegistrator();
         if (null !== $registrator) {
+
+            $this->authorize('users.create');
+
             $newUserData['referrer_id'] = $registrator->id;
         }
 
@@ -146,7 +147,7 @@ class UserController extends Controller
 
         return response()->render(
             null !== $registrator ? 'user.show' : 'auth.registered',
-            $user->fresh(),
+            $user->fresh('roles'),
             Response::HTTP_CREATED,
             route('users.show', [$user->getId()]));
     }
@@ -196,7 +197,7 @@ class UserController extends Controller
         $user->children()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('children');
     }
 
     /**
@@ -214,7 +215,7 @@ class UserController extends Controller
         $user->parents()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('parents');
     }
 
     /**
@@ -231,7 +232,7 @@ class UserController extends Controller
         $user->roles()->sync($roleIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('roles');
     }
 
     /**
