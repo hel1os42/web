@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\NauModels\Offer;
+use App\Models\User;
 use App\Observers\OfferObserver;
-use App\Services\Implementation\NauOfferReservation;
+use App\Observers\UserObserver;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
+use App\Services\Implementation\NauOfferReservation;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Offer::observe(OfferObserver::class);
+        User::observe(UserObserver::class);
     }
 
     /**
