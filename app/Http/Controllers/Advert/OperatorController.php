@@ -80,10 +80,10 @@ class OperatorController extends Controller
     {
         $this->authorize('operators.create');
 
-        $attributes             = $request->all();
-        $user                   = $this->user();
-        $place                  = $this->placeRepository->findByUser($user);
-        $newOperator            = $this->operatorRepository
+        $attributes  = $request->all();
+        $user        = $this->user();
+        $place       = $this->placeRepository->findByUser($user);
+        $newOperator = $this->operatorRepository
             ->createForPlaceOrFail($attributes, $place);
 
         $newOperator = $newOperator->fresh()->toArray();
