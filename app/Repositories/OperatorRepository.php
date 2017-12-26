@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\HttpException;
 use Prettus\Repository\Contracts\RepositoryInterface;
 use App\Models\Place;
 use App\Models\Operator;
+use Illuminate\Support\Collection;
 
 /**
  * Interface OperatorRepository
@@ -33,4 +34,11 @@ interface OperatorRepository extends RepositoryInterface
      * @return Operator|null
      */
     public function findByIdAndPlaceId(string $operatorUuid, string $placeUuid): ?Operator;
+
+    /**
+     * @param Place $place
+     *
+     * @return Collection
+     */
+    public function findByPlace(Place $place): Collection;
 }

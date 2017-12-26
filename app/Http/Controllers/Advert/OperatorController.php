@@ -42,7 +42,8 @@ class OperatorController extends Controller
     public function index(): Response
     {
         $this->authorize('operators.list');
-        $operators      = $this->operatorRepository->all();
+        $place          = $this->placeRepository->findByUser($this->user());
+        $operators      = $this->operatorRepository->findByPlace($place);
         $result['data'] = $operators->toArray();
 
         return \response()->render('advert.operator.index', $result);
@@ -87,8 +88,7 @@ class OperatorController extends Controller
         $newOperator            = $this->operatorRepository
             ->createForPlaceOrFail($attributes, $place);
 
-        $result['data'] = $newOperator->toArray();
-        unset($result['data']['place']);
+        $result['data'] = $newOperator->fresh()->toArray();
 
         return \response()->render('advert.operator.show',
             $result,

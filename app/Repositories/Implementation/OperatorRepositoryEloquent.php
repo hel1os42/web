@@ -10,6 +10,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use App\Models\Operator;
 use App\Models\Place;
 use Prettus\Validator\Contracts\ValidatorInterface;
+use Illuminate\Support\Collection;
 
 /**
  * Class OperatorRepositoryEloquent
@@ -35,6 +36,12 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    protected function applyCriteria()
+    {
+        parent::applyCriteria();
+        $this->model->without('place');
+    }
+
     /**
      * @param array $attributes
      * @param Place $place
@@ -45,6 +52,9 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
      */
     public function createForPlaceOrFail(array $attributes, Place $place): Operator
     {
+        $this->applyCriteria();
+        $this->applyScope();
+
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
@@ -84,5 +94,15 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return Collection
+     */
+    public function findByPlace(Place $place): Collection
+    {
+        return $this->model->where(['place_uuid' => $place->getId()])->get();
     }
 }
