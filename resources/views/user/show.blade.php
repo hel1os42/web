@@ -105,12 +105,30 @@
 						            <p><strong>Name</strong></p>
 						            <p><strong>Id</strong></p>
 						            <p><strong>Email</strong></p>
+                                    <p><strong>Phone</strong></p>
+                                    <p><strong>Approved</strong></p>
 						            <p><strong>Invite link</strong></p>
 						        </div>
                                 <div class="col-sm-6 p-10 p-5">
                                     <p>{{$name}}</p>
                                     <p>{{$id}}</p>
                                     <p>{{$email}}</p>
+                                    <p>{{$phone}}</p>
+                                    <div>
+                                        @if($approved)
+                                            Yes
+                                        @else
+                                            No
+                                            @can('users.update.approve', $user)
+                                                <form action="{{route('users.update', $id)}}" method="post" style="display:  inline-block;">
+                                                    {{ csrf_field() }}
+                                                    {{ method_field('PUT') }}
+                                                    <input hidden type="checkbox" name="approved" checked>
+                                                    <button style="display:  inline-block;" type="submit">approve</button>
+                                                </form>
+                                            @endcan
+                                        @endif
+                                    </div>
                                     <p><a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a></p>
                                 </div>
                             </div>

@@ -37,7 +37,7 @@
         <td>Name</td>
         <td>Email</td>
         <td>Phone</td>
-        <td>Roles</td>
+        <td>Approved</td>
         <td>Actions</td>
         </thead>
         @foreach ($data as $user)
@@ -46,7 +46,19 @@
                 <td>{{$user['name']}}</td>
                 <td>{{$user['email']}}</td>
                 <td>{{$user['phone']}}</td>
-                <td>{{implode(', ', array_column($user['roles'], 'name'))}}</td>
+                <td>
+                    @if($user['approved'])
+                        Yes
+                    @else
+                        <form action="{{route('users.update', $user['id'])}}" method="post" style="display:  inline-block;">
+                            No
+                            {{ csrf_field() }}
+                            {{ method_field('PUT') }}
+                            <input hidden type="checkbox" name="approved" checked>
+                            <button style="display:  inline-block;" type="submit">approve</button>
+                        </form>
+                    @endif
+                </td>
                 <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a
                             href="{{route('impersonate', $user['id'])}}">login as</a></td>
             </tr>

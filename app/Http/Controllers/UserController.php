@@ -84,23 +84,27 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('users.update', $this->userRepository->find($uuid));
+        $editableUser = $this->userRepository->find($uuid);
+
+        $this->authorize('users.update', $editableUser);
 
         $userData = $request->all();
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($this->user(),
+            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
                 ['password']),
                 $userData);
         }
 
-        $user = $this->userRepository->with('roles');
+        $user = $this->userRepository;
+
+        $with = [];
 
         if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-            $user->with(['parents', 'children', 'roles']);
+            $with = ['parents', 'children', 'roles'];
         }
         $user   = $user->update($userData, $uuid);
-        $result = $user->fresh();
+        $result = $user->fresh($with);
 
         if ($request->has('parent_ids')) {
             $result = $this->setParents($request->parent_ids, $user);
