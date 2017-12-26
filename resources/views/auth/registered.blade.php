@@ -1,4 +1,8 @@
 @extends('layouts.ajax')
 @section('content')
-    Congratulations {{$user->name}}, you have successfully registered.
+    Congratulations
+    @if(isset($name))
+        {{$name}}
+    @endif
+    , you have successfully registered.
 @stop
