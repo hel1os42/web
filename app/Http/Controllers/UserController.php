@@ -197,7 +197,7 @@ class UserController extends Controller
         $user->children()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('children');
     }
 
     /**
@@ -215,7 +215,7 @@ class UserController extends Controller
         $user->parents()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('parents');
     }
 
     /**
@@ -232,6 +232,6 @@ class UserController extends Controller
         $user->roles()->sync($roleIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('roles');
     }
 }
