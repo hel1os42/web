@@ -37,6 +37,14 @@ trait RoleTrait
     /**
      * @return bool
      */
+    public function isAdmin(): bool
+    {
+        return $this->hasRoles([Role::ROLE_ADMIN]);
+    }
+
+    /**
+     * @return bool
+     */
     public function isAgent()
     {
         return $this->hasRoles([Role::ROLE_AGENT]);

@@ -12,6 +12,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class UserController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
     private $userRepository;
 
     public function __construct(UserRepository $userRepository, AuthManager $authManager)
@@ -98,6 +101,12 @@ class UserController extends Controller
 
         $user = $this->userRepository;
 
+        if ($request->has('approve')) {
+            $this->authorize('users.update.approve', $user);
+
+            $user->setApproved($request->approve);
+        }
+
         $with = [];
 
         if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
@@ -105,10 +114,6 @@ class UserController extends Controller
         }
         $user   = $user->update($userData, $uuid);
         $result = $user->fresh($with);
-
-        if ($request->has('approve')) {
-            $this->approve($user, $request->approve);
-        }
 
         $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
         $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
@@ -233,18 +238,5 @@ class UserController extends Controller
         $user->save();
 
         return $user->fresh('roles');
-    }
-
-    /**
-     * @param User $user
-     * @param bool $approve
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    private function approve(User $user, bool $approve = true)
-    {
-        $this->authorize('users.update.approve', $user);
-
-        $user->setApproved($approve)->save();
     }
 }
