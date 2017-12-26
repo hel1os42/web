@@ -23,6 +23,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     protected $fieldSearchable = [
         'phone' => 'like',
+        'email' => 'like',
         'roles.name'
     ];
 

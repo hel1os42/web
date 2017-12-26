@@ -40,6 +40,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @property Place      place
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
