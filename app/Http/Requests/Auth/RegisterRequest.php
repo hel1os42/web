@@ -64,7 +64,7 @@ class RegisterRequest extends FormRequest
     /**
      * @return User|null
      */
-    public function getRegistrator(): User
+    public function getRegistrator(): ?User
     {
         return auth()->user();
     }

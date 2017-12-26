@@ -168,18 +168,22 @@
                                         </p>
                                         @endcan
                                         @can('users.update.parents', $user)
-                                        <p>
-                                            @foreach($parents as $parent)
-                                                {{$parent['name']}}<br>
-                                            @endforeach
-                                        </p>
+                                            <p>
+                                                @if(isset($parents))
+                                                    @foreach($parents as $parent)
+                                                        {{$parent['name']}}<br>
+                                                    @endforeach
+                                                @endif
+                                            </p>
                                         @endcan
                                         @can('users.update.children', $user)
-                                        <p>
-                                            @foreach($children as $child)
-                                                {{$child['name']}}<br>
-                                            @endforeach
-                                        </p>
+                                            <p>
+                                                @if(isset($children))
+                                                    @foreach($children as $child)
+                                                        {{$child['name']}}<br>
+                                                    @endforeach
+                                                @endif
+                                            </p>
                                         @endcan
                                     </div>
                                     <button type="submit">Update</button>

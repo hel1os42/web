@@ -18,13 +18,13 @@ class UserPolicy extends Policy
     }
 
     /**
-     * @param User|null $user
+     * @param User $user
      *
      * @return bool
      */
-    public function create(?User $user)
+    public function create(User $user)
     {
-        return $user !== null ? $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]) : true;
+        return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
     }
 
     /**
