@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
-use Illuminate\Routing\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
@@ -53,6 +53,11 @@ class LoginController extends AuthController
      */
     public function logout()
     {
+
+        if (false === $this->jwtAuth->getToken()) {
+            $this->user()->leaveImpersonation();
+        }
+
         $this->auth->guard()->logout();
 
         return \request()->wantsJson()
@@ -75,12 +80,12 @@ class LoginController extends AuthController
     }
 
     /**
-     * @param LoginRequest    $request
-     * @param ResponseFactory $response
-     * @param Session         $session
+     * @param LoginRequest $request
+     * @param Session      $session
      *
      * @return Response
-     *
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function login(LoginRequest $request, Session $session)
     {
@@ -122,6 +127,7 @@ class LoginController extends AuthController
      * @param Authenticatable $user
      *
      * @return Response
+     * @throws \LogicException
      */
     private function postLoginJwt(Authenticatable $user): Response
     {
@@ -133,12 +139,57 @@ class LoginController extends AuthController
     /**
      * @param Authenticatable $user
      *
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \LogicException
      */
     private function postLoginSession(Authenticatable $user)
     {
         $this->auth->guard('web')->login($user);
 
         return \response()->redirectTo(\request()->get('redirect_to', '/'));
+    }
+
+    /**
+     * @param string       $uuid
+     * @param UrlGenerator $urlGenerator
+     *
+     * @return \Illuminate\Http\RedirectResponse|Response
+     * @throws \LogicException
+     * @throws \RuntimeException
+     */
+    public function impersonate(string $uuid, UrlGenerator $urlGenerator)
+    {
+        $user = $this->userRepository->find($uuid);
+
+        $this->authorize('impersonate', $user);
+
+        if (false !== $this->jwtAuth->getToken()) {
+            $token = $this->jwtAuth->fromUser($user,
+                [config('laravel-impersonate.session_key') => $this->user()->getKey()]);
+
+            return \response()->render('', \compact('token'));
+        }
+
+        $this->user()->impersonate($user);
+
+        session()->put('impersonate_last_url', $urlGenerator->previous());
+
+        return \request()->wantsJson()
+            ? \response()->render('', $this->user()->toArray())
+            : \response()->redirectTo(route('home'));
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse|Response
+     * @throws \LogicException
+     * @throws \RuntimeException
+     */
+    public function stopImpersonate()
+    {
+        $this->user()->leaveImpersonation();
+
+        return \request()->wantsJson()
+            ? \response()->render('', [])
+            : \response()->redirectTo(\request()->session()->get('impersonate_last_url'));
     }
 }

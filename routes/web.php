@@ -56,7 +56,7 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
     /**
      * register
      */
-    $router->post('users', 'Auth\RegisterController@register')->name('register');
+    $router->post('users', 'UserController@register')->name('register');
 });
 
 //---- Unauthorized users
@@ -68,6 +68,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
+
+    $router->get('auth/impersonate/{uuid}', 'Auth\LoginController@impersonate')->where('uuid',
+        '[a-z0-9-]+')->name('impersonate');
+    $router->get('auth/stop_impersonate', 'Auth\LoginController@stopImpersonate')->name('stop_impersonate');
 
     /**
      * User actions
@@ -91,6 +95,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->get('users', 'UserController@index')->name('users.index');
+    $router->get('users/create', 'UserController@create')->name('users.create');
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
         $router->get('', 'UserController@show')->name('users.show');
         $router->put('', 'UserController@update')->name('users.update');
