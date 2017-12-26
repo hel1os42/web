@@ -43,13 +43,10 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'             => 'nullable|string|min:2',
             'phone'            => 'nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
             'password'         => 'required_with:email|nullable|min:6|max:255',
-            'password_confirm' => 'required_with:email|nullable|same:password',
-            'latitude'         => 'nullable|numeric|between:-90,90',
-            'longitude'        => 'nullable|numeric|between:-180,180',
+            'password_confirm' => 'required_with:email|nullable|same:password'
         ];
 
         if ($this->getRegistrator() === null) {
