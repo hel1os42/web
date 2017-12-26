@@ -322,6 +322,18 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @param bool $approve
+     *
+     * @return User
+     */
+    public function setApproved(bool $approve): User
+    {
+        $this->approved = $approve;
+
+        return $this;
+    }
+
+    /**
      * Find User by invite code
      *
      * @param string $invite

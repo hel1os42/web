@@ -40,9 +40,9 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name'         => 'string|min:2',
-            'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
+            'email'        => sprintf('email|max:255|unique:users,email,%s',
                 request()->id),
-            'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+            'phone'        => sprintf('regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 request()->id),
             'latitude'     => 'nullable|numeric|between:-90,90',
             'longitude'    => 'nullable|numeric|between:-180,180',
@@ -58,6 +58,7 @@ class UserUpdateRequest extends FormRequest
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
+            'approve'      => 'boolean',
         ];
     }
 } 

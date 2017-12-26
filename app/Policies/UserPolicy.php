@@ -127,4 +127,16 @@ class UserPolicy extends Policy
         return ($user->hasRoles([Role::ROLE_ADMIN]) || $user->hasChild($anotherUser))
                && $user->isImpersonated() === false;
     }
+
+    /**
+     * @param User $user
+     * @param User $editableUser
+     *
+     * @return bool
+     */
+    public function approve(User $user, User $editableUser): bool
+    {
+        return $user->hasRoles([Role::ROLE_ADMIN])
+               || ($user->isAgent() && $user->hasChild($editableUser));
+    }
 }

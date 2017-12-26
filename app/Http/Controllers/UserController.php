@@ -114,6 +114,10 @@ class UserController extends Controller
             $result = $this->updateRoles($request->role_ids, $user);
         }
 
+        if ($request->has('approve')) {
+            $this->approve($user, $request->approve);
+        }
+
         return \response()->render('user.show', $result, Response::HTTP_CREATED, route('profile'));
     }
 
@@ -232,5 +236,18 @@ class UserController extends Controller
         $user->save();
 
         return $user->fresh();
+    }
+
+    /**
+     * @param User $user
+     * @param bool $approve
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    private function approve(User $user, bool $approve = true)
+    {
+        $this->authorize('users.update.approve', $user);
+
+        $user->setApproved($approve)->save();
     }
 }
