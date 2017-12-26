@@ -39,7 +39,7 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'         => 'nullable|string|min:2',
+            'name'         => 'string|min:2',
             'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 request()->id),
             'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
