@@ -53,7 +53,7 @@
                         <form action="{{route('users.update', $user['id'])}}" method="post" style="display:  inline-block;">
                             No
                             {{ csrf_field() }}
-                            {{ method_field('PUT') }}
+                            {{ method_field('PATCH') }}
                             <input hidden type="checkbox" name="approved" checked>
                             <button style="display:  inline-block;" type="submit">approve</button>
                         </form>
