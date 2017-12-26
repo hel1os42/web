@@ -53,9 +53,15 @@ class RegisterRequest extends FormRequest
         ];
 
         if ($this->getRegistrator() === null) {
-            $rules['phone']       = 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone';
-            $rules['code']        = 'required_with:phone|nullable|digits:6|otp';
-            $rules['referrer_id'] = 'required|string|exists:users,id';
+
+            $rules = [
+                'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
+                'code'             => 'required_with:phone|nullable|digits:6|otp',
+                'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
+                'password'         => 'required_with:email|nullable|min:6|max:255',
+                'password_confirm' => 'required_with:email|nullable|same:password',
+                'referrer_id'      => 'required|string|exists:users,id',
+            ];
         }
 
         return $rules;
