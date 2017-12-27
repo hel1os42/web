@@ -7,6 +7,10 @@ $router->group(['middleware' => 'investor', 'prefix' => 'service'], function () 
     $router->get('nau/{user}', 'Service\NauController@getAccount');
     $router->post('crosschange', 'Service\NauController@exchangeNau');
 });
+/**
+ * register
+ */
+$router->post('users', 'UserController@register')->name('register');
 
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
@@ -57,11 +61,6 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
-
-    /**
-     * register
-     */
-    $router->post('users', 'UserController@register')->name('register');
 });
 
 //---- Unauthorized users
