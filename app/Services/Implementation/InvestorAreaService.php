@@ -10,12 +10,16 @@ use Illuminate\Http\Request;
  */
 class InvestorAreaService implements \App\Services\InvestorAreaService
 {
-
     public function checkRequestSign(Request $request): bool
     {
         $data = $request->all();
         ksort($data);
-        $key = config('key.secret.investor');
+        $key = config('nau.key_secret_investor');
+
+        $timestamp = $request->get('timestamp');
+        if (!is_numeric($timestamp) || $timestamp > time() || time() - 120 > $timestamp) {
+            return false;
+        }
 
         $stringData = sprintf('%s:%s:%s:%s',
             strtoupper($request->method()), urlencode($request->path()), $this->extractElements($data), $key);
@@ -25,6 +29,8 @@ class InvestorAreaService implements \App\Services\InvestorAreaService
 
     private function extractElements(array $data): string
     {
+        $data = array_except($data, 'signature');
+
         array_walk($data, function (&$value, $key) {
             $value = sprintf('%s=%s', urlencode($key), urlencode($value));
         });

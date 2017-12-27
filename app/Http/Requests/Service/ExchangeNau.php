@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests\Service;
 
-use App\Services\InvestorAreaService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Carbon;
 
 /**
  * Class ExchangeNau
@@ -16,9 +15,9 @@ use Illuminate\Support\Carbon;
  */
 class ExchangeNau extends FormRequest
 {
-    public function authorize(InvestorAreaService $service): bool
+    public function authorize(): bool
     {
-        return $service->checkRequestSign($this);
+        return true;
     }
 
     public function rules(): array
@@ -29,8 +28,8 @@ class ExchangeNau extends FormRequest
         return [
             'address'   => 'required|exists:pgsql_nau.account,addr',
             'direction' => 'required|in:in,out',
-            'amount'    => 'required|float',
-            'timestamp' => sprintf('required|integer|min:%d|max:%d', $min, $now->timestamp),
+            'amount'    => 'required|numeric',
+            'timestamp' => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
             'signature' => sprintf('required|string')
         ];
     }

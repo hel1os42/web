@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Service;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Service\ExchangeNau;
+use App\Models\User;
 use App\Repositories\AccountRepository;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
@@ -13,10 +14,10 @@ use OmniSynapse\CoreService\FailedJob\CrossChange as CrossChangeFailed;
 use OmniSynapse\CoreService\Response\CrossChange as CrossChangeSuccess;
 
 /**
- * Class TransferExchangeNauController
+ * Class NauController
  * NS: App\Http\Controllers\Service
  */
-class TransferExchangeNauController extends Controller
+class NauController extends Controller
 {
     public function exchangeNau(
         ExchangeNau $request,
@@ -60,5 +61,10 @@ class TransferExchangeNauController extends Controller
         };
 
         return $result;
+    }
+
+    public function getAccount(User $user)
+    {
+        return \response()->render('', $user->getAccountForNau()->toArray());
     }
 }

@@ -3,6 +3,11 @@
 /** @var \Illuminate\Routing\Router $router */
 $router = app('router');
 
+$router->group(['middleware' => 'investor', 'prefix' => 'service'], function () use ($router) {
+    $router->get('nau/{user}', 'Service\NauController@getAccount');
+    $router->post('crosschange', 'Service\NauController@exchangeNau');
+});
+
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
