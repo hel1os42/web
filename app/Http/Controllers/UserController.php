@@ -12,6 +12,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class UserController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
     private $userRepository;
 
     public function __construct(UserRepository $userRepository, AuthManager $authManager)
@@ -84,35 +87,37 @@ class UserController extends Controller
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('users.update', $this->userRepository->find($uuid));
+        $editableUser = $this->userRepository->find($uuid);
 
-        $userData = $request->all();
+        $this->authorize('users.update', $editableUser);
+
+        $userData = $request->except(['approve']);
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($this->user(),
+            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
                 ['password']),
                 $userData);
         }
 
-        $user = $this->userRepository->with('roles');
+        $user = $this->userRepository;
+
+        if ($request->has('approve')) {
+            $this->authorize('users.update.approve', $user);
+
+            $user->setApproved($request->approve);
+        }
+
+        $with = [];
 
         if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-            $user->with(['parents', 'children', 'roles']);
+            $with = ['parents', 'children', 'roles'];
         }
         $user   = $user->update($userData, $uuid);
-        $result = $user->fresh();
+        $result = $user->fresh($with);
 
-        if ($request->has('parent_ids')) {
-            $result = $this->setParents($request->parent_ids, $user);
-        }
-
-        if ($request->has('child_ids')) {
-            $result = $this->setChildren($request->child_ids, $user);
-        }
-
-        if ($request->has('role_ids')) {
-            $result = $this->updateRoles($request->role_ids, $user);
-        }
+        $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
+        $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
+        $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
 
         return \response()->render('user.show', $result, Response::HTTP_CREATED, route('profile'));
     }
