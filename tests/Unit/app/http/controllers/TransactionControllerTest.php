@@ -208,14 +208,14 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::at(0))
             ->method('authorize')
-            ->with('my.transactions.list')
+            ->with('transactions.list')
             ->willReturn(true);
 
         if ($data) {
             $this->authorizeGate
                 ->expects(self::at(1))
                 ->method('authorize')
-                ->with('my.transaction.show', $this->transaction)
+                ->with('transaction.show', $this->transaction)
                 ->willReturn(true);
         }
 

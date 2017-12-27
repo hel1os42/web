@@ -59,11 +59,11 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $this->authorize('transactions.create');
-
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
+
+        $this->authorize('transactions.create', $sourceAccount->owner);
 
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
@@ -91,7 +91,7 @@ class TransactionController extends Controller
      */
     public function listTransactions(string $transactionId = null): Response
     {
-        $this->authorize('my.transactions.list');
+        $this->authorize('transactions.list', $this->user());
 
         $transactions = $this->transactionRepository->getBySenderOrRecepient($this->user());
 
@@ -101,7 +101,7 @@ class TransactionController extends Controller
 
         $transaction = $transactions->findOrFail($transactionId);
 
-        $this->authorize('my.transaction.show', $transaction);
+        $this->authorize('transaction.show', $transaction);
 
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }
