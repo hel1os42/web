@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\FormRequest;
 use App\Http\Requests\TransactRequest;
-use App\Models\Contracts\Currency;
 use App\Repositories\AccountRepository;
 use App\Repositories\TransactionRepository;
 use Illuminate\Auth\AuthManager;
@@ -19,6 +18,15 @@ class TransactionController extends Controller
     private $transactionRepository;
     private $accountRepository;
 
+    /**
+     * TransactionController constructor.
+     *
+     * @param TransactionRepository $transactionRepository
+     * @param AccountRepository     $accountRepository
+     * @param AuthManager           $authManager
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct(
         TransactionRepository $transactionRepository,
         AccountRepository $accountRepository,
@@ -33,6 +41,7 @@ class TransactionController extends Controller
 
     /**
      * @return Response
+     * @throws \App\Exceptions\TokenException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -44,7 +53,7 @@ class TransactionController extends Controller
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
             'source' => $this->user()
-                ->getAccountFor(Currency::NAU)
+                ->getAccountForNau()
                 ->getAddress()
         ]));
     }
