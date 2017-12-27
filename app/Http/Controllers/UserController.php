@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Attributes;
-use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests;
 use App\Models\Role;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class UserController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
     private $userRepository;
 
     public function __construct(UserRepository $userRepository, AuthManager $authManager)
@@ -32,11 +34,23 @@ class UserController extends Controller
     {
         $this->authorize('users.list');
 
-        $users = $this->auth->user()->hasRoles([Role::ROLE_ADMIN])
+        $users = $this->user()->hasRoles([Role::ROLE_ADMIN])
             ? $this->userRepository->with('roles')
-            : $this->auth->user()->children()->with('roles');
+            : $this->user()->children()->with('roles');
 
         return \response()->render('user.index', $users->paginate());
+    }
+
+    /**
+     * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
+     */
+    public function create()
+    {
+        $this->authorize('users.create');
+
+        return \response()->render('user.create', []);
     }
 
     /**
@@ -45,7 +59,6 @@ class UserController extends Controller
      * @param string|null $uuid
      *
      * @return Response
-     * @throws HttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -62,55 +75,92 @@ class UserController extends Controller
     }
 
     /**
-     * @param UserUpdateRequest $request
-     * @param string|null       $uuid
+     * @param Requests\UserUpdateRequest $request
+     * @param string|null                $uuid
      *
      * @return Response
-     * @throws HttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function update(UserUpdateRequest $request, string $uuid = null): Response
+    public function update(Requests\UserUpdateRequest $request, string $uuid = null): Response
     {
         $uuid = $this->getUuid($uuid);
 
-        $this->authorize('users.update', $this->userRepository->find($uuid));
+        $editableUser = $this->userRepository->find($uuid);
 
-        $userData = $request->all();
+        $this->authorize('users.update', $editableUser);
+
+        $userData = $request->except(['approve']);
 
         if ($request->isMethod('put')) {
-            $userData = \array_merge(Attributes::getFillableWithDefaults($this->auth->user(), ['password']),
+            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
+                ['password']),
                 $userData);
         }
 
-        $user = $this->userRepository->with('roles');
+        $user = $this->userRepository;
 
-        if ($this->auth->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-            $user->with('parents')->with('children');
-        }
-        $user = $user->update($userData, $uuid);
+        if ($request->has('approve')) {
+            $this->authorize('users.update.approve', $user);
 
-        if ($request->has('parent_ids')) {
-            $this->setParents($request->parent_ids, $user);
+            $user->setApproved($request->approve);
         }
 
-        if ($request->has('child_ids')) {
-            $this->setChildren($request->child_ids, $user);
+        $with = [];
+
+        if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
+            $with = ['parents', 'children', 'roles'];
+        }
+        $user   = $user->update($userData, $uuid);
+        $result = $user->fresh($with);
+
+        $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
+        $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
+        $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
+
+        return \response()->render('user.show', $result, Response::HTTP_CREATED, route('profile'));
+    }
+
+    /**
+     * @param Requests\Auth\RegisterRequest $request
+     *
+     * @return Response
+     * @throws UnprocessableEntityHttpException
+     * @throws \LogicException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function register(Requests\Auth\RegisterRequest $request)
+    {
+        $newUserData = $request->all();
+
+        $registrator = $request->getRegistrator();
+        if (null !== $registrator) {
+
+            $this->authorize('users.create');
+
+            $newUserData['referrer_id'] = $registrator->id;
         }
 
-        if ($request->has('role_ids')) {
-            $this->updateRoles($request->role_ids, $user);
+        $user = $this->userRepository->create($newUserData);
+
+        $success = $user->exists;
+
+        if (!$success) {
+            throw new UnprocessableEntityHttpException();
         }
 
-        return \response()->render('user.show', $user->toArray(), Response::HTTP_CREATED, route('profile'));
+        return response()->render(
+            null !== $registrator ? 'user.show' : 'auth.registered',
+            $user->fresh('roles'),
+            Response::HTTP_CREATED,
+            route('users.show', [$user->getId()]));
     }
 
     /**
      * @param string|null $uuid
      *
      * @return mixed
-     * @throws HttpException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -134,7 +184,7 @@ class UserController extends Controller
      */
     private function getUuid(?string $uuid)
     {
-        return null === $uuid ? $this->auth->id() : $uuid;
+        return null === $uuid ? $this->guard->id() : $uuid;
     }
 
     /**
@@ -152,7 +202,7 @@ class UserController extends Controller
         $user->children()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('children');
     }
 
     /**
@@ -170,7 +220,7 @@ class UserController extends Controller
         $user->parents()->sync($userIds, true);
         $user->save();
 
-        return $user->fresh();
+        return $user->fresh('parents');
     }
 
     /**
@@ -185,7 +235,8 @@ class UserController extends Controller
         $this->authorize('users.update.roles', $user);
 
         $user->roles()->sync($roleIds, true);
+        $user->save();
 
-        return $user->fresh();
+        return $user->fresh('roles');
     }
 }

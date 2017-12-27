@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Transact;
@@ -59,6 +60,8 @@ interface CoreService
      * @return AbstractJob
      */
     public function offerDeleted(Offer $offer): AbstractJob;
+
+    public function crossChange(Account $account, float $amount, bool $isIncoming): AbstractJob;
 
     public function getClient(): Client;
 }

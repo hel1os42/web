@@ -7,6 +7,7 @@ use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
+use App\Models\User\RoleTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,6 +41,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @property Place      place
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -48,7 +50,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, Impersonate, Uuids;
+    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids;
 
     public function __construct(array $attributes = [])
     {
@@ -321,6 +323,18 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @param bool $approve
+     *
+     * @return User
+     */
+    public function setApproved(bool $approve): User
+    {
+        $this->approved = $approve;
+
+        return $this;
+    }
+
+    /**
      * Find User by invite code
      *
      * @param string $invite
@@ -428,44 +442,7 @@ class User extends Authenticatable implements PhoneAuthenticable
         return $this->activationCodes()->count();
     }
 
-    /**
-     * @param array $roleNames
-     *
-     * @return bool
-     */
-    public function hasRoles(array $roleNames)
-    {
-        foreach ($this->roles as $userRole) {
-            if (in_array($userRole->name, $roleNames)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    /**
-     * @return bool
-     */
-    public function isAdvertiser()
-    {
-        return $this->hasRoles([Role::ROLE_ADVERTISER]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAgent()
-    {
-        return $this->hasRoles([Role::ROLE_AGENT]);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function hasAnyRole()
-    {
-        return $this->hasRoles(Role::getAllRoles());
-    }
 
     /**
      * @param User $parent
