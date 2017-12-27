@@ -3,6 +3,10 @@
 /** @var \Illuminate\Routing\Router $router */
 $router = app('router');
 
+$router->group(['middleware' => 'investor', 'prefix' => 'service'], function () use ($router) {
+    $router->get('nau/{user}', 'Service\NauController@getAccount');
+    $router->post('crosschange', 'Service\NauController@exchangeNau');
+});
 /**
  * register
  */

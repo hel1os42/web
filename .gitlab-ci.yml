@@ -84,10 +84,10 @@ build image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
   after_script:
+    - docker push $REPOSITORY/$IMAGE:`cat ./VERSION`
     - docker logout $REPOSITORY
   script:
     - docker build --pull -t $REPOSITORY/$IMAGE:`cat ./VERSION` .
-    - docker push $REPOSITORY/$IMAGE:`cat ./VERSION`
   only:
     - develop
     - testing
@@ -103,11 +103,11 @@ release image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $REPOSITORY
     - docker pull $REPOSITORY/$IMAGE:`cat ./VERSION`
-  before_script:
+  after_script:
+    - docker push $REPOSITORY/$IMAGE:$RELEASE_TAG
     - docker logout $REPOSITORY
   script:
-    - docker tag $CONTAINER_TEST_IMAGE $REPOSITORY/$IMAGE:$RELEASE_TAG
-    - docker push $REPOSITORY/$IMAGE:$RELEASE_TAG
+    - docker tag $REPOSITORY/$IMAGE:`cat ./VERSION` $REPOSITORY/$IMAGE:$RELEASE_TAG
   only:
     - master
 
