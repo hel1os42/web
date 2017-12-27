@@ -116,14 +116,14 @@
                                     <p>{{$phone}}</p>
                                     <div>
                                         @if($approved)
-                                            Yes
+                                            <p style="color:green">Yes</p>
                                         @else
                                             No
                                             @can('users.update.approve', $user)
                                                 <form action="{{route('users.update', $id)}}" method="post" style="display:  inline-block;">
                                                     {{ csrf_field() }}
                                                     {{ method_field('PATCH') }}
-                                                    <input hidden type="checkbox" name="approved" checked>
+                                                    <input hidden type="text" name="approved" value="1">
                                                     <button style="display:  inline-block;" type="submit">approve</button>
                                                 </form>
                                             @endcan

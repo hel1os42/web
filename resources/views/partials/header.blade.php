@@ -12,6 +12,16 @@
         </div>
         @auth
             <div class="controls pull-right">
+                @if(!is_null(auth()->user()))
+                    @if(auth()->user()->isImpersonated())
+                        <li>
+                            <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle">
+                                <i class="ti-shift-right"></i>
+                                <p>Leave impersonation</p>
+                            </a>
+                        </li>
+                    @endif
+                @endif
                 <a href="{{ route('profile') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
                 <a href="{{ route('logout') }}" title="Logout"><i class="fa fa-sign-out"></i></a>
             </div>
@@ -24,6 +34,7 @@
         <nav>
             <menu>
                 <li><a href="{{ route('home') }}">Home</a></li>
+                @if(auth()->user()->isAdvertiser())
                 <li><a href="{{ route('referrals') }}">Referrals</a></li>
                 <li><a href="{{ route('profile.place.show') }}">Place show</a></li>
                 <li><a href="{{ route('profile.place.offers') }}">Place offers</a></li>
@@ -41,13 +52,12 @@
                         <li><a href="{{ route('transactionCreate') }}">Create transaction</a></li>
                     </ul>
                 </li>
-                <li class="sub-menu">
-                    <a href="{{ route('places.index') }}">Places</a>
-                    <ul>
-                        <li><a href="{{ route('places.index') }}">Places list</a></li>
-                        <li><a href="{{ route('places.create') }}">Create</a></li>
-                    </ul>
-                </li>
+                @endif
+                @can('users.list')
+                    <li>
+                        <a href="{{ route('users.index') }}">Users</a>
+                    </li>
+                @endcan
             </menu>
         </nav>
     @endauth
