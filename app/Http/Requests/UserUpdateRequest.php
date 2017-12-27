@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 /**
  * Class ProfileUpdateRequest
@@ -16,7 +17,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property array role_ids
  * @property array parent_ids
  * @property array child_ids
- *
+ * @property bool  approve
  *
  */
 class UserUpdateRequest extends FormRequest
@@ -38,7 +39,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'name'         => 'string|min:2',
             'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 request()->id),
@@ -58,6 +59,14 @@ class UserUpdateRequest extends FormRequest
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
+            'approve'      => 'boolean',
         ];
+
+        if($this->isMethod(Request::METHOD_PATCH)){
+            $rules['email'] = sprintf('nullable|email|max:255|unique:users,email,%s', request()->id);
+            $rules['phone'] = sprintf('nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s', request()->id);
+        }
+
+        return $rules;
     }
 } 
