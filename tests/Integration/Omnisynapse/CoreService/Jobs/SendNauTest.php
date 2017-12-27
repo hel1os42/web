@@ -61,7 +61,7 @@ class SendNauTest extends TestCase
             'destination_account_id' => $sendNau['destinationAccountId'],
             'amount'                 => $sendNau['amount'],
             'status'                 => $sendNau['status'],
-            'created_at'             => $sendNau['createdAt'],
+            'created_at'             => $sendNau['createdAt']->format('Y-m-d\TH:i:sO'),
             'type'                   => $sendNau['type'],
             'feeTransactions'        => $sendNau['feeTransactions']
         ]));

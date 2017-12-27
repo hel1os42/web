@@ -28,7 +28,7 @@ class Transaction implements \JsonSerializable
     /** @var string */
     public $status;
 
-    /** @var null|string */
+    /** @var string */
     public $created_at;
 
     /** @var string */
@@ -48,7 +48,7 @@ class Transaction implements \JsonSerializable
             'destination_account_id' => $this->getDestinationAccountId(),
             'amount'                 => $this->getAmount(),
             'status'                 => $this->getStatus(),
-            'created_at'             => null === $this->getCreatedAt() ? null : $this->getCreatedAt()->format('Y-m-d\TH:i:sO'),
+            'created_at'             => $this->getCreatedAt()->format('Y-m-d\TH:i:sO'),
             'type'                   => $this->getType(),
             'feeTransactions'        => $this->getFeeTransactions(),
         ];
@@ -95,11 +95,11 @@ class Transaction implements \JsonSerializable
     }
 
     /**
-     * @return Carbon|null
+     * @return Carbon
      */
-    public function getCreatedAt(): ?Carbon
+    public function getCreatedAt(): Carbon
     {
-        return null === $this->created_at ? null : Carbon::parse($this->created_at);
+        return Carbon::parse($this->created_at);
     }
 
     /**

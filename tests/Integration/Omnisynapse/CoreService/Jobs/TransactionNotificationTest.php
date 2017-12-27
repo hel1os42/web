@@ -82,7 +82,7 @@ class TransactionNotificationTest extends TestCase
             'destination_account_id' => $transaction['sendTo'],
             'amount'                 => $transaction['amount'],
             'status'                 => $transaction['status'],
-            'created_at'             => $transaction['createdAt'],
+            'created_at'             => $transaction['createdAt']->format('Y-m-d\TH:i:sO'),
             'type'                   => $transaction['type'],
             'feeTransactions'        => $transaction['feeTransactions']
         ]));
