@@ -58,10 +58,10 @@ trait RelationsTrait
     }
 
     /**
-     * @return Collection
+     * @return Relations\HasMany
      * @throws \App\Exceptions\TokenException
      */
-    public function offers(): Collection
+    public function offers(): Relations\HasMany
     {
         return $this->getAccountForNau()->offers();
     }
