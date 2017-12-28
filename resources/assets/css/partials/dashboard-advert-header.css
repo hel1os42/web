@@ -1,0 +1,71 @@
+/* dashboard-advert-header */
+
+.dashboard-advert-header {
+    position: relative;
+    margin-bottom: 32px;
+    background: no-repeat center center;
+    background-size: cover;
+}
+.dashboard-advert-header > * {
+    position: relative;
+    z-index: 2;
+}
+.dashboard-advert-header:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,.7);
+}
+.dashboard-advert-header .advert-header {
+    margin-left: 150px;
+    padding: 32px 0 16px;
+}
+.dashboard-advert-header .advert-header .create-offer {
+    float: right;
+    margin: 0 0 8px 15px;
+}
+.dashboard-advert-header .offer-logo {
+    float: left;
+    padding: 32px 0 16px;
+    width: 120px;
+}
+.dashboard-advert-header .offer-logo img {
+    width: 120px;
+    display: block;
+}
+.dashboard-advert-header .advert-header .advert-info {
+    margin-bottom: 16px;
+}
+.dashboard-advert-header .advert-header .advert-name {
+    font-size: 140%;
+    font-weight: bold;
+}
+.dashboard-advert-header .stat-info {
+    padding: 8px 0 0;
+    font-size: 120%;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+}
+.dashboard-advert-header .stat-info span {
+    display: inline-block;
+    padding: 12px 0 10px 48px;
+    background: no-repeat left center;
+}
+.dashboard-advert-header .stat-info span.icon-offers {
+    padding-left: 63px;
+    background: url(../../img/icon-offers.png) no-repeat 15px center;
+}
+.dashboard-advert-header .stat-info span.icon-nau {
+    background-image: url(../../img/icon-nau.png);
+}
+.dashboard-advert-header .stat-info span.icon-statistic {
+    padding-left: 60px;
+    background-image: url(../../img/icon-statistic.png);
+}
+.dashboard-advert-header .stat-info strong {
+    padding-left: 15px;
+    font-size: 120%;
+}
