@@ -2,6 +2,7 @@
 
 @section('title', 'Create user')
 @section('content')
+    <div class="col-md-9" style="margin-left:200px; margin-top: 50px">
     @if (isset($errors))
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -34,4 +35,5 @@
             <button type="submit">Create</button>
         </div>
     </form>
+    </div>
 @stop
