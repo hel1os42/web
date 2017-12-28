@@ -1,53 +1,62 @@
-            <nav class="navbar navbar-default">
-                <div class="container-fluid">
-                    <div class="navbar-minimize">
-                        <button id="minimizeSidebar" class="btn btn-round btn-white btn-fill btn-just-icon">
-                    		<i class="ti-arrow-left"></i>
-                        </button>
-                    </div>
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <span class="navbar-brand"> @yield('title') </span>
-                    </div>
-                    <div class="collapse navbar-collapse">
-                        <ul class="nav navbar-nav navbar-right">
-                            @if(!is_null(auth()->user()) && auth()->user()->isImpersonated())
-                            <li>
-                                <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle">
-                                    <i class="ti-shift-right"></i>
-                                    <p>Leave impersonation</p>
-                                </a>
-                            </li>
-                            @endif
-                            <li>
-                                @auth
-                                <a href="{{route('profile')}}" class="dropdown-toggle">
-                                    <i class="ti-user"></i>
-                                    <p>Profile</p>
-                                </a>
-                                @endauth
-                                @guest
-                                <a href="{{route('loginForm')}}" class="dropdown-toggle">
-                                    <p>Login</p>
-                                    <i class="ti-shift-left"></i>
-                                </a>
-                                @endguest
-                            </li>
-                            @auth
-							<li>
-                                <a href="{{route('logout')}}" class="dropdown-toggle">
-                                    <i class="ti-shift-right"></i>
-                                    <p>Logout</p>
-                                </a>
-                            </li>
-                            @endauth
-                            <li class="separator hidden-lg hidden-md"></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+@guest
+    <script>
+        /* анонимов со всех страниц, кроме /auth/* сразу перенаправляем на логинацию */
+        if (location.pathname.substr(0, 6) !== '/auth/') location.pathname = '/auth/login';
+    </script>
+@endguest
+
+<div class="container">
+    <div class="clearfix">
+        <div class="logo pull-left">
+            <a href="/"><img src="{{ asset('img/logo.png') }}" alt="nau.io"></a>
+        </div>
+        @auth
+            <div class="controls pull-right">
+                @if(!is_null(auth()->user()))
+                    @if(auth()->user()->isImpersonated())
+                            <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle" style="width:auto">
+                                <i class="fa fa-fighter-jet"></i>
+                                Leave impersonation
+                            </a>
+                    @endif
+                @endif
+                <a href="{{ route('profile') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
+                <a href="{{ route('logout') }}" title="Logout"><i class="fa fa-sign-out"></i></a>
+            </div>
+            <div class="advert-name pull-right">
+                {{ auth()->user()->name }}
+            </div>
+        @endauth
+    </div>
+    @auth
+        <nav>
+            <menu>
+                <li><a href="{{ route('home') }}">Home</a></li>
+                @if(auth()->user()->isAdvertiser())
+                <li><a href="{{ route('referrals') }}">Referrals</a></li>
+                <li><a href="{{ route('profile.place.show') }}">Place show</a></li>
+                <li><a href="{{ route('profile.place.offers') }}">Place offers</a></li>
+                <li class="sub-menu">
+                    <a href="{{ route('advert.offers.index') }}">Offers</a>
+                    <ul>
+                        <li><a href="{{ route('advert.offers.index') }}">Dashboard</a></li>
+                        <li><a href="{{ route('advert.offers.create') }}">Create offer</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="{{ route('transactionList') }}">Operations</a>
+                    <ul>
+                        <li><a href="{{ route('transactionList') }}">Transactions list</a></li>
+                        <li><a href="{{ route('transactionCreate') }}">Create transaction</a></li>
+                    </ul>
+                </li>
+                @endif
+                @can('users.list')
+                    <li>
+                        <a href="{{ route('users.index') }}">{{auth()->user()->isAgent() ? 'Advertisers' : 'Users'}}</a>
+                    </li>
+                @endcan
+            </menu>
+        </nav>
+    @endauth
+</div>

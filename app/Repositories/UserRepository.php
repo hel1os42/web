@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -12,6 +11,7 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  * NS: App\Repositories
  *
  * @method User find($id, $columns = ['*'])
+ * @method User setApproved(bool $approve)
  * @method User update(array $attributes, $id)
  * @method User create(array $attributes)
  * @method Collection|User[] findByField($field, $value, $columns = ['*'])

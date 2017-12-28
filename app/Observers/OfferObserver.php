@@ -31,7 +31,7 @@ class OfferObserver
 
         $activeOffersInPlaceStatus = $place->active_offers_count > 0;
 
-        if ($activeOffersInPlaceStatus != $place->hasActiveOffers()) {
+        if ($activeOffersInPlaceStatus !== $place->hasActiveOffers()) {
             $place->setHasActiveOffers($activeOffersInPlaceStatus)->update();
         }
     }

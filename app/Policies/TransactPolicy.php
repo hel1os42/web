@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Models\NauModels\Account;
+use App\Models\NauModels\Transact;
 use App\Models\User;
 
 class TransactPolicy extends Policy
@@ -9,20 +11,44 @@ class TransactPolicy extends Policy
     /**
      * @param User $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function index(User $user)
+    public function index(User $user, User $byUser): bool
     {
-        return $user->hasAnyRole();
+        return $user->hasAnyRole()
+               && ($user->equals($byUser)
+                   || ($user->isAgent() && $user->hasChild($byUser))
+                   || $user->isAdmin());
     }
 
     /**
      * @param User $user
+     * @param Account $sourceAccount
      *
-     * @return mixed
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user, Account $sourceAccount): bool
     {
-        return $user->hasAnyRole();
+        return $user->hasAnyRole()
+               && ($user->equals($sourceAccount->owner)
+                   || $user->isAdmin());
+    }
+
+    /**
+     * @param User     $user
+     * @param Transact $transaction
+     *
+     * @return bool
+     */
+    public function show(User $user, Transact $transaction): bool
+    {
+        $sourceUser      = $transaction->source->owner;
+        $destinationUser = $transaction->destination->owner;
+
+        return $user->hasAnyRole()
+               && ($user->equals($sourceUser)
+                   || $user->equals($destinationUser)
+                   || ($user->isAgent() && ($user->hasChild($sourceUser) || $user->hasChild($destinationUser)))
+                   || $user->isAdmin());
     }
 }

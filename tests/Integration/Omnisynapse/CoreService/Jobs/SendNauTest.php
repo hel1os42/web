@@ -38,7 +38,7 @@ class SendNauTest extends TestCase
             'destinationAccountId' => $faker->randomDigitNotNull,
             'amount'               => $faker->randomFloat(),
             'status'               => 'PAID',
-            'createdAt'           => Carbon::parse($faker->time()),
+            'createdAt'            => Carbon::parse($faker->time()),
             'type'                 => 'P2P',
             'feeTransactions'      => [
                 $feeTransaction
