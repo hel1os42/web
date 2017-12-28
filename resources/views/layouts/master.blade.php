@@ -13,6 +13,7 @@
             </header>
 
             <main class="clearfix">
+                @include('partials.msg')
                 @yield('content')
             </main>
         </div>

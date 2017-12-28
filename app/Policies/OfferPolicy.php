@@ -85,7 +85,7 @@ class OfferPolicy extends Policy
      */
     public function create(User $user): bool
     {
-        return $user->isAdvertiser();
+        return $user->place !== null && $user->isAdvertiser();
     }
 
     /**
