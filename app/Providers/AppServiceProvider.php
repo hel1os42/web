@@ -11,7 +11,9 @@ use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Offer::observe(OfferObserver::class);
+
+        ViewFacade::composer(
+            ['advert.*'], function (View $view) {
+                $authUser = auth()->user();
+                $authUser->load('accounts');
+                $view->with('authUser', $authUser->toArray());
+            }
+        );
     }
 
     /**

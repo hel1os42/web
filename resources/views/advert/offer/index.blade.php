@@ -1,53 +1,44 @@
-@extends('layouts.master')
+@extends('advert.layout')
 
 @section('title', 'Dashboard')
 
 @section('content')
-@php
-    foreach ($data as &$offer) {
-        $offer = array_merge(['picture_url' => $offer['picture_url']], $offer);
-    }
-@endphp
 
 <div class="container">
-
-    <h1>Offers</h1>
-
     <div class="row">
         <div class="col-xs-12 dashboard-advert-header" style="background-image: url({{ asset('img/advert_img.png') }});">
-
-            <div class="offer-logo"><img src="{{ auth()->user()->picture_url }}" alt="offer name"></div>
+            <div class="offer-logo"><img src="{{ $authUser['picture_url'] }}" alt="offer name"></div>
             <div class="advert-header-wrap">
                 <div class="advert-header">
-                    <div class="create-offer"><a href="/advert/offers/create" class="btn-nau btn-create-offer">Create offer</a></div>
+                    <div class="create-offer"><a href="{{ route('advert.offers.create') }}" class="btn-nau btn-create-offer">Create offer</a></div>
                     <div class="advert-info">
-                        <p class="advert-name">{{ auth()->user()->name }}</p>
-                        <p>{{ auth()->user()->phone }}, {{ auth()->user()->email }}</p>
+                        <p class="advert-name">{{ $authUser['name'] }}</p>
+                        <p>{{ $authUser['phone'] }}, {{ $authUser['email'] }}</p>
                     </div>
                     <div class="stat-info clearfix"><!-- not need .row -->
                         <div class="col-xs-4">
                             <span class="icon-offers">Offers:</span>
-                            <strong>{{ count($data) }}<!-- TODO: когда будет пагинация - это сломается --></strong>
+                            <strong>{{ $total }}</strong>
                         </div>
                         <div class="col-xs-4">
                             <span class="icon-nau">NAU:</span>
-                            <strong>{{ auth()->user()->getAccountForNau()->amount }}</strong>
+                            <strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong>
                         </div>
-                        <div class="col-xs-4">
-                            <span class="icon-statistic">Statistic:</span>
-                            <strong>??? 1</strong>
-                        </div>
+                        @if(false)
+                            <div class="col-xs-4">
+                                <span class="icon-statistic">Statistic:</span>
+                                <strong>??? 1</strong>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <!-- if (have_childrens_offers) -->
 
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#tab_your_offers">Your Offers</a></li>
-            <li><a data-toggle="tab" href="#tab_childrens_offers">Children's Offers</a></li>
         </ul>
 
 
@@ -55,12 +46,6 @@
 
             <div id="tab_your_offers" class="tab-pane fade in active">
 
-                <!-- endif -->
-
-                <!--
-                    TODO: когда-нибудь сделать пагинацию и на стороне сервера
-                    https://laravel.com/docs/5.5/pagination
-                -->
                 <table id="table_your_offers" class="display">
                     <thead>
                     <tr>
@@ -88,14 +73,14 @@
                     </tfoot>
                     <tbody>
                         @php
-                            $counter = 1;
+                            $counter = $from;
                         @endphp
                         @foreach ($data as $offer)
                             <tr>
                                 <td>{{ $counter++ }}</td>
-                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture"></span></td>
+                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td><span data-df="ymd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="ymd">{{ $offer['finish_date'] }}</span></td>
+                                <td><span data-df="yyyy/mm/dd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="yyyy/mm/dd">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td>{{ $offer['status'] }}</td>
@@ -108,7 +93,7 @@
                                                 <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9" data-fix-category="true">{{ $offer['category_id'] }}</span></p>
                                             </div>
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"></span></p>
+                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
                                             </div>
                                         </div>
                                         <div class="row set">
@@ -143,9 +128,8 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-3">Created at:</span> <span class="col-xs-9" data-df="ymd hms">{{ $offer['created_at'] }}</span></p>
-                                                <p class="row"><span class="title col-xs-3">Updated at:</span> <span class="col-xs-9" data-df="ymd hms">{{ $offer['updated_at'] }}</span></p>
-                                                <p class="row"><span class="title col-xs-3">Deleted at:</span> <span class="col-xs-9" data-df="ymd hms">{{ $offer['deleted_at'] }}</span></p>
+                                                <p class="row"><span class="title col-xs-3">Created at:</span> <span class="col-xs-9" data-df="yyyy/mm/dd hh:MM:ss">{{ $offer['created_at'] }}</span></p>
+                                                <p class="row"><span class="title col-xs-3">Updated at:</span> <span class="col-xs-9" data-df="yyyy/mm/dd hh:MM:ss">{{ $offer['updated_at'] }}</span></p>
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
@@ -160,26 +144,22 @@
                         @endforeach
                     </tbody>
                 </table>
-
+                @include('pagination.advert')
             <!-- if (have_childrens_offers) -->
             </div>
 
-            <div id="tab_childrens_offers" class="tab-pane fade">
-                <p>Not realised</p>
-                <!-- такая же таблица, но + 1 поле: "Advert_name" - реальный owner оффера -->
-            </div>
         </div>
     </div>
 </div>
 
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/dashboard-advert-header.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('jquery/datatables.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('jquery/datatables.fix.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables.fix.css') }}">
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('jquery/datatables.min.js') }}"></script>
+    <script src="{{ asset('js/datatables.min.js') }}"></script>
     <script>
         window.addEventListener('load', function(){
 
@@ -223,6 +203,14 @@
             }
 
         });
+    </script>
+
+    <script>
+        function imgError(image) {
+            image.onerror = "";
+            image.src = "/img/imagenotfound.svg";
+            return true;
+        }
     </script>
 @endpush
 

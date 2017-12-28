@@ -36,7 +36,9 @@ class RegisterController extends AuthController
             'referrer_id' => $referrerUser->id
         ]);
 
-        return response()->render('auth.register', $data);
+        return request()->wantsJson()
+            ? response()->render('', $data)
+            : redirect()->route('loginForm');
     }
 
     /**

@@ -6,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
 
-    @include('styles')
+    @include('advert.styles')
     @stack('styles')
 </head>
 
@@ -15,7 +15,7 @@
 <div id="mainwrapper">
     <header>
         @section('header')
-            @include('partials.header')
+            @include('advert.partials.header')
         @show
     </header>
 
@@ -26,13 +26,13 @@
 
 <footer>
     @section('footer')
-        @include('partials.footer')
+        @include('advert.partials.footer')
     @show
 </footer>
 
 </body>
 
-@include('partials.javascripts')
+@include('advert.scripts')
 @stack('scripts')
 
 </html>

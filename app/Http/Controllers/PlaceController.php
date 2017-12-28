@@ -87,7 +87,7 @@ class PlaceController extends Controller
             $place->append('offers');
         }
 
-        return \response()->render('profile.place.show', $place->toArray());
+        return \response()->render('advert.profile.place.show', $place->toArray());
     }
 
     /**
@@ -123,11 +123,11 @@ class PlaceController extends Controller
     {
         $this->authorize('my.place.create');
 
-        if ($placesRepository->existsByUser($this->auth->user())) {
-            return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
-        }
+//        if ($placesRepository->existsByUser($this->auth->user())) {
+//            return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
+//        }
 
-        return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+        return \response()->render('advert.profile.place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('advert.layout')
 
 @section('title', 'Create offer')
 
@@ -69,7 +69,6 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/leaflet.css') }}">
 @endpush
 
 @push('scripts')
@@ -178,6 +177,69 @@
                 });
             }).trigger('change');
         }
+
+        $('#createOfferForm').on('submit', function (e){
+            e.preventDefault();
+
+            var timeframes = [];
+            if (true === $('#tab_wdt1').hasClass('active')){
+                var weekdays = {
+                    "all" : ["mo", "tu", "we", "th", "fr", "su", "sa"],
+                    "working" : ["mo", "tu", "we", "th", "fr"],
+                    "weekend" : ["su", "sa"]
+                };
+                var workingDaysState = $('input[name="____wd_working_days"]').is(':checked');
+                var weekendDaysState = $('input[name="____wd_weekend"]').is(':checked');
+                var startTime = $('input[name="start_time"]').val();
+                var finishTime = $('input[name="finish_time"]').val();
+                if(true === workingDaysState && true === weekendDaysState) {
+                    timeframes.push(compactTimeframe(weekdays.all, startTime, finishTime));
+                } else if (true === workingDaysState) {
+                    timeframes.push(compactTimeframe(weekdays.working, startTime, finishTime));
+                } else if (true === weekendDaysState){
+                    timeframes.push(compactTimeframe(weekdays.weekend, startTime, finishTime));
+                }
+            } else if (true === $('#tab_wdt2').hasClass('active')){
+                var weekdays = {};
+                $('[data-relation="check_wd8"]:checked, [data-relation="check_wd9"]:checked').each(function(){
+                    currentWeekday = $(this).data('weekday');
+                    timeFrom = $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val();
+                    timeTo = $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val();
+                    key = timeFrom + '-' + timeTo;
+                    weekdays[key] = (Array.isArray(weekdays[key])) ? weekdays[key].concat(currentWeekday) : new Array(currentWeekday);
+                });
+                $.each(weekdays, function(times, days){
+                    timesArray = times.split('-');
+                    timeframes.push(compactTimeframe(days, timesArray[0], timesArray[1]));
+                });
+            }
+console.log(timeframes);
+            var formData = $(this).serializeArray();
+            formData.push({"name" : "timeframes", "value" : timeframes});
+
+            console.log(formData);
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                data: formData,
+                dataType: "json",
+                success: function(data)
+                      {
+                          console.log(data);
+                      }
+            });
+
+            function compactTimeframe(days, from, to){
+                return {
+                    "from": from + ':00.000000+0000',
+                    "to": to + ':00.000000+0000',
+                    "days": days
+                };
+            }
+        });
 
 	</script>
 @endpush
