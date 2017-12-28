@@ -3,6 +3,16 @@
 /** @var \Illuminate\Routing\Router $router */
 $router = app('router');
 
+$router->group(['middleware' => 'investor', 'prefix' => 'service'], function () use ($router) {
+    $router->get('nau/{user}', 'Service\NauController@getAccount');
+    $router->post('crosschange', 'Service\NauController@exchangeNau');
+    $router->post('user/create', 'Service\NauController@createUser');
+});
+/**
+ * register
+ */
+$router->post('users', 'UserController@register')->name('register');
+
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
@@ -52,11 +62,6 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
-
-    /**
-     * register
-     */
-    $router->post('users', 'UserController@register')->name('register');
 });
 
 //---- Unauthorized users
@@ -150,7 +155,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
            ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
-           ->where('reansactionId', '[0-9]+')
            ->name('transactionList');
 
     /**

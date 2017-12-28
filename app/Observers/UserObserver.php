@@ -12,7 +12,7 @@ class UserObserver
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function creating(User $user)
+    public function created(User $user)
     {
         if (is_null(auth()->user())) {
             $user->roles()->attach([
