@@ -51,6 +51,14 @@ trait RoleTrait
     }
 
     /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return $this->hasRoles([Role::ROLE_USER]);
+    }
+
+    /**
      * @return mixed
      */
     public function hasAnyRole()
