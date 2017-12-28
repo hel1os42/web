@@ -5,6 +5,8 @@ namespace App\Models\User;
 use App\Models\ActivationCode;
 use App\Models\AdditionalField;
 use App\Models\NauModels\Account;
+use App\Models\NauModels\Offer;
+use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\Place;
 use App\Models\Role;
@@ -58,12 +60,15 @@ trait RelationsTrait
     }
 
     /**
-     * @return Relations\HasMany
-     * @throws \App\Exceptions\TokenException
+     * @return Relations\BelongsToMany
      */
-    public function offers(): Relations\HasMany
+    public function offers(): Relations\BelongsToMany
     {
-        return $this->getAccountForNau()->offers();
+        return $this->belongsToMany(Offer::class, (new Redemption)->getTable())
+                    ->withPivot([
+                        'created_at',
+                        'points',
+                    ]);
     }
 
     /**
