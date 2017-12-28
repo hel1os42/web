@@ -16,7 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TransactionController extends Controller
 {
+    /**
+     * @var TransactionRepository
+     */
     private $transactionRepository;
+
+    /**
+     * @var AccountRepository
+     */
     private $accountRepository;
 
     public function __construct(
@@ -40,13 +47,13 @@ class TransactionController extends Controller
      */
     public function createTransaction(): Response
     {
-        $this->authorize('transactions.create');
+        $sourceAccount = $this->user()->getAccountForNau();
+
+        $this->authorize('transactions.create', $sourceAccount);
 
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
-            'source' => $this->user()
-                             ->getAccountFor(Currency::NAU)
-                             ->getAddress()
+            'source' => $sourceAccount->getAddress(),
         ]));
     }
 
@@ -63,7 +70,7 @@ class TransactionController extends Controller
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
 
-        $this->authorize('transactions.create', $sourceAccount->owner);
+        $this->authorize('transactions.create', $sourceAccount);
 
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);

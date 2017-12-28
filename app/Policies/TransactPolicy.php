@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
 use App\Models\User;
 
@@ -22,14 +23,14 @@ class TransactPolicy extends Policy
 
     /**
      * @param User $user
-     * @param User $sourceUser
+     * @param Account $sourceAccount
      *
      * @return bool
      */
-    public function create(User $user, User $sourceUser): bool
+    public function create(User $user, Account $sourceAccount): bool
     {
         return $user->hasAnyRole()
-               && ($user->equals($sourceUser)
+               && ($user->equals($sourceAccount->owner)
                    || $user->isAdmin());
     }
 

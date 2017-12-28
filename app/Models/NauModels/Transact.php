@@ -41,7 +41,7 @@ class Transact extends AbstractNauModel
         $this->primaryKey = 'txid';
 
         $this->fillable = [
-            'id', 'source_account_id', 'destination_account_id', 'amount', 'type'
+            'id', 'source_account_id', 'destination_account_id', 'amount'
         ];
 
         $this->casts = [

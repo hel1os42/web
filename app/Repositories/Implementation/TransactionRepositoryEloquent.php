@@ -51,8 +51,7 @@ class TransactionRepositoryEloquent extends BaseRepository implements Transactio
         $attributes = [
             'amount' => $amount,
             'source_account_id' => $sourceAccount->id,
-            'destination_account_id' => $destinationAccount->id,
-            'type' => Transact::TYPE_P2P
+            'destination_account_id' => $destinationAccount->id
         ];
 
         return $this->create($attributes);
