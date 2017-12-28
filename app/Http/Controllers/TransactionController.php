@@ -77,11 +77,19 @@ class TransactionController extends Controller
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
+        $noFee              = false;
 
-        $this->authorize('transactions.create', $sourceAccount);
+        $authorizeAbility = 'transactions.create';
+
+        if($request->has('no_fee')){
+            $noFee = true;
+            $authorizeAbility = 'transactions.createNoFee';
+        }
+
+        $this->authorize($authorizeAbility, $sourceAccount, $destinationAccount);
 
         $transaction = $this->transactionRepository
-            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
+            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount, $noFee);
 
         return response()->render(
             null === $transaction->id
