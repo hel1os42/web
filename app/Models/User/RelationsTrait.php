@@ -61,7 +61,7 @@ trait RelationsTrait
      * @return Collection
      * @throws \App\Exceptions\TokenException
      */
-    public function offers()
+    public function offers(): Collection
     {
         return $this->getAccountForNau()->offers();
     }
