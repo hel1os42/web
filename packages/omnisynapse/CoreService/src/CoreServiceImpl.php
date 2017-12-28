@@ -139,8 +139,8 @@ class CoreServiceImpl implements CoreService
         return new OfferDeleted($offer, $this);
     }
 
-    public function crossChange(Account $account, float $amount, bool $isIncoming): AbstractJob
+    public function crossChange(Account $account, string $ethAddress, float $amount, bool $isIncoming): AbstractJob
     {
-        return new CrossChange($account, $amount, $isIncoming, $this);
+        return new CrossChange($account, $ethAddress, $amount, $isIncoming, $this);
     }
 }

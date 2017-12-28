@@ -61,7 +61,7 @@ interface CoreService
      */
     public function offerDeleted(Offer $offer): AbstractJob;
 
-    public function crossChange(Account $account, float $amount, bool $isIncoming): AbstractJob;
+    public function crossChange(Account $account, string $ethAddress, float $amount, bool $isIncoming): AbstractJob;
 
     public function getClient(): Client;
 }

@@ -10,6 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * NS: App\Http\Requests\Service
  *
  * @property string address
+ * @property string ethAddress
  * @property string direction
  * @property double amount
  */
@@ -26,11 +27,12 @@ class ExchangeNau extends FormRequest
         $min = $now->copy()->subMinutes(2);
 
         return [
-            'address'   => 'required|exists:pgsql_nau.account,addr',
-            'direction' => 'required|in:in,out',
-            'amount'    => 'required|numeric',
-            'timestamp' => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
-            'signature' => sprintf('required|string')
+            'ethAddress' => 'required|string|size:42|regex:/^0x[a-fA-F0-9]{40}$/',
+            'address'    => 'required|exists:pgsql_nau.account,addr',
+            'direction'  => 'required|in:in,out',
+            'amount'     => 'required|numeric',
+            'timestamp'  => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
+            'signature'  => sprintf('required|string')
         ];
     }
 }
