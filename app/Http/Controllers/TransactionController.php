@@ -41,7 +41,6 @@ class TransactionController extends Controller
 
     /**
      * @return Response
-     * @throws \App\Exceptions\TokenException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
@@ -53,7 +52,7 @@ class TransactionController extends Controller
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
             'source' => $this->user()
-                ->getAccountForNau()
+                ->getAccountFor(Currency::NAU)
                 ->getAddress()
         ]));
     }
