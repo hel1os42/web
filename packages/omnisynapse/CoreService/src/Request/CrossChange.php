@@ -9,12 +9,14 @@ namespace OmniSynapse\CoreService\Request;
 class CrossChange implements \JsonSerializable
 {
     public $nauAddress;
+    public $ethAddress;
     public $amount;
     public $direction;
 
-    public function __construct(string $nauAddress, string $amount, string $direction)
+    public function __construct(string $nauAddress, string $ethAddress, string $amount, string $direction)
     {
         $this->nauAddress = $nauAddress;
+        $this->ethAddress = $ethAddress;
         $this->direction  = $direction;
         $this->amount     = $amount;
     }
