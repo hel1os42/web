@@ -56,6 +56,7 @@ class AuthServiceProvider extends ServiceProvider
 
         'transactions.list'   => 'TransactPolicy@index',
         'transactions.create' => 'TransactPolicy@create',
+        'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
         'transaction.show'    => 'TransactPolicy@show',
 
         'users.create'          => 'UserPolicy@create',
