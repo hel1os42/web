@@ -125,7 +125,7 @@ class TransactionControllerTest extends TestCase
         ];
 
         $this->user->method('getId')->willReturn($userData['id']);
-        $this->user->method('getAccountFor')->willReturn($this->account);
+        $this->user->method('getAccountForNau')->willReturn($this->account);
     }
 
     private function configureTestAccount()
@@ -172,7 +172,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('transactions.create')
+            ->with('transactions.create', $this->account)
             ->willReturn(true);
 
         $responseFactory
@@ -272,7 +272,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('transactions.create')
+            ->with('transactions.create', $this->account)
             ->willReturn(true);
 
         $responseFactory
