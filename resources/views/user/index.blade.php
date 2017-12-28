@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'NAU show Users list')
+@section('title', 'NAU show advertiser list')
 
 @section('content')
     <style>
@@ -8,11 +8,11 @@
             padding: 10px;
         }
     </style>
-    <h1>Users list page</h1>
+    <h1>Advertiser list</h1>
     <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
         <div class="card card-very-long">
 
-            <a href="{{route('users.create')}}" style="float:right" class="btn-link">+ Add new user</a>
+            <a href="{{route('users.create')}}" style="float:right" class="btn-link">+ Add new advertiser</a>
             <div id="admin-users-search">
                 <label for="phone">By email:</label>
                 <input type="text" name="email" id="email" value="">

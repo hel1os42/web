@@ -14,12 +14,10 @@
             <div class="controls pull-right">
                 @if(!is_null(auth()->user()))
                     @if(auth()->user()->isImpersonated())
-                        <li>
-                            <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle">
-                                <i class="ti-shift-right"></i>
-                                <p>Leave impersonation</p>
+                            <a href="{{ route('stop_impersonate') }}" class="dropdown-toggle" style="width:auto">
+                                <i class="fa fa-fighter-jet"></i>
+                                Leave impersonation
                             </a>
-                        </li>
                     @endif
                 @endif
                 <a href="{{ route('profile') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
@@ -55,7 +53,7 @@
                 @endif
                 @can('users.list')
                     <li>
-                        <a href="{{ route('users.index') }}">Users</a>
+                        <a href="{{ route('users.index') }}">{{auth()->user()->isAgent() ? 'Advertisers' : 'Users'}}</a>
                     </li>
                 @endcan
             </menu>
