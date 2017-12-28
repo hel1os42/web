@@ -28,13 +28,13 @@ class NauController extends Controller
         $address = $request->address;
         $account = $accountRepository->findByAddressOrFail($address);
 
-        $job = $coreService->crossChange($account, $request->amount, $request->direction === 'in');
+        $job = $coreService->crossChange($account, $request->ethAddress, $request->amount, $request->direction === 'in');
 
         $result = null;
 
         $eventsDispatcher->listen(CrossChangeSuccess::class, function (CrossChangeSuccess $crossChange) use (&$result) {
             $result = \response()->render('', $crossChange, Response::HTTP_CREATED, route('transactionList', [
-                'transactionId' => $crossChange->transaction_id
+                'transactionId' => $crossChange->nau->transaction_id
             ]));
         });
 

@@ -28,11 +28,14 @@ class CrossChange extends AbstractJob
      * @var bool
      */
     private $isIncoming;
+    /** @var string */
+    private $ethAddress;
 
-    public function __construct(Account $account, float $amount, bool $isIncoming, CoreService $coreService)
+    public function __construct(Account $account, string $ethAddress, float $amount, bool $isIncoming, CoreService $coreService)
     {
         parent::__construct($coreService);
 
+        $this->ethAddress = $ethAddress;
         $this->account    = $account;
         $this->amount     = $amount;
         $this->isIncoming = $isIncoming;
@@ -53,7 +56,7 @@ class CrossChange extends AbstractJob
     /** @return null|\JsonSerializable */
     public function getRequestObject(): ?\JsonSerializable
     {
-        return new CrossChangeRequest($this->account->address, $this->amount, $this->isIncoming ? 'in' : 'out');
+        return new CrossChangeRequest($this->account->address, $this->ethAddress, $this->amount, $this->isIncoming ? 'in' : 'out');
     }
 
     /** @return object */
