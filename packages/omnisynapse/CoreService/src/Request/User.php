@@ -63,11 +63,11 @@ class User implements \JsonSerializable
     }
 
     /**
-     * @param string $username
+     * @param null|string $username
      *
      * @return User
      */
-    public function setUsername(string $username): User
+    public function setUsername(?string $username): User
     {
         $this->username = $username;
 

@@ -28,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
+ * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
  * @property int                          offers_count
@@ -40,6 +41,8 @@ use Illuminate\Support\Collection;
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
+ * @method static static|Builder filterByActiveOffersAvailability()
+ * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
  */
 class Place extends Model
 {
@@ -60,16 +63,17 @@ class Place extends Model
         $this->initUuid();
 
         $this->casts = [
-            'id'          => 'string',
-            'name'        => 'string',
-            'description' => 'string',
-            'about'       => 'string',
-            'address'     => 'string',
-            'latitude'    => 'double',
-            'longitude'   => 'double',
-            'radius'      => 'integer',
-            'stars'       => 'integer',
-            'is_featured' => 'boolean'
+            'id'                => 'string',
+            'name'              => 'string',
+            'description'       => 'string',
+            'about'             => 'string',
+            'address'           => 'string',
+            'latitude'          => 'double',
+            'longitude'         => 'double',
+            'radius'            => 'integer',
+            'stars'             => 'integer',
+            'is_featured'       => 'boolean',
+            'has_active_offers' => 'boolean',
         ];
 
         $this->hidden = [
@@ -213,6 +217,14 @@ class Place extends Model
         return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
     }
 
+    /**
+     * @return bool
+     */
+    public function hasActiveOffers(): bool
+    {
+        return $this->has_active_offers;
+    }
+
     /** @return bool */
     public function isFeatured(): bool
     {
@@ -328,6 +340,18 @@ class Place extends Model
     }
 
     /**
+     * @param bool $hasActiveOffers
+     *
+     * @return Place
+     */
+    public function setHasActiveOffers(bool $hasActiveOffers): Place
+    {
+        $this->has_active_offers = $hasActiveOffers;
+
+        return $this;
+    }
+
+    /**
      * @param Builder $builder
      * @param User    $user
      *
@@ -406,6 +430,30 @@ class Place extends Model
     }
 
     /**
+     * @param Builder     $builder
+     * @param string|null $lat
+     * @param string|null $lng
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
+    {
+        if (isset($lat, $lng)) {
+            return $builder->orderByRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((latitude - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(latitude * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((longitude - %2$s) * 
+        PI()/180 / 2), 2))))',
+                $this->getConnection()->getPdo()->quote($lat),
+                $this->getConnection()->getPdo()->quote($lng)));
+        }
+
+        return $builder;
+    }
+
+    /**
      * @param Builder $builder
      * @param array   $categoryIds
      *
@@ -418,6 +466,18 @@ class Place extends Model
             $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
         });
     }
+
+    /**
+     * @param Builder $builder
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeFilterByActiveOffersAvailability(Builder $builder): Builder
+    {
+        return $builder->where('has_active_offers', '=', true);
+    }
+
 
     /**
      * @return array

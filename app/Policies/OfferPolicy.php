@@ -73,7 +73,9 @@ class OfferPolicy extends Policy
      */
     public function destroy(User $user, Offer $offer): bool
     {
-        return $user->isAdvertiser() && $offer->isOwner($user);
+        return ($user->isAdvertiser() && $offer->isOwner($user))
+               || $user->isAdmin()
+               || ($user->isAgent() && $user->hasChild($offer->getOwner()));
     }
 
     /**
@@ -83,7 +85,7 @@ class OfferPolicy extends Policy
      */
     public function create(User $user): bool
     {
-        return $user->isAdvertiser();
+        return $user->place !== null && $user->isAdvertiser();
     }
 
     /**
@@ -91,9 +93,11 @@ class OfferPolicy extends Policy
      *
      * @return bool
      */
-    public function update(User $user): bool
+    public function update(User $user, Offer $offer): bool
     {
-        return $user->isAdvertiser();
+        return ($user->isAdvertiser() && $offer->isOwner($user))
+               || $user->isAdmin()
+               || ($user->isAgent() && $user->hasChild($offer->getOwner()));
     }
 
     /**
@@ -104,6 +108,8 @@ class OfferPolicy extends Policy
      */
     public function pictureStore(User $user, Offer $offer): bool
     {
-        return $user->isAdvertiser() && $offer->isOwner($user);
+        return ($user->isAdvertiser() && $offer->isOwner($user))
+               || $user->isAdmin()
+               || ($user->isAgent() && $user->hasChild($offer->getOwner()));
     }
 }

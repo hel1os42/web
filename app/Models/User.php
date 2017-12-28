@@ -7,7 +7,7 @@ use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\RelationsTrait;
-use App\Models\User\TriggersTrait;
+use App\Models\User\RoleTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Collection;
@@ -41,6 +41,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        referrals_count
  * @property int        accounts_count
  * @property int        activation_codes_count
+ * @property Place      place
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -49,7 +50,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, Impersonate, Uuids, TriggersTrait;
+    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids;
 
     public function __construct(array $attributes = [])
     {
@@ -322,6 +323,18 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @param bool $approve
+     *
+     * @return User
+     */
+    public function setApproved(bool $approve): User
+    {
+        $this->approved = $approve;
+
+        return $this;
+    }
+
+    /**
      * Find User by invite code
      *
      * @param string $invite
@@ -392,7 +405,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      *
      * @return bool
      */
-    public function equals(User $user = null)
+    public function equals(User $user = null): bool
     {
         return null != $user && $this->id === $user->id;
     }
@@ -427,6 +440,28 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getActivationCodesCountAttribute(): int
     {
         return $this->activationCodes()->count();
+    }
+
+
+
+    /**
+     * @param User $parent
+     *
+     * @return mixed
+     */
+    public function hasParent(User $parent)
+    {
+        return $this->parents->contains($parent->getId());
+    }
+
+    /**
+     * @param User $child
+     *
+     * @return bool
+     */
+    public function hasChild(User $child)
+    {
+        return $this->children->contains($child->getId());
     }
 
     /**

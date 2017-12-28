@@ -3,6 +3,7 @@
 namespace App\Models\NauModels;
 
 use App\Models\Traits\HasNau;
+use App\Models\User as WebUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  type
  *
  * @method static static|Builder forAccount(Account $account)
- * @method static static|Builder forUser(User $user)
+ * @method static static|Builder forUser(WebUser $user)
  */
 class Transact extends AbstractNauModel
 {
@@ -189,6 +190,7 @@ class Transact extends AbstractNauModel
      * @param Account $account
      *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
     public function scopeForAccount(Builder $query, Account $account): Builder
     {
@@ -197,12 +199,13 @@ class Transact extends AbstractNauModel
     }
 
     /**
-     * @param Builder          $query
-     * @param \App\Models\User $user
+     * @param Builder $query
+     * @param WebUser $user
      *
      * @return Builder
+     * @throws \InvalidArgumentException
      */
-    public function scopeForUser(Builder $query, \App\Models\User $user): Builder
+    public function scopeForUser(Builder $query, WebUser $user): Builder
     {
         $accountIds = $user->accounts()
                            ->pluck('id');
