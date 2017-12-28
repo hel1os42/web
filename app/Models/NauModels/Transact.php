@@ -186,20 +186,6 @@ class Transact extends AbstractNauModel
     }
 
     /**
-     * @param string $type
-     *
-     * @return string
-     */
-    public function setTypeAttribute(string $type)
-    {
-        if (!in_array($type, [self::TYPE_P2P, self::TYPE_INCOMING, self::TYPE_REDEMPTION])) {
-            $type = self::TYPE_REDEMPTION;
-        }
-
-        return $this->attributes['type'] = $type;
-    }
-
-    /**
      * @param Builder $query
      * @param Account $account
      *
