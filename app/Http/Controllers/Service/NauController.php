@@ -7,6 +7,7 @@ use App\Http\Requests\Service\CreateUserRequest;
 use App\Http\Requests\Service\ExchangeNau;
 use App\Models\User;
 use App\Repositories\AccountRepository;
+use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
@@ -82,8 +83,12 @@ class NauController extends Controller
      * @throws UnprocessableEntityHttpException
      * @throws \InvalidArgumentException
      */
-    public function createUser(CreateUserRequest $request, UserRepository $userRepository)
-    {
+    public function createUser(
+        CreateUserRequest $request,
+        UserRepository $userRepository,
+        TransactionRepository $transactionRepository,
+        AccountRepository $accountRepository
+    ) {
         $referrerUser = User::findByInvite("NAU");
         $referrerId   = null !== $referrerUser ? $referrerUser->id : null;
         $newUserData  = [
@@ -99,6 +104,18 @@ class NauController extends Controller
         if (!$success) {
             throw new UnprocessableEntityHttpException();
         }
+
+        $systemAccount = $accountRepository->findWhere([
+                'owner_id' => '00000000-0000-0000-0000-100000000000'
+            ], ['id'])->first();
+
+        if (null === $systemAccount) {
+            $user->delete();
+            throw new UnprocessableEntityHttpException();
+        }
+
+        $transactionRepository
+            ->createWithAmountSourceDestination($request->balance, $systemAccount, $user->getAccountForNau());
 
         return response()->render(
             '', $user->fresh(), Response::HTTP_CREATED,

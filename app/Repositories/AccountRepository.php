@@ -9,6 +9,8 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 /**
  * Interface AccountRepository
  * @package namespace App\Repositories;
+ *
+ * @method Account|null|mixed findWhere(array $where, $columns = ['*'])
  */
 interface AccountRepository extends RepositoryInterface
 {

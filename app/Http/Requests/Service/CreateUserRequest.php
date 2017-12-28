@@ -11,6 +11,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * @property string email
  * @property string phone
+ * @property double balance
  */
 class CreateUserRequest extends FormRequest
 {
@@ -27,6 +28,7 @@ class CreateUserRequest extends FormRequest
         return [
             'email'     => 'required|email|unique:users,email',
             'phone'     => 'required|regex:/\+[0-9]{10,15}/|unique:users,phone',
+            'balance'   => 'required|numeric',
             'timestamp' => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
             'signature' => sprintf('required|string')
         ];
