@@ -405,7 +405,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      *
      * @return bool
      */
-    public function equals(User $user = null)
+    public function equals(User $user = null): bool
     {
         return null != $user && $this->id === $user->id;
     }

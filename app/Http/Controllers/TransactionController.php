@@ -16,7 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TransactionController extends Controller
 {
+    /**
+     * @var TransactionRepository
+     */
     private $transactionRepository;
+
+    /**
+     * @var AccountRepository
+     */
     private $accountRepository;
 
     public function __construct(
@@ -33,19 +40,20 @@ class TransactionController extends Controller
 
     /**
      * @return Response
+     * @throws \App\Exceptions\TokenException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function createTransaction(): Response
     {
-        $this->authorize('transactions.create');
+        $sourceAccount = $this->user()->getAccountForNau();
+
+        $this->authorize('transactions.create', $sourceAccount);
 
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
-            'source' => $this->user()
-                ->getAccountFor(Currency::NAU)
-                ->getAddress()
+            'source' => $sourceAccount->getAddress(),
         ]));
     }
 
@@ -58,25 +66,29 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $this->authorize('transactions.create');
-
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
 
+        $this->authorize('transactions.create', $sourceAccount);
+
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
 
-        return response()->render('transactions.complete', $transaction->toArray(),
-            null === $transaction->id ?
-                Response::HTTP_ACCEPTED :
-                Response::HTTP_CREATED,
+        return response()->render(
+            null === $transaction->id
+                ? 'transaction.in-progress'
+                : 'transaction.complete',
+            $transaction->toArray(),
+            null === $transaction->id
+                ? Response::HTTP_ACCEPTED
+                : Response::HTTP_CREATED,
             route('transaction.complete')
         );
     }
 
     /**
-     * @param int|null $transactionId
+     * @param string|null $transactionId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -84,9 +96,9 @@ class TransactionController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function listTransactions(int $transactionId = null): Response
+    public function listTransactions(string $transactionId = null): Response
     {
-        $this->authorize('transactions.list');
+        $this->authorize('transactions.list', $this->user());
 
         $transactions = $this->transactionRepository->getBySenderOrRecepient($this->user());
 
@@ -95,6 +107,8 @@ class TransactionController extends Controller
         }
 
         $transaction = $transactions->findOrFail($transactionId);
+
+        $this->authorize('transaction.show', $transaction);
 
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }

@@ -1,0 +1,447 @@
+/* nau-form */
+.nau-form .control-box {
+	margin-bottom: 20px;
+}
+.nau-form textarea {
+    resize: none;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 82px;
+    max-height: 82px;
+}
+.nau-form p.title {
+		margin-bottom: 20px;
+    font-size: 120%;
+    font-weight: bold;
+}
+.nau-form p.title small {
+    display: block;
+    font-size: 60%;
+    font-weight: normal;
+    color: #bdbdbd;
+}
+.nau-form p.title:not(:first-of-type) {
+    margin-top: 40px;
+}
+.nau-form label {
+    display: block;
+    position: relative;
+}
+.nau-form label small {
+    display: block;
+    font-size: 60%;
+    line-height: 1.4em;
+    color: #bdbdbd;
+}
+.nau-form .control-text label span.input-label,
+.nau-form .control-datetime label span.input-label,
+.nau-form .control-select label span.input-label {
+    display: block;
+    margin-bottom: 4px;
+}
+.nau-form .control-text input,
+.nau-form .control-text textarea,
+.nau-form .control-range input,
+.nau-form .control-datetime input,
+.nau-form .control-select select {
+    display: block;
+    padding: 4px 8px;
+    width: 100%;
+    font: normal 16px/24px "Open Sans", Helvetica, Arial, sans-serif;
+    color: #7b728c;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+.nau-form .control-text input:focus,
+.nau-form .control-text textarea:focus,
+.nau-form .control-range input:focus,
+.nau-form .control-datetime input:focus,
+.nau-form .control-select select:focus {
+    border-color: #ff5a00;
+}
+.nau-form .control-check-left input,
+.nau-form .control-radio-left input {
+    display: none;
+}
+.nau-form .control-check-left label,
+.nau-form .control-radio-left label {
+    padding-left: 45px;
+    cursor: pointer;
+    line-height: 24px;
+}
+.nau-form .control-check-left label:before,
+.nau-form .control-radio-left label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+.nau-form .control-radio-left label:before {
+    border-radius: 50%;
+}
+.nau-form .control-check-left input:checked ~ label:after,
+.nau-form .control-radio-left input:checked ~ label:after {
+    content: "";
+    position: absolute;
+}
+.nau-form .control-check-left input:checked ~ label:after {
+    left: 5px;
+    top: 2px;
+    width: 18px;
+    height: 10px;
+    border-left: 4px solid #ff5a00;
+    border-bottom: 4px solid #ff5a00;
+    transform: rotate(-45deg);
+}
+.nau-form .control-radio-left input:checked ~ label:after {
+    left: 4px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    background: #ff5a00 linear-gradient(to right, #ff5a00, #ff8b10);
+    border-radius: 50%;
+}
+.nau-form .control-range:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.nau-form .control-range label {
+    display: inline-block;
+}
+.nau-form .control-range em,
+.nau-form .control-range label {
+    float: right;
+}
+.nau-form .control-range input {
+    width: 80px;
+    text-align: center;
+}
+.nau-form .control-range em {
+    position: relative;
+    top: 5px;
+    display: inline-block;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    font-size: 0;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.nau-form .control-range em.more {
+    margin-left: 8px;
+}
+.nau-form .control-range em.less {
+    margin-right: 8px;
+}
+.nau-form .control-range em:hover {
+    border-color: #ff5a00;
+}
+.nau-form .control-range em:before,
+.nau-form .control-range em:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 2px;
+    background: #bdbdbd;
+}
+.nau-form .control-range em:after {
+    width: 2px;
+    height: 12px;
+}
+.nau-form .control-range em.less:after {
+    display: none;
+}
+.nau-form .control-range em:hover:before,
+.nau-form .control-range em:hover:after {
+    background: #ff5a00;
+}
+.nau-form .control-datetime input {
+    cursor: pointer;
+}
+.nau-form .tabs-controls {
+    margin-top: 40px;
+}
+.nau-form .day-info.passive strong,
+.nau-form .day-info.passive .control-datetime {
+    opacity: 0.5;
+}
+.nau-form .max-redemption label.infinity:before {
+    content: "∞";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #7b728c;
+    background: #fff;
+}
+.nau-form [type="submit"] {
+    font-size: 22px;
+    line-height: 18px;
+    font-weight: bold;
+}
+.nau-form .control-file {
+    position: relative;
+    margin-top: 4px;
+    border: 3px dashed #e0e0e0;
+    border-radius: 6px;
+}
+.nau-form .control-file.hover {
+    border-color: #ff5a00;
+}
+.nau-form .control-file .text-hover {
+    position: absolute;
+    display: none;
+    z-index: 4;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: 6px;
+    color: #ff5a00;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255, 90, 0, 0.2);
+}
+.nau-form .control-file.hover .text-hover {
+    display: block;
+}
+.nau-form .control-file.hover img,
+.nau-form .control-file.hover .text-add {
+    opacity: 0.2;
+}
+.nau-form .control-file input {
+    position: absolute;
+    z-index: 6;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+.nau-form .control-file .text-add {
+    display: block;
+    padding: 32px 0;
+    text-align: center;
+}
+.nau-form .control-file img {
+    display: none;
+    margin: 0 auto;
+    padding: 8px;
+    max-width: 100%;
+}
+.nau-form .hint {
+    display: none;
+    margin: -6px 0 0;
+    padding: 0;
+    font-size: 85%;
+    line-height: 1.4em;
+    font-style: italic;
+    color: #ff8a0e;
+}
+.nau-form .invalid + .hint,
+.nau-form .day-info.invalid ~ .hint {
+    display: block;
+}
+.nau-form .invalid input,
+.nau-form .invalid textarea,
+.nau-form .invalid select {
+    border-color: #ff8a0e;
+}
+
+.nau-form select option:first-child {
+    font-style: italic;
+    color: #e0e0e0;
+}
+
+#formOverlay {
+    display: none;
+    position: fixed;
+    z-index: 9700;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(63, 76, 93, 0.4);
+}
+#formInformationModal {
+    position: fixed;
+    padding: 8px 30px 20px;
+    z-index: 9705;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: #fff;
+    border: 4px solid #3f4c5d;
+    border-radius: 6px;
+}
+#formInformationModal img.loading {
+    width: 32px;
+    height: 32px;
+}
+
+
+.tokens-total {
+    position: relative;
+    padding: 24px 0 20px 72px;
+}
+.tokens-total:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 44px;
+    height: 38px;
+    background: url(../../img/logo.png) no-repeat left top;
+}
+.tokens-total strong {
+    display: block;
+    font-size: 120%;
+}
+.tokens-total span {
+    font-size: 85%;
+}
+
+.nau-form .sub-radio {
+    display: none;
+		margin-bottom: 0;
+    padding-left: 44px;
+}
+.nau-form .sub-radio .input-label {
+	font-weight: normal;
+}
+
+
+
+
+
+/* tabs-step */
+.step-footer {
+    padding: 16px 0;
+}
+.tab-step-control:after,
+.step-footer:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.tab-step-control {
+    padding: 24px 0;
+    list-style: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.tab-step-control li {
+    position: relative;
+    float: left;
+    width: 25%;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 20px;
+}
+.tab-step-control li a {
+    text-decoration: none;
+    color: #3f4c5d;
+}
+.tab-step-control li em {
+    position: relative;
+    display: block;
+    margin: 0 auto 8px;
+    padding-top: 8px;
+    width: 40px;
+    height: 40px;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1em;
+    background: #e0e0e0;
+    border-radius: 50%;
+}
+.tab-step-control li em:before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 4px solid transparent;
+    border-radius: 50%;
+}
+.tab-step-control li.valid em:before {
+    border-color: rgba(65, 219, 0, 0.4);
+}
+.tab-step-control li.invalid em:before {
+    border-color: rgba(255, 95, 0, 0.4);
+}
+.tab-step-control li.active em {
+    color: #fff;
+    background: #ff5a00 linear-gradient(to right, #ff5a00, #ff8b10);
+}
+.tab-step-control li:not(:last-child):before {
+    content: "";
+    position: absolute;
+    left: 80%;
+    top: 18px;
+    width: 30%;
+    border-top: 1px solid #e0e0e0;
+}
+.tab-step-control li:not(:last-child):after {
+    content: "";
+    position: absolute;
+    left: 110%;
+    top: 15px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    transform: rotate(45deg);
+}
+.tab-step-content {
+    padding-left: 0;
+    padding-right: 0;
+    border: none;
+}
+
+
+
+.map-wrap {
+    position: relative;
+}
+.leaflet-map {
+    height: 400px;
+    z-index: 111;
+}
+#marker {
+    position: absolute;
+    z-index: 111;
+    background: rgba(255, 139, 16, 0.2) url(/img/leaflet/pin.png) no-repeat 50% 50%;
+    background-size: auto 35px;
+    width: 190px;
+    height: 190px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+}
