@@ -24,7 +24,7 @@ class SendNau extends AbstractJob
     /**
      * @var string
      */
-    private $httpPath = '/transactions';
+    private $httpPath;
 
     /**
      * SendNau constructor.
@@ -37,10 +37,6 @@ class SendNau extends AbstractJob
         parent::__construct($coreService);
 
         $this->transaction = $transaction;
-
-        if ($this->transaction->isNoFee()) {
-            $this->httpPath = '/transactions/noFee';
-        }
 
         /** @var SendNau requestObject */
         $this->requestObject = (new SendNauRequest($transaction));
@@ -69,7 +65,7 @@ class SendNau extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return $this->httpPath;
+        return $this->transaction->isNoFee() ? '/transactions/noFee' : '/transactions';
     }
 
     /**

@@ -85,7 +85,7 @@ class TransactionController extends Controller
             $authorizeAbility = $authorizeAbility . '.no_fee';
         }
 
-        $this->authorize($authorizeAbility, $sourceAccount, $destinationAccount);
+        $this->authorize($authorizeAbility, [$sourceAccount, $destinationAccount]);
 
         $transaction = $this->transactionRepository
             ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount, $noFee);
