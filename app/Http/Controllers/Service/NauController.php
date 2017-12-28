@@ -19,6 +19,8 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 /**
  * Class NauController
  * NS: App\Http\Controllers\Service
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NauController extends Controller
 {
