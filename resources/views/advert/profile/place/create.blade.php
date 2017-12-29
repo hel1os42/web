@@ -106,7 +106,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
 @endpush
 
-
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script type="text/javascript">
