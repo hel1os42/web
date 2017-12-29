@@ -42,6 +42,7 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
+ * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
  */
 class Place extends Model
 {
@@ -62,16 +63,17 @@ class Place extends Model
         $this->initUuid();
 
         $this->casts = [
-            'id'          => 'string',
-            'name'        => 'string',
-            'description' => 'string',
-            'about'       => 'string',
-            'address'     => 'string',
-            'latitude'    => 'double',
-            'longitude'   => 'double',
-            'radius'      => 'integer',
-            'stars'       => 'integer',
-            'is_featured' => 'boolean'
+            'id'                => 'string',
+            'name'              => 'string',
+            'description'       => 'string',
+            'about'             => 'string',
+            'address'           => 'string',
+            'latitude'          => 'double',
+            'longitude'         => 'double',
+            'radius'            => 'integer',
+            'stars'             => 'integer',
+            'is_featured'       => 'boolean',
+            'has_active_offers' => 'boolean',
         ];
 
         $this->hidden = [
@@ -425,6 +427,30 @@ class Place extends Model
             $this->getConnection()->getPdo()->quote($lat),
             $this->getConnection()->getPdo()->quote($lng),
             $radius));
+    }
+
+    /**
+     * @param Builder     $builder
+     * @param string|null $lat
+     * @param string|null $lng
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
+    {
+        if (isset($lat, $lng)) {
+            return $builder->orderByRaw(sprintf('(6371000 * 2 * 
+        ASIN(SQRT(POWER(SIN((latitude - ABS(%1$s)) * 
+        PI()/180 / 2), 2) + COS(latitude * PI()/180) * 
+        COS(ABS(%1$s) * PI()/180) * 
+        POWER(SIN((longitude - %2$s) * 
+        PI()/180 / 2), 2))))',
+                $this->getConnection()->getPdo()->quote($lat),
+                $this->getConnection()->getPdo()->quote($lng)));
+        }
+
+        return $builder;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -14,6 +15,12 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string password
  * @property string password_confirm
  * @property string referrer_id
+ * @property string name
+ * @property float  latitude
+ * @property float  longitude
+ * @property array  role_ids
+ * @property array  parent_ids
+ * @property array  child_ids
  */
 class RegisterRequest extends FormRequest
 {
@@ -25,7 +32,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return !auth()->check();
+        return true;
     }
 
     /**
@@ -35,13 +42,26 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
+            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
             'password'         => 'required_with:email|nullable|min:6|max:255',
-            'password_confirm' => 'required_with:email|nullable|same:password',
-            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
-            'code'             => 'required_with:phone|nullable|digits:6|otp',
-            'referrer_id'      => 'required|string|exists:users,id'
+            'password_confirm' => 'required_with:email|nullable|same:password'
         ];
+
+        if ($this->getRegistrator() === null) {
+            $rules['code']        = 'required_with:phone|nullable|digits:6|otp';
+            $rules['referrer_id'] = 'required|string|exists:users,id';
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getRegistrator(): ?User
+    {
+        return auth()->user();
     }
 }

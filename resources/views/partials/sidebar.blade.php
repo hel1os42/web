@@ -1,3 +1,5 @@
+<!-- сайдбар уже не используется, меню переехало в хедер, можно удалить (21.12.2017) -->
+
 <div class="sidebar" data-background-color="brown" data-active-color="danger">
 
     <!--

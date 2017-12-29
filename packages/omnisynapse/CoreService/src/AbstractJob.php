@@ -2,9 +2,7 @@
 
 namespace OmniSynapse\CoreService;
 
-use App\Http\Exceptions\ServiceUnavailableException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,15 +48,13 @@ abstract class AbstractJob implements ShouldQueue
      * Execute the job.
      *
      * @return void
-     *
-     * @throws RequestException
-     * @throws ServiceUnavailableException
      */
     public function handle()
     {
         /** @var Response $response */
-        $method   = $this->getHttpMethod();
-        $uri      = $this->getHttpPath();
+        $method = $this->getHttpMethod();
+        $uri    = $this->getHttpPath();
+
         $jsonBody = null !== $this->getRequestObject()
             ? $this->getRequestObject()->jsonSerialize()
             : null;
@@ -72,16 +68,16 @@ abstract class AbstractJob implements ShouldQueue
         try {
             $response        = $this->getClient()->request($method, $uri, ['json' => $jsonBody]);
             $responseContent = $response->getBody()->getContents();
-        } catch (GuzzleException $exception) {
-            throw new ServiceUnavailableException(null, $exception);
-        } catch(\InvalidArgumentException $exception) {
-            throw new ServiceUnavailableException(null, $exception);
-        } catch(\LogicException $exception) {
-            throw new ServiceUnavailableException(null, $exception);
+        } catch (\Throwable $exception) {
+            $this->failed($exception);
+
+            return;
         }
 
         if (floor($response->getStatusCode() * 0.01) > 2) {
-            throw new RequestException($this, $response, $responseContent);
+            $this->failed(new RequestException($this, $response, $responseContent));
+
+            return;
         }
 
         logger()->debug('Request and Response', [
@@ -98,7 +94,13 @@ abstract class AbstractJob implements ShouldQueue
             return;
         }
 
-        $responseObject = $this->mapDecodedContent($decodedContent, $responseObject, $response, $responseContent);
+        try {
+            $responseObject = $this->mapDecodedContent($decodedContent, $responseObject, $response, $responseContent);
+        } catch (RequestException $e) {
+            $this->failed(new RequestException($this, $response, $responseContent));
+
+            return;
+        }
 
         event($responseObject);
     }
@@ -130,6 +132,8 @@ abstract class AbstractJob implements ShouldQueue
     public function failed(\Exception $exception)
     {
         $failedResponse = $this->getFailedResponseObject($exception);
+        logger("Failed Job.", ['exception' => $exception]);
+
         event($failedResponse);
     }
 

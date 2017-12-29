@@ -12,6 +12,7 @@ use App\Models\Place;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations;
+use Illuminate\Support\Collection;
 
 /**
  * Trait RelationsTrait
