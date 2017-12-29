@@ -38,7 +38,7 @@ class ResetPasswordController extends AuthController
     protected function sendResetResponse(string $response): Response
     {
         return response()->render('auth.login', [
-            'errors' => trans($response),
+            'errorsMsg' => trans($response),
         ]);
     }
 
@@ -52,7 +52,7 @@ class ResetPasswordController extends AuthController
     {
         return response()->render('auth.passwords.reset', [
             'email'  => $request->email,
-            'errors' => trans($response),
+            'errorsMsg' => trans($response),
         ]);
     }
 
