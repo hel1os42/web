@@ -22,11 +22,6 @@ class SendNau extends AbstractJob
     private $transaction;
 
     /**
-     * @var string
-     */
-    private $httpPath;
-
-    /**
      * SendNau constructor.
      *
      * @param Transact    $transaction
