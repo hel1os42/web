@@ -15,6 +15,16 @@
             <div class="advert-name pull-right">
                 {{ $authUser['name'] }}
             </div>
+            @if(!is_null(auth()->user()))
+                @if(auth()->user()->isImpersonated())
+                    <div class="advert-name pull-right">
+                        <a href="{{ route('stop_impersonate') }}" class="btn-nau btn-create-offer dropdown-toggle" style="width:auto">
+                            <i class="fa fa-fighter-jet"></i>
+                            Leave impersonation
+                        </a>
+                    </div>
+                @endif
+            @endif
         @endauth
     </div>
     @auth

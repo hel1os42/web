@@ -40,7 +40,6 @@ class OfferRequest extends FormRequest
      */
     public function authorize()
     {
-        dd($this->request->all());
         return true;
     }
 
