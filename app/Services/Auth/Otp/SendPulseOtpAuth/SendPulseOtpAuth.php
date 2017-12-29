@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Auth\Otp\Stub;
+namespace App\Services\Auth\Otp\SendPulseOtpAuth;
 
 use App\Exceptions\Exception;
-use App\Models\User;
 use App\Services\Auth\Otp\OtpAuth;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request as HttpRequest;
@@ -67,18 +66,18 @@ class SendPulseOtpAuth implements OtpAuth
             throw new UnprocessableEntityHttpException('Can\'t send otp code.');
         }
 
-        Cache::store('file')->put($phoneNumber, Hash::make($code), 15);
+        Cache::put($phoneNumber, Hash::make($code), 15);
     }
 
     /**
      * @param string $phoneNumber
      * @param string $codeToCheck
      *
-     * @return string
+     * @return bool
      */
-    public function validateCode(string $phoneNumber, string $codeToCheck): string
+    public function validateCode(string $phoneNumber, string $codeToCheck): bool
     {
-        return $this->checkOtpCode($phoneNumber, $codeToCheck) ? 'otp' : '';
+        return $this->checkOtpCode($phoneNumber, $codeToCheck);
     }
 
     /**
@@ -144,8 +143,8 @@ class SendPulseOtpAuth implements OtpAuth
      */
     private function checkOtpCode(string $phoneNumber, string $codeToCheck): bool
     {
-        return Cache::store('file')->has($phoneNumber)
-            ? Hash::check($codeToCheck, Cache::store('file')->get($phoneNumber))
+        return Cache::has($phoneNumber)
+            ? Hash::check($codeToCheck, Cache::get($phoneNumber))
             : false;
     }
 }

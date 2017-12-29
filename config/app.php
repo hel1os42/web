@@ -184,7 +184,7 @@ return [
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
-        App\Services\Auth\Otp\Stub\OtpAuthProvider::class,
+        App\Providers\OtpAuthProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,

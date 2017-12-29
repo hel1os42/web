@@ -19,7 +19,7 @@ interface OtpAuth
      * @param string $phoneNumber
      * @param string $codeToCheck
      *
-     * @return string
+     * @return bool
      */
-    public function validateCode(string $phoneNumber, string $codeToCheck): string;
+    public function validateCode(string $phoneNumber, string $codeToCheck): bool;
 }
