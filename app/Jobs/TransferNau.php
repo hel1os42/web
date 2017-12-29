@@ -41,6 +41,6 @@ class TransferNau implements ShouldQueue
         $user = $userRepository->find($this->userId);
 
         $transactionRepository
-            ->createWithAmountSourceDestination($this->amount, $systemAccount, $user->getAccountForNau());
+            ->createWithAmountSourceDestination($this->amount, $systemAccount, $user->getAccountForNau(), true);
     }
 }
