@@ -51,7 +51,7 @@ class SendPulseOtpAuth implements OtpAuth
         $code = random_int(100000, 999999);
         $data = [
             'phones'        => json_encode([$phoneNumber]),
-            'body'          => $code,
+            'body'          => 'NAU verification code: ' . $code,
             'transliterate' => "0"
         ];
         try {
