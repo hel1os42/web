@@ -19,9 +19,11 @@ class ResetPasswordController extends AuthController
     use ResetsPasswords;
 
     /**
-     * @param  Request $request
-     * @param  string|null $token
+     * @param Request     $request
+     * @param string|null $token
+     *
      * @return Response
+     * @throws \LogicException
      */
     public function showResetForm(Request $request, string $token = null): Response
     {
@@ -33,37 +35,43 @@ class ResetPasswordController extends AuthController
 
     /**
      * @param string $response
+     *
      * @return Response
+     * @throws \LogicException
      */
     protected function sendResetResponse(string $response): Response
     {
         return response()->render('auth.login', [
-            'errorsMsg' => trans($response),
+            'message' => trans($response),
         ]);
     }
 
     /**
-     * @param  Request $request
-     * @param  string $response
-     * @SuppressWarnings("unused")
+     * @param Request $request
+     * @param string  $response
+     *
      * @return Response
+     * @throws \LogicException
      */
     protected function sendResetFailedResponse(Request $request, string $response): Response
     {
-        return response()->render('auth.passwords.reset', [
-            'email'  => $request->email,
-            'errorsMsg' => trans($response),
+        return response()->render('auth.passwords.email', [
+            'email'   => $request->email,
+            'message' => trans($response),
         ]);
     }
 
     /**
-     * @param  PasswordFormRequest $request
+     * @param PasswordFormRequest $request
+     *
      * @return Response
+     * @throws \LogicException
      */
     public function reset(PasswordFormRequest $request)
     {
         $response = $this->broker()->reset(
-            $this->credentials($request), function ($user, $password) {
+            $this->credentials($request),
+            function ($user, $password) {
                 $this->resetPassword($user, $password);
             }
         );
@@ -75,13 +83,14 @@ class ResetPasswordController extends AuthController
 
     /**
      * @param  CanResetPassword $user
-     * @param  string $password
+     * @param  string           $password
+     *
      * @return void
      */
     protected function resetPassword($user, $password)
     {
         $user->fill([
-            'password' => $password,
+            'password'       => $password,
             'remember_token' => Str::random(60),
         ])->save();
     }
