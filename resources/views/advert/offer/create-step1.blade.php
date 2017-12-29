@@ -1,4 +1,4 @@
-<div id="tab_step1" class="tab-pane fade in active">
+{{--<div id="tab_step1" class="tab-pane fade in active">--}}
 
     {{ csrf_field() }}
 
@@ -7,8 +7,8 @@
     <div class="control-box">
         <p class="control-text">
             <label>
-                <span class="input-label">Offer name</span>
-                <input name="label" value="">
+                <span class="input-label">Offer name*</span>
+                <input name="label" value="" class="formData">
             </label>
         </p>
         <p class="hint">Please, enter the Offer name.</p>
@@ -18,7 +18,7 @@
         <p class="control-text">
             <label>
                 <span class="input-label">Offer description</span>
-                <textarea name="description"></textarea>
+                <textarea name="description" class="nullableFormData"></textarea>
             </label>
         </p>
         <p class="hint">Please, enter the Offer description.</p>
@@ -42,7 +42,7 @@
         <p class="control-select valid-not-empty">
             <label>
                 <span class="input-label">Offer category</span>
-                <select id="offer_category" name="category_id"></select>
+                <select id="offer_category" name="category_id" class="formData"></select>
             </label>
         </p>
         <p class="hint">Please, select the category.</p>
@@ -89,8 +89,8 @@
         <p class="hint">Please, enter the Bonus or Gift information.</p>
     </div>
     @endif
-    <p class="step-footer">
-        <a href="#tab_step2" data-toggle="tab" class="tab-nav btn-nau pull-right">next step &gt;</a>
-    </p>
+    {{--<p class="step-footer">--}}
+        {{--<a href="#tab_step2" data-toggle="tab" class="tab-nav btn-nau pull-right">next step &gt;</a>--}}
+    {{--</p>--}}
 
-</div>
+{{--</div>--}}

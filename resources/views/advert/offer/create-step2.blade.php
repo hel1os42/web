@@ -1,10 +1,10 @@
-<div id="tab_step2" class="tab-pane fade">
+{{--<div id="tab_step2" class="tab-pane fade">--}}
 
     <div class="control-box">
         <p class="title">Working dates</p>
         <p class="row control-datetime valid-dates">
-            <label class="col-xs-6"><span class="input-label">from</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
-            <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
+            <label class="col-xs-6"><span class="input-label">from*</span> <input name="start_date" readonly class="js-datepicker FormData" placeholder="Select date" value=""></label>
+            <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker nullableFormData" placeholder="Select date" value=""></label>
         </p>
         <p class="hint">Please, select the valid range of dates.</p>
     </div>
@@ -122,9 +122,8 @@
         </div>
     </div>
 
-    <p class="step-footer">
-        <a href="#tab_step1" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>
-        <input type="submit" class="btn-nau pull-right" value="Create Offer">
-        <a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-right">next step &gt;</a>
-    </p>
-</div>
+    {{--<p class="step-footer">--}}
+        {{--<a href="#tab_step1" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>--}}
+        {{--<a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-right">next step &gt;</a>--}}
+    {{--</p>--}}
+{{--</div>--}}
