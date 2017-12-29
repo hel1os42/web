@@ -272,7 +272,7 @@ class TransactionControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('transactions.create', $this->account)
+            ->with('transactions.create', [$this->account, $this->account])
             ->willReturn(true);
 
         $responseFactory

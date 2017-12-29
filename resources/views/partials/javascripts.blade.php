@@ -87,3 +87,9 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQ81-fUpHTJ73LOtZLzZjGjkUWl0TtvWA&libraries=places"></script>
 <script src="{{ asset('jquery/locationpicker.jquery.js')  }}"></script>
 -->
+
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+{{--<script src="{{ asset('js/leaflet/leaflet-src.js') }}"></script>--}}
+<script src="{{ asset('js/advert-cabinet.js') }}"></script>

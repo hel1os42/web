@@ -42,7 +42,6 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        accounts_count
  * @property int        activation_codes_count
  * @property Place      place
- * @property string     otp_code
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -94,7 +93,6 @@ class User extends Authenticatable implements PhoneAuthenticable
         $this->hidden = [
             'coreUser',
             'password',
-            'otp_code',
             'remember_token',
             'referrer_id'
         ];
@@ -325,17 +323,6 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
-     * @param string $code
-     *
-     * @return $this
-     */
-    public function setOtpCode(string $code)
-    {
-        $this->otp_code = Hash::make($code);
-        return $this;
-    }
-
-    /**
      * @param bool $approve
      *
      * @return User
@@ -381,28 +368,6 @@ class User extends Authenticatable implements PhoneAuthenticable
         $newInvite = substr(uniqid(), 0, rand(3, 8));
 
         return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
-    }
-
-    /**
-     * @return string
-     */
-    public function getOtpCode(): string
-    {
-        return $this->otp_code;
-    }
-
-    /**
-     * @param string $phoneNumber
-     * @param string $codeToCheck
-     *
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public static function checkOtpCode(string $phoneNumber, string $codeToCheck): string
-    {
-        $hashedCode = self::findByPhone($phoneNumber)->getOtpCode();
-
-        return Hash::check($codeToCheck, $hashedCode);
     }
 
     /**

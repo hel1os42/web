@@ -15,15 +15,13 @@ class StubOtpAuth implements OtpAuth
 {
     /**
      * @param string $phoneNumber
-     *
-     * @return string
      */
     public function generateCode(string $phoneNumber): void
     {
         return;
     }
 
-    public function validateCode(string $phoneNumber, string $code): string
+    public function validateCode(string $phoneNumber, string $code): bool
     {
         return $code === substr($phoneNumber, -6);
     }

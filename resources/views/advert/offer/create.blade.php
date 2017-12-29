@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('advert.layout')
 
 @section('title', 'Create offer')
 
@@ -13,19 +13,19 @@
 
             <form action="{{route('advert.offers.store')}}" method="post" class="nau-form" id="createOfferForm" target="_top">
 
-                <ul class="tab-step-control js-tabs">
-                    <li class="active"><a href="#tab_step1" data-toggle="tab"><em>1</em> Main<br>Information</a></li>
-                    <li><a href="#tab_step2" data-toggle="tab"><em>2</em> Working Dates<br>&amp; Times</a></li>
-                    <li><a href="#tab_step3" data-toggle="tab"><em>3</em> Working<br>Area</a></li>
-                    <li><a href="#tab_step4" data-toggle="tab"><em>4</em> Additional<br>Settings</a></li>
-                </ul>
+                {{--<ul class="tab-step-control js-tabs">--}}
+                    {{--<li class="active"><a href="#tab_step1" data-toggle="tab"><em>1</em> Main<br>Information</a></li>--}}
+                    {{--<li><a href="#tab_step2" data-toggle="tab"><em>2</em> Working Dates<br>&amp; Times</a></li>--}}
+                    {{--<li><a href="#tab_step3" data-toggle="tab"><em>3</em> Working<br>Area</a></li>--}}
+                    {{--<li><a href="#tab_step4" data-toggle="tab"><em>4</em> Additional<br>Settings</a></li>--}}
+                {{--</ul>--}}
 
-                <div class="tab-content tab-step-content">
+                {{--<div class="tab-content tab-step-content">--}}
                     @include('advert.offer.create-step1')
                     @include('advert.offer.create-step2')
                     @include('advert.offer.create-step3')
                     @include('advert.offer.create-step4')
-                </div>
+                {{--</div>--}}
 
             </form>
 
@@ -47,10 +47,10 @@
                                 document.getElementById("offer_category").innerHTML = xhr.responseText;
                             }
                             else if (xhr.status === 400) {
-                                alert('Get categories: there was an error 400');
+                                console.log('Get categories: there was an error 400');
                             }
                             else {
-                                alert('Get categories: something else other than 200 was returned');
+                                console.log('Get categories: something else other than 200 was returned');
                             }
                         }
                     };
@@ -69,7 +69,6 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/leaflet.css') }}">
 @endpush
 
 @push('scripts')
@@ -101,8 +100,6 @@
 
         /* offer type = discount */
         offerTypeController();
-
-
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -177,6 +174,227 @@
                     $(this).parents('p').next('.sub-radio')['slide' + ($(this).is(':checked') ? 'Down' : 'Up')]();
                 });
             }).trigger('change');
+        }
+
+        $( document ).ready( function() {
+            let GPS = {};
+            if ( navigator.geolocation ) {
+                navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
+            } else {
+                defaultGPS();
+            }
+
+            function getGPS( pos ) {
+                GPS = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                };
+                mapInitialize( GPS );
+            }
+
+            function defaultGPS() {
+                /* Los Angeles: */
+                GPS = {
+                    lat: 34.0143733,
+                    lng: -118.2831973
+                };
+                mapInitialize( GPS );
+            }
+
+
+            function mapInitialize( GPS ) {
+
+                let map = L.map( 'mapid', {
+                    center: GPS,
+                    zoom:   13
+                } );
+
+                L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom:       19,
+                    minZoom:       1,
+                    maxNativeZoom: 18,
+                    attribution:   '© OpenStreetMap',
+                } ).addTo( map );
+
+
+                function fillMapFields(map){
+                    let radiusPx = 190;
+                    $('[name="latitude"]').val(map.getCenter().lat);
+                    $('[name="longitude"]').val(map.getCenter().lng);
+                    $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
+
+                    function getRadius(radiusPx, map) {
+                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
+                    }
+
+                    function getZoom(latitude, radius) {
+                        let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
+                        return zoom;
+                    }
+
+                    function round(value, step) {
+                        step || (step = 1.0);
+                        let inv = 1.0 / step;
+                        return Math.round(value * inv) / inv;
+                    }
+                }
+
+                fillMapFields(map);
+                handleForm(map);
+            }
+        } );
+
+        function handleForm(map){
+            $('#createOfferForm').on('submit', function (e){
+                e.preventDefault();
+
+                function getTZ(map, callback){
+                    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+                    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
+                    let timestamp = Math.round(new Date().valueOf() / 1000);
+                    let lat = map.getCenter().lat;
+                    let lng = map.getCenter().lng;
+                    let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+                    return httpGetAsync(map, requestUrl, callback);
+
+                    function httpGetAsync(map, theUrl, callback)
+                    {
+                        let xmlHttp = new XMLHttpRequest();
+                        xmlHttp.onreadystatechange = function() {
+                            if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                                let response = JSON.parse(xmlHttp.responseText);
+                                function convertRawOffset(raw){
+                                    let absRawInHr = Math.abs(raw / 3600);
+                                    let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
+                                    return (raw < 0) ? ('-' + converted) : ('+' + converted);
+                                }
+                                let tz = convertRawOffset(response.rawOffset);
+                                callback(map, tz);
+                            }
+                        }
+                        xmlHttp.open("GET", theUrl, true);
+                        xmlHttp.send(null);
+                    }
+                }
+
+                getTZ(map, getFormData);
+
+                function getFormData(map, tz){
+                    let timeframes = [];
+                    if (true === $('#tab_wdt1').hasClass('active')){
+                        let weekdays = {
+                            "all" : ["mo", "tu", "we", "th", "fr", "su", "sa"],
+                            "working" : ["mo", "tu", "we", "th", "fr"],
+                            "weekend" : ["su", "sa"]
+                        };
+                        let workingDaysState = $('input[name="____wd_working_days"]').is(':checked');
+                        let weekendDaysState = $('input[name="____wd_weekend"]').is(':checked');
+                        let startTime = $('input[name="start_time"]').val();
+                        let finishTime = $('input[name="finish_time"]').val();
+                        if(true === workingDaysState && true === weekendDaysState) {
+                            timeframes.push(compactTimeframe(weekdays.all, startTime, finishTime, tz));
+                        } else if (true === workingDaysState) {
+                            timeframes.push(compactTimeframe(weekdays.working, startTime, finishTime, tz));
+                        } else if (true === weekendDaysState){
+                            timeframes.push(compactTimeframe(weekdays.weekend, startTime, finishTime, tz));
+                        }
+                    } else if (true === $('#tab_wdt2').hasClass('active')){
+                        let weekdays = {};
+                        $('[data-relation="check_wd8"]:checked, [data-relation="check_wd9"]:checked').each(function(){
+                            currentWeekday = $(this).data('weekday');
+                            timeFrom = $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val();
+                            timeTo = $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val();
+                            key = timeFrom + '-' + timeTo;
+                            weekdays[key] = (Array.isArray(weekdays[key])) ? weekdays[key].concat(currentWeekday) : new Array(currentWeekday);
+                        });
+                        $.each(weekdays, function(times, days){
+                            timesArray = times.split('-');
+                            timeframes.push(compactTimeframe(days, timesArray[0], timesArray[1], tz));
+                        });
+                    }
+
+                    let formData = $('.formData').serializeArray();
+                    $('.nullableLimit').each(function(){
+                        formData.push({
+                            "name" : $(this).prop('name'),
+                            "value" : ($(this).val() === '0') ? null : $(this).val()
+                        });
+                    });
+                    $('.nullableFormData').each(function(){
+                        let value = (
+                                        $(this).val() === '0'
+                                        || $(this).val() === undefined
+                                        || $(this).val() === ''
+                                    ) ? null : $(this).val();
+                        formData.push({
+                            "name" : $(this).prop('name'),
+                            "value" : value
+                        });
+                    });
+                    let startDateObj = new Date($('[name="start_date"]').val());
+                    formData.push({
+                        "name" : "start_date",
+                        "value" : prepareDate(startDateObj, tz)
+                    });
+                    let finishDateVal = $('[name="finish_date"]').val();
+                    formData.push({
+                        "name" : "finish_date",
+                        "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
+                    });
+                    function prepareDate(date, tz) {
+                        return date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+' 00:00:00.000000'+ tz;
+                    }
+
+                    $.each(timeframes, function(key, timeframe){
+                        formData.push({
+                            "name" : "timeframes[" + key + "][from]",
+                            "value" : timeframe.from
+                        });
+                        formData.push({
+                            "name" : "timeframes[" + key + "][to]",
+                            "value" : timeframe.to
+                        });
+                        $.each(timeframe.days, function(dayKey, day){
+                            formData.push({
+                                "name" : "timeframes[" + key + "][days][" + dayKey + "]",
+                                "value" : day
+                            });
+                        }, key);
+                    });
+
+                    formData.push({
+                        "name" : "_token",
+                        "value" : $('[name="_token"]').val()
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: $('#createOfferForm').attr('action'),
+                        headers: {
+                            'Accept':'application/json',
+                        },
+                        data: formData,
+                        success: function(data, textStatus, xhr){
+                            if (202 == xhr.status){
+                                return window.location.replace("{{ route('advert.offers.index') }}");
+                            } else {
+                                console.log(xhr.status);
+                            }
+                        },
+                        error: function(resp){
+                            console.log(resp.status);
+                        }
+                    });
+                };
+
+                function compactTimeframe(days, from, to, timezoneStr){
+                    return {
+                        "from": from + ':00.000000' + timezoneStr,
+                        "to": to + ':00.000000' + timezoneStr,
+                        "days": days
+                    };
+                }
+            });
         }
 
 	</script>

@@ -76,7 +76,7 @@ class PlaceController extends Controller
             $place->append('offers');
         }
 
-        return \response()->render('profile.place.show', $place->toArray());
+        return \response()->render('advert.profile.place.show', $place->toArray());
     }
 
     /**
@@ -116,7 +116,7 @@ class PlaceController extends Controller
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
-        return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+        return \response()->render('advert.profile.place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
     /**

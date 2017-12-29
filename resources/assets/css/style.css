@@ -164,3 +164,60 @@ footer p {
     border-top-color: transparent;
 }
 
+.pagenavy {
+    margin-bottom: 32px;
+    text-align: right;
+}
+.pagenavy span,
+.pagenavy a {
+    position: relative;
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0 6px;
+    min-width: 32px;
+    height: 32px;
+    vertical-align: top;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+.pagenavy a {
+    color: #ff5a00;
+    border-color: #ff5a00;
+}
+.pagenavy a:hover,
+.pagenavy a:active,
+.pagenavy a:focus {
+    color: #ff8a0e;
+    border-color: #ff8a0e;
+    text-decoration: none;
+}
+.pagenavy .prev:before,
+.pagenavy .next:before {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: 12px;
+    width: 12px;
+    height: 12px;
+    border-left: 2px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
+    transform: rotate(45deg);
+}
+.pagenavy .next:before {
+    left: auto;
+    right: 12px;
+    transform: rotate(-135deg);
+}
+.pagenavy a.prev:before,
+.pagenavy a.next:before {
+    border-color: #ff5a00;
+}
+.pagenavy a.prev:hover:before,
+.pagenavy a.next:hover:before,
+.pagenavy a.prev:active:before,
+.pagenavy a.next:active:before,
+.pagenavy a.prev:focus:before,
+.pagenavy a.next:focus:before {
+    border-color: #ff8a0e;
+}
