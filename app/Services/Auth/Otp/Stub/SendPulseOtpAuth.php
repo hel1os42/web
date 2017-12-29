@@ -30,16 +30,12 @@ class SendPulseOtpAuth implements OtpAuth
 
     /**
      * SendPulseOtpAuth constructor.
-     * @throws UnprocessableEntityHttpException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function __construct()
     {
         $this->client = new Client([
             'base_uri' => config('otp.sendpulse.base_api_url')
         ]);
-        $this->token  = $this->getToken();
     }
 
     /**
@@ -51,6 +47,7 @@ class SendPulseOtpAuth implements OtpAuth
      */
     public function generateCode(string $phoneNumber): void
     {
+        $this->token  = $this->getToken();
         $code = random_int(100000, 999999);
         $data = [
             'phones'        => json_encode([$phoneNumber]),
@@ -94,7 +91,7 @@ class SendPulseOtpAuth implements OtpAuth
         $authPath = config('otp.sendpulse.auth_path');
         $authData = config('otp.sendpulse.auth_data');
 
-        if (empty([$authData['client_id'], $authData['client_secret']])) {
+        if (empty($authData['client_id']) || empty($authData['client_secret'])) {
             logger('OTP provider config is not set.');
             throw new UnprocessableEntityHttpException('Can\'t send otp code.');
         }
