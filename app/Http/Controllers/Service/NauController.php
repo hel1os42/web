@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Service;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Service\CreateUserRequest;
 use App\Http\Requests\Service\ExchangeNau;
+use App\Jobs\TransferNau;
 use App\Models\User;
 use App\Repositories\AccountRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
+use function GuzzleHttp\Promise\queue;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
 use OmniSynapse\CoreService\CoreService;
@@ -86,7 +88,6 @@ class NauController extends Controller
     public function createUser(
         CreateUserRequest $request,
         UserRepository $userRepository,
-        TransactionRepository $transactionRepository,
         AccountRepository $accountRepository
     ) {
         $referrerUser = User::findByInvite("NAU");
@@ -114,8 +115,7 @@ class NauController extends Controller
             throw new UnprocessableEntityHttpException();
         }
 
-        $transactionRepository
-            ->createWithAmountSourceDestination($request->balance, $systemAccount, $user->getAccountForNau());
+        TransferNau::dispatch($request->balance, $user->id);
 
         return response()->render(
             '', $user->fresh(), Response::HTTP_CREATED,

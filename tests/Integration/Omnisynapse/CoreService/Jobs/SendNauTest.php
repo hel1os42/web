@@ -49,6 +49,7 @@ class SendNauTest extends TestCase
         $sendNauMock->shouldReceive('getSourceAccountId')->once()->andReturn($sendNau['sourceAccountId']);
         $sendNauMock->shouldReceive('getDestinationAccountId')->once()->andReturn($sendNau['destinationAccountId']);
         $sendNauMock->shouldReceive('getAmount')->once()->andReturn($sendNau['amount']);
+        $sendNauMock->shouldReceive('isNoFee')->once()->andReturn(false);
 
         /*
          * Test JOB
