@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Create offer')
+@section('title', 'Create transaction')
 
 @section('content')
     <div class="col-md-8">

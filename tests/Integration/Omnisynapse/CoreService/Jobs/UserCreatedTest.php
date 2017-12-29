@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService\Job;
 
+use App\Models\Role;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 use GuzzleHttp\Client;
@@ -39,6 +40,7 @@ class UserCreatedTest extends TestCase
                 $wallet
             ],
             'createdAt'   => $createdAt->format('Y-m-d\TH:i:sO'),
+            'defaultRole' => Role::ROLE_ADMIN,
         ];
 
         $referrerMock = \Mockery::mock(\App\Models\User::class);
@@ -48,6 +50,8 @@ class UserCreatedTest extends TestCase
         $userMock->shouldReceive('getId')->atLeast(1)->andReturn($user['id']);
         $userMock->shouldReceive('getName')->atLeast(1)->andReturn($user['username']);
         $userMock->shouldReceive('getReferrer')->atLeast(1)->andReturn($referrerMock);
+        $userMock->shouldReceive('load')->once()->andReturn(true);
+        $userMock->shouldReceive('isAdmin')->once()->andReturn(true);
 
         $response = new Response(200, [
             'Content-Type' => 'application/json',

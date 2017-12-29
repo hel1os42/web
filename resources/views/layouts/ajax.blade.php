@@ -1,12 +1,3 @@
-@if (isset($errors) && $errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-{!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
+@include('partials.msg')
 
 @yield('content')
