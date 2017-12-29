@@ -147,7 +147,9 @@ class LoginController extends AuthController
     {
         $this->auth->guard('web')->login($user);
 
-        return \response()->redirectTo(\request()->get('redirect_to', route('profile')));
+        $redirect = ($this->auth->user()->isAdvertiser()) ? route('advert.profile') : '/';
+
+        return \response()->redirectTo(\request()->get('redirect_to', $redirect));
     }
 
     /**

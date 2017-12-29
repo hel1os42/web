@@ -77,7 +77,7 @@ class PictureController extends AbstractPictureController
 
         $this->authorize('places.picture.store', $place);
 
-        $redirect = (!$request->wantsJson() && $this->user()->isAdvertiser()) ? route('advert.profile') : route('profile.picture.show');
+        $redirect = (!$request->wantsJson() && $this->auth->user()->isAdvertiser()) ? route('advert.profile') : route('profile.picture.show');
 
         return $this->storeImageFor($request, $place->getId(), $redirect);
     }
