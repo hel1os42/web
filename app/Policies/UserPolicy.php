@@ -67,7 +67,7 @@ class UserPolicy extends Policy
      */
     public function pictureStore(User $user)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER]);
     }
 
     /**

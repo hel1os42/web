@@ -40,6 +40,6 @@ class AdvertController extends Controller
 
         $this->authorize('users.show', $user);
 
-        return \response()->render('advert.profile', $user->toArray());
+        return \response()->render('advert.profile.show', $user->toArray());
     }
 }
