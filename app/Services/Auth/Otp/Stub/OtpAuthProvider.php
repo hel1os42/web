@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Auth\Otp\SendPulse;
+namespace App\Services\Auth\Otp\Stub;
 
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Support\ServiceProvider;

@@ -331,7 +331,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function setOtpCode(string $code)
     {
-        $this->otp_code = $code;
+        $this->otp_code = Hash::make($code);
         return $this;
     }
 
@@ -389,6 +389,20 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getOtpCode(): string
     {
         return $this->otp_code;
+    }
+
+    /**
+     * @param string $phoneNumber
+     * @param string $codeToCheck
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public static function checkOtpCode(string $phoneNumber, string $codeToCheck): string
+    {
+        $hashedCode = self::findByPhone($phoneNumber)->getOtpCode();
+
+        return Hash::check($codeToCheck, $hashedCode);
     }
 
     /**

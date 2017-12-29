@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Services\Auth\Otp\SendPulse;
+namespace App\Services\Auth\Otp\Stub;
 
 use App\Exceptions\Exception;
 use App\Models\User;
 use App\Services\Auth\Otp\OtpAuth;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -69,8 +68,7 @@ class SendPulseOtpAuth implements OtpAuth
             throw new UnprocessableEntityHttpException('Can\'t send otp code.');
         }
 
-        User::findByPhone($phoneNumber)->setOtpCode(Hash::make($code))->save();
-
+        User::findByPhone($phoneNumber)->setOtpCode($code)->save();
     }
 
     /**
@@ -82,10 +80,7 @@ class SendPulseOtpAuth implements OtpAuth
      */
     public function validateCode(string $phoneNumber, string $codeToCheck): string
     {
-        $hashedCode = User::findByPhone($phoneNumber)->getOtpCode();
-
-        return Hash::check($codeToCheck, $hashedCode) ? 'otp' : null;
-
+        return User::checkOtpCode($phoneNumber, $codeToCheck);
     }
 
     /**
