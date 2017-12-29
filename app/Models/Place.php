@@ -63,16 +63,17 @@ class Place extends Model
         $this->initUuid();
 
         $this->casts = [
-            'id'          => 'string',
-            'name'        => 'string',
-            'description' => 'string',
-            'about'       => 'string',
-            'address'     => 'string',
-            'latitude'    => 'double',
-            'longitude'   => 'double',
-            'radius'      => 'integer',
-            'stars'       => 'integer',
-            'is_featured' => 'boolean'
+            'id'                => 'string',
+            'name'              => 'string',
+            'description'       => 'string',
+            'about'             => 'string',
+            'address'           => 'string',
+            'latitude'          => 'double',
+            'longitude'         => 'double',
+            'radius'            => 'integer',
+            'stars'             => 'integer',
+            'is_featured'       => 'boolean',
+            'has_active_offers' => 'boolean',
         ];
 
         $this->hidden = [

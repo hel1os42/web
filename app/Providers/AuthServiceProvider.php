@@ -56,6 +56,8 @@ class AuthServiceProvider extends ServiceProvider
 
         'transactions.list'   => 'TransactPolicy@index',
         'transactions.create' => 'TransactPolicy@create',
+        'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
+        'transaction.show'    => 'TransactPolicy@show',
 
         'users.create'          => 'UserPolicy@create',
         'users.list'            => 'UserPolicy@index',
@@ -66,6 +68,7 @@ class AuthServiceProvider extends ServiceProvider
         'users.update.children' => 'UserPolicy@updateChildren',
         'users.update.parents'  => 'UserPolicy@updateParents',
         'users.update.roles'    => 'UserPolicy@updateRoles',
+        'users.update.approve'  => 'UserPolicy@approve',
         'impersonate'           => 'UserPolicy@impersonate',
     ];
 

@@ -12,13 +12,10 @@ class TransactObserver extends AbstractJobObserver
      * @param Transact $transact
      *
      * @return bool
+     * @throws RequestException
      */
     public function creating(Transact $transact)
     {
-        if (!$transact->isTypeP2p()) {
-            return true;
-        }
-
         return $this->queue($this->getCoreService()->sendNau($transact));
     }
 }

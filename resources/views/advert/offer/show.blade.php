@@ -1,6 +1,6 @@
-@extends('layouts.master')
+@extends('advert.layout')
 
-@section('title', 'Show offer')
+@section('title', 'Offer')
 
 @section('content')
 @php

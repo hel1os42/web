@@ -16,7 +16,7 @@ interface TransactionRepository extends RepositoryInterface
 {
     public function model(): string;
 
-    public function createWithAmountSourceDestination(float $amount, Account $sourceAccount, Account $destinationAccount): Transact;
+    public function createWithAmountSourceDestination(float $amount, Account $sourceAccount, Account $destinationAccount, Bool $noFee): Transact;
 
     /**
      * @param User $user
