@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\FormRequest;
 use App\Http\Requests\TransactRequest;
-use App\Models\Contracts\Currency;
 use App\Repositories\AccountRepository;
 use App\Repositories\TransactionRepository;
 use Illuminate\Auth\AuthManager;
@@ -26,6 +25,15 @@ class TransactionController extends Controller
      */
     private $accountRepository;
 
+    /**
+     * TransactionController constructor.
+     *
+     * @param TransactionRepository $transactionRepository
+     * @param AccountRepository     $accountRepository
+     * @param AuthManager           $authManager
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct(
         TransactionRepository $transactionRepository,
         AccountRepository $accountRepository,
@@ -69,11 +77,18 @@ class TransactionController extends Controller
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
+        $noFee              = false;
+        $authorizeAbility   = 'transactions.create';
 
-        $this->authorize('transactions.create', $sourceAccount);
+        if ($request->has('no_fee')) {
+            $noFee            = true;
+            $authorizeAbility = $authorizeAbility . '.no_fee';
+        }
+
+        $this->authorize($authorizeAbility, [$sourceAccount, $destinationAccount]);
 
         $transaction = $this->transactionRepository
-            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
+            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount, $noFee);
 
         return response()->render(
             null === $transaction->id

@@ -22,7 +22,7 @@ class TransactPolicy extends Policy
     }
 
     /**
-     * @param User $user
+     * @param User    $user
      * @param Account $sourceAccount
      *
      * @return bool
@@ -30,8 +30,22 @@ class TransactPolicy extends Policy
     public function create(User $user, Account $sourceAccount): bool
     {
         return $user->hasAnyRole()
-               && ($user->equals($sourceAccount->owner)
-                   || $user->isAdmin());
+               && $user->equals($sourceAccount->owner);
+    }
+
+    /**
+     * @param User    $user
+     * @param Account $sourceAccount
+     * @param Account $destinationAccount
+     *
+     * @return bool
+     */
+    public function createNoFee(User $user, Account $sourceAccount, Account $destinationAccount): bool
+    {
+        return $user->isAdmin()
+            || ($user->equals($sourceAccount->owner)
+                && $user->isAgent()
+                && $user->hasChild($destinationAccount->owner));
     }
 
     /**
