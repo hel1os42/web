@@ -14,5 +14,4 @@ class OtpAuthProvider extends ServiceProvider
             return new SendPulseOtpAuth();
         });
     }
-
 }

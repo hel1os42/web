@@ -100,7 +100,8 @@ class SendPulseOtpAuth implements OtpAuth
         $authData = config('otp.sendpulse.auth_data');
 
         if (empty([$authData['client_id'], $authData['client_secret']])) {
-
+            logger('OTP provider config is not set.');
+            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
         }
 
         try {
