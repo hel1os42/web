@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Services\Auth\Otp\OtpAuth;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -65,7 +67,7 @@ class SendPulseOtpAuth implements OtpAuth
             throw new UnprocessableEntityHttpException('Can\'t send otp code.');
         }
 
-        User::findByPhone($phoneNumber)->setOtpCode($code)->save();
+        Cache::store('file')->put($phoneNumber, Hash::make($code), 15);
     }
 
     /**
@@ -73,11 +75,10 @@ class SendPulseOtpAuth implements OtpAuth
      * @param string $codeToCheck
      *
      * @return string
-     * @throws \InvalidArgumentException
      */
     public function validateCode(string $phoneNumber, string $codeToCheck): string
     {
-        return User::checkOtpCode($phoneNumber, $codeToCheck);
+        return $this->checkOtpCode($phoneNumber, $codeToCheck) ? 'otp' : '';
     }
 
     /**
@@ -133,5 +134,18 @@ class SendPulseOtpAuth implements OtpAuth
         }
 
         return json_decode($result);
+    }
+
+    /**
+     * @param string $phoneNumber
+     * @param string $codeToCheck
+     *
+     * @return bool
+     */
+    private function checkOtpCode(string $phoneNumber, string $codeToCheck): bool
+    {
+        return Cache::store('file')->has($phoneNumber)
+            ? Hash::check($codeToCheck, Cache::store('file')->get($phoneNumber))
+            : false;
     }
 }
