@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Auth\Otp\Stub;
+namespace App\Providers;
 
 use App\Services\Auth\Otp\OtpAuth;
+use App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth;
 use Illuminate\Support\ServiceProvider;
 
 class OtpAuthProvider extends ServiceProvider
