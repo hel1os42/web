@@ -22,6 +22,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
     $router->group(['prefix' => 'auth'], function () use ($router) {
 
+        $router->get('/', function () {
+            return redirect()->route('loginForm');
+        });
+
         $router->group(['prefix' => 'login'], function () use ($router) {
             $router->get('', 'Auth\LoginController@getLogin')
                    ->name('loginForm');
@@ -77,6 +81,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('auth/impersonate/{uuid}', 'Auth\LoginController@impersonate')->where('uuid',
         '[a-z0-9-]+')->name('impersonate');
     $router->get('auth/stop_impersonate', 'Auth\LoginController@stopImpersonate')->name('stop_impersonate');
+
+    $router->get('advert/profile', 'AdvertController@profile')->name('advert.profile');
 
     /**
      * User actions
