@@ -11,7 +11,6 @@ use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
-use App\Services\Implementation\NauOfferReservation;
 use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
 use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
