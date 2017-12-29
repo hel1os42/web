@@ -6,11 +6,16 @@
         @auth
             <div class="controls pull-right">
 {{--                {{ dd(get_defined_vars()['__data']) }}--}}
-                <a href="{{ route('profile.place.show') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
+
+                @if(!$isPlaceCreated)
+                    <a href="{{ route('places.create') }}" title="Fill account info"><i class="fa fa-user-o"></i></a>
+                @else
+                    <a href="{{ route('profile.place.show') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
+                @endif
                 <a href="{{ route('logout') }}" title="Logout"><i class="fa fa-sign-out"></i></a>
             </div>
             <div class="advert-name pull-right">
-                {{ auth()->user()->name }}
+                {{ $authUser['name'] }}
             </div>
         @endauth
     </div>

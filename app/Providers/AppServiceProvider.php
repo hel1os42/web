@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\NauModels\Offer;
 use App\Observers\OfferObserver;
+use App\Repositories\PlaceRepository;
 use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
@@ -35,6 +36,9 @@ class AppServiceProvider extends ServiceProvider
                 $authUser = auth()->user();
                 $authUser->load('accounts');
                 $view->with('authUser', $authUser->toArray());
+
+                $placesRepository = app(PlaceRepository::class);
+                $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
             }
         );
     }

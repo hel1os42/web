@@ -367,9 +367,6 @@
                         "value" : $('[name="_token"]').val()
                     });
 
-
-                    console.log(formData);
-                    console.log($(this).attr('action'));
                     $.ajax({
                         type: "POST",
                         url: $('#createOfferForm').attr('action'),
@@ -378,9 +375,7 @@
                         },
                         data: formData,
                         success: function(data, textStatus, xhr){
-                            console.log(xhr);
                             if (202 == xhr.status){
-                                {{--return window.location.href = "{{ route('advert.offers.index') }}";--}}
                                 return window.location.replace("{{ route('advert.offers.index') }}");
                             } else {
                                 console.log(xhr.status);
