@@ -384,9 +384,9 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getOtpCode(): string
+    public function getOtpCode(): ?string
     {
         return $this->otp_code;
     }
@@ -402,7 +402,7 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         $hashedCode = self::findByPhone($phoneNumber)->getOtpCode();
 
-        return Hash::check($codeToCheck, $hashedCode);
+        return $hashedCode !== null && Hash::check($codeToCheck, $hashedCode);
     }
 
     /**
