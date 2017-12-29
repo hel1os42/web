@@ -20,8 +20,6 @@ class TransactObserverTest extends AbstractObserversTestCase
         /** @var Transact $transactionMock */
         $transactionMock = $this->createMock(Transact::class);
 
-        $transactionMock->expects($this->once())->method('isTypeP2p')->willReturn(true);
-
         $coreServiceImplMock
             ->expects($this->once())
             ->method('sendNau')

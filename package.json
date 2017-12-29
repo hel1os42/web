@@ -20,5 +20,9 @@
     "vue": "^2.1.10",
     "node-sass": "^4.5.2",
     "sass-loader": "^6.0.3"
+  },
+  "dependencies": {
+    "leaflet": "^1.2.0",
+    "ol": "^4.6.4"
   }
 }

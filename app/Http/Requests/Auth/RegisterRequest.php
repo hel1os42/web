@@ -43,17 +43,13 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'             => 'string|min:2',
-            'phone'            => 'nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
+            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
             'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
             'password'         => 'required_with:email|nullable|min:6|max:255',
-            'password_confirm' => 'required_with:email|nullable|same:password',
-            'latitude'         => 'nullable|numeric|between:-90,90',
-            'longitude'        => 'nullable|numeric|between:-180,180',
+            'password_confirm' => 'required_with:email|nullable|same:password'
         ];
 
         if ($this->getRegistrator() === null) {
-            $rules['phone']       = 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone';
             $rules['code']        = 'required_with:phone|nullable|digits:6|otp';
             $rules['referrer_id'] = 'required|string|exists:users,id';
         }
@@ -64,7 +60,7 @@ class RegisterRequest extends FormRequest
     /**
      * @return User|null
      */
-    public function getRegistrator(): User
+    public function getRegistrator(): ?User
     {
         return auth()->user();
     }
