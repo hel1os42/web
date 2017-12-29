@@ -47,9 +47,9 @@ class SendPulseOtpAuth implements OtpAuth
      */
     public function generateCode(string $phoneNumber): void
     {
-        $this->token  = $this->getToken();
-        $code = random_int(100000, 999999);
-        $data = [
+        $this->token = $this->getToken();
+        $code        = random_int(100000, 999999);
+        $data        = [
             'phones'        => json_encode([$phoneNumber]),
             'body'          => 'NAU verification code: ' . $code,
             'transliterate' => "0"
