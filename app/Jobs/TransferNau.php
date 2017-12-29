@@ -35,7 +35,7 @@ class TransferNau implements ShouldQueue
         AccountRepository $accountRepository
     ) {
         $systemAccount = $accountRepository->findWhere([
-            'owner_id' => '00000000-0000-0000-0000-100000000000'
+            'owner_id' => '00000000-0000-0000-0000-000000000000'
         ], ['id'])->first();
 
         $user = $userRepository->find($this->userId);
