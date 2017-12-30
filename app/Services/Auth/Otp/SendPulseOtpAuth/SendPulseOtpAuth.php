@@ -30,12 +30,18 @@ class SendPulseOtpAuth implements OtpAuth
     private $token;
 
     /**
+     * @var Client
+     */
+    private $configData;
+
+    /**
      * SendPulseOtpAuth constructor.
      */
     public function __construct()
     {
+        $this->configData = config('otp.gate_data.sendpulse');
         $this->client = new Client([
-            'base_uri' => config('otp.sendpulse.base_api_url')
+            'base_uri' => $this->configData['base_api_url']
         ]);
     }
 
@@ -88,8 +94,8 @@ class SendPulseOtpAuth implements OtpAuth
      */
     private function getToken()
     {
-        $authPath = config('otp.sendpulse.auth_path');
-        $authData = config('otp.sendpulse.auth_data');
+        $authPath = $this->configData['auth_path'];
+        $authData = $this->configData['auth_data'];
 
         if (empty($authData['client_id']) || empty($authData['client_secret'])) {
             logger('OTP provider config is not set.');
