@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Attributes;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Place;
 use App\Models\Role;
 use App\Models\User;
+use App\Repositories\PlaceRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +35,7 @@ class AdvertController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function profile(): Response
+    public function profile(PlaceRepository $placeRepository): Response
     {
         $user = auth()->user();
         $user->load(['parents', 'children']);

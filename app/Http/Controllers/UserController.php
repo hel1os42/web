@@ -119,6 +119,10 @@ class UserController extends Controller
         $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
         $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
 
+        if (auth()->user()->getId() === $uuid && auth()->user()->isAdvertiser()) {
+            return \response()->redirectTo(route('advert.profile'));
+        }
+
         return \response()->render('user.show', $result, Response::HTTP_CREATED, route('profile'));
     }
 

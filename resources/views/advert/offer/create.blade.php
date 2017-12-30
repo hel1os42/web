@@ -342,7 +342,7 @@
                         "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
                     });
                     function prepareDate(date, tz) {
-                        return date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+' 00:00:00.000000'+ tz;
+                        return date.getFullYear()+"-"+(date.getMonth()+1) +"-"+date.getDate()+' 00:00:00.000000'+ tz;
                     }
 
                     $.each(timeframes, function(key, timeframe){
