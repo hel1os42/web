@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Account source
  * @property Account destination
  * @property string  type
+ * @property bool    no_fee
  *
  * @method static static|Builder forAccount(Account $account)
  * @method static static|Builder forUser(WebUser $user)
@@ -41,7 +42,7 @@ class Transact extends AbstractNauModel
         $this->primaryKey = 'txid';
 
         $this->fillable = [
-            'id', 'source_account_id', 'destination_account_id', 'amount'
+            'id', 'source_account_id', 'destination_account_id', 'amount', 'no_fee',
         ];
 
         $this->casts = [
@@ -51,12 +52,14 @@ class Transact extends AbstractNauModel
             'amount'  => 'float',
             'status'  => 'string',
             'tx_type' => 'string',
+            'no_fee'  => 'boolean',
         ];
 
         $this->appends = [
             'id',
             'source_account_id',
             'destination_account_id',
+            'no_fee',
         ];
 
         $this->hidden = [
@@ -64,6 +67,7 @@ class Transact extends AbstractNauModel
             'src_id',
             'dst_id',
             'tx_type',
+            'no_fee',
         ];
         $this->maps   = [
             'id'                     => 'txid',
@@ -183,6 +187,14 @@ class Transact extends AbstractNauModel
     public function isTypeIncoming(): bool
     {
         return $this->getType() === self::TYPE_INCOMING;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNoFee(): bool
+    {
+        return $this->no_fee;
     }
 
     /**
