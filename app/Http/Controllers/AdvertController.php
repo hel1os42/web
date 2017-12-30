@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Attributes;
-use App\Http\Requests\UserUpdateRequest;
-use App\Models\Role;
-use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;

@@ -39,8 +39,6 @@
             </div>
         </div>
 
-
-
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#tab_your_offers">Your Offers</a></li>
         </ul>
@@ -189,7 +187,6 @@
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
                             let categories = JSON.parse(xhr.responseText).data;
-                            console.log(categories);
                                 $.each(categories, function(){
                                     let name = this.name;
                                     $('[data-uuid="'+this.id+'"]').each(function(){
