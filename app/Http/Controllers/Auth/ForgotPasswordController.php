@@ -22,7 +22,7 @@ class ForgotPasswordController extends AuthController
      */
     protected function sendResetLinkResponse(string $response): Response
     {
-        return response()->render('auth.passwords.email.sended', [
+        return response()->render('auth.passwords.email-sended', [
             'message' => trans($response)
         ]);
     }
