@@ -2,8 +2,10 @@
 return [
     'gate'       => env('OTP_GATE', 'sendpulse'),
     'gate_class' => [
-        'sendpulse' => \App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth::class,
+        'sendpulse'  => \App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth::class,
         'smstraffic' => \App\Services\Auth\Otp\SmsTrafficOtpAuth\SmsTrafficOtpAuth::class,
+        'smsfly'     => \App\Services\Auth\Otp\SmsFlyOtpAuth\SmsFlyOtpAuth::class,
+        'stub'       => \App\Services\Auth\Otp\Stub\StubOtpAuth::class,
     ],
     'gate_data'  => [
         'sendpulse'  => [
@@ -26,6 +28,14 @@ return [
                 'rus'          => '0',
                 'originator'   => 'nau.io',
                 //'udh'          => ''
+            ]
+        ],
+        'smsfly'     => [
+            'base_api_url' => 'http://sms-fly.com',
+            'main_path'    => '/api/api.noai.php',
+            'auth_data'    => [
+                'login'        => env('SMSFLY_LOGIN', ''),
+                'password'     => env('SMSFLY_PASSWORD', ''),
             ]
         ]
     ],
