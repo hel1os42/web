@@ -28,7 +28,7 @@ class BaseOtpAuth
     public function __construct()
     {
         $this->configData = config('otp.gate_data.' . $this->gateName);
-        $this->client = new Client([
+        $this->client     = new Client([
             'base_uri' => $this->configData['base_api_url']
         ]);
     }
@@ -56,10 +56,10 @@ class BaseOtpAuth
     }
 
     /**
-     * @param string     $method
-     * @param string     $path
+     * @param string            $method
+     * @param string            $path
      * @param array|string|null $postData
-     * @param array|null $headers
+     * @param array|null        $headers
      *
      * @return string
      * @throws UnprocessableEntityHttpException
@@ -67,19 +67,24 @@ class BaseOtpAuth
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    protected function request(string $method, string $path, $postData = null, array $headers = null, $basicAuth = null): string
-    {
+    protected function request(
+        string $method,
+        string $path,
+        $postData = null,
+        array $headers = null,
+        $basicAuth = null
+    ): string {
         $data = [];
-        if($postData !== null){
-            $key = is_string($postData) ? 'body' : 'form_params';
+        if ($postData !== null) {
+            $key        = is_string($postData) ? 'body' : 'form_params';
             $data[$key] = $postData;
         }
 
-        if($headers !== null){
+        if ($headers !== null) {
             $data['headers'] = $headers;
         }
 
-        if($basicAuth !== null) {
+        if ($basicAuth !== null) {
             $data['auth'] = [$this->configData['auth_data']['login'], $this->configData['auth_data']['password']];
         }
 
@@ -114,7 +119,7 @@ class BaseOtpAuth
      */
     protected function createOtp(): string
     {
-        return (string) random_int(100000, 999999);
+        return (string)random_int(100000, 999999);
     }
 
     protected function getOtpMessage($code)

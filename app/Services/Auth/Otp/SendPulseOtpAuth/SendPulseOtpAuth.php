@@ -75,7 +75,7 @@ class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
         }
 
         $result = $this->request(HttpRequest::METHOD_POST, $authPath, $authData);
-        $data = json_decode($result);
+        $data   = json_decode($result);
 
         if (!isset($data->access_token)) {
             $this->otpError('Bad access token');

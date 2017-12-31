@@ -29,7 +29,7 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
     {
         $code = $this->createOtp();
 
-        $data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+        $data  = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
         $data .= "<request>";
         $data .= "<operation>SENDSMS</operation>";
         $data .= '		<message start_time="AUTO" end_time="AUTO" lifetime="4" rate="1" desc="OTP API">';
