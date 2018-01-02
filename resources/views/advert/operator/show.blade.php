@@ -11,7 +11,7 @@
                     <div class="col-sm-10 p-5">
                             @foreach(get_defined_vars()['__data'] as $field => $value)
 
-                            @if (!in_array($field, ['app', 'errors', '__env']))
+                            @if (!in_array($field, ['app', 'errors', '__env', 'authUser']))
                                 <p><strong> {{ $field }} </strong></p>
                                 @if('is_active' === $field)
                                     @if(true === $value)

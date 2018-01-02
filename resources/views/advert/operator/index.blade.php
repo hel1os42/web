@@ -53,6 +53,9 @@
                         </tbody>
                     @endif
                 </table>
+                <form method="get" action="{{ route('advert.operators.create') }}">
+                    <button type="submit" class="btn btn-rose btn-wd btn-md">or create new</button>
+                </form>
             </div>
         </div>
     </div>
