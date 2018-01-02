@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
  *
  * @property string source
  * @property string destination
- * @property float amount
+ * @property float  amount
  */
 class TransactRequest extends FormRequest
 {

@@ -170,6 +170,7 @@ return [
         Sofa\Eloquence\ServiceProvider::class,
         Vinkla\Hashids\HashidsServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Lab404\Impersonate\ImpersonateServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -183,7 +184,7 @@ return [
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
-        App\Services\Auth\Otp\Stub\OtpAuthProvider::class,
+        App\Providers\OtpAuthProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,

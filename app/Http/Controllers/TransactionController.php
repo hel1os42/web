@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\FormRequest;
 use App\Http\Requests\TransactRequest;
-use App\Models\Contracts\Currency;
 use App\Repositories\AccountRepository;
 use App\Repositories\TransactionRepository;
 use Illuminate\Auth\AuthManager;
@@ -16,9 +15,25 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TransactionController extends Controller
 {
+    /**
+     * @var TransactionRepository
+     */
     private $transactionRepository;
+
+    /**
+     * @var AccountRepository
+     */
     private $accountRepository;
 
+    /**
+     * TransactionController constructor.
+     *
+     * @param TransactionRepository $transactionRepository
+     * @param AccountRepository     $accountRepository
+     * @param AuthManager           $authManager
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct(
         TransactionRepository $transactionRepository,
         AccountRepository $accountRepository,
@@ -33,20 +48,20 @@ class TransactionController extends Controller
 
     /**
      * @return Response
+     * @throws \App\Exceptions\TokenException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function createTransaction(): Response
     {
-        $this->authorize('transactions.create');
+        $sourceAccount = $this->user()->getAccountForNau();
+
+        $this->authorize('transactions.create', $sourceAccount);
 
         return response()->render('transaction.create', FormRequest::preFilledFormRequest(TransactRequest::class, [
             'amount' => 1,
-            'source' => $this->auth
-                ->user()
-                ->getAccountFor(Currency::NAU)
-                ->getAddress()
+            'source' => $sourceAccount->getAddress(),
         ]));
     }
 
@@ -59,25 +74,36 @@ class TransactionController extends Controller
      */
     public function completeTransaction(TransactRequest $request): Response
     {
-        $this->authorize('transactions.create');
-
         $sourceAccount      = $this->accountRepository->findByAddressOrFail($request->source);
         $destinationAccount = $this->accountRepository->findByAddressOrFail($request->destination);
         $amount             = $request->amount;
+        $noFee              = false;
+        $authorizeAbility   = 'transactions.create';
+
+        if ($request->has('no_fee')) {
+            $noFee            = true;
+            $authorizeAbility = $authorizeAbility . '.no_fee';
+        }
+
+        $this->authorize($authorizeAbility, [$sourceAccount, $destinationAccount]);
 
         $transaction = $this->transactionRepository
-            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount);
+            ->createWithAmountSourceDestination($amount, $sourceAccount, $destinationAccount, $noFee);
 
-        return response()->render('transactions.complete', $transaction->toArray(),
-            null === $transaction->id ?
-                Response::HTTP_ACCEPTED :
-                Response::HTTP_CREATED,
+        return response()->render(
+            null === $transaction->id
+                ? 'transaction.in-progress'
+                : 'transaction.complete',
+            $transaction->toArray(),
+            null === $transaction->id
+                ? Response::HTTP_ACCEPTED
+                : Response::HTTP_CREATED,
             route('transaction.complete')
         );
     }
 
     /**
-     * @param int|null $transactionId
+     * @param string|null $transactionId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
@@ -85,18 +111,19 @@ class TransactionController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function listTransactions(int $transactionId = null): Response
+    public function listTransactions(string $transactionId = null): Response
     {
-        $this->authorize('transactions.list');
+        $this->authorize('transactions.list', $this->user());
 
-        $user         = $this->auth->user();
-        $transactions = $this->transactionRepository->getBySenderOrRecepient($user);
+        $transactions = $this->transactionRepository->getBySenderOrRecepient($this->user());
 
         if (null === $transactionId) {
             return response()->render('transaction.list', $transactions->paginate());
         }
 
         $transaction = $transactions->findOrFail($transactionId);
+
+        $this->authorize('transaction.show', $transaction);
 
         return response()->render('transaction.transactionInfo', $transaction->toArray());
     }

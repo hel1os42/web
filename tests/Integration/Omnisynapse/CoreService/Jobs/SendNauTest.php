@@ -38,7 +38,7 @@ class SendNauTest extends TestCase
             'destinationAccountId' => $faker->randomDigitNotNull,
             'amount'               => $faker->randomFloat(),
             'status'               => 'PAID',
-            'createdAt'           => Carbon::parse($faker->time()),
+            'createdAt'            => Carbon::parse($faker->time()),
             'type'                 => 'P2P',
             'feeTransactions'      => [
                 $feeTransaction
@@ -49,6 +49,7 @@ class SendNauTest extends TestCase
         $sendNauMock->shouldReceive('getSourceAccountId')->once()->andReturn($sendNau['sourceAccountId']);
         $sendNauMock->shouldReceive('getDestinationAccountId')->once()->andReturn($sendNau['destinationAccountId']);
         $sendNauMock->shouldReceive('getAmount')->once()->andReturn($sendNau['amount']);
+        $sendNauMock->shouldReceive('isNoFee')->once()->andReturn(false);
 
         /*
          * Test JOB

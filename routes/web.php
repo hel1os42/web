@@ -3,6 +3,16 @@
 /** @var \Illuminate\Routing\Router $router */
 $router = app('router');
 
+$router->group(['middleware' => 'investor', 'prefix' => 'service'], function () use ($router) {
+    $router->get('nau/{user}', 'Service\NauController@getAccount');
+    $router->post('crosschange', 'Service\NauController@exchangeNau');
+    $router->post('user/create', 'Service\NauController@createUser');
+});
+/**
+ * register
+ */
+$router->post('users', 'UserController@register')->name('register');
+
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
@@ -11,6 +21,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
     })->name('home');
 
     $router->group(['prefix' => 'auth'], function () use ($router) {
+
+        $router->get('/', function () {
+            return redirect()->route('loginForm');
+        });
 
         $router->group(['prefix' => 'login'], function () use ($router) {
             $router->get('', 'Auth\LoginController@getLogin')
@@ -52,11 +66,6 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->post('reset', 'Auth\ResetPasswordController@reset');
         });
     });
-
-    /**
-     * register
-     */
-    $router->post('users', 'Auth\RegisterController@register')->name('register');
 });
 
 //---- Unauthorized users
@@ -68,6 +77,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
+
+    $router->get('auth/impersonate/{uuid}', 'Auth\LoginController@impersonate')->where('uuid',
+        '[a-z0-9-]+')->name('impersonate');
+    $router->get('auth/stop_impersonate', 'Auth\LoginController@stopImpersonate')->name('stop_impersonate');
+
+    $router->get('advert/profile', 'AdvertController@profile')->name('advert.profile');
 
     /**
      * User actions
@@ -91,6 +106,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     });
 
     $router->get('users', 'UserController@index')->name('users.index');
+    $router->get('users/create', 'UserController@create')->name('users.create');
     $router->group(['prefix' => 'users/{id}', 'where' => ['id' => '[a-z0-9-]+']], function () use ($router) {
         $router->get('', 'UserController@show')->name('users.show');
         $router->put('', 'UserController@update')->name('users.update');
@@ -145,7 +161,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
            ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
-           ->where('reansactionId', '[0-9]+')
            ->name('transactionList');
 
     /**

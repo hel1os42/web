@@ -19,13 +19,23 @@ class UserPolicy extends Policy
 
     /**
      * @param User $user
+     *
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+    }
+
+    /**
+     * @param User $user
      * @param User $anotherUser
      *
      * @return bool
      */
     public function show(User $user, User $anotherUser)
     {
-        if ($user->hasRoles([Role::ROLE_ADMIN])
+        if ($user->isAdmin()
             || ($user->hasAnyRole() && $anotherUser->equals($user))
         ) {
             return true;
@@ -43,7 +53,7 @@ class UserPolicy extends Policy
      */
     public function update(User $user, User $anotherUser)
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
                || ($user->isAgent() && $user->hasChild($anotherUser))
                || ($user->hasAnyRole() && $anotherUser->equals($user));
     }
@@ -56,7 +66,7 @@ class UserPolicy extends Policy
      */
     public function referrals(User $user, User $anotherUser)
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
                || ($user->hasAnyRole() && $anotherUser->equals($user));
     }
 
@@ -67,7 +77,7 @@ class UserPolicy extends Policy
      */
     public function pictureStore(User $user)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER]);
     }
 
     /**
@@ -78,7 +88,7 @@ class UserPolicy extends Policy
      */
     public function updateChildren(User $user, User $anotherUser)
     {
-        return ($user->hasRoles([Role::ROLE_ADMIN])
+        return ($user->isAdmin()
                 || ($user->isAgent() && $user->hasChild($anotherUser)))
                && ($anotherUser->hasRoles([Role::ROLE_AGENT, Role::ROLE_CHIEF_ADVERTISER]));
     }
@@ -91,20 +101,41 @@ class UserPolicy extends Policy
      */
     public function updateParents(User $user, User $anotherUser)
     {
-        return ($user->hasRoles([Role::ROLE_ADMIN])
+        return ($user->isAdmin()
                 || ($user->isAgent() && $user->hasChild($anotherUser)))
                && ($anotherUser->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_ADVERTISER]));
     }
 
     /**
-     * @param User      $user
-     * @param User|null $anotherUser
+     * @param User $user
      *
      * @return bool
      */
-    public function updateRoles(User $user, User $anotherUser)
+    public function updateRoles(User $user)
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
-               || ($user->isAgent() && $user->hasChild($anotherUser));
+        return $user->isAdmin();
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function impersonate(User $user, User $anotherUser)
+    {
+        return ($user->isAdmin() || $user->hasChild($anotherUser))
+               && $user->isImpersonated() === false;
+    }
+
+    /**
+     * @param User $user
+     * @param User $editableUser
+     *
+     * @return bool
+     */
+    public function approve(User $user, User $editableUser): bool
+    {
+        return $user->isAdmin() || ($user->isAgent() && $user->hasChild($editableUser));
     }
 }

@@ -73,12 +73,13 @@ class PictureController extends AbstractPictureController
 
     private function store(PictureRequest $request)
     {
-        $place = $this->placeRepository->findByUser($this->auth->user());
+        $place = $this->placeRepository->findByUser($this->user());
 
         $this->authorize('places.picture.store', $place);
 
-        return $this->storeImageFor($request, $place->getId(),
-            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
+        $redirect = (!$request->wantsJson() && $this->auth->user()->isAdvertiser()) ? route('advert.profile') : route('profile.picture.show');
+
+        return $this->storeImageFor($request, $place->getId(), $redirect);
     }
 
     /**

@@ -105,12 +105,30 @@
 						            <p><strong>Name</strong></p>
 						            <p><strong>Id</strong></p>
 						            <p><strong>Email</strong></p>
+                                    <p><strong>Phone</strong></p>
+                                    <p><strong>Approved</strong></p>
 						            <p><strong>Invite link</strong></p>
 						        </div>
                                 <div class="col-sm-6 p-10 p-5">
                                     <p>{{$name}}</p>
                                     <p>{{$id}}</p>
                                     <p>{{$email}}</p>
+                                    <p>{{$phone}}</p>
+                                    <div>
+                                        @if($approved)
+                                            <p style="color:green">Yes</p>
+                                        @else
+                                            No
+                                            @can('users.update.approve', $user)
+                                                <form action="{{route('users.update', $id)}}" method="post" style="display:  inline-block;">
+                                                    {{ csrf_field() }}
+                                                    {{ method_field('PATCH') }}
+                                                    <input hidden type="text" name="approved" value="1">
+                                                    <button style="display:  inline-block;" type="submit">approve</button>
+                                                </form>
+                                            @endcan
+                                        @endif
+                                    </div>
                                     <p><a href="{{route('registerForm', $invite_code)}}">{{route('registerForm', $invite_code)}}</a></p>
                                 </div>
                             </div>
@@ -168,18 +186,22 @@
                                         </p>
                                         @endcan
                                         @can('users.update.parents', $user)
-                                        <p>
-                                            @foreach($parents as $parent)
-                                                {{$parent['name']}}<br>
-                                            @endforeach
-                                        </p>
+                                            <p>
+                                                @if(isset($parents))
+                                                    @foreach($parents as $parent)
+                                                        {{$parent['name']}}<br>
+                                                    @endforeach
+                                                @endif
+                                            </p>
                                         @endcan
                                         @can('users.update.children', $user)
-                                        <p>
-                                            @foreach($children as $child)
-                                                {{$child['name']}}<br>
-                                            @endforeach
-                                        </p>
+                                            <p>
+                                                @if(isset($children))
+                                                    @foreach($children as $child)
+                                                        {{$child['name']}}<br>
+                                                    @endforeach
+                                                @endif
+                                            </p>
                                         @endcan
                                     </div>
                                     <button type="submit">Update</button>

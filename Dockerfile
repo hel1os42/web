@@ -11,8 +11,8 @@ COPY . /app
 CMD php artisan config:clear &&\
     php artisan optimize &&\
     php artisan config:cache &&\
-    php artisan migrate &&\
-    nohup php artisan queue:work --queue=nau-web --sleep=3 --tries=1 --daemon &\
+    php artisan migrate --force &&\
+    nohup php artisan queue:work --sleep=3 --tries=10 --daemon &\
     php artisan serve --host=0.0.0.0 --port=8181
 
 EXPOSE 8181
