@@ -24,7 +24,7 @@ class SendNau extends AbstractJob
     /**
      * SendNau constructor.
      *
-     * @param Transact $transaction
+     * @param Transact    $transaction
      * @param CoreService $coreService
      */
     public function __construct(Transact $transaction, CoreService $coreService)
@@ -43,6 +43,7 @@ class SendNau extends AbstractJob
     public function __sleep()
     {
         $parentProperties = parent::__sleep();
+
         return array_merge($parentProperties, ['requestObject', 'transaction']);
     }
 
@@ -59,7 +60,7 @@ class SendNau extends AbstractJob
      */
     public function getHttpPath(): string
     {
-        return '/transactions';
+        return $this->transaction->isNoFee() ? '/transactions/noFee' : '/transactions';
     }
 
     /**
@@ -80,6 +81,7 @@ class SendNau extends AbstractJob
 
     /**
      * @param \Exception $exception
+     *
      * @return FailedJob
      */
     protected function getFailedResponseObject(\Exception $exception): FailedJob

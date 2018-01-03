@@ -6,10 +6,11 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
+use App\Repositories\PlaceRepository;
+use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
-use App\Services\Implementation\NauOfferReservation;
 use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
 use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
@@ -17,7 +18,9 @@ use App\Services\OfferReservation;
 use App\Services\OffersService;
 use App\Services\WeekDaysService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 
 /**
  * Class AppServiceProvider
@@ -40,6 +43,19 @@ class AppServiceProvider extends ServiceProvider
 
         Offer::observe(OfferObserver::class);
         User::observe(UserObserver::class);
+
+        ViewFacade::composer(
+            ['*'], function (View $view) {
+                $authUser = auth()->user();
+                if (null != $authUser) {
+                    $authUser->load('accounts');
+                    $view->with('authUser', $authUser->toArray());
+
+                    $placesRepository = app(PlaceRepository::class);
+                    $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
+                }
+            }
+        );
     }
 
     /**

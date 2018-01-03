@@ -22,6 +22,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
     $router->group(['prefix' => 'auth'], function () use ($router) {
 
+        $router->get('/', function () {
+            return redirect()->route('loginForm');
+        });
+
         $router->group(['prefix' => 'login'], function () use ($router) {
             $router->get('', 'Auth\LoginController@getLogin')
                    ->name('loginForm');
@@ -117,6 +121,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'store'   => 'advert.offers.store',
             'destroy' => 'advert.offers.destroy',
             'update'  => 'advert.offers.update',
+            'edit'    => 'advert.offers.edit',
         ]
     ]);
 

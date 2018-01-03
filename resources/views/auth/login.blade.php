@@ -1,10 +1,7 @@
 @extends('layouts.auth')
 @section('content')
-    {!! Form::open(array('route' => 'login', 'method' => 'POST')) !!}
+{!! Form::open(array('route' => 'login', 'method' => 'POST')) !!}
     <div class="card card-login card-hidden">
-        <div class="header text-center">
-            <h3 class="title">Login</h3>
-        </div>
         <div class="content">
             <div class="social-line text-center">
                 @include(
@@ -25,7 +22,8 @@
                     ],
                     ["label" => "Password"]
                 )
-                <input class="btn btn-rose btn-wd btn-lg" type="submit">
+                <input class="btn btn-rose btn-wd btn-lg" type="submit" value="Login">
+                <div><a style="color: #80808094;" href="{{route('password.request')}}">Reset password</a></div>
             </div>
         </div>
     </div>

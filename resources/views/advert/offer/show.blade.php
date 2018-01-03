@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Show offer')
+@section('title', 'Offer')
 
 @section('content')
 @php

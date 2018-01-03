@@ -17,15 +17,15 @@
                 <label for="phone">By email:</label>
                 <input type="text" name="email" id="email" value="">
                 @if(auth()->user()->isAdmin())
-                <label for="role">By role:</label>
-                <select name="role" id="role">
-                    <option value="" selected>All</option>
-                    <option value="admin">Admin</option>
-                    <option value="agent">Agent</option>
-                    <option value="chief_advertiser">Chief advertiser</option>
-                    <option value="advertiser">Advertiser</option>
-                    <option value="user">User</option>
-                </select>
+                    <label for="role">By role:</label>
+                    <select name="role" id="role">
+                        <option value="" selected>All</option>
+                        <option value="admin">Admin</option>
+                        <option value="agent">Agent</option>
+                        <option value="chief_advertiser">Chief advertiser</option>
+                        <option value="advertiser">Advertiser</option>
+                        <option value="user">User</option>
+                    </select>
                 @endif
 
                 <form method="get" action="{{route('users.index')}}" id="search-form" style="display: inline-block;">
@@ -41,6 +41,7 @@
                 <td>Email</td>
                 <td>Phone</td>
                 <td>Balance(NAU)</td>
+                <td></td>
                 <td>Approved</td>
                 <td>Actions</td>
                 </thead>
@@ -57,7 +58,26 @@
                         </td>
                         <td>{{$user['email']}}</td>
                         <td>{{$user['phone']}}</td>
-                        <td>{{isset($user['accounts']['NAU']['balance']) ? $user['accounts']['NAU']['balance'] : '-'}}</td>
+                        @if(isset($user['accounts']['NAU']['balance']))
+                            <td>
+                                {{$user['accounts']['NAU']['balance']}}
+                            </td>
+                            <td>
+                                <button style="display:  inline-block;" type="submit"
+                                        class="btn transaction-open-dialog"
+                                        data-toggle="modal"
+                                        data-source="{{auth()->user()->getAccountForNau()->getAddress()}}"
+                                        data-destination="{{$user['accounts']['NAU']['address']}}"
+                                        data-target="#sendNauModal">
+                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        @else
+                            <td>
+                                - <i class="fa fa-info" aria-hidden="true" style="color: red;"></i>
+                            </td>
+                            <td></td>
+                        @endif
                         <td>
                             @if($user['approved'])
                                 <span style="color:green">Yes</span>
@@ -72,12 +92,39 @@
                                 </form>
                             @endif
                         </td>
-                        <td><a href="{{route('users.show', $user['id'])}}">edit</a> | <a
-                                    href="{{route('impersonate', $user['id'])}}">login as</a></td>
+                        <td><a href="{{route('users.show', $user['id'])}}">edit</a> |
+                            <a href="{{route('impersonate', $user['id'])}}">login as</a>
+                        </td>
                     </tr>
                 @endforeach
             </table>
             @include('pagination.default', compact('current_page','from','last_page','next_page_url','path','per_page','prev_page_url','to','total'))
+        </div>
+    </div>
+    <div class="modal fade" id="sendNauModal" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Send NAU</h4>
+                </div>
+                <div class="transaction modal-body" data-url="{{route('transaction.complete')}}">
+                    <p>Your balance: {{auth()->user()->getAccountForNau()->getBalance()}}</p>
+                    {{ csrf_field() }}
+                    <input hidden type="text" name="source" id="source" value="">
+                    <input hidden type="text" name="destination" id="destination" value="">
+                    <input hidden type="text" name="no_fee" id="noFee" value="1">
+                    <label for="amount">Amount</label>
+                    <input type="text" name="amount" id="amount" value="1"> (min 1 NAU)
+                </div>
+                <div class="transaction-result modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="sendTransaction">Send</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -101,6 +148,9 @@
         };
 
         phoneInput.addEventListener( "input", updateAdminUsersSearchForm );
-        roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
+        if(roleSelect) {
+            roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
+        }
+
     </script>
 @stop

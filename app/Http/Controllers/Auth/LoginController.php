@@ -146,7 +146,7 @@ class LoginController extends AuthController
     {
         $this->auth->guard('web')->login($user);
 
-        return \response()->redirectTo(\request()->get('redirect_to', '/'));
+        return \response()->redirectTo(\request()->get('redirect_to', route('profile')));
     }
 
     /**

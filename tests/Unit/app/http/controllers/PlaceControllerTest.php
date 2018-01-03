@@ -294,7 +294,7 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['profile.place.show', $placesArray])
+            ->with('render', ['advert.profile.place.show', $placesArray])
             ->willReturn($response);
 
         // test
@@ -384,7 +384,7 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['place.create', $data])
+            ->with('render', ['advert.profile.place.create', $data])
             ->willReturn($response);
 
         $returnValue = $this->controller->create($this->placeRepository);
