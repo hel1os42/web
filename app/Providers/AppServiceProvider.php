@@ -45,13 +45,15 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
 
         ViewFacade::composer(
-            ['advert.*'], function (View $view) {
+            ['*'], function (View $view) {
                 $authUser = auth()->user();
-                $authUser->load('accounts');
-                $view->with('authUser', $authUser->toArray());
+                if (null != $authUser) {
+                    $authUser->load('accounts');
+                    $view->with('authUser', $authUser->toArray());
 
-                $placesRepository = app(PlaceRepository::class);
-                $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
+                    $placesRepository = app(PlaceRepository::class);
+                    $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
+                }
             }
         );
     }

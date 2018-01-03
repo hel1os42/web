@@ -1,4 +1,4 @@
-@extends('advert.layout')
+@extends('layouts.master')
 
 @section('title', 'Dashboard')
 
@@ -85,7 +85,19 @@
                                 <td><span data-df="yyyy/mm/dd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="yyyy/mm/dd">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
-                                <td>{{ $offer['status'] }}</td>
+                                <td>
+                                    @if($offer['status'] === 'deactive')
+                                        <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
+                                              style="display:  inline-block;">
+                                            {{ csrf_field() }}
+                                            {{ method_field('PUT') }}
+                                            <input type="hidden" name="status" value="active">
+                                            <button style="display:  inline-block;" type="submit" class="btn">activate</button>
+                                        </form>
+                                    @else
+                                        {{ $offer['status'] }}
+                                    @endif
+                                </td>
                                 <td class="details-code" style="display: none;">
                                     <div>
                                         <div class="row set">
@@ -96,20 +108,32 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
+                                                @include('partials.offer-picture-filepicker', ['offerId' => $offer['id']])
                                             </div>
                                         </div>
                                         <div class="row set">
                                             <div class="col-xs-4">
-                                                @if(false)
+                                                @php
+                                                $week = ['su' => 'Sunday', 'mo' => 'Monday', 'tu' => 'Tuesday', 'we' => 'Wednesday','th' => 'Thursday', 'fr' => 'Friday', 'sa' => 'Saturday'];
+                                                $workingDays = [];
+                                                    foreach ($offer['timeframes'] as $timeframe){
+                                                        foreach ($timeframe['days'] as $day){
+                                                            $workingDays[$day] = [
+                                                                'from' => substr($timeframe['from'], 0, 5),
+                                                                'to' => substr($timeframe['to'], 0, 5),
+                                                                'daystr' => (array_key_exists($day, $week)) ? $week[$day] : ''
+                                                            ];
+
+                                                        }
+                                                    }
+                                                @endphp
                                                 <p class="title">Working time:</p>
-                                                <p class="row"><span class="title col-xs-3">mon:</span> <span class="col-xs-9">??? - ???</span></p>
-                                                <p class="row"><span class="title col-xs-3">tue:</span> <span class="col-xs-9">??? - ???</span></p>
-                                                <p class="row"><span class="title col-xs-3">wed:</span> <span class="col-xs-9">??? - ???</span></p>
-                                                <p class="row"><span class="title col-xs-3">thu:</span> <span class="col-xs-9">??? - ???</span></p>
-                                                <p class="row"><span class="title col-xs-3">fri:</span> <span class="col-xs-9">??? - ???</span></p>
-                                                <p class="row"><span class="title col-xs-3">sat:</span> <span class="col-xs-9">-</span></p>
-                                                <p class="row"><span class="title col-xs-3">sun:</span> <span class="col-xs-9">-</span></p>
-                                                @endif
+                                                @foreach($workingDays as $workingDay)
+                                                <p class="row">
+                                                    <span class="title col-xs-3">{{$workingDay['daystr']}}:</span>
+                                                    <span class="col-xs-9">{{$workingDay['from']}} - {{$workingDay['to']}}</span>
+                                                </p>
+                                                @endforeach
                                             </div>
                                             <div class="col-xs-8">
                                                 <div class="row">
@@ -138,12 +162,10 @@
                                                 @endif
                                             </div>
                                             <div class="col-xs-6">
-                                                @if(false)
                                                 <div class="pull-right">
                                                     &nbsp;<br>
-                                                    <button class="btn-nau">Edit information</button>
+                                                    <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
                                                 </div>
-                                                @endif
                                             </div>
                                         </div>
                                     </div>
