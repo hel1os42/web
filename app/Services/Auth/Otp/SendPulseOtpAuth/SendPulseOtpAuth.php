@@ -2,13 +2,9 @@
 
 namespace App\Services\Auth\Otp\SendPulseOtpAuth;
 
-use App\Exceptions\Exception;
+use App\Services\Auth\Otp\BaseOtpAuth;
 use App\Services\Auth\Otp\OtpAuth;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
  * Class StubOtpAuth
@@ -17,13 +13,8 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
  *
  * @package App\Helpers
  */
-class SendPulseOtpAuth implements OtpAuth
+class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
 {
-    /**
-     * @var Client
-     */
-    private $client;
-
     /**
      * @var string
      */
@@ -34,117 +25,62 @@ class SendPulseOtpAuth implements OtpAuth
      */
     public function __construct()
     {
-        $this->client = new Client([
-            'base_uri' => config('otp.sendpulse.base_api_url')
-        ]);
+        $this->gateName = 'sendpulse';
+        parent::__construct();
     }
 
     /**
      * @param string $phoneNumber
      *
-     * @throws UnprocessableEntityHttpException
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
      */
     public function generateCode(string $phoneNumber): void
     {
         $this->token = $this->getToken();
-        $code        = random_int(100000, 999999);
+        $code        = $this->createOtp();
         $data        = [
             'phones'        => json_encode([$phoneNumber]),
-            'body'          => 'NAU verification code: ' . $code,
+            'body'          => $this->getOtpMessage($code),
             'transliterate' => "0"
         ];
-        try {
-            $result = $this->request(HttpRequest::METHOD_POST, '/sms/send', $data);
-        } catch (Exception $exception) {
-            logger('Can\'t send otp code.' . $exception->getMessage());
-            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
-        }
+
+        $header = ['Authorization' => "Bearer " . $this->token];
+        $result = $this->request(HttpRequest::METHOD_POST, '/sms/send', $data, $header);
+        $result = json_decode($result);
+
         if (!isset($result->result) || $result->result === false) {
-            logger('Can\'t send otp code.' . json_encode($result));
-            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
+            $this->otpError('Can\'t send otp code. ' . json_encode($result));
         }
 
-        Cache::put($phoneNumber, Hash::make($code), 15);
-    }
-
-    /**
-     * @param string $phoneNumber
-     * @param string $codeToCheck
-     *
-     * @return bool
-     */
-    public function validateCode(string $phoneNumber, string $codeToCheck): bool
-    {
-        return $this->checkOtpCode($phoneNumber, $codeToCheck);
+        $this->cacheOtpCode($phoneNumber, $code);
     }
 
     /**
      * @return mixed
-     * @throws UnprocessableEntityHttpException
      * @throws \InvalidArgumentException
      * @throws \LogicException
+     * @throws \RuntimeException
+     * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
      */
     private function getToken()
     {
-        $authPath = config('otp.sendpulse.auth_path');
-        $authData = config('otp.sendpulse.auth_data');
+        $authPath = $this->configData['auth_path'];
+        $authData = $this->configData['auth_data'];
 
         if (empty($authData['client_id']) || empty($authData['client_secret'])) {
-            logger('OTP provider config is not set.');
-            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
+            $this->otpError('Gate config is not set.');
         }
 
-        try {
-            $authResponse = $this->client->request(HttpRequest::METHOD_POST, $authPath, ['form_params' => $authData]);
-        } catch (Exception $exception) {
-            logger('Can\'t send otp code.' . $exception->getMessage());
-            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
-        }
+        $result = $this->request(HttpRequest::METHOD_POST, $authPath, $authData);
+        $data   = json_decode($result);
 
-        $data = json_decode($authResponse->getBody());
+        if (!isset($data->access_token)) {
+            $this->otpError('Bad access token');
+        }
 
         return $data->access_token;
-    }
-
-    /**
-     * @param string $method
-     * @param string $path
-     * @param array  $data
-     *
-     * @return mixed
-     * @throws UnprocessableEntityHttpException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
-     */
-    private function request(string $method, string $path, array $data)
-    {
-        $authorizationHeader = ['headers' => ['Authorization' => "Bearer " . $this->token]];
-        try {
-            $result = $this->client
-                ->request($method,
-                    $path, array_merge($authorizationHeader,
-                        ['form_params' => $data]))
-                ->getBody();
-        } catch (Exception $exception) {
-            logger('Can\'t send otp code.' . $exception->getMessage());
-            throw new UnprocessableEntityHttpException('Can\'t send otp code.');
-        }
-
-        return json_decode($result);
-    }
-
-    /**
-     * @param string $phoneNumber
-     * @param string $codeToCheck
-     *
-     * @return bool
-     */
-    private function checkOtpCode(string $phoneNumber, string $codeToCheck): bool
-    {
-        return Cache::has($phoneNumber)
-            ? Hash::check($codeToCheck, Cache::get($phoneNumber))
-            : false;
     }
 }
