@@ -8,9 +8,7 @@ use App\Http\Requests\Service\ExchangeNau;
 use App\Jobs\TransferNau;
 use App\Models\User;
 use App\Repositories\AccountRepository;
-use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
-use function GuzzleHttp\Promise\queue;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Response;
 use OmniSynapse\CoreService\CoreService;
@@ -58,6 +56,8 @@ class NauController extends Controller
 
             if ($exception instanceof RequestException) {
                 logger()->debug($exception->getRawResponse());
+                $result = \response()->error($exception->getResponse()->getStatusCode(), $exception->getMessage());
+                return;
             }
 
             $result = \response()->error(Response::HTTP_INTERNAL_SERVER_ERROR, "Internal server error");
