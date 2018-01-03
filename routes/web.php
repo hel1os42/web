@@ -82,8 +82,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         '[a-z0-9-]+')->name('impersonate');
     $router->get('auth/stop_impersonate', 'Auth\LoginController@stopImpersonate')->name('stop_impersonate');
 
-    $router->get('advert/profile', 'AdvertController@profile')->name('advert.profile');
-
     /**
      * User actions
      */
@@ -123,6 +121,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'store'   => 'advert.offers.store',
             'destroy' => 'advert.offers.destroy',
             'update'  => 'advert.offers.update',
+            'edit'    => 'advert.offers.edit',
         ]
     ]);
 

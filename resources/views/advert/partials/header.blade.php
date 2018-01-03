@@ -5,7 +5,7 @@
         </div>
         @auth
             <div class="controls pull-right">
-                <a href="{{ route('advert.profile') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
+                <a href="{{ route('profile') }}" title="Pofile"><i class="fa fa-user-o"></i></a>
                 <a href="{{ route('logout') }}" title="Logout"><i class="fa fa-sign-out"></i></a>
             </div>
             <div class="advert-name pull-right">

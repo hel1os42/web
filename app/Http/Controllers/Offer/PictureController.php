@@ -41,12 +41,15 @@ class PictureController extends AbstractPictureController
      */
     public function store(PictureRequest $request, string $offerId)
     {
-
         $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
 
         $this->authorize('offers.picture.store', $offer);
 
-        return $this->storeImageFor($request, $offer->id, route('offer.picture.show', ['offerId' => $offer->id]));
+        $redirect = (request()->wantsJson())
+            ? route('offer.picture.show', ['offerId' => $offer->id])
+            : route('advert.offers.index');
+
+        return $this->storeImageFor($request, $offer->id, $redirect);
     }
 
     /**

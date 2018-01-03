@@ -29,7 +29,7 @@ class PictureController extends AbstractPictureController
     {
         $this->authorize('users.picture.store', $this->user());
 
-        $redirect = (!$request->wantsJson() && $this->user()->isAdvertiser()) ? route('advert.profile') : route('profile.picture.show');
+        $redirect = ($request->wantsJson()) ? route('profile.picture.show') : route('profile');
 
         return $this->storeImageFor($request, $this->guard->id(), $redirect);
     }
