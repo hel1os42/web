@@ -6,7 +6,6 @@
 
     <div class="container">
         <div class="row">
-
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <h1>Edit offer</h1>
 
@@ -30,7 +29,7 @@
                         <p class="control-text">
                             <label>
                                 <span class="input-label">Offer description</span>
-                                <textarea name="description" class="nullableFormData" value="{{ $description }}"></textarea>
+                                <textarea name="description" class="nullableFormData">{{ $description }}</textarea>
                             </label>
                         </p>
                         <p class="hint">Please, enter the Offer description.</p>
@@ -468,13 +467,13 @@
             } );
 
             function handleForm(map){
+                let oldweekdays = $('#tab_wdt2').data('workingdays');
                 $('[data-relation="check_wd8"]').each(function(){
-                    let weekdays = $('#tab_wdt2').data('workingdays');
                     let currentWeekday = $(this).data('weekday');
-                    if(currentWeekday in weekdays){
+                    if(currentWeekday in oldweekdays){
                         $('[data-relation="check_wd8"][data-weekday="' + currentWeekday + '"]').attr('checked', 'checked');
-                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(weekdays[currentWeekday].from);
-                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(weekdays[currentWeekday].to);
+                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].from);
+                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].to);
                     } else {
                         $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val("");
                         $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val("");
