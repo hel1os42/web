@@ -6,7 +6,8 @@
         <p><strong>Setting map radius</strong></p>
 
         <div class="map-wrap" >
-            <div class="leaflet-map" id="mapid"></div>
+            <div class="leaflet-map" id="mapid">
+            </div>
             <div id="marker"></div>
         </div>
 

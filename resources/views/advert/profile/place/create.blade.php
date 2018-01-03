@@ -1,4 +1,4 @@
-@extends('advert.layout')
+@extends('layouts.master')
 
 @section('title', 'Account info')
 
@@ -220,14 +220,15 @@
                         },
                         data: formData,
                         success: function(data, textStatus, xhr){
-                            console.log(xhr);
                             if (201 == xhr.status){
                                     return window.location.replace("{{ route('profile') }}");
                             } else {
+                                alert("Something went wrong. Try again, please.");
                                 console.log(xhr.status);
                             }
                         },
                         error: function(resp){
+                            alert("Something went wrong. Try again, please.");
                             console.log(resp.status);
                         }
                     });

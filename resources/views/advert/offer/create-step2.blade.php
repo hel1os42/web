@@ -3,8 +3,8 @@
     <div class="control-box">
         <p class="title">Working dates</p>
         <p class="row control-datetime valid-dates">
-            <label class="col-xs-6"><span class="input-label">from*</span> <input name="start_date" readonly class="js-datepicker FormData" placeholder="Select date" value=""></label>
-            <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker nullableFormData" placeholder="Select date" value=""></label>
+            <label class="col-xs-6"><span class="input-label">from*</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
+            <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
         </p>
         <p class="hint">Please, select the valid range of dates.</p>
     </div>

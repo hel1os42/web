@@ -13,6 +13,7 @@ use App\Repositories\OfferRepository;
 use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -52,6 +53,7 @@ class OfferController extends Controller
         $this->authorize('my.offers.list');
         $account      = $this->user()->getAccountForNau();
         $paginator    = $this->offerRepository
+            ->with('timeframes')
             ->scopeAccount($account)
             ->paginateWithoutGlobalScopes();
         $data         = $paginator->toArray();
@@ -179,7 +181,38 @@ class OfferController extends Controller
 
         $this->offerRepository->update($attributes, $offer->getId());
 
+        if (!request()->wantsJson()) {
+            return \response()->redirectTo(route('advert.offers.index'));
+        }
         return $this->acceptedResponse('advert.offers.show', $offerUuid);
+    }
+
+    /**
+     * Get offer full info(for Advert) by it uuid
+     *
+     * @param string $offerUuid
+     *
+     * @return Response
+     * @throws HttpException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \LogicException
+     */
+    public function edit(string $offerUuid): Response
+    {
+        $offer = $this->offerRepository->findWithoutGlobalScopes($offerUuid);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+        $offer->load('timeframes');
+        $data = $offer->toArray();
+        if (array_key_exists('timeframes', $data)) {
+            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
+        }
+
+        $this->authorize('my.offer.show', $offer);
+
+        return \response()->render('advert.offer.edit', $data);
     }
 
     /**
