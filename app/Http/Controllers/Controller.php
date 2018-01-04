@@ -36,4 +36,14 @@ class Controller extends BaseController
     {
         return $this->guard->user();
     }
+
+    /**
+     * @param null|string $uuid
+     *
+     * @return null|string
+     */
+    protected function getUserUuid(?string $uuid)
+    {
+        return null === $uuid ? $this->user()->getId() : $uuid;
+    }
 }
