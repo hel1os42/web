@@ -34,7 +34,7 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
                    ->name('login');
 
             $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
-                //->middleware(['throttle:1,1'])
+                   ->middleware(['throttle:1,1'])
                    ->where('phone_number', '\+[0-9]+')
                    ->name('get-login-otp-code');
         });
