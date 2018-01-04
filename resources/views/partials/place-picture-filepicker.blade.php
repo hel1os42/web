@@ -1,5 +1,5 @@
 <form method="POST" action="{{route('place.picture.store')}}" enctype="multipart/form-data">
-    <label>Set logo:</label>
+    <label>Set picture:</label>
     <div class="form-group">
         {{ csrf_field() }}
         <div class="fileinput fileinput-new text-center" data-provides="fileinput">
@@ -9,8 +9,8 @@
                 </div>
                 <div class="fileinput-preview fileinput-exists thumbnail" style=""></div>
                 <div class="btn btn-default btn-fill btn-file">
-                    <span class="fileinput-new">Pick logo</span>
-                    <span class="fileinput-exists">Change logo</span>
+                    <span class="fileinput-new">Pick picture</span>
+                    <span class="fileinput-exists">Change picture</span>
                     <input type="hidden">
                     <input type="file" name="picture">
                 </div>

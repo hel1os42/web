@@ -1,4 +1,4 @@
-@extends('advert.layout')
+@extends('layouts.master')
 
 @section('title', 'Offer')
 

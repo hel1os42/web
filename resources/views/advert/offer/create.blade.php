@@ -1,4 +1,4 @@
-@extends('advert.layout')
+@extends('layouts.master')
 
 @section('title', 'Create offer')
 
@@ -6,7 +6,6 @@
 
 <div class="container">
     <div class="row">
-
         <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
             <h1>Create offer</h1>
@@ -178,10 +177,9 @@
 
         $( document ).ready( function() {
             let GPS = {};
+            let defaultZoom = 1;
             if ( navigator.geolocation ) {
                 navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-            } else {
-                defaultGPS();
             }
 
             function getGPS( pos ) {
@@ -189,24 +187,23 @@
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude
                 };
-                mapInitialize( GPS );
+                defaultZoom = 13;
+                mapInitialize( GPS, defaultZoom );
             }
-
             function defaultGPS() {
-                /* Los Angeles: */
                 GPS = {
-                    lat: 34.0143733,
-                    lng: -118.2831973
+                    lat: 0,
+                    lng: 0
                 };
-                mapInitialize( GPS );
+                mapInitialize( GPS, defaultZoom );
             }
 
 
-            function mapInitialize( GPS ) {
+            function mapInitialize( GPS, defaultZoom ) {
 
                 let map = L.map( 'mapid', {
                     center: GPS,
-                    zoom:   13
+                    zoom:   defaultZoom// 13
                 } );
 
                 L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -222,7 +219,7 @@
                     $('[name="latitude"]').val(map.getCenter().lat);
                     $('[name="longitude"]').val(map.getCenter().lng);
                     $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
-
+                    console.log(map.getZoom());
                     function getRadius(radiusPx, map) {
                         return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
                     }
@@ -238,6 +235,10 @@
                         return Math.round(value * inv) / inv;
                     }
                 }
+
+                $(map).on('zoomend, moveend', function(){
+                    fillMapFields(this);
+                });
 
                 fillMapFields(map);
                 handleForm(map);
@@ -341,8 +342,12 @@
                         "name" : "finish_date",
                         "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
                     });
+
                     function prepareDate(date, tz) {
-                        return date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+' 00:00:00.000000'+ tz;
+                        return date.getFullYear()+"-"+prependWithZero(date.getMonth()+1)+"-"+prependWithZero(date.getDate())+' 00:00:00.000000'+ tz;
+                        function prependWithZero(number) {
+                            return ("0" + number).slice(-2);
+                        }
                     }
 
                     $.each(timeframes, function(key, timeframe){
@@ -366,7 +371,7 @@
                         "name" : "_token",
                         "value" : $('[name="_token"]').val()
                     });
-
+console.log(formData);
                     $.ajax({
                         type: "POST",
                         url: $('#createOfferForm').attr('action'),
