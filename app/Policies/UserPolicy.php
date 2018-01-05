@@ -47,15 +47,13 @@ class UserPolicy extends Policy
 
     /**
      * @param User $user
-     * @param User $anotherUser
+     * @param User $editableUser
      *
      * @return bool
      */
-    public function update(User $user, User $anotherUser)
+    public function update(User $user, User $editableUser)
     {
-        return $user->isAdmin()
-               || ($user->isAgent() && $user->hasChild($anotherUser))
-               || ($user->hasAnyRole() && $anotherUser->equals($user));
+        return $this->baseUserEditCheck($user, $editableUser);
     }
 
     /**
@@ -72,12 +70,13 @@ class UserPolicy extends Policy
 
     /**
      * @param User $user
+     * @param User $editableUser
      *
      * @return bool
      */
-    public function pictureStore(User $user)
+    public function pictureStore(User $user, User $editableUser)
     {
-        return $user->hasAnyRole();
+        return $this->baseUserEditCheck($user, $editableUser);
     }
 
     /**
@@ -137,5 +136,18 @@ class UserPolicy extends Policy
     public function approve(User $user, User $editableUser): bool
     {
         return $user->isAdmin() || ($user->isAgent() && $user->hasChild($editableUser));
+    }
+
+    /**
+     * @param User $authenticatedUser
+     * @param User $editableUser
+     *
+     * @return bool
+     */
+    private function baseUserEditCheck(User $authenticatedUser, User $editableUser)
+    {
+        return ($authenticatedUser->hasAnyRole() && $editableUser->equals($authenticatedUser))
+               || ($authenticatedUser->isAgent() && $authenticatedUser->hasChild($editableUser))
+               || $authenticatedUser->isAdmin();
     }
 }

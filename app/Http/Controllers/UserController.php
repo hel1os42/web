@@ -65,7 +65,7 @@ class UserController extends Controller
      */
     public function show(string $uuid = null): Response
     {
-        $uuid = $this->getUuid($uuid);
+        $uuid = $this->getUserUuid($uuid);
 
         $user = $this->userRepository->with('roles')->with('parents')->with('children')->find($uuid);
 
@@ -85,7 +85,7 @@ class UserController extends Controller
      */
     public function update(Requests\UserUpdateRequest $request, string $uuid = null): Response
     {
-        $uuid = $this->getUuid($uuid);
+        $uuid = $this->getUserUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
 
@@ -167,24 +167,13 @@ class UserController extends Controller
      */
     public function referrals(string $uuid = null)
     {
-        $uuid = $this->getUuid($uuid);
+        $uuid = $this->getUserUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
 
         $this->authorize('users.referrals.list', $user);
 
         return \response()->render('user.profile.referrals', $user->referrals()->paginate());
-    }
-
-    /**
-     * @param null|string $uuid
-     *
-     * @return int|null|string
-     * @throws \InvalidArgumentException
-     */
-    private function getUuid(?string $uuid)
-    {
-        return null === $uuid ? $this->guard->id() : $uuid;
     }
 
     /**
