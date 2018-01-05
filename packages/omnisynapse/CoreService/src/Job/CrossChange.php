@@ -78,6 +78,6 @@ class CrossChange extends AbstractJob
     public function __sleep()
     {
         $parentProperties = parent::__sleep();
-        return array_merge($parentProperties, ['account', 'amount', 'isIncoming']);
+        return array_merge($parentProperties, ['account', 'amount', 'isIncoming', 'ethAddress']);
     }
 }

@@ -28,6 +28,7 @@ class CrossChange implements \JsonSerializable
     {
         return [
             'nauAddress' => $this->nauAddress,
+            'ethAddress' => $this->ethAddress,
             'amount'     => $this->amount,
             'direction'  => $this->direction,
         ];

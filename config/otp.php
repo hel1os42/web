@@ -1,10 +1,11 @@
 <?php
 return [
-    'gate'       => env('OTP_GATE', 'sendpulse'),
+    'gate'       => env('OTP_GATE', 'stub'),
     'gate_class' => [
         'sendpulse'  => \App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth::class,
         'smstraffic' => \App\Services\Auth\Otp\SmsTrafficOtpAuth\SmsTrafficOtpAuth::class,
         'smsfly'     => \App\Services\Auth\Otp\SmsFlyOtpAuth\SmsFlyOtpAuth::class,
+        'twilio'     => \App\Services\Auth\Otp\TwilioOtpAuth\TwilioOtpAuth::class,
         'stub'       => \App\Services\Auth\Otp\Stub\StubOtpAuth::class,
     ],
     'gate_data'  => [
@@ -34,9 +35,16 @@ return [
             'base_api_url' => 'http://sms-fly.com',
             'main_path'    => '/api/api.noai.php',
             'auth_data'    => [
-                'login'        => env('SMSFLY_LOGIN', ''),
-                'password'     => env('SMSFLY_PASSWORD', ''),
+                'login'    => env('SMSFLY_LOGIN', ''),
+                'password' => env('SMSFLY_PASSWORD', ''),
             ]
+        ],
+        'twilio'     => [
+            'auth_data'     => [
+                'client_id'     => env('TWILIO_ID', ''),
+                'client_secret' => env('TWILIO_SECRET', ''),
+            ],
+            'sender_number' => env('TWILIO_NUMBER', '')
         ]
     ],
 ];
