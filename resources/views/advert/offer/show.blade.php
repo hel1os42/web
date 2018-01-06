@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $metaKeys = ['app', 'errors', '__env'];
+    $metaKeys = ['app', 'errors', '__env', 'authUser'];
 @endphp
     <div class="col-md-6">
         <div class="card">
