@@ -15,8 +15,6 @@
 
 {{--<script src="{{ asset('js/script.js') }}"></script>--}}
 
-<script src="{{ asset('js/advert-cabinet.js') }}" type="text/javascript"></script>
-
 <script src="{{ asset('js/jasny-bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/amaze.js') }}"></script>
 

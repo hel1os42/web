@@ -22,7 +22,7 @@ class ForgotPasswordController extends AuthController
      */
     protected function sendResetLinkResponse(string $response): Response
     {
-        return response()->render('auth.passwords.email', [
+        return response()->render('auth.passwords.email-sended', [
             'message' => trans($response)
         ]);
     }
@@ -46,7 +46,12 @@ class ForgotPasswordController extends AuthController
      */
     public function sendResetLinkEmail(EmailRequest $request): Response
     {
-        $response = $this->broker()->sendResetLink($request->only('email'));
+        try{
+            $response = $this->broker()->sendResetLink($request->only('email'));
+        } catch (\Swift_TransportException $exception) {
+            $response = 'passwords.sentError';
+            logger("Email reset password error!!! Error" . $exception->getMessage());
+        }
         return $response === Password::RESET_LINK_SENT
             ? $this->sendResetLinkResponse($response)
             : $this->sendResetLinkFailedResponse($request, $response);

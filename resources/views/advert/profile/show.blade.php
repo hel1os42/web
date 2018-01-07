@@ -1,4 +1,4 @@
-@extends('advert.layout')
+@extends('layouts.master')
 
 @section('title', 'Profile')
 @php
@@ -36,16 +36,6 @@
                                 <li class="">
                                     <a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">
                                         Update profile photo
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#update_place_logo" aria-controls="update_place_logo" role="tab" data-toggle="tab" aria-expanded="false">
-                                        Update place logo
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#update_place_cover" aria-controls="update_place_cover" role="tab" data-toggle="tab" aria-expanded="false">
-                                        Update place cover
                                     </a>
                                 </li>
 						    </ul>
@@ -125,7 +115,7 @@
                                             <div class="fileinput-preview fileinput-exists thumbnail img-circle" style=""></div>
                                             <div class="btn btn-default btn-fill btn-file">
                                                 <span class="fileinput-new">Pick photo</span>
-                                                <span class="fileinput-exists">Change logo</span>
+                                                <span class="fileinput-exists">Change pic</span>
                                                 <input type="hidden">
                                                 <input type="file" name="picture">
                                             </div>
@@ -134,12 +124,6 @@
                                 </div>
                                 <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
                             </form>
-                        </div>
-                        <div role="tabpanel" id="update_place_logo" class="tab-pane">
-                            @include('partials.place-picture-filepicker')
-                        </div>
-                        <div role="tabpanel" id="update_place_cover" class="tab-pane">
-                            @include('partials.place-cover-filepicker')
                         </div>
                     </div>
                 </div>
