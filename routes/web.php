@@ -11,7 +11,7 @@ $router->group(['middleware' => 'investor', 'prefix' => 'service'], function () 
 /**
  * register
  */
-$router->post('users', 'UserController@register')->name('register');
+$router->post('users', 'UserController@store')->name('register');
 
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
