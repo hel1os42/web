@@ -14,16 +14,9 @@ class UserObserver
      */
     public function created(User $user)
     {
-        if (is_null(auth()->user())) {
-            $user->roles()->attach([
-                Role::findByName(Role::ROLE_USER)->getId(),
-                Role::findByName(Role::ROLE_ADVERTISER)->getId()
-            ]);
-        } elseif (auth()->user()->isAgent()) {
-            $user->roles()->attach([
-                Role::findByName(Role::ROLE_ADVERTISER)->getId()
-            ]);
-            $user->parents()->attach([auth()->user()->id]);
-        }
+        $user->roles()->attach([
+            Role::findByName(Role::ROLE_USER)->getId(),
+            Role::findByName(Role::ROLE_ADVERTISER)->getId()
+        ]);
     }
 }
