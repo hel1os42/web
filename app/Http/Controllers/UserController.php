@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormRequest;
 use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -49,12 +50,8 @@ class UserController extends Controller
     {
         $this->authorize('users.create');
 
-        return \response()->render('user.create', [
-            'email'            => null,
-            'password'         => null,
-            'password_confirm' => null,
-            'phone'            => null
-        ]);
+        return \response()->render('user.create',
+            FormRequest::preFilledFormRequest(Requests\Auth\RegisterRequest::class));
     }
 
     /**

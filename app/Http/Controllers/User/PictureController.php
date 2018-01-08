@@ -53,7 +53,8 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $userUuid = null): Response
     {
-        $userUuid = $this->getUserUuid($userUuid);
+        $userUuid = $userUuid ?? $this->guard->id();
+
         if ($userUuid === null) {
             throw new NotFoundHttpException();
         }
