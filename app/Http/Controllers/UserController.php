@@ -252,6 +252,4 @@ class UserController extends Controller
 
         $user->roles()->sync($roleIds, true);
     }
-
-
 }

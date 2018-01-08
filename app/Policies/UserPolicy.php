@@ -50,6 +50,8 @@ class UserPolicy extends Policy
      * @return bool
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \InvalidArgumentException
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function updateRoles(User $user, User $editableUser, array $roleIds): bool
     {
