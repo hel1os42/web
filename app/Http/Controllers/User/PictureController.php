@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class PictureController
@@ -29,7 +30,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(string $userUuid = null, PictureRequest $request, UserRepository $userRepository)
     {
-        $userUuid = $this->getUserUuid($userUuid);
+        $userUuid = $this->confirmUuid($userUuid);
 
         $editableUser = $userRepository->find($userUuid);
 
@@ -52,7 +53,11 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $userUuid = null): Response
     {
-        $userUuid = $this->getUserUuid($userUuid);
+        $userUuid = $userUuid ?? $this->guard->id();
+
+        if ($userUuid === null) {
+            throw new NotFoundHttpException();
+        }
 
         return $this->respondWithImageFor($userUuid);
     }
