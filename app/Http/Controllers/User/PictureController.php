@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class PictureController
@@ -53,6 +54,9 @@ class PictureController extends AbstractPictureController
     public function show(string $userUuid = null): Response
     {
         $userUuid = $this->getUserUuid($userUuid);
+        if ($userUuid === null) {
+            throw new NotFoundHttpException();
+        }
 
         return $this->respondWithImageFor($userUuid);
     }
