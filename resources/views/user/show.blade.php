@@ -294,32 +294,7 @@
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
 
     <script type="text/javascript">
-        @if(false)
-        function loadCategory() {
-            var xmlhttp = new XMLHttpRequest();
-
-            xmlhttp.onreadystatechange = function() {
-                if ( xmlhttp.readyState === XMLHttpRequest.DONE ) {
-                    if ( xmlhttp.status === 200 ) {
-                        let sel = document.getElementById( "place-category" );
-                        sel.innerHTML = xmlhttp.responseText;
-                    } else if ( xmlhttp.status === 400 ) {
-                        alert( 'There was an error 400' );
-                    } else {
-                        alert( xmlhttp.status + ' was returned' );
-                    }
-                }
-            };
-
-            xmlhttp.open( "GET", "{{route('categories')}}", true );
-            xmlhttp.send();
-        }
-
-        loadCategory();
-
-        @endif
-
-        @can('users.update.roles', $user)
+        @can('user.update.roles', [$user, $roleIds])
         function loadRoles() {
             let xmlhttp = new XMLHttpRequest();
             let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
