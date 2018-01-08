@@ -63,7 +63,7 @@ class UserController extends Controller
      */
     public function show(string $uuid = null): Response
     {
-        $uuid = $this->getUserUuid($uuid);
+        $uuid = $this->checkUuid($uuid);
 
         $with = ['place'];
 
@@ -89,7 +89,7 @@ class UserController extends Controller
      */
     public function update(Requests\UserUpdateRequest $request, string $uuid = null): Response
     {
-        $uuid = $this->getUserUuid($uuid);
+        $uuid = $this->checkUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
         $userData     = $request->all();
@@ -160,7 +160,7 @@ class UserController extends Controller
      */
     public function referrals(string $uuid = null)
     {
-        $uuid = $this->getUserUuid($uuid);
+        $uuid = $this->checkUuid($uuid);
 
         $user = $this->userRepository->find($uuid);
 

@@ -30,7 +30,7 @@ class PictureController extends AbstractPictureController
      */
     public function store(string $userUuid = null, PictureRequest $request, UserRepository $userRepository)
     {
-        $userUuid = $this->getUserUuid($userUuid);
+        $userUuid = $this->checkUuid($userUuid);
 
         $editableUser = $userRepository->find($userUuid);
 
