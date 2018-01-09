@@ -238,7 +238,6 @@
                         {{--<a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>--}}
                         <input type="submit" class="btn-nau pull-right" value="Save">
                     </p>
-
                 </form>
 
                 <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
