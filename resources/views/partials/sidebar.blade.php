@@ -61,6 +61,12 @@
                             <li>
 								<a href="{{route('offers.index')}}">Index</a>
 							</li>
+                            <li>
+                                <a href="{{ route('advert.operators.create') }}">Operators create</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('advert.operators.index') }}">Operators list</a>
+                            </li>
 						</ul>
 					</div>
 				</li>

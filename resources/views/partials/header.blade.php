@@ -62,6 +62,12 @@
                         </ul>
                         @endif
                     </li>
+                    <li class="sub-menu">
+                        <a href="{{ route('advert.operators.index') }}">Operators</a>
+                        <ul>
+                            <li><a href="{{ route('advert.operators.create') }}">Create operator</a></li>
+                        </ul>
+                    </li>
                 @endif
                 @can('users.list')
                     <li>

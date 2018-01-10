@@ -125,6 +125,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
+    // Advert page for create operator
+    $router->resource('advert/operators', 'Advert\OperatorController', [
+        'names'       => [
+            'index'   => 'advert.operators.index',
+            'show'    => 'advert.operators.show',
+            'create'  => 'advert.operators.create',
+            'store'   => 'advert.operators.store',
+            'destroy' => 'advert.operators.destroy',
+            'edit'    => 'advert.operators.edit',
+            'update'  => 'advert.operators.update',
+        ]
+    ]);
+
     $router->put('advert/offers/{offerId}/status', 'Advert\OfferController@updateStatus')
            ->name('advert.offer.updateStatus');
 
