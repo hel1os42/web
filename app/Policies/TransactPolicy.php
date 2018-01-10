@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Transact;
+use App\Models\Role;
 use App\Models\User;
 
 class TransactPolicy extends Policy
@@ -44,7 +45,7 @@ class TransactPolicy extends Policy
     {
         return $user->isAdmin()
             || ($user->equals($sourceAccount->owner)
-                && $user->isAgent()
+                && $user->hasRoles([Role::ROLE_CHIEF_ADVERTISER, Role::ROLE_AGENT])
                 && $user->hasChild($destinationAccount->owner));
     }
 
