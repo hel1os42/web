@@ -138,4 +138,14 @@ class UserPolicy extends Policy
     {
         return $user->isAdmin() || ($user->isAgent() && $user->hasChild($editableUser));
     }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function relink(User $user)
+    {
+        return $user->isAdmin();
+    }
 }

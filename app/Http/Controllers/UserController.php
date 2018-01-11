@@ -93,6 +93,11 @@ class UserController extends Controller
 
         $userData = $request->except(['approve']);
 
+        if (!$this->user()->hasRoles([Role::ROLE_ADMIN]))
+        {
+            unset($userData['invite_code']);
+        }
+
         if ($request->isMethod('put')) {
             $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
                 ['password']),

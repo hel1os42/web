@@ -108,6 +108,9 @@
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
+                                        @can('users.relink', $user)
+                                        <p><strong>Invite</strong></p>
+                                        @endcan
                                         <p><strong>Position</strong></p>
                                         @can('users.update.roles', $user)
                                             <p style="height: 120px;"><strong>Roles</strong></p>
@@ -127,6 +130,10 @@
                                                   value="{{$email}}"></p>
                                         <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
                                                   value="{{$phone}}"></p>
+                                        @can('users.relink', $user)
+                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
+                                                  value="{{$invite_code}}"></p>
+                                        @endcan
                                         @can('users.update.roles', $user)
                                             <p>
                                                 <select style="height: 120px;" id="roles" name="role_ids[]"

@@ -60,6 +60,7 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'      => 'boolean',
+            'invite_code'  => 'string|min:3|unique:users,invite_code',
         ];
 
         if($this->isMethod(Request::METHOD_PATCH)){
