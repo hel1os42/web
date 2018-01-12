@@ -100,8 +100,7 @@ class UserController extends Controller
 
         if ($request->isMethod('put')) {
             $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
-                ['password']),
-                $userData);
+                ['password']), $userData);
         }
 
         $user = $this->userRepository;
@@ -112,14 +111,8 @@ class UserController extends Controller
             $user->setApproved($request->approve);
         }
 
-        $with = [];
-
-        if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-            $with = ['parents', 'children', 'roles'];
-        }
         $user   = $user->update($userData, $uuid);
-        $result = $user->fresh($with);
-
+        $result = $user->fresh();
         $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
         $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
         $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
