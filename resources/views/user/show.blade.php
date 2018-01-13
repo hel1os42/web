@@ -77,7 +77,7 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
-                                <div class="col-sm-6 p-5">
+                                <div class="col-sm-2 p-5">
                                     <p><strong>Name</strong></p>
                                     <p><strong>Id</strong></p>
                                     <p><strong>Email</strong></p>
