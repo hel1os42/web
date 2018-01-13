@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\FormRequest;
 use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\PlaceService;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -17,6 +17,14 @@ class UserController extends Controller
      */
     private $userRepository;
 
+    /**
+     * UserController constructor.
+     *
+     * @param UserRepository $userRepository
+     * @param AuthManager    $authManager
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct(UserRepository $userRepository, AuthManager $authManager)
     {
         $this->userRepository = $userRepository;
@@ -50,8 +58,7 @@ class UserController extends Controller
     {
         $this->authorize('users.create');
 
-        return \response()->render('user.create',
-            FormRequest::preFilledFormRequest(Requests\Auth\RegisterRequest::class));
+        return \response()->render('user.create', Requests\Auth\RegisterRequest::preFilledFormRequest());
     }
 
     /**
@@ -82,25 +89,29 @@ class UserController extends Controller
     /**
      * @param Requests\UserUpdateRequest $request
      * @param string|null                $uuid
+     * @param PlaceService               $placeService
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \LogicException
      */
-    public function update(Requests\UserUpdateRequest $request, string $uuid = null): Response
-    {
+    public function update(
+        Requests\UserUpdateRequest $request,
+        PlaceService $placeService,
+        string $uuid = null
+    ): Response {
         $uuid = $this->confirmUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
-        $userData     = $request->all();
+        $userData     = $request->isMethod('put')
+            ? $request->all()
+            : array_merge($editableUser->getFillableWithDefaults(['password']), $request->all());
 
-        if ($request->isMethod('put')) {
-            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
-                ['password']),
-                $userData);
+        $this->authorize('users.update', [$editableUser, $userData]);
+
+        if (isset($userData['approved']) && $userData['approved'] === false) {
+            $placeService->disapprove($editableUser->place);
         }
-
-        $this->authorize('users.update', $editableUser, $userData);
 
         $user = $this->userRepository;
         $user = $user->update($userData, $uuid);
@@ -126,7 +137,6 @@ class UserController extends Controller
         $view = 'auth.registered';
 
         if (null !== $registrator) {
-
             $view                       = 'user.show';
             $newUserData['referrer_id'] = $registrator->id;
             $this->authorize('users.create', [$newUserData]);

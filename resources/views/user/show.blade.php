@@ -28,6 +28,7 @@
                     $allPossibleChildren[] = $childValue->toArray();
                 }
             }
+        $roles = isset($roles) ? $roles : [];
 @endphp
 @section('content')
     <div class="profile">
@@ -76,7 +77,7 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
-                                <div class="col-sm-6 p-5">
+                                <div class="col-sm-2 p-5">
                                     <p><strong>Name</strong></p>
                                     <p><strong>Id</strong></p>
                                     <p><strong>Email</strong></p>
@@ -294,32 +295,7 @@
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
 
     <script type="text/javascript">
-        @if(false)
-        function loadCategory() {
-            var xmlhttp = new XMLHttpRequest();
-
-            xmlhttp.onreadystatechange = function() {
-                if ( xmlhttp.readyState === XMLHttpRequest.DONE ) {
-                    if ( xmlhttp.status === 200 ) {
-                        let sel = document.getElementById( "place-category" );
-                        sel.innerHTML = xmlhttp.responseText;
-                    } else if ( xmlhttp.status === 400 ) {
-                        alert( 'There was an error 400' );
-                    } else {
-                        alert( xmlhttp.status + ' was returned' );
-                    }
-                }
-            };
-
-            xmlhttp.open( "GET", "{{route('categories')}}", true );
-            xmlhttp.send();
-        }
-
-        loadCategory();
-
-        @endif
-
-        @can('users.update.roles', $user)
+        @can('user.update.roles', [$user, $roleIds])
         function loadRoles() {
             let xmlhttp = new XMLHttpRequest();
             let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
@@ -388,7 +364,7 @@
                     };
                     passGpsToMapContainer( gps );
                 },
-                startMap:          function() {
+                startMap:           function() {
                     this.map = L.map( this.mapIdSelector, {
                         center: this.gps,
                         zoom:   this.zoom
@@ -406,7 +382,7 @@
                     $( this.map ).on( 'zoomend, moveend', this.copyFromMapToForm() );
 
                 },
-                copyFromMapToForm: function() {
+                copyFromMapToForm:  function() {
                     $( this.form.lat ).val( this.map.getCenter().lat );
                     $( this.form.lng ).val( this.map.getCenter().lng );
                     $( this.form.radius ).val( Math.round( getRadius( this.markerRadius, this.map ) ) );
@@ -428,11 +404,11 @@
                         return Math.round( value * inv ) / inv;
                     }
                 },
-                setGps:            function( gps ) {
+                setGps:             function( gps ) {
                     this.gps = gps;
                     return this;
                 },
-                copyFromFormToMap: function() {
+                copyFromFormToMap:  function() {
                     let lat = Number( $( this.form.lat ).val() );
                     let lng = Number( $( this.form.lng ).val() );
                     if ( lat !== 0 && lng !== 0 ) {

@@ -42,7 +42,9 @@
                 <td>Phone</td>
                 <td>Balance(NAU)</td>
                 <td></td>
-                <td>Approved</td>
+                @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+                    <td>Approved</td>
+                @endif
                 <td>Actions</td>
                 </thead>
                 @foreach ($data as $user)
@@ -78,25 +80,27 @@
                             </td>
                             <td></td>
                         @endif
-                        <td>
-                            @if(in_array('advertiser', array_column($user['roles'], 'name')))
-                                @if($user['approved'])
-                                    <span style="color:green">Yes</span>
+                        @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+                            <td>
+                                @if(in_array('advertiser', array_column($user['roles'], 'name')))
+                                    @if($user['approved'])
+                                        <span style="color:green">Yes</span>
+                                    @else
+                                        <form action="{{route('users.update', $user['id'])}}" method="post"
+                                              style="display:  inline-block;">
+                                            No
+                                            {{ csrf_field() }}
+                                            {{ method_field('PATCH') }}
+                                            <input hidden type="text" name="approved" value="1">
+                                            <button style="display:  inline-block;" type="submit" class="btn">approve
+                                            </button>
+                                        </form>
+                                    @endif
                                 @else
-                                    <form action="{{route('users.update', $user['id'])}}" method="post"
-                                          style="display:  inline-block;">
-                                        No
-                                        {{ csrf_field() }}
-                                        {{ method_field('PATCH') }}
-                                        <input hidden type="text" name="approved" value="1">
-                                        <button style="display:  inline-block;" type="submit" class="btn">approve
-                                        </button>
-                                    </form>
+                                    -
                                 @endif
-                            @else
-                                -
-                            @endif
-                        </td>
+                            </td>
+                        @endif
                         <td><a href="{{route('users.show', $user['id'])}}">edit</a> |
                             <a href="{{route('impersonate', $user['id'])}}">login as</a>
                         </td>
