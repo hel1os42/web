@@ -2,8 +2,8 @@
 
 namespace App\Services\Auth\Otp;
 
-use App\Exceptions\Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -88,17 +88,15 @@ class BaseOtpAuth
             $data['auth'] = [$this->configData['auth_data']['login'], $this->configData['auth_data']['password']];
         }
 
-
         try {
-            $result = $this->client
-                ->request($method, $path, $data)
-                ->getBody()
-                ->getContents();
-        } catch (Exception $exception) {
-            $this->otpError('Error sending request. Error:' . $exception->getMessage());
+            $result = $this->client->request($method, $path, $data);
+        } catch (ConnectException $exception) {
+            $message = 'Can\'t send otp code. Try again later.';
+            logger('OTP: ' . $exception->getMessage() . ' Gate:' . $this->gateName);
+            throw new ConnectException($message, $exception->getRequest());
         }
 
-        return $result;
+        return $result->getBody()->getContents();
     }
 
     /**
