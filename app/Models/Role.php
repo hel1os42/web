@@ -63,6 +63,13 @@ class Role extends Model
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Role
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \InvalidArgumentException
+     */
     public static function findByName(string $name): Role
     {
         return self::query()->where('name', $name)->firstOrFail();
@@ -86,5 +93,15 @@ class Role extends Model
             self::ROLE_AGENT,
             self::ROLE_ADMIN,
         ];
+    }
+
+    /**
+     * @param string $roleName
+     *
+     * @return bool
+     */
+    public function equalsByName(string $roleName)
+    {
+        return $this->getName() === $roleName;
     }
 }

@@ -25,6 +25,7 @@
     "pda/pheanstalk": "^3.1",
     "prettus/l5-repository": "^2.6",
     "sofa/eloquence": "^5.4",
+    "twilio/sdk": "^5.16",
     "tymon/jwt-auth": "0.5.*",
     "vinkla/hashids": "^3.2",
     "webpatser/laravel-uuid": "^2.0"
