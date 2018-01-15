@@ -24,5 +24,4 @@
 			<input type="submit">
 		</form>
 	</div>
-
 @stop
