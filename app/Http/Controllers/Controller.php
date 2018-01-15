@@ -40,9 +40,9 @@ class Controller extends BaseController
     /**
      * @param null|string $uuid
      *
-     * @return null|string
+     * @return string
      */
-    protected function getUserUuid(?string $uuid)
+    protected function confirmUuid(?string $uuid): string
     {
         return null === $uuid ? $this->user()->getId() : $uuid;
     }
