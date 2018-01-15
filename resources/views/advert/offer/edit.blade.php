@@ -238,7 +238,12 @@
                         {{--<a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>--}}
                         <input type="submit" class="btn-nau pull-right" value="Save">
                     </p>
+                </form>
 
+                <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-wd btn-md">Delete offer</button>
                 </form>
 
                 <div id="formOverlay">
@@ -462,23 +467,68 @@
                     });
 
                     fillMapFields(map);
+                    fillTimeframes(map);
                     handleForm(map);
                 }
             } );
 
-            function handleForm(map){
-                let oldweekdays = $('#tab_wdt2').data('workingdays');
-                $('[data-relation="check_wd8"]').each(function(){
-                    let currentWeekday = $(this).data('weekday');
-                    if(currentWeekday in oldweekdays){
-                        $('[data-relation="check_wd8"][data-weekday="' + currentWeekday + '"]').attr('checked', 'checked');
-                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].from);
-                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].to);
-                    } else {
-                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val("");
-                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val("");
+            function fillTimeframes(map){
+                function getTZ(map, callback){
+                    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+                    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
+                    let timestamp = Math.round(new Date().valueOf() / 1000);
+                    let lat = map.getCenter().lat;
+                    let lng = map.getCenter().lng;
+                    let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+                    return httpGetAsync(map, requestUrl, callback);
+
+                    function httpGetAsync(map, theUrl, callback)
+                    {
+                        let xmlHttp = new XMLHttpRequest();
+                        xmlHttp.onreadystatechange = function() {
+                            if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                                let response = JSON.parse(xmlHttp.responseText);
+                                function convertRawOffset(raw){
+                                    let absRawInHr = Math.abs(raw / 3600);
+                                    let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
+                                    return (raw < 0) ? ('-' + converted) : ('+' + converted);
+                                }
+                                let tz = convertRawOffset(response.rawOffset);
+                                callback(map, tz);
+                            }
+                        }
+                        xmlHttp.open("GET", theUrl, true);
+                        xmlHttp.send(null);
                     }
-                });
+                }
+
+                getTZ(map, fillTimeframesCallback);
+                function fillTimeframesCallback(map, tz){
+                    let absRawInHr = tz.substr(-4,2);
+                    let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
+
+                    let oldweekdays = $('#tab_wdt2').data('workingdays');
+                    $('[data-relation="check_wd8"]').each(function(){
+                        let currentWeekday = $(this).data('weekday');
+                        if(currentWeekday in oldweekdays){
+                            $('[data-relation="check_wd8"][data-weekday="' + currentWeekday + '"]').attr('checked', 'checked');
+
+                            $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(addTz(oldweekdays[currentWeekday].from, tzInHr));
+                            $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(addTz(oldweekdays[currentWeekday].to, tzInHr));
+                        } else {
+                            $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val("");
+                            $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val("");
+                        }
+                    });
+                    function addTz(timeStr, tzNum)
+                    {
+                        let timeHrsNum = +timeStr.substr(0,2);
+                        return (timeHrsNum+tzNum) + timeStr.substr(2);
+                    }
+                }
+            }
+
+            function handleForm(map){
 
                 $('#createOfferForm').on('submit', function (e){
                     e.preventDefault();
