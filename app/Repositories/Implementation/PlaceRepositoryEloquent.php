@@ -6,6 +6,7 @@ use App\Http\Exceptions\InternalServerErrorException;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\PlaceRepository;
+use App\Repositories\SpecialityRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -47,7 +48,7 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->model->without('offers');
     }
 
-    public function createForUserOrFail(array $attributes, User $user): Place
+    public function createForUserOrFail(array $attributes, User $user, array $specsIds, array $tagsIds): Place
     {
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
@@ -61,6 +62,20 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $model = $this->model->newInstance($attributes);
         $model->user()->associate($user);
         $model->save();
+
+        if (array_key_exists('retail_types', $attributes) && count($attributes['retail_types']) > 0) {
+            $categories = array_merge([$attributes['category']], $attributes['retail_types']);
+            $model->categories()->sync($categories);
+        }
+
+        if (count(count($tagsIds)) > 0) {
+            $model->tags()->sync($tagsIds);
+        }
+
+        if (count($specsIds) > 0) {
+            $model->specialities()->sync($specsIds);
+        }
+
         $this->resetModel();
 
         if (!$model->exists) {

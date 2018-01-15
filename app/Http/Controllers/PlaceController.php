@@ -6,8 +6,11 @@ use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\PlaceRepository;
+use App\Repositories\SpecialityRepository;
+use App\Repositories\TagRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -116,7 +119,8 @@ class PlaceController extends Controller
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
-        return \response()->render('advert.profile.place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+        return \response()->render('advert.profile.place.create',
+            FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
     /**
@@ -127,22 +131,49 @@ class PlaceController extends Controller
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
+    public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository, TagRepository $tagRepository): Response
     {
         $this->authorize('my.place.create');
 
-        $placeData = $request->all();
+        $placeData = $request->except('specialities', 'tags');
 
-        $place = $placesRepository->createForUserOrFail($placeData, $this->user());
+        $specsIds = $this->parseSpecialities($request->get('specialities', []));
+        $tagsIds = $tagRepository->findIdsByCategoryAndSlugs($placeData['category'], $request->get('tags', []));
 
-        if ($request->has('category_ids') === true) {
-            $place->categories()->attach($request->category_ids);
-        }
+        $place = $placesRepository->createForUserOrFail($placeData, $this->user(), $specsIds, $tagsIds);
 
         return \response()->render('profile.place.show',
             $place->toArray(),
             Response::HTTP_CREATED,
             route('profile.place.show'));
+    }
+
+    /**
+     * @param array $specialities
+     *
+     * @return array
+     */
+    protected function parseSpecialities(array $specialities): array
+    {
+        if (0 == count($specialities)) {
+            return [];
+        }
+        $specialityRepository = app(SpecialityRepository::class);
+        $specsIds = [];
+        foreach ($specialities as $retailTypeSlugs) {
+            if (
+                !array_key_exists('retail_type_id', $retailTypeSlugs)
+                || !array_key_exists('specs', $retailTypeSlugs)
+            ) {
+                continue;
+            }
+            $retailTypeId = $retailTypeSlugs['retail_type_id'];
+            $specs = $retailTypeSlugs['specs'];
+
+            $specsIds = array_merge($specsIds, $specialityRepository->findIdsByRetailTypeAndSlugs($retailTypeId, $specs));
+        }
+
+        return $specsIds;
     }
 
     /**
@@ -159,8 +190,7 @@ class PlaceController extends Controller
         CreateUpdateRequest $request,
         PlaceRepository $placesRepository,
         string $uuid = null
-    ): Response
-    {
+    ): Response {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
             : $placesRepository->find($uuid);

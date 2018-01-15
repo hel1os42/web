@@ -400,6 +400,30 @@ class Place extends Model
     }
 
     /**
+     * @return BelongsToMany
+     */
+    public function specialities(): BelongsToMany
+    {
+        return $this->belongsToMany(Speciality::class, 'places_specialities', 'place_id', 'speciality_id');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'places_tags', 'place_id', 'tag_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function retailTypes()
+    {
+        return $this->categories()->whereNotNull('parent_id');
+    }
+
+    /**
      * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
@@ -477,7 +501,6 @@ class Place extends Model
     {
         return $builder->where('has_active_offers', '=', true);
     }
-
 
     /**
      * @return array

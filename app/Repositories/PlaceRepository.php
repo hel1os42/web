@@ -20,7 +20,7 @@ interface PlaceRepository extends RepositoryInterface
 {
     public function model(): string;
 
-    public function createForUserOrFail(array $placeData, User $user): Place;
+    public function createForUserOrFail(array $placeData, User $user, array $specsIds, array $tagsIds): Place;
 
     /**
      * @param User $user

@@ -5,44 +5,14 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Seeder;
 use Webpatser\Uuid\Uuid;
 
+/**
+ * Don't use for more than 2 dimensional arrays.
+ *
+ * Class CategoriesTableSeeder
+ */
 class CategoriesTableSeeder extends Seeder
 {
-    private $categories = [
-        self::FOOD_DRINKS => [
-            'American',
-            'Arabic',
-            'African',
-            'Asian',
-            'Bar food',
-            'Brazilian',
-            'Burgers',
-            'Chinese',
-            'Desserts',
-            'Indian',
-            'European',
-            'Fast food',
-            'French',
-            'Ice cream',
-            'International',
-            'Japanese',
-            'Mediterranean',
-            'Mexican',
-            'Middle Eastern',
-            'Organic',
-            'Pizza',
-            'Russian',
-            'Seafood',
-            'Steaks',
-            'Thai',
-            'Vegan',
-            'Vegetarian',
-            'Yogurt',
-        ],
-        self::BEAUTY_FITNESS,
-        self::RETAIL_SERVICES,
-        self::ATTRACTIONS_LEISURE,
-        self::OTHER_ONLINE
-    ];
+    private $categories = \App\Helpers\RetailTypes::ALL;
 
     const FOOD_DRINKS = 'Food & Drinks';
     const BEAUTY_FITNESS = 'Beauty & Fitness';
@@ -71,6 +41,8 @@ class CategoriesTableSeeder extends Seeder
         $categories = $this->getCategories();
 
         $connection = $this->db->connection();
+
+        $this->clearOutdatedCategories();
 
         foreach ($categories as $category) {
             if ($connection->table('categories')->where('name', $category['name'])->exists()) {
@@ -106,7 +78,13 @@ class CategoriesTableSeeder extends Seeder
             if (is_array($children)) {
                 yield $categoryArray;
 
-                foreach ($this->getCategories($children, $lastCategoryId) as $item) {
+                $stored = $this->db
+                    ->connection()
+                    ->table('categories')
+                    ->where('name', $categoryArray['name'])
+                    ->first();
+
+                foreach ($this->getCategories($children, (null === $stored) ? $lastCategoryId : $stored->id) as $item) {
                     yield $item;
                 }
                 continue;
@@ -114,5 +92,45 @@ class CategoriesTableSeeder extends Seeder
 
             yield array_merge($categoryArray, ['name' => $children]);
         }
+    }
+
+    private function clearOutdatedCategories()
+    {
+        $connection = $this->db->connection();
+
+        $outdatedCategories = $connection
+            ->table('categories')
+            ->select([
+                'id'
+            ])
+            ->whereNotNull('parent_id')
+            ->whereNotIn('name', $this->getActualNames());
+
+        if (0 === count($outdatedCategories)) {
+            return;
+        }
+
+//        remove records from places_categories table
+        $connection
+            ->table('places_categories')
+            ->whereIn('category_id', $outdatedCategories)
+            ->delete();
+//        remove records from categories table
+        $connection
+            ->table('categories')
+            ->whereIn('id', $outdatedCategories)
+            ->delete();
+    }
+
+    /**
+     * return array
+     */
+    private function getActualNames(): array
+    {
+        $result = array();
+        foreach($this->categories as $subCategories){
+            $result = array_merge($result, $subCategories);
+        }
+        return $result;
     }
 }
