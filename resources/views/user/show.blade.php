@@ -370,7 +370,7 @@
                         zoom:   this.zoom
                     } );
 
-                    L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    L.tileLayer( '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         maxZoom:       19,
                         minZoom:       1,
                         maxNativeZoom: 18,
