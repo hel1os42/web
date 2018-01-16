@@ -10,11 +10,11 @@ use App\Repositories\SpecialityRepository;
 use App\Repositories\TagRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class PlaceController
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @package App\Http\Controllers
  */
 class PlaceController extends Controller
@@ -131,14 +131,17 @@ class PlaceController extends Controller
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository, TagRepository $tagRepository): Response
-    {
+    public function store(
+        CreateUpdateRequest $request,
+        PlaceRepository $placesRepository,
+        TagRepository $tagRepository
+    ): Response {
         $this->authorize('my.place.create');
 
         $placeData = $request->except('specialities', 'tags');
 
         $specsIds = $this->parseSpecialities($request->get('specialities', []));
-        $tagsIds = $tagRepository->findIdsByCategoryAndSlugs($placeData['category'], $request->get('tags', []));
+        $tagsIds  = $tagRepository->findIdsByCategoryAndSlugs($placeData['category'], $request->get('tags', []));
 
         $place = $placesRepository->createForUserOrFail($placeData, $this->user(), $specsIds, $tagsIds);
 
@@ -159,18 +162,18 @@ class PlaceController extends Controller
             return [];
         }
         $specialityRepository = app(SpecialityRepository::class);
-        $specsIds = [];
+        $specsIds             = [];
         foreach ($specialities as $retailTypeSlugs) {
-            if (
-                !array_key_exists('retail_type_id', $retailTypeSlugs)
+            if (!array_key_exists('retail_type_id', $retailTypeSlugs)
                 || !array_key_exists('specs', $retailTypeSlugs)
             ) {
                 continue;
             }
             $retailTypeId = $retailTypeSlugs['retail_type_id'];
-            $specs = $retailTypeSlugs['specs'];
+            $specs        = $retailTypeSlugs['specs'];
 
-            $specsIds = array_merge($specsIds, $specialityRepository->findIdsByRetailTypeAndSlugs($retailTypeId, $specs));
+            $specsIds = array_merge($specsIds,
+                $specialityRepository->findIdsByRetailTypeAndSlugs($retailTypeId, $specs));
         }
 
         return $specsIds;

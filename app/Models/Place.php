@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Helpers\Attributes;
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
+use App\Models\Place\RelationsTrait;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -46,12 +43,14 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use Uuids;
+    use Uuids, RelationsTrait;
 
     /**
      * Place constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -361,66 +360,6 @@ class Place extends Model
     public function scopeByUser($builder, User $user): Builder
     {
         return $builder->where('user_id', $user->getId());
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * ATTENTION! it just stub
-     */
-    public function testimonials(): HasMany
-    {
-        return $this->hasMany(Testimonial::class);
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * @throws \App\Exceptions\TokenException
-     */
-    public function offers()
-    {
-        return $this->user->getAccountFor(Currency::NAU)->offers();
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function specialities(): BelongsToMany
-    {
-        return $this->belongsToMany(Speciality::class, 'places_specialities', 'place_id', 'speciality_id');
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class, 'places_tags', 'place_id', 'tag_id');
-    }
-
-    /**
-     * @return \Illuminate\Database\Query\Builder|static
-     */
-    public function retailTypes()
-    {
-        return $this->categories()->whereNotNull('parent_id');
     }
 
     /**
