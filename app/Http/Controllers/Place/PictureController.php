@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Place;
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\PlaceRepository;
+use App\Services\PlaceService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Intervention\Image\ImageManager;
@@ -25,12 +26,17 @@ class PictureController extends AbstractPictureController
 
     private $type = 'picture';
     private $placeRepository;
+    /**
+     * @var $placeService PlaceService
+     */
+    private $placeService;
 
     public function __construct(
         ImageManager $imageManager,
         Filesystem $filesystem,
         AuthManager $authManager,
-        PlaceRepository $placeRepository
+        PlaceRepository $placeRepository,
+        PlaceService $placeService
     ) {
         parent::__construct($imageManager, $filesystem, $authManager);
 
@@ -77,7 +83,11 @@ class PictureController extends AbstractPictureController
 
         $this->authorize('places.picture.store', $place);
 
-        $redirect = (!$request->wantsJson() && $this->auth->user()->isAdvertiser()) ? route('profile.place.show') : route('profile.picture.show');
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $this->placeService->disapprove($place, true);
+        }
+
+        $redirect = (!$request->wantsJson() && $this->user()->isAdvertiser()) ? route('profile.place.show') : route('profile.picture.show');
 
         return $this->storeImageFor($request, $place->getId(), $redirect);
     }
