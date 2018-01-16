@@ -12,25 +12,18 @@ use App\Models\Role;
 trait RoleTrait
 {
     /**
-     * @return bool
-     */
-    public function isAdvertiser()
-    {
-        return $this->hasRoles([Role::ROLE_ADVERTISER]);
-    }
-
-    /**
      * @param array $roleNames
      *
      * @return bool
      */
-    public function hasRoles(array $roleNames)
+    public function hasRoles(array $roleNames): bool
     {
         foreach ($this->roles as $userRole) {
             if (in_array($userRole->name, $roleNames)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -45,7 +38,7 @@ trait RoleTrait
     /**
      * @return bool
      */
-    public function isAgent()
+    public function isAgent(): bool
     {
         return $this->hasRoles([Role::ROLE_AGENT]);
     }
@@ -53,7 +46,23 @@ trait RoleTrait
     /**
      * @return bool
      */
-    public function isUser()
+    public function isChiefAdvertiser(): bool
+    {
+        return $this->hasRoles([Role::ROLE_CHIEF_ADVERTISER]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdvertiser(): bool
+    {
+        return $this->hasRoles([Role::ROLE_ADVERTISER]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUser(): bool
     {
         return $this->hasRoles([Role::ROLE_USER]);
     }
