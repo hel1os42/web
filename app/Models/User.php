@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\TokenException;
+use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
@@ -479,5 +480,15 @@ class User extends Authenticatable implements PhoneAuthenticable
 
         return session()->has($keyName) !== false;
 
+    }
+
+    /**
+     * @param array $without
+     *
+     * @return array
+     */
+    public function getFillableWithDefaults($without = []): array
+    {
+        return Attributes::getFillableWithDefaults($this, $without);
     }
 }
