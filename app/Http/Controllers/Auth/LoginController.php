@@ -24,9 +24,9 @@ class LoginController extends AuthController
         return $this->auth->user()
             ? \response()->redirectTo(route('home'))
             : \response()->render('auth.login', [
-            'email'    => null,
-            'password' => null
-        ]);
+                'email'    => null,
+                'password' => null
+            ]);
     }
 
     /**
