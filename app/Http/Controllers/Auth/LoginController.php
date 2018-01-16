@@ -21,7 +21,9 @@ class LoginController extends AuthController
      */
     public function getLogin()
     {
-        return \response()->render('auth.login', [
+        return $this->auth->user()
+            ? \response()->redirectTo(route('home'))
+            : \response()->render('auth.login', [
             'email'    => null,
             'password' => null
         ]);
@@ -62,7 +64,7 @@ class LoginController extends AuthController
 
         return \request()->wantsJson()
             ? \response()->render('', '', Response::HTTP_NO_CONTENT)
-            : \redirect()->route('home');
+            : \redirect()->route('login');
     }
 
     /**
@@ -113,7 +115,9 @@ class LoginController extends AuthController
         }
 
         if (null === $user) {
-            return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+            return \response()->redirectTo(route('login'))
+                ->withErrors(trans('auth.failed'))
+                ->withInput();
         }
 
         $session->migrate(true);
@@ -146,7 +150,7 @@ class LoginController extends AuthController
     {
         $this->auth->guard('web')->login($user);
 
-        return \response()->redirectTo(\request()->get('redirect_to', route('profile')));
+        return \response()->redirectTo(route('home'));
     }
 
     /**

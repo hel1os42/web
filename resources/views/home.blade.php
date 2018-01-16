@@ -3,7 +3,7 @@
 @section('title', 'NAU')
 
 @section('content')
-    <h1>NAU</h1>
+    <h1>Welcome to NAU {{$authUser['name']}}!</h1>
     <div class="col-md-9" style="margin-left:200px">
         @auth
             @if(auth()->user()->isAgent())

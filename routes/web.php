@@ -16,10 +16,6 @@ $router->post('users', 'UserController@store')->name('register');
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
-    $router->get('/', function () {
-        return response()->render('home', []);
-    })->name('home');
-
     $router->group(['prefix' => 'auth'], function () use ($router) {
 
         $router->get('/', function () {
@@ -74,6 +70,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 // Authorized users
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
+
+    $router->get('/', function () {
+        return response()->render('home', []);
+    })->name('home');
 
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
