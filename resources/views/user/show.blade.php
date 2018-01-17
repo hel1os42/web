@@ -7,15 +7,15 @@
             <div class="card card-user">
                 <div class="author">
                     @if (file_exists(public_path('../storage/app/images/profile/pictures/'.$id.'.jpg')))
-                        <img class="img avatar" src="{{route('profile.picture.show')}}">
+                        <img class="img avatar" src="{{ route('profile.picture.show') }}">
                     @else
                         <a href="#">
-                            <img class="img avatar" src="{{asset('img/avatar.png')}}">
+                            <img class="img avatar" src="{{ asset('img/avatar.png') }}">
                         </a>
                     @endif
                 </div>
                 <div class="">
-                    <h4 class="title">{{$name}}</h4>
+                    <h4 class="title">{{ $name }}</h4>
                     <br>
                 </div>
             </div>
@@ -26,34 +26,26 @@
                     <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-                                <li class="active"><a href="#profile" aria-controls="profile" role="tab"
-                                                      data-toggle="tab" aria-expanded="true">Profile info</a>
-                                </li>
-                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab"
-                                       aria-expanded="true">Edit profile</a>
-
-                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab"
-                                                data-toggle="tab" aria-expanded="false">Update photo</a>
-                                </li>
+                                <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a></li>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Edit profile</a></li>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a></li>
                             </ul>
                         </div>
                     </div>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
-                                <div class="col-sm-6 p-5">
+                                <div class="col-sm-3 p-5">
                                     <p><strong>Name</strong></p>
                                     <p><strong>Email</strong></p>
                                     <p><strong>Phone</strong></p>
                                     <p><strong>Invite code</strong></p>
                                 </div>
-                                <div class="col-sm-6 p-5">
-                                    <p>{{$name ?: '-'}}</p>
-                                    <p>{{$email ?: '-'}}</p>
-                                    <p>{{$phone ?: '-'}}</p>
-                                    <p>
-                                        {{$invite_code}}
-                                    </p>
+                                <div class="col-sm-9 p-5">
+                                    <p>{{ $name ?: '-' }}</p>
+                                    <p>{{ $email ?: '-' }}</p>
+                                    <p>{{ $phone ?: '-' }}</p>
+                                    <p>{{ $invite_code }}</p>
                                 </div>
                             </div>
                             <div class="row">
@@ -61,48 +53,51 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
-                            <form action="{{route('users.update', $id)}}" method="POST"
-                                  enctype="application/x-www-form-urlencoded">
+                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
                                 <div class="row">
 
-                                    <div class="col-sm-6 p-5">
+                                    <div class="col-sm-3 p-5">
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
-                                        <p><strong>Position</strong></p>
                                     </div>
-                                    <div class="col-sm-6 p-5">
 
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="name"
-                                                  value="{{$name}}"></p>
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
-                                                  value="{{$email}}"></p>
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
-                                                  value="{{$phone}}"></p>
+                                    <div class="col-sm-9 p-5">
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <p><strong>Position</strong></p>
                                         <div class="map-wrap" style="width: 400px;">
                                             <div id="mapid" style="height: 400px; width: 600px;">
                                                 <div id="marker" style="z-index: 500;"></div>
                                             </div>
-
                                         </div>
-                                        <input type="hidden" name="latitude" value="{{$latitude}}">
-                                        <input type="hidden" name="longitude" value="{{$longitude}}">
-                                    </div>
+                                        <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
+                                        <input type="hidden" name="latitude" value="{{ $place['latitude'] }}">
+                                        <input type="hidden" name="longitude" value="{{ $place['longitude'] }}">
+                                        <input type="hidden" name="radius" value="{{ $place['radius'] }}">
+                                    </div>
                                 </div>
+
                                 <div class="row">
                                     @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
                                 </div>
                                 <div class="row">
-                                    <button type="submit" class="pull-right">Update</button>
+                                    <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
                                 </div>
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <form method="POST" action="{{route('profile.picture.store')}}"
-                                  enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('profile.picture.store') }}" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <h4 class="title">Update your avatar</h4>
                                 <div class="row">
@@ -114,8 +109,7 @@
                                                     <img src="{{asset('img/placeholder.jpg')}}" alt="...">
                                                 </div>
                                             </div>
-                                            <div class="fileinput-preview fileinput-exists thumbnail img-circle"
-                                                 style=""></div>
+                                            <div class="fileinput-preview fileinput-exists thumbnail img-circle" style=""></div>
                                             <div class="btn btn-default btn-fill btn-file">
                                                 <span class="fileinput-new">Pick photo</span>
                                                 <span class="fileinput-exists">Change logo</span>
@@ -143,111 +137,41 @@
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
 
     @include('role-partials.selector', ['partialRoute' => 'user.show-scripts'])
 
     <script type="text/javascript">
-        $( document ).ready( function() {
 
-            let mapContainer = {
-                gps:                {},
-                zoom:               13,
-                defaultZoom:        1,
-                map:                null,
-                mapIdSelector:      'mapid',
-                markerRadius:       190,
-                form:               {
-                    lat:    $( '[name="latitude"]' ),
-                    lng:    $( '[name="longitude"]' ),
-                    radius: $( '[name="radius"]' ),
-                },
-                run:                function() {
-                    this.copyFromFormToMap();
-                    if ( this.map === null && $.isEmptyObject( this.gps ) ) {
-                        this.getCurrentPosition();
-                        return;
-                    }
-                    if ( this.map === null ) {
-                        this.startMap();
-                    }
-                },
-                getCurrentPosition: function() {
-                    if ( navigator.geolocation ) {
-                        navigator.geolocation.getCurrentPosition( this.getGps );
-                    }
+        /* map */
 
-                },
-                getGps:             function( pos ) {
-                    let gps = {
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude
-                    };
-                    passGpsToMapContainer( gps );
-                },
-                startMap:           function() {
-                    this.map = L.map( this.mapIdSelector, {
-                        center: this.gps,
-                        zoom:   this.zoom
-                    } );
+        $('a[href="#edit"]').one('shown.bs.tab', function() {
+            setTimeout(function(){
+                mapInit({
+                    id: 'mapid',
+                    setPosition: {
+                        lat: $('[name="latitude"]').val(),
+                        lng: $('[name="longitude"]').val(),
+                        radius: $('[name="radius"]').val()
+                    },
+                    done: mapDone,
+                    move: mapMove
+                });
+            }, 100);
+        });
 
-                    L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom:       19,
-                        minZoom:       1,
-                        maxNativeZoom: 18,
-                        attribution:   '© OpenStreetMap',
-                    } ).addTo( this.map );
+        function mapDone(map){
+            let values = mapValues(map);
+            $('#mapradius').children('span').text(values.radius / 1000);
+        }
 
-                    this.copyFromMapToForm();
-
-                    $( this.map ).on( 'zoomend, moveend', this.copyFromMapToForm() );
-
-                },
-                copyFromMapToForm:  function() {
-                    $( this.form.lat ).val( this.map.getCenter().lat );
-                    $( this.form.lng ).val( this.map.getCenter().lng );
-                    $( this.form.radius ).val( Math.round( getRadius( this.markerRadius, this.map ) ) );
-
-                    function getRadius( radiusPx, map ) {
-                        return 40075016.686 * Math.abs( Math.cos( map.getCenter().lat / 180 * Math.PI ) ) / Math.pow(
-                            2, map.getZoom() + 8 ) * radiusPx;
-                    }
-
-                    function getZoom( latitude, radius ) {
-                        let zoom = this.round( Math.log2( 40075016.686 * 75 * Math.abs(
-                            Math.cos( latitude / 180 * Math.PI ) ) / radius ) - 8, 0.25 );
-                        return zoom;
-                    }
-
-                    function round( value, step ) {
-                        step || (step = 1.0);
-                        let inv = 1.0 / step;
-                        return Math.round( value * inv ) / inv;
-                    }
-                },
-                setGps:             function( gps ) {
-                    this.gps = gps;
-                    return this;
-                },
-                copyFromFormToMap:  function() {
-                    let lat = Number( $( this.form.lat ).val() );
-                    let lng = Number( $( this.form.lng ).val() );
-                    if ( lat !== 0 && lng !== 0 ) {
-                        this.setGps( {
-                            lat: lat,
-                            lng: lng
-                        } )
-                    }
-                }
-            };
-
-            function passGpsToMapContainer( gps ) {
-                mapContainer.setGps( gps ).startMap();
-            }
-
-            $( 'a[href="#edit"]' ).on( 'click', function() {
-                mapContainer.run();
-            } );
-        } );
+        function mapMove(map){
+            let values = mapValues(map);
+            $('#mapradius').children('span').text(values.radius / 1000);
+            $('[name="latitude"]').val(values.lat);
+            $('[name="longitude"]').val(values.lng);
+            $('[name="radius"]').val(values.radius);
+        }
 
     </script>
 @endpush
