@@ -22,7 +22,6 @@
                                     <input name="name" value="{{old('name')}}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer name.</p>
                         </div>
 
                         <div class="control-box">
@@ -32,7 +31,6 @@
                                     <textarea name="description" class="formData">{{ old('description') }}</textarea>
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer description.</p>
                         </div>
 
                         <div class="control-box">
@@ -42,7 +40,6 @@
                                     <textarea name="about" class="formData">{{ old('about') }}</textarea>
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer description.</p>
                         </div>
 
                         <div class="control-box">
@@ -52,7 +49,7 @@
                                     <input name="address" value="{{ old('address') }}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer name.</p>
+                            <p class="hint">Please, enter the Offer address.</p>
                         </div>
 
                         <div class="control-box">
@@ -62,7 +59,6 @@
                                     <select id="place_category" name="category_ids[]" class="formData"></select>
                                 </label>
                             </p>
-                            <p class="hint">Please, select the category.</p>
                         </div>
 @if(false)
                         <div class="control-box">
@@ -107,9 +103,9 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
-
     <script>
 
         /* offer_category */
@@ -159,19 +155,28 @@
 
         /* form submit */
 
-        $('#createPlaceForm').on('submit', function (e){
-
-            e.preventDefault();
-
-            getFormData();
-
-            function getFormData(){
-
+        $("#createPlaceForm").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength:3,
+                },
+                description: {
+                    required: true,
+                },
+                about: {
+                    required: true,
+                },
+                address: {
+                    required: true,
+                }
+            },
+            submitHandler: function (form) {
                 let formData = $('.formData').serializeArray();
 
                 formData.push({
-                    "name" : "_token",
-                    "value" : $('[name="_token"]').val()
+                    "name": "_token",
+                    "value": $('[name="_token"]').val()
                 });
 
                 $.ajax({
@@ -189,7 +194,7 @@
                             console.log(xhr.status);
                         }
                     },
-                    error: function(resp){
+                    error: function (resp) {
                         alert("Something went wrong. Try again, please.");
                         console.log(resp.status);
                     }

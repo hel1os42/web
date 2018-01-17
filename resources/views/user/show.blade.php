@@ -35,13 +35,13 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
-                                <div class="col-sm-6 p-5">
+                                <div class="col-sm-3 p-5">
                                     <p><strong>Name</strong></p>
                                     <p><strong>Email</strong></p>
                                     <p><strong>Phone</strong></p>
                                     <p><strong>Invite code</strong></p>
                                 </div>
-                                <div class="col-sm-6 p-5">
+                                <div class="col-sm-9 p-5">
                                     <p>{{ $name ?: '-' }}</p>
                                     <p>{{ $email ?: '-' }}</p>
                                     <p>{{ $phone ?: '-' }}</p>
@@ -58,17 +58,23 @@
                                 {{ method_field('PUT') }}
                                 <div class="row">
 
-                                    <div class="col-sm-6 p-5">
+                                    <div class="col-sm-3 p-5">
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
-                                        <p><strong>Position</strong></p>
                                     </div>
 
-                                    <div class="col-sm-6 p-5">
+                                    <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <p><strong>Position</strong></p>
                                         <div class="map-wrap" style="width: 400px;">
                                             <div id="mapid" style="height: 400px; width: 600px;">
                                                 <div id="marker" style="z-index: 500;"></div>
@@ -76,12 +82,12 @@
                                         </div>
                                         <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
-                                        <input type="hidden" name="latitude" value="{{ $latitude }}">
-                                        <input type="hidden" name="longitude" value="{{ $longitude }}">
-                                        <input type="hidden" name="radius" value="{{ $radius }}">
+                                        <input type="hidden" name="latitude" value="{{ $place['latitude'] }}">
+                                        <input type="hidden" name="longitude" value="{{ $place['longitude'] }}">
+                                        <input type="hidden" name="radius" value="{{ $place['radius'] }}">
                                     </div>
-
                                 </div>
+
                                 <div class="row">
                                     @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
                                 </div>
@@ -131,6 +137,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
 
     @include('role-partials.selector', ['partialRoute' => 'user.show-scripts'])
 
