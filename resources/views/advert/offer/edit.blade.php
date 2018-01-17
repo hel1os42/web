@@ -400,8 +400,6 @@
 
             /* map */
 
-            let Map;
-
             mapInit({
                 id: 'mapid',
                 setPosition: {
@@ -414,7 +412,6 @@
             });
 
             function mapDone(map){
-                Map = map;
                 let values = mapValues(map);
                 $('#mapradius').children('span').text(values.radius / 1000);
                 fillTimeframes(map);
