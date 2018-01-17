@@ -8,58 +8,50 @@
             padding: 10px;
         }
     </style>
-    <h1>Advertiser list</h1>
+
     <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
         <div class="card card-very-long">
-
-            <a href="{{route('users.create')}}" style="float:right" class="btn-link">+ Add new advertiser</a>
-            <div id="admin-users-search">
-                <label for="phone">By email:</label>
-                <input type="text" name="email" id="email" value="">
-                @if(auth()->user()->isAdmin())
-                    <label for="role">By role:</label>
-                    <select name="role" id="role">
-                        <option value="" selected>All</option>
-                        <option value="admin">Admin</option>
-                        <option value="agent">Agent</option>
-                        <option value="chief_advertiser">Chief advertiser</option>
-                        <option value="advertiser">Advertiser</option>
-                        <option value="user">User</option>
-                    </select>
-                @endif
-
-                <form method="get" action="{{route('users.index')}}" id="search-form" style="display: inline-block;">
-                    <input type="hidden" name="search" id="search-field" value="">
-                    <input type="hidden" name="searchJoin" value="and">
-                    <button type="submit" class="btn">Search</button>
-                </form>
-            </div>
+            @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
             <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
                 <thead>
-                <td>Name</td>
-                <td>Place</td>
-                <td>Email</td>
-                <td>Phone</td>
-                <td>Balance(NAU)</td>
+                <td>User</td>
                 <td></td>
-                @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
-                    <td>Approved</td>
-                @endif
+                <td>Place</td>
+                <td></td>
+                <td>Balance</td>
+                <td></td>
+                <td>Approved</td>
                 <td>Actions</td>
                 </thead>
                 @foreach ($data as $user)
-
                     <tr>
-                        <td>{{$user['name']}}</td>
-                        <td>
-                            @if(isset($user['place']['id']))
-                                <a href="{{route('places.show', $user['place']['id'])}}"> {{$user['place']['name']}} </a>
-                            @else
-                                -
-                            @endif
+                        <td>{{$user['name'] ?: '-'}}
+                            <br>
+                            <span style="font-size: 19px;">{{$user['email']}}</span><br>
+                            <span style="font-size: 19px;">{{$user['phone']}}</span>
                         </td>
-                        <td>{{$user['email']}}</td>
-                        <td>{{$user['phone']}}</td>
+                        <td>
+                            <a href="{{route('users.show', $user['id'])}}">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </a>
+                        </td>
+
+                        @if(isset($user['place']['id']))
+                            <td>
+                                <a href="{{route('places.show', $user['place']['id'])}}"> {{$user['place']['name']}} </a>
+                            </td>
+                            <td>
+                                <a href="{{route('places.edit', $user['place']['id'])}}">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        @else
+                            <td>-</td>
+                            <td></td>
+                        @endif
+
+
+
                         @if(isset($user['accounts']['NAU']['balance']))
                             <td>
                                 {{$user['accounts']['NAU']['balance']}}
@@ -80,29 +72,10 @@
                             </td>
                             <td></td>
                         @endif
-                        @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
-                            <td>
-                                @if(in_array('advertiser', array_column($user['roles'], 'name')))
-                                    @if($user['approved'])
-                                        <span style="color:green">Yes</span>
-                                    @else
-                                        <form action="{{route('users.update', $user['id'])}}" method="post"
-                                              style="display:  inline-block;">
-                                            No
-                                            {{ csrf_field() }}
-                                            {{ method_field('PATCH') }}
-                                            <input hidden type="text" name="approved" value="1">
-                                            <button style="display:  inline-block;" type="submit" class="btn">approve
-                                            </button>
-                                        </form>
-                                    @endif
-                                @else
-                                    -
-                                @endif
-                            </td>
-                        @endif
-                        <td><a href="{{route('users.show', $user['id'])}}">edit</a> |
-                            <a href="{{route('impersonate', $user['id'])}}">login as</a>
+                        <td>
+                            @include('role-partials.selector', ['partialRoute' => 'user.index-approved', 'data' => ['user' => $user]])
+                        </td>
+                        <td><a href="{{route('impersonate', $user['id'])}}">login as</a>
                         </td>
                     </tr>
                 @endforeach
