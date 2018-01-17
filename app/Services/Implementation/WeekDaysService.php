@@ -78,10 +78,34 @@ class WeekDaysService implements WeekDaysServiceInterface
                           return $offer->relationLoaded('timeframes')
                               ? array_merge(
                                   $offer->toArray(),
-                                  ['timeframes' => $this->convertTimeframesCollection($offer->timeframes)]
+                                  ['timeframes' => $this->processOfferTimeFrames($offer)]
                               )
-                              : $offer;
+                              : $offer->toArray();
                       })->toArray();
+    }
+
+    /**
+     * @param Offer $offer
+     * @return array
+     */
+    public function processOfferTimeFrames(Offer $offer): array
+    {
+        $separatedTimeFrames = [];
+        $timeFrames          = $this->convertTimeframesCollection($offer->timeframes);
+
+        foreach ($timeFrames as $timeFrame) {
+            $partialTimeFrames   = $this->splitTimeFrameData($timeFrame);
+            $separatedTimeFrames = array_merge($separatedTimeFrames, $partialTimeFrames);
+        }
+
+        $orderedDaysList = array_flip(\App\Services\WeekDaysService::LIST);
+        $orderedData     = array_replace($orderedDaysList, $separatedTimeFrames);
+
+        $realTimeFrames = array_filter($orderedData, function($timeFrameData) {
+            return is_array($timeFrameData);
+        });
+
+        return $realTimeFrames;
     }
 
     /**
@@ -98,5 +122,28 @@ class WeekDaysService implements WeekDaysServiceInterface
                                   ['days' => $this->daysToWeekDays($timeframe->days)]
                               );
                           })->toArray();
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function splitTimeFrameData(array $data): array
+    {
+        $partials = [];
+        $days     = array_get($data, 'days', []);
+
+        if (empty($days)) {
+            return $partials;
+        }
+
+        foreach ($days as $day) {
+            $timeFrame         = $data;
+            $timeFrame['days'] = [$day];
+
+            $partials[$day] = $timeFrame;
+        }
+
+        return $partials;
     }
 }
