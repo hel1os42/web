@@ -18,7 +18,7 @@ class CreateOperatorsTable extends Migration
             $table->uuid('place_uuid');
             $table->string('login', 60);
             $table->string('password');
-            $table->boolean('is_active')->default('false');
+            $table->boolean('is_active')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
