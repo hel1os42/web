@@ -9,7 +9,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
                 <div>
-                    <form action="{{route('places.store')}}" method="post" class="nau-form" id="createPlaceForm" target="_top">
+                    <form action="{{ route('places.store') }}" method="post" class="nau-form" id="createPlaceForm" target="_top">
 
                         {{ csrf_field() }}
 
@@ -29,7 +29,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Description*</span>
-                                    <textarea name="description" value="{{old('description')}}" class="formData"></textarea>
+                                    <textarea name="description" class="formData">{{ old('description') }}</textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Offer description.</p>
@@ -39,7 +39,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">About*</span>
-                                    <textarea name="about" value="{{old('about')}}" class="formData"></textarea>
+                                    <textarea name="about" class="formData">{{ old('about') }}</textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Offer description.</p>
@@ -49,7 +49,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Address*</span>
-                                    <input name="address" value="{{old('address')}}" class="formData">
+                                    <input name="address" value="{{ old('address') }}" class="formData">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Offer name.</p>
@@ -86,6 +86,7 @@
                                 <div class="leaflet-map" id="mapid"></div>
                                 <div id="marker"></div>
                             </div>
+                            <p id="mapradius">Radius: <span>unknown</span> km.</p>
                         </div>
 
                         <p class="step-footer">
@@ -102,14 +103,17 @@
 
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
 @endpush
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
-    <script type="text/javascript">
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+
+    <script>
+
         /* offer_category */
+
         let xhr = new XMLHttpRequest();
 
         xhr.onreadystatechange = function () {
@@ -128,112 +132,70 @@
 
         xhr.open("GET", "{{ route('categories') }}", true);
         xhr.send();
-    </script>
-    <script>
-        $( document ).ready( function() {
-        let GPS = {};
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-            } else {
-                defaultGPS();
-            }
-
-            function getGPS( pos ) {
-                GPS = {
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                };
-                mapInitialize( GPS );
-            }
-
-            function defaultGPS() {
-                /* Los Angeles: */
-                GPS = {
-                    lat: 34.0143733,
-                    lng: -118.2831973
-                };
-                mapInitialize( GPS );
-            }
-
-            function mapInitialize( GPS ) {
-
-                let map = L.map( 'mapid', {
-                    center: GPS,
-                    zoom:   13
-                } );
-
-                L.tileLayer( '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom:       19,
-                    minZoom:       1,
-                    maxNativeZoom: 18,
-                    attribution:   '© OpenStreetMap',
-                } ).addTo( map );
 
 
-                function fillMapFields(map){
-                    let radiusPx = 190;
-                    $('[name="latitude"]').val(map.getCenter().lat);
-                    $('[name="longitude"]').val(map.getCenter().lng);
-                    $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
 
-                    function getRadius(radiusPx, map) {
-                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
-                    }
+        /* map */
 
-                    function getZoom(latitude, radius) {
-                        let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
-                        return zoom;
-                    }
+        mapInit({
+            id: 'mapid',
+            done: mapDone,
+            move: mapMove
+        });
 
-                    function round(value, step) {
-                        step || (step = 1.0);
-                        let inv = 1.0 / step;
-                        return Math.round(value * inv) / inv;
-                    }
-                }
-
-                fillMapFields(map);
-                handleForm(map);
-            }
-        } );
-
-        function handleForm(map){
-            $('#createPlaceForm').on('submit', function (e){
-                e.preventDefault();
-
-                getFormData();
-
-                function getFormData(){
-
-                    let formData = $('.formData').serializeArray();
-
-                    formData.push({
-                        "name" : "_token",
-                        "value" : $('[name="_token"]').val()
-                    });
-
-                    $.ajax({
-                        type: "POST",
-                        url: $('#createPlaceForm').attr('action'),
-                        headers: {
-                            'Accept':'application/json',
-                        },
-                        data: formData,
-                        success: function(data, textStatus, xhr){
-                            if (201 == xhr.status){
-                                    return window.location.replace("{{ route('profile') }}");
-                            } else {
-                                alert("Something went wrong. Try again, please.");
-                                console.log(xhr.status);
-                            }
-                        },
-                        error: function(resp){
-                            alert("Something went wrong. Try again, please.");
-                            console.log(resp.status);
-                        }
-                    });
-                };
-            });
+        function mapDone(map){
+            mapMove(map);
         }
+
+        function mapMove(map){
+            let values = mapValues(map);
+            $('#mapradius').children('span').text(values.radius / 1000);
+            $('[name="latitude"]').val(values.lat);
+            $('[name="longitude"]').val(values.lng);
+            $('[name="radius"]').val(values.radius);
+        }
+
+
+
+        /* form submit */
+
+        $('#createPlaceForm').on('submit', function (e){
+
+            e.preventDefault();
+
+            getFormData();
+
+            function getFormData(){
+
+                let formData = $('.formData').serializeArray();
+
+                formData.push({
+                    "name" : "_token",
+                    "value" : $('[name="_token"]').val()
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: $('#createPlaceForm').attr('action'),
+                    headers: {
+                        'Accept':'application/json',
+                    },
+                    data: formData,
+                    success: function(data, textStatus, xhr){
+                        if (201 === xhr.status){
+                                return window.location.replace("{{ route('profile') }}");
+                        } else {
+                            alert("Something went wrong. Try again, please.");
+                            console.log(xhr.status);
+                        }
+                    },
+                    error: function(resp){
+                        alert("Something went wrong. Try again, please.");
+                        console.log(resp.status);
+                    }
+                });
+            }
+        });
+
     </script>
 @endpush

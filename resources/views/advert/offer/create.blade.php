@@ -10,7 +10,7 @@
 
             <h1>Create offer</h1>
 
-            <form action="{{route('advert.offers.store')}}" method="post" class="nau-form" id="createOfferForm" target="_top">
+            <form action="{{ route('advert.offers.store') }}" method="post" class="nau-form" id="createOfferForm" target="_top">
 
                 {{--<ul class="tab-step-control js-tabs">--}}
                     {{--<li class="active"><a href="#tab_step1" data-toggle="tab"><em>1</em> Main<br>Information</a></li>--}}
@@ -66,6 +66,7 @@
 
 
 @push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
 @endpush
@@ -76,7 +77,9 @@
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
-	<script>
+    <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script>
 
         /* dateTime picker init */
         dateTimePickerInit();
@@ -175,75 +178,32 @@
             }).trigger('change');
         }
 
-        $( document ).ready( function() {
-            let GPS = {};
-            let defaultZoom = 1;
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-            }
-
-            function getGPS( pos ) {
-                GPS = {
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                };
-                defaultZoom = 13;
-                mapInitialize( GPS, defaultZoom );
-            }
-            function defaultGPS() {
-                GPS = {
-                    lat: 0,
-                    lng: 0
-                };
-                mapInitialize( GPS, defaultZoom );
-            }
 
 
-            function mapInitialize( GPS, defaultZoom ) {
 
-                let map = L.map( 'mapid', {
-                    center: GPS,
-                    zoom:   defaultZoom// 13
-                } );
+        /* map */
 
-                L.tileLayer( '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom:       19,
-                    minZoom:       1,
-                    maxNativeZoom: 18,
-                    attribution:   '© OpenStreetMap',
-                } ).addTo( map );
+        mapInit({
+            id: 'mapid',
+            done: mapDone,
+            move: mapMove
+        });
+
+        function mapDone(map){
+            mapMove(map);
+            handleForm(map);
+        }
+
+        function mapMove(map){
+            let values = mapValues(map);
+            $('#mapradius').children('span').text(values.radius / 1000);
+            $('[name="latitude"]').val(values.lat);
+            $('[name="longitude"]').val(values.lng);
+            $('[name="radius"]').val(values.radius);
+        }
 
 
-                function fillMapFields(map){
-                    let radiusPx = 190;
-                    $('[name="latitude"]').val(map.getCenter().lat);
-                    $('[name="longitude"]').val(map.getCenter().lng);
-                    $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
-                    console.log(map.getZoom());
-                    function getRadius(radiusPx, map) {
-                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
-                    }
-
-                    function getZoom(latitude, radius) {
-                        let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
-                        return zoom;
-                    }
-
-                    function round(value, step) {
-                        step || (step = 1.0);
-                        let inv = 1.0 / step;
-                        return Math.round(value * inv) / inv;
-                    }
-                }
-
-                $(map).on('zoomend, moveend', function(){
-                    fillMapFields(this);
-                });
-
-                fillMapFields(map);
-                handleForm(map);
-            }
-        } );
+       /* порефакторить функцию handleForm */
 
         function handleForm(map){
             $('#createOfferForm').on('submit', function (e){
@@ -262,7 +222,7 @@
                     {
                         let xmlHttp = new XMLHttpRequest();
                         xmlHttp.onreadystatechange = function() {
-                            if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                            if (4 === xmlHttp.readyState && 200 === xmlHttp.status){
                                 let response = JSON.parse(xmlHttp.responseText);
                                 function convertRawOffset(raw){
                                     let absRawInHr = Math.abs(raw / 3600);
@@ -272,7 +232,7 @@
                                 let tz = convertRawOffset(response.rawOffset);
                                 callback(map, tz);
                             }
-                        }
+                        };
                         xmlHttp.open("GET", theUrl, true);
                         xmlHttp.send(null);
                     }
@@ -302,14 +262,14 @@
                     } else if (true === $('#tab_wdt2').hasClass('active')){
                         let weekdays = {};
                         $('[data-relation="check_wd8"]:checked, [data-relation="check_wd9"]:checked').each(function(){
-                            currentWeekday = $(this).data('weekday');
-                            timeFrom = $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val();
-                            timeTo = $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val();
-                            key = timeFrom + '-' + timeTo;
+                            let currentWeekday = $(this).data('weekday');
+                            let timeFrom = $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val();
+                            let timeTo = $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val();
+                            let key = timeFrom + '-' + timeTo;
                             weekdays[key] = (Array.isArray(weekdays[key])) ? weekdays[key].concat(currentWeekday) : new Array(currentWeekday);
                         });
                         $.each(weekdays, function(times, days){
-                            timesArray = times.split('-');
+                            let timesArray = times.split('-');
                             timeframes.push(compactTimeframe(days, timesArray[0], timesArray[1], tz));
                         });
                     }
@@ -340,7 +300,7 @@
                     let finishDateVal = $('[name="finish_date"]').val();
                     formData.push({
                         "name" : "finish_date",
-                        "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
+                        "value" : ('' === finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
                     });
 
                     function prepareDate(date, tz) {
@@ -380,7 +340,7 @@ console.log(formData);
                         },
                         data: formData,
                         success: function(data, textStatus, xhr){
-                            if (202 == xhr.status){
+                            if (202 === xhr.status){
                                 return window.location.replace("{{ route('advert.offers.index') }}");
                             } else {
                                 console.log(xhr.status);
@@ -390,7 +350,7 @@ console.log(formData);
                             console.log(resp.status);
                         }
                     });
-                };
+                }
 
                 function compactTimeframe(days, from, to, timezoneStr){
                     return {

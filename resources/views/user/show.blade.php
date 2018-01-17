@@ -100,9 +100,8 @@
                                                       style="display:  inline-block;">
                                                     {{ csrf_field() }}
                                                     {{ method_field('PATCH') }}
-                                                    <input hidden type="text" name="approved" value="1">
-                                                    <button style="display:  inline-block;" type="submit">approve
-                                                    </button>
+                                                    <input type="hidden" name="approved" value="1">
+                                                    <input class="btn-nau" type="submit" value="approve">
                                                 </form>
                                             @endcan
                                         @endif
@@ -145,16 +144,15 @@
                                     </div>
                                     <div class="col-sm-6 p-10 p-5">
                                         <p style="line-height: 14px; font-size: 14px;">{{$id}}</p>
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="name"
-                                                  value="{{$name}}"></p>
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
-                                                  value="{{$email}}"></p>
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
-                                                  value="{{$phone}}"></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{$name}}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{$email}}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{$phone}}"></label></p>
                                         @can('user.update.roles', [$user, $roleIds])
                                             <p>
-                                                <select style="height: 120px;" id="roles" name="role_ids[]"
-                                                        class="form-control" multiple></select>
+                                                <label>
+                                                    <select style="height: 120px;" id="roles" name="role_ids[]"
+                                                            class="form-control" multiple></select>
+                                                </label>
                                             </p>
                                         @endcan
                                         @can('user.update.children', [$user, array_column($allPossibleChildren, 'id')])
@@ -163,6 +161,7 @@
                                                     @php
                                                         $children = isset($children) ? $children : [];
                                                     @endphp
+                                                    <label>
                                                     <select style="height: 120px;" id="roles" name="child_ids[]"
                                                             class="form-control" multiple>
                                                         @foreach($allPossibleChildren as $child)
@@ -176,6 +175,7 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    </label>
                                                 @endif
                                             </p>
                                         @endcan
@@ -186,13 +186,12 @@
                                         <div id="mapid" style="height: 400px; width: 600px;">
                                             <div id="marker" style="z-index: 500;"></div>
                                         </div>
-
                                     </div>
                                     <input type="hidden" name="latitude" value="{{$latitude}}">
                                     <input type="hidden" name="longitude" value="{{$longitude}}">
                                 </div>
                                 <div class="row">
-                                    <button type="submit" class="pull-right">Update</button>
+                                    <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
                                 </div>
                             </form>
                         </div>
@@ -232,7 +231,7 @@
                                 <form action="{{route('places.index')}}" target="_top">
                                     {{ csrf_field() }}
                                     <div class="form-group">
-                                        <label for="category">Choose category:</label>
+                                        <label for="place-category">Choose category:</label>
                                         <div class="select">
                                             <select id="place-category" class="form-control"
                                                     name="category_ids[]"></select>
@@ -245,7 +244,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="latitude">Set latitude:</label>
-                                        <input type="text" class="form-control" name="latitude" placeholder="40.7142540"
+                                        <input class="form-control" name="latitude" placeholder="40.7142540"
                                                value=""><br>
                                         @foreach($errors->get('latitude') as $message)
                                             <p class="text-danger">
@@ -255,7 +254,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="latitude">Set longitude</label>
-                                        <input type="text" class="form-control" name="longitude"
+                                        <input class="form-control" name="longitude"
                                                placeholder="-74.0054797"
                                                value=""><br>
                                         @foreach($errors->get('longitude') as $message)
@@ -266,7 +265,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="latitude">Set radius (in meters):</label>
-                                        <input type="text" class="form-control" name="radius" placeholder="1000"
+                                        <input class="form-control" name="radius" placeholder="1000"
                                                value=""><br>
                                         @foreach($errors->get('radius') as $message)
                                             <p class="text-danger">
@@ -307,7 +306,7 @@
                         sel.innerHTML = xmlhttp.responseText;
                         for ( let rolesIndex = 0; rolesIndex < sel.options.length; rolesIndex++ ) {
                             let option = sel.options[rolesIndex];
-                            if ( currentRoles.indexOf( option.value ) != -1 ) {
+                            if ( currentRoles.indexOf( option.value ) !== -1 ) {
                                 option.selected = true;
                                 console.log( option.value );
                             }
@@ -326,6 +325,12 @@
 
         loadRoles();
         @endcan
+
+
+
+        /* map */
+
+        /* TODO: порефакторить, использовать leaflet.nau.js, разобраться что тут происходит */
 
         $( document ).ready( function() {
 
@@ -353,18 +358,26 @@
                 },
                 getCurrentPosition: function() {
                     if ( navigator.geolocation ) {
-                        navigator.geolocation.getCurrentPosition( this.getGps );
+                        navigator.geolocation.getCurrentPosition( this.getGps, this.getGpsErr );
                     }
 
                 },
-                getGps:             function( pos ) {
+                getGps: function( pos ) {
                     let gps = {
                         lat: pos.coords.latitude,
                         lng: pos.coords.longitude
                     };
                     passGpsToMapContainer( gps );
                 },
-                startMap:           function() {
+                getGpsErr: function() {
+                    /* Los Angelos */
+                    let gps = {
+                        lat: 34.0143733,
+                        lng: -118.2831973
+                    };
+                    passGpsToMapContainer( gps );
+                },
+                startMap: function() {
                     this.map = L.map( this.mapIdSelector, {
                         center: this.gps,
                         zoom:   this.zoom
@@ -411,11 +424,12 @@
                 copyFromFormToMap:  function() {
                     let lat = Number( $( this.form.lat ).val() );
                     let lng = Number( $( this.form.lng ).val() );
+
                     if ( lat !== 0 && lng !== 0 ) {
-                        this.setGps( {
-                            lat: lat,
-                            lng: lng
-                        } )
+                        this.setGps( { lat, lng } );
+                    } else {
+                        /* Los Angeles: */
+                        this.setGps( { lat: 34.0143733, lng: -118.2831973 } );
                     }
                 }
             };
@@ -424,8 +438,10 @@
                 mapContainer.setGps( gps ).startMap();
             }
 
-            $( 'a[href="#edit"]' ).on( 'click', function() {
-                mapContainer.run();
+            $( 'a[href="#edit"]' ).one( 'shown.bs.tab', function() {
+                setTimeout(function(){
+                    mapContainer.run();
+                }, 1000);
             } );
         } );
 
