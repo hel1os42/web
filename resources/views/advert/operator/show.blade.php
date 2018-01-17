@@ -23,6 +23,7 @@
                                     <p>{{ $value }}</p>
                                 @endif
                             @endif
+
                             @endforeach
                     </div>
                 </div>
