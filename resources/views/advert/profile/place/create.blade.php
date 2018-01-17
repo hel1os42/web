@@ -22,7 +22,6 @@
                                     <input name="name" value="{{old('name')}}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer name.</p>
                         </div>
 
                         <div class="control-box">
@@ -32,7 +31,6 @@
                                     <textarea name="description" value="{{old('description')}}" class="formData"></textarea>
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer description.</p>
                         </div>
 
                         <div class="control-box">
@@ -42,7 +40,6 @@
                                     <textarea name="about" value="{{old('about')}}" class="formData"></textarea>
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer description.</p>
                         </div>
 
                         <div class="control-box">
@@ -52,7 +49,7 @@
                                     <input name="address" value="{{old('address')}}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer name.</p>
+                            <p class="hint">Please, enter the Offer address.</p>
                         </div>
 
                         <div class="control-box">
@@ -62,7 +59,6 @@
                                     <select id="place_category" name="category_ids[]" class="formData"></select>
                                 </label>
                             </p>
-                            <p class="hint">Please, select the category.</p>
                         </div>
 @if(false)
                         <div class="control-box">
@@ -108,6 +104,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script type="text/javascript">
         /* offer_category */
         let xhr = new XMLHttpRequest();
@@ -177,7 +174,7 @@
                     $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
 
                     function getRadius(radiusPx, map) {
-                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
+                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom() + 8) * radiusPx;
                     }
 
                     function getZoom(latitude, radius) {
@@ -193,47 +190,55 @@
                 }
 
                 fillMapFields(map);
-                handleForm(map);
             }
         } );
 
-        function handleForm(map){
-            $('#createPlaceForm').on('submit', function (e){
-                e.preventDefault();
+        $("#createPlaceForm").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength:3,
+                },
+                description: {
+                    required: true,
+                },
+                about: {
+                    required: true,
+                },
+                address: {
+                    required: true,
+                }
+            },
+            submitHandler: function (form) {
+                let formData = $('.formData').serializeArray();
 
-                getFormData();
+                formData.push({
+                    "name": "_token",
+                    "value": $('[name="_token"]').val()
+                });
 
-                function getFormData(){
-
-                    let formData = $('.formData').serializeArray();
-
-                    formData.push({
-                        "name" : "_token",
-                        "value" : $('[name="_token"]').val()
-                    });
-
-                    $.ajax({
-                        type: "POST",
-                        url: $('#createPlaceForm').attr('action'),
-                        headers: {
-                            'Accept':'application/json',
-                        },
-                        data: formData,
-                        success: function(data, textStatus, xhr){
-                            if (201 == xhr.status){
-                                    return window.location.replace("{{ route('profile') }}");
-                            } else {
-                                alert("Something went wrong. Try again, please.");
-                                console.log(xhr.status);
-                            }
-                        },
-                        error: function(resp){
+                $.ajax({
+                    type: "POST",
+                    url: $(form).attr('action'),
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    data: formData,
+                    success: function (data, textStatus, xhr) {
+                        if (201 == xhr.status) {
+                            return window.location.replace("{{ route('profile') }}");
+                        } else {
                             alert("Something went wrong. Try again, please.");
-                            console.log(resp.status);
+                            console.log(xhr.status);
                         }
-                    });
-                };
-            });
-        }
+                    },
+                    error: function (resp) {
+                        alert("Something went wrong. Try again, please.");
+                        console.log(resp.status);
+                    }
+                });
+            }
+        });
+
     </script>
 @endpush
