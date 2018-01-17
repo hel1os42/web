@@ -246,7 +246,7 @@
     padding: 8px;
     max-width: 100%;
 }
-.nau-form .hint {
+.nau-form .hint, .nau-form label.error {
     display: none;
     margin: -6px 0 0;
     padding: 0;
