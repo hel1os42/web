@@ -46,9 +46,8 @@
                                 </a>
                             </td>
                         @else
-                            <td>
-                                -
-                            </td>
+                            <td>-</td>
+                            <td></td>
                         @endif
 
 
