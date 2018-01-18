@@ -43,10 +43,10 @@ class UserController extends Controller
         $this->authorize('users.list');
 
         $users = $this->user()->isAdmin()
-            ? $this->userRepository->with(['roles', 'accounts', 'place'])
-            : $this->user()->children()->with(['roles', 'accounts', 'place']);
+            ? $this->userRepository
+            : $this->userRepository->getChildrenByUser($this->user());
 
-        return \response()->render('user.index', $users->paginate());
+        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])->paginate());
     }
 
     /**
