@@ -115,9 +115,7 @@ class LoginController extends AuthController
         }
 
         if (null === $user) {
-            return \response()->redirectTo(route('login'))
-                ->withErrors(trans('auth.failed'))
-                ->withInput();
+            return $this->sendFailedLoginResponse($request);
         }
 
         $session->migrate(true);
