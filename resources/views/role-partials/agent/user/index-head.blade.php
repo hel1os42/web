@@ -6,11 +6,8 @@
     <label for="role">By role:</label>
     <select name="role" id="role">
         <option value="" selected>All</option>
-        <option value="admin">Admin</option>
-        <option value="agent">Agent</option>
         <option value="chief_advertiser">Chief advertiser</option>
         <option value="advertiser">Advertiser</option>
-        <option value="user">User</option>
     </select>
 
     <form method="get" action="{{route('users.index')}}" id="search-form" style="display: inline-block;">
