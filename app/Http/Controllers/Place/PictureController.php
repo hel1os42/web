@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\PlaceRepository;
 use App\Services\PlaceService;
+use App\Services\ImageService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Intervention\Image\ImageManager;
@@ -54,9 +55,24 @@ class PictureController extends AbstractPictureController
      */
     public function storePicture(PictureRequest $request)
     {
-        $this->type = self::TYPE_PICTURE;
+        $place = $this->placeRepository->findByUser($this->user());
 
-        return $this->store($request);
+        $this->authorize('places.picture.store', $place);
+
+        $imageService = app()->makeWith(ImageService::class, [
+            'file' => $request->file('picture')
+        ]);
+
+        $imageService->savePlacePicture($place);
+
+        // very strange redirect condition copy/pasted from another place
+        $redirect = !$request->wantsJson() && $this->auth->user()->isAdvertiser()
+            ? route('profile.place.show')
+            : route('profile.picture.show');
+
+        return $request->wantsJson()
+            ? response()->render('', [], Response::HTTP_CREATED, $redirect)
+            : redirect($redirect);
     }
 
     /**
@@ -71,8 +87,8 @@ class PictureController extends AbstractPictureController
     public function storeCover(PictureRequest $request)
     {
         $this->type          = self::TYPE_COVER;
-        $this->pictureHeight = 200;
-        $this->pictureWidth  = 600;
+        $this->pictureHeight = 400;
+        $this->pictureWidth  = 1200;
 
         return $this->store($request);
     }
