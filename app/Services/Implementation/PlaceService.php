@@ -57,7 +57,8 @@ class PlaceService implements PlaceServiceImpl
             return [];
         }
 
-        $specsIds             = [];
+        $specsIds = [];
+
         foreach ($specialities as $retailTypeSpecs) {
             if (!array_key_exists('retail_type_id', $retailTypeSpecs)
                 || !array_key_exists('specs', $retailTypeSpecs)
@@ -91,6 +92,7 @@ class PlaceService implements PlaceServiceImpl
             }
             if (!array_key_exists($spec->group, $proceededGroups)) {
                 $resultSpecs[] = $spec->id;
+                
                 $proceededGroups[$spec->group] = $spec->group;
                 continue;
             }
