@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -15,5 +16,5 @@ interface SpecialityRepository extends RepositoryInterface
 
     public function findByRetailType(string $retailTypeId): Builder;
 
-    public function findIdsByRetailTypeAndSlugs(string $retailTypeId, array $slugs): array;
+    public function findByRetailTypeAndSlugs(string $retailTypeId, array $slugs): Collection;
 }

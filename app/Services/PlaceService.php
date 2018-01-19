@@ -17,4 +17,19 @@ interface PlaceService
      * @return mixed
      */
     public function disapprove(Place $place, bool $setUserApprovedFlag = false);
+
+    /**
+     * @param array $specialities
+     *
+     * @return array
+     */
+    public function parseSpecialities(array $specialities): array;
+
+    /**
+     * @param string $category
+     * @param array  $tags
+     *
+     * @return array
+     */
+    public function parseTags(string $category, array $tags): array;
 }

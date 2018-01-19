@@ -51,9 +51,9 @@ class CreateUpdateRequest extends FormRequest
     {
         return [
             'name'                       => 'required|string|min:3|max:255',
-            'description'                => 'string',
-            'about'                      => 'string',
-            'address'                    => 'string|max:255',
+            'description'                => 'nullable|string',
+            'about'                      => 'nullable|string',
+            'address'                    => 'nullable|string|max:255',
             'category'                   => sprintf(
                 'required|string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX

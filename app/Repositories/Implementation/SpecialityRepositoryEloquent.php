@@ -4,6 +4,7 @@ namespace App\Repositories\Implementation;
 
 use App\Models\Speciality;
 use App\Repositories\SpecialityRepository;
+use Illuminate\Support\Collection;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -52,12 +53,11 @@ class SpecialityRepositoryEloquent extends BaseRepository implements SpecialityR
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function findIdsByRetailTypeAndSlugs(string $retailTypeId, array $slugs): array
+    public function findByRetailTypeAndSlugs(string $retailTypeId, array $slugs): Collection
     {
         return $this->model
             ->where('retail_type_id', $retailTypeId)
             ->whereIn('slug', $slugs)
-            ->pluck('id')
-            ->toArray();
+            ->get();
     }
 }
