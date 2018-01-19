@@ -58,6 +58,7 @@
                         <th>Reward</th>
                         <th>Reserved</th>
                         <th>Status</th>
+                        <th>Change status</th>
                         <th style="display: none;">Details</th>
                     </tr>
                     </thead>
@@ -70,6 +71,7 @@
                         <th>Reward</th>
                         <th>Reserved</th>
                         <th>Status</th>
+                        <th>Change status</th>
                         <th style="display: none;">Details</th>
                     </tr>
                     </tfoot>
@@ -80,11 +82,15 @@
                         @foreach ($data as $offer)
                             <tr>
                                 <td>{{ $counter++ }}</td>
+                                <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
                                 <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
                                 <td><span data-df="yyyy/mm/dd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="yyyy/mm/dd">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
+                                <td>
+                                    {{ $offer['status'] }}
+                                </td>
                                 <td>
                                     @if($offer['status'] === 'deactive')
                                         <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
@@ -92,10 +98,16 @@
                                             {{ csrf_field() }}
                                             {{ method_field('PUT') }}
                                             <input type="hidden" name="status" value="active">
-                                            <button style="display:  inline-block;" type="submit" class="btn">activate</button>
+                                            <button style="display:  inline-block;" type="submit" class="btn btn-warning">activate</button>
                                         </form>
                                     @else
-                                        {{ $offer['status'] }}
+                                        <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
+                                              style="display:  inline-block;">
+                                            {{ csrf_field() }}
+                                            {{ method_field('PUT') }}
+                                            <input type="hidden" name="status" value="deactive">
+                                            <button style="display:  inline-block;" type="submit" class="btn btn-primary">deactivate</button>
+                                        </form>
                                     @endif
                                 </td>
                                 <td class="details-code" style="display: none;">
@@ -123,17 +135,18 @@
                                                                 'to' => substr($timeframe['to'], 0, 5),
                                                                 'daystr' => (array_key_exists($day, $week)) ? $week[$day] : ''
                                                             ];
-
                                                         }
                                                     }
                                                 @endphp
                                                 <p class="title">Working time:</p>
-                                                @foreach($workingDays as $workingDay)
-                                                <p class="row">
-                                                    <span class="title col-xs-3">{{$workingDay['daystr']}}:</span>
-                                                    <span class="col-xs-9">{{$workingDay['from']}} - {{$workingDay['to']}}</span>
-                                                </p>
-                                                @endforeach
+                                                <div class="workingDaysStorage" data-workingdays="{{json_encode($workingDays)}}" data-offerid="{{ $offer['id'] }}">
+                                                    @foreach($workingDays as $dayKey => $workingDay)
+                                                        <p class="row">
+                                                            <span class="title col-xs-4">{{$workingDay['daystr']}}:</span>
+                                                            <span class="col-xs-8 workingDaySpan" data-day="{{ $dayKey }}" data-offerid="{{ $offer['id'] }}"></span>
+                                                        </p>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                             <div class="col-xs-8">
                                                 <div class="row">
@@ -155,6 +168,11 @@
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}">
+                                                <input name="_method" type="hidden" value="DELETE">
+                                                <input name="_token" type="hidden" value={{ csrf_token() }}>
+                                                <input class="btn btn-danger" type="submit" value="Delete offer">
+                                            </form>
                                             <div class="col-xs-6">
                                                 @if(false)
                                                     <p class="row"><span class="title col-xs-3">Created at:</span> <span class="col-xs-9" data-df="yyyy/mm/dd hh:MM:ss">{{ $offer['created_at'] }}</span></p>
@@ -163,7 +181,6 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
-                                                    &nbsp;<br>
                                                     <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
                                                 </div>
                                             </div>
@@ -251,6 +268,66 @@
             }
 
         });
+
+        function fillTimeframes(){
+            $(".gps").each(function(){
+                let data = {
+                    lat: $(this).data('lat'),
+                    lng: $(this).data('lng'),
+                    offerId: $(this).data('offerid')
+                };
+                getTZ(data, fillTimeframesCallback);
+            });
+            function getTZ(data, callback){
+                let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+                let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
+                let timestamp = Math.round(new Date().valueOf() / 1000);
+                let lat = data.lat;
+                let lng = data.lng;
+                let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+                return httpGetAsync(data, requestUrl, callback);
+
+                function httpGetAsync(data, theUrl, callback)
+                {
+                    let xmlHttp = new XMLHttpRequest();
+                    xmlHttp.onreadystatechange = function() {
+                        if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                            let response = JSON.parse(xmlHttp.responseText);
+                            function convertRawOffset(raw){
+                                let absRawInHr = Math.abs(raw / 3600);
+                                let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
+                                return (raw < 0) ? ('-' + converted) : ('+' + converted);
+                            }
+                            let tz = convertRawOffset(response.rawOffset);
+                            callback(data, tz);
+                        }
+                    }
+                    xmlHttp.open("GET", theUrl, true);
+                    xmlHttp.send(null);
+                }
+            }
+
+
+            function fillTimeframesCallback(data, tz){
+                let absRawInHr = tz.substr(-4,2);
+                let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
+
+                let oldweekdays = $('.workingDaysStorage[data-offerid="' + data.offerId + '"]').data('workingdays');
+                $('.workingDaySpan[data-offerid="'+data.offerId+'"]').each(function(){
+                    let day = $(this).data('day');
+                    if (day in oldweekdays){
+                        $(this).text(addTz(oldweekdays[day].from, tzInHr) + '-' + addTz(oldweekdays[day].to, tzInHr));
+                    }
+                });
+
+                function addTz(timeStr, tzNum)
+                {
+                    let timeHrsNum = +timeStr.substr(0,2);
+                    return (timeHrsNum+tzNum) + timeStr.substr(2);
+                }
+            }
+        }
+        fillTimeframes();
     </script>
 
     <script>

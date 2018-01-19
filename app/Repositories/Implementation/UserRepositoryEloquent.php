@@ -4,6 +4,7 @@ namespace App\Repositories\Implementation;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
@@ -72,6 +73,26 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         $this->resetModel();
 
         event(new RepositoryEntityCreated($this, $model));
+
+        return $this->parserResult($model);
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return Builder
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function getChildrenByUser(User $user): Builder
+    {
+        $this->model = $user->children();
+
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->getQuery();
+
+        $this->resetModel();
 
         return $this->parserResult($model);
     }

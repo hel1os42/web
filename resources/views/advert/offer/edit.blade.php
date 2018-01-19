@@ -9,7 +9,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <h1>Edit offer</h1>
 
-                <form action="{{route('advert.offers.update', $id)}}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
+                <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
 
                     {{ csrf_field() }}
 
@@ -190,6 +190,7 @@
                             </div>
                             <div id="marker"></div>
                         </div>
+                        <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
                         <input type="hidden" name="latitude" value="{{ $latitude }}" class="mapFields nullableFormData">
                         <input type="hidden" name="longitude" value="{{ $longitude }}" class="mapFields nullableFormData">
@@ -238,7 +239,12 @@
                         {{--<a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>--}}
                         <input type="submit" class="btn-nau pull-right" value="Save">
                     </p>
+                </form>
 
+                <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="submit" class="btn btn-wd btn-md" value="Delete offer">
                 </form>
 
                 <div id="formOverlay">
@@ -291,6 +297,7 @@
         <script src="{{ asset('js/partials/control-range.js') }}"></script>
         <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
         <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+        <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
         <script>
 
             /* dateTime picker init */
@@ -390,95 +397,95 @@
                 }).trigger('change');
             }
 
-            $( document ).ready( function() {
-                let GPS = {};
-                let defaultZoom = 1;
-                if ( navigator.geolocation ) {
-                    navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-                }
 
-                function getGPS( pos ) {
-                    GPS = {
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude
-                    };
-                    defaultZoom = 13;
-                    mapInitialize( GPS, defaultZoom );
-                }
-                function defaultGPS() {
-                    GPS = {
-                        lat: +$('[name="latitude"]').val(),
-                        lng: +$('[name="longitude"]').val()
-                    };
-                    mapInitialize( GPS, defaultZoom );
-                }
+            /* map */
+
+            mapInit({
+                id: 'mapid',
+                setPosition: {
+                    lat: $('[name="latitude"]').val(),
+                    lng: $('[name="longitude"]').val(),
+                    radius: $('[name="radius"]').val()
+                },
+                done: mapDone,
+                move: mapMove
+            });
+
+            function mapDone(map){
+                let values = mapValues(map);
+                $('#mapradius').children('span').text(values.radius / 1000);
+                fillTimeframes(map);
+                handleForm(map);
+            }
+
+            function mapMove(map){
+                let values = mapValues(map);
+                $('#mapradius').children('span').text(values.radius / 1000);
+                $('[name="latitude"]').val(values.lat);
+                $('[name="longitude"]').val(values.lng);
+                $('[name="radius"]').val(values.radius);
+            }
 
 
-                function mapInitialize( GPS, defaultZoom ) {
-                    lat =$('[name="latitude"]').val();
-                    lng = $('[name="longitude"]').val();
-                    if (lat !== 0 && lng !== 0) {
-                        GPS = {
-                            lat: +lat,
-                            lng: +lng
+            /* TODO: следующие две функции (fillTimeframes, handleForm) нужно порефакторить */
+
+            function fillTimeframes(map){
+                function getTZ(map, callback){
+                    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+                    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
+                    let timestamp = Math.round(new Date().valueOf() / 1000);
+                    let lat = map.getCenter().lat;
+                    let lng = map.getCenter().lng;
+                    let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+                    return httpGetAsync(map, requestUrl, callback);
+
+                    function httpGetAsync(map, theUrl, callback)
+                    {
+                        let xmlHttp = new XMLHttpRequest();
+                        xmlHttp.onreadystatechange = function() {
+                            if (4 === xmlHttp.readyState && 200 === xmlHttp.status){
+                                let response = JSON.parse(xmlHttp.responseText);
+                                function convertRawOffset(raw){
+                                    let absRawInHr = Math.abs(raw / 3600);
+                                    let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
+                                    return (raw < 0) ? ('-' + converted) : ('+' + converted);
+                                }
+                                let tz = convertRawOffset(response.rawOffset);
+                                callback(map, tz);
+                            }
                         };
-                    };
-                    let map = L.map( 'mapid', {
-                        center: GPS,
-                        zoom:   defaultZoom// 13
-                    } );
-
-                    L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom:       19,
-                        minZoom:       1,
-                        maxNativeZoom: 18,
-                        attribution:   '© OpenStreetMap',
-                    } ).addTo( map );
-
-
-                    function fillMapFields(map){
-                        let radiusPx = 190;
-                        $('[name="latitude"]').val(map.getCenter().lat);
-                        $('[name="longitude"]').val(map.getCenter().lng);
-                        $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
-                        function getRadius(radiusPx, map) {
-                            return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
-                        }
-
-                        function getZoom(latitude, radius) {
-                            let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
-                            return zoom;
-                        }
-
-                        function round(value, step) {
-                            step || (step = 1.0);
-                            let inv = 1.0 / step;
-                            return Math.round(value * inv) / inv;
-                        }
+                        xmlHttp.open("GET", theUrl, true);
+                        xmlHttp.send(null);
                     }
-
-                    $(map).on('zoomend, moveend', function(){
-                        fillMapFields(this);
-                    });
-
-                    fillMapFields(map);
-                    handleForm(map);
                 }
-            } );
+
+                getTZ(map, fillTimeframesCallback);
+                function fillTimeframesCallback(map, tz){
+                    let absRawInHr = tz.substr(-4,2);
+                    let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
+
+                    let oldweekdays = $('#tab_wdt2').data('workingdays');
+                    $('[data-relation="check_wd8"]').each(function(){
+                        let currentWeekday = $(this).data('weekday');
+                        if(currentWeekday in oldweekdays){
+                            $('[data-relation="check_wd8"][data-weekday="' + currentWeekday + '"]').attr('checked', 'checked');
+
+                            $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(addTz(oldweekdays[currentWeekday].from, tzInHr));
+                            $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(addTz(oldweekdays[currentWeekday].to, tzInHr));
+                        } else {
+                            $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val("");
+                            $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val("");
+                        }
+                    });
+                    function addTz(timeStr, tzNum)
+                    {
+                        let timeHrsNum = +timeStr.substr(0,2);
+                        return (timeHrsNum+tzNum) + timeStr.substr(2);
+                    }
+                }
+            }
 
             function handleForm(map){
-                let oldweekdays = $('#tab_wdt2').data('workingdays');
-                $('[data-relation="check_wd8"]').each(function(){
-                    let currentWeekday = $(this).data('weekday');
-                    if(currentWeekday in oldweekdays){
-                        $('[data-relation="check_wd8"][data-weekday="' + currentWeekday + '"]').attr('checked', 'checked');
-                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].from);
-                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val(oldweekdays[currentWeekday].to);
-                    } else {
-                        $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val("");
-                        $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val("");
-                    }
-                });
 
                 $('#createOfferForm').on('submit', function (e){
                     e.preventDefault();
@@ -496,7 +503,7 @@
                         {
                             let xmlHttp = new XMLHttpRequest();
                             xmlHttp.onreadystatechange = function() {
-                                if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                                if (4 === xmlHttp.readyState && 200 === xmlHttp.status){
                                     let response = JSON.parse(xmlHttp.responseText);
                                     function convertRawOffset(raw){
                                         let absRawInHr = Math.abs(raw / 3600);
@@ -506,7 +513,7 @@
                                     let tz = convertRawOffset(response.rawOffset);
                                     callback(map, tz);
                                 }
-                            }
+                            };
                             xmlHttp.open("GET", theUrl, true);
                             xmlHttp.send(null);
                         }
@@ -574,7 +581,7 @@
                         let finishDateVal = $('[name="finish_date"]').val();
                         formData.push({
                             "name" : "finish_date",
-                            "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
+                            "value" : ('' === finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
                         });
 
                         function prepareDate(date, tz) {
@@ -606,15 +613,16 @@
                             "value" : $('[name="_token"]').val()
                         });
                         console.log(formData);
+                        let $createOfferForm = $('#createOfferForm');
                         $.ajax({
-                            type:  $('#createOfferForm').attr('method'),
-                            url: $('#createOfferForm').attr('action'),
+                            type:  $createOfferForm.attr('method'),
+                            url: $createOfferForm.attr('action'),
                             headers: {
                                 'Accept':'application/json',
                             },
                             data: formData,
                             success: function(data, textStatus, xhr){
-                                if (202 == xhr.status){
+                                if (202 === xhr.status){
                                     return window.location.replace("{{ route('advert.offers.index') }}");
                                 } else {
                                     alert("Something went wrong. Try again, please.");
@@ -626,7 +634,7 @@
                                 console.log(resp.status);
                             }
                         });
-                    };
+                    }
 
                     function compactTimeframe(days, from, to, timezoneStr){
                         return {
