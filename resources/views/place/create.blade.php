@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Account info')
+@section('title', 'Create advertiser place')
 
 @section('content')
     <div class="container">
@@ -13,7 +13,7 @@
 
                         {{ csrf_field() }}
 
-                        <p class="title">Account info</p>
+                        <p class="title">Create advertiser place</p>
 
                         <div class="control-box">
                             <p class="control-text">

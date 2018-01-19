@@ -92,7 +92,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'UserController@referrals')->name('referrals');
         $router->post('picture', 'User\PictureController@store')->name('profile.picture.store');
         $router->get('picture.jpg', 'User\PictureController@show')->name('profile.picture.show');
-        $router->get('place', 'PlaceController@showOwnerPlace')
+        $router->get('place', 'PlaceController@show')
             ->name('profile.place.show');
         $router->put('place', 'PlaceController@update');
         $router->patch('place', 'PlaceController@update')
@@ -111,6 +111,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->patch('', 'UserController@update');
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store');
+        $router->get('place/create', 'PlaceController@create')->name('users.place.create');;
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
