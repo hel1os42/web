@@ -434,7 +434,7 @@
 }
 #marker {
     position: absolute;
-    z-index: 111;
+    z-index: 500;
     background: rgba(255, 139, 16, 0.2) url(/img/leaflet/pin.png) no-repeat 50% 50%;
     background-size: auto 35px;
     width: 190px;
@@ -444,4 +444,7 @@
     transform: translate(-50%, -50%);
     border-radius: 50%;
     pointer-events: none;
+}
+#marker.without-radius {
+	background-color: transparent;
 }
