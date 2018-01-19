@@ -68,7 +68,7 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
             $model->categories()->sync($categories);
         }
 
-        if (count(count($tagsIds)) > 0) {
+        if (count($tagsIds) > 0) {
             $model->tags()->sync($tagsIds);
         }
 
