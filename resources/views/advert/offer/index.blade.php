@@ -7,7 +7,9 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 dashboard-advert-header" style="background-image: url({{ asset('img/advert_img.png') }});">
-            <div class="offer-logo"><img src="{{ $authUser['picture_url'] }}" alt="offer name"></div>
+            @if(file_exists(\App\Models\User::getUserAvatarPath($authUser['id'])))
+                <div class="offer-logo"><img src="{{ $authUser['picture_url'] }}" alt="User logo"></div>
+            @endif
             <div class="advert-header-wrap">
                 <div class="advert-header">
                     @if($isPlaceCreated)
