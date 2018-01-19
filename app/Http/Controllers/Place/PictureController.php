@@ -6,7 +6,6 @@ use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\PlaceRepository;
 use App\Services\PlaceService;
-use App\Services\ImageService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Intervention\Image\ImageManager;
@@ -59,7 +58,7 @@ class PictureController extends AbstractPictureController
 
         $this->authorize('places.picture.store', $place);
 
-        $imageService = app()->makeWith(ImageService::class, [
+        $imageService = app()->makeWith('App\Services\ImageService', [
             'file' => $request->file('picture')
         ]);
 
