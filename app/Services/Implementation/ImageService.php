@@ -64,7 +64,7 @@ class ImageService implements ImageServiceInterface
 
     /**
      * @param string $format
-     * @param int|null $quality
+     * @param int $quality
      * @return $this
      */
     public function encode(string $format = self::DEFAULT_ENCODING_FORMAT, int $quality = self::DEFAULT_QUALITY)
