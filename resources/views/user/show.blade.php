@@ -82,9 +82,9 @@
                                         </div>
                                         <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
-                                        <input type="hidden" name="latitude" value="{{ $place['latitude'] }}">
-                                        <input type="hidden" name="longitude" value="{{ $place['longitude'] }}">
-                                        <input type="hidden" name="radius" value="{{ $place['radius'] }}">
+                                        <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                        <input type="hidden" name="longitude" value="{{ $longitude }}">
+                                        <input type="hidden" name="radius" value="{{ $radius }}">
                                     </div>
                                 </div>
 
