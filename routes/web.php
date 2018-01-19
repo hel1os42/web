@@ -16,10 +16,6 @@ $router->post('users', 'UserController@store')->name('register');
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
-    $router->get('/', function () {
-        return response()->render('home', []);
-    })->name('home');
-
     $router->group(['prefix' => 'auth'], function () use ($router) {
 
         $router->get('/', function () {
@@ -75,6 +71,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
+    $router->get('/', function () {
+        return response()->render('home', []);
+    })->name('home');
+
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
@@ -122,6 +122,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy' => 'advert.offers.destroy',
             'update'  => 'advert.offers.update',
             'edit'    => 'advert.offers.edit',
+        ]
+    ]);
+
+    // Advert page for create operator
+    $router->resource('advert/operators', 'Advert\OperatorController', [
+        'names'       => [
+            'index'   => 'advert.operators.index',
+            'show'    => 'advert.operators.show',
+            'create'  => 'advert.operators.create',
+            'store'   => 'advert.operators.store',
+            'destroy' => 'advert.operators.destroy',
+            'edit'    => 'advert.operators.edit',
+            'update'  => 'advert.operators.update',
         ]
     ]);
 

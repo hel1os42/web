@@ -9,7 +9,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <h1>Edit offer</h1>
 
-                <form action="{{route('advert.offers.update', $id)}}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
+                <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
 
                     {{ csrf_field() }}
 
@@ -190,6 +190,7 @@
                             </div>
                             <div id="marker"></div>
                         </div>
+                        <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
                         <input type="hidden" name="latitude" value="{{ $latitude }}" class="mapFields nullableFormData">
                         <input type="hidden" name="longitude" value="{{ $longitude }}" class="mapFields nullableFormData">
@@ -243,7 +244,7 @@
                 <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-wd btn-md">Delete offer</button>
+                    <input type="submit" class="btn btn-wd btn-md" value="Delete offer">
                 </form>
 
                 <div id="formOverlay">
@@ -296,6 +297,7 @@
         <script src="{{ asset('js/partials/control-range.js') }}"></script>
         <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
         <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+        <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
         <script>
 
             /* dateTime picker init */
@@ -395,82 +397,37 @@
                 }).trigger('change');
             }
 
-            $( document ).ready( function() {
-                let GPS = {};
-                let defaultZoom = 1;
-                if ( navigator.geolocation ) {
-                    navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-                }
 
-                function getGPS( pos ) {
-                    GPS = {
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude
-                    };
-                    defaultZoom = 13;
-                    mapInitialize( GPS, defaultZoom );
-                }
-                function defaultGPS() {
-                    GPS = {
-                        lat: +$('[name="latitude"]').val(),
-                        lng: +$('[name="longitude"]').val()
-                    };
-                    mapInitialize( GPS, defaultZoom );
-                }
+            /* map */
 
+            mapInit({
+                id: 'mapid',
+                setPosition: {
+                    lat: $('[name="latitude"]').val(),
+                    lng: $('[name="longitude"]').val(),
+                    radius: $('[name="radius"]').val()
+                },
+                done: mapDone,
+                move: mapMove
+            });
 
-                function mapInitialize( GPS, defaultZoom ) {
-                    lat =$('[name="latitude"]').val();
-                    lng = $('[name="longitude"]').val();
-                    if (lat !== 0 && lng !== 0) {
-                        GPS = {
-                            lat: +lat,
-                            lng: +lng
-                        };
-                    };
-                    let map = L.map( 'mapid', {
-                        center: GPS,
-                        zoom:   defaultZoom// 13
-                    } );
+            function mapDone(map){
+                let values = mapValues(map);
+                $('#mapradius').children('span').text(values.radius / 1000);
+                fillTimeframes(map);
+                handleForm(map);
+            }
 
-                    L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom:       19,
-                        minZoom:       1,
-                        maxNativeZoom: 18,
-                        attribution:   '© OpenStreetMap',
-                    } ).addTo( map );
+            function mapMove(map){
+                let values = mapValues(map);
+                $('#mapradius').children('span').text(values.radius / 1000);
+                $('[name="latitude"]').val(values.lat);
+                $('[name="longitude"]').val(values.lng);
+                $('[name="radius"]').val(values.radius);
+            }
 
 
-                    function fillMapFields(map){
-                        let radiusPx = 190;
-                        $('[name="latitude"]').val(map.getCenter().lat);
-                        $('[name="longitude"]').val(map.getCenter().lng);
-                        $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
-                        function getRadius(radiusPx, map) {
-                            return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
-                        }
-
-                        function getZoom(latitude, radius) {
-                            let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
-                            return zoom;
-                        }
-
-                        function round(value, step) {
-                            step || (step = 1.0);
-                            let inv = 1.0 / step;
-                            return Math.round(value * inv) / inv;
-                        }
-                    }
-
-                    $(map).on('zoomend, moveend', function(){
-                        fillMapFields(this);
-                    });
-
-                    fillMapFields(map);
-                    fillTimeframes(map);
-                    handleForm(map);
-                }
-            } );
+            /* TODO: следующие две функции (fillTimeframes, handleForm) нужно порефакторить */
 
             function fillTimeframes(map){
                 function getTZ(map, callback){
@@ -486,7 +443,7 @@
                     {
                         let xmlHttp = new XMLHttpRequest();
                         xmlHttp.onreadystatechange = function() {
-                            if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                            if (4 === xmlHttp.readyState && 200 === xmlHttp.status){
                                 let response = JSON.parse(xmlHttp.responseText);
                                 function convertRawOffset(raw){
                                     let absRawInHr = Math.abs(raw / 3600);
@@ -496,7 +453,7 @@
                                 let tz = convertRawOffset(response.rawOffset);
                                 callback(map, tz);
                             }
-                        }
+                        };
                         xmlHttp.open("GET", theUrl, true);
                         xmlHttp.send(null);
                     }
@@ -546,7 +503,7 @@
                         {
                             let xmlHttp = new XMLHttpRequest();
                             xmlHttp.onreadystatechange = function() {
-                                if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
+                                if (4 === xmlHttp.readyState && 200 === xmlHttp.status){
                                     let response = JSON.parse(xmlHttp.responseText);
                                     function convertRawOffset(raw){
                                         let absRawInHr = Math.abs(raw / 3600);
@@ -556,7 +513,7 @@
                                     let tz = convertRawOffset(response.rawOffset);
                                     callback(map, tz);
                                 }
-                            }
+                            };
                             xmlHttp.open("GET", theUrl, true);
                             xmlHttp.send(null);
                         }
@@ -624,7 +581,7 @@
                         let finishDateVal = $('[name="finish_date"]').val();
                         formData.push({
                             "name" : "finish_date",
-                            "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
+                            "value" : ('' === finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
                         });
 
                         function prepareDate(date, tz) {
@@ -656,15 +613,16 @@
                             "value" : $('[name="_token"]').val()
                         });
                         console.log(formData);
+                        let $createOfferForm = $('#createOfferForm');
                         $.ajax({
-                            type:  $('#createOfferForm').attr('method'),
-                            url: $('#createOfferForm').attr('action'),
+                            type:  $createOfferForm.attr('method'),
+                            url: $createOfferForm.attr('action'),
                             headers: {
                                 'Accept':'application/json',
                             },
                             data: formData,
                             success: function(data, textStatus, xhr){
-                                if (202 == xhr.status){
+                                if (202 === xhr.status){
                                     return window.location.replace("{{ route('advert.offers.index') }}");
                                 } else {
                                     alert("Something went wrong. Try again, please.");
@@ -676,7 +634,7 @@
                                 console.log(resp.status);
                             }
                         });
-                    };
+                    }
 
                     function compactTimeframe(days, from, to, timezoneStr){
                         return {

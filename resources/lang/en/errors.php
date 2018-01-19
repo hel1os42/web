@@ -14,4 +14,5 @@ return [
     'offer_not_found'                                     => 'The offer you are looking for, does not exist, or it is on moderation',
     'transaction_not_found'                               => 'You don\'t have permission to access this transaction.',
     'offer_unprocessable_entity'                          => 'Forbidden to delete offer with status \'active\'.',
+    'operator_not_found'                                  => 'The operator you are looking for, does not exist',
 ];

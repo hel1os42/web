@@ -168,6 +168,11 @@
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}">
+                                                <input name="_method" type="hidden" value="DELETE">
+                                                <input name="_token" type="hidden" value={{ csrf_token() }}>
+                                                <input class="btn btn-danger" type="submit" value="Delete offer">
+                                            </form>
                                             <div class="col-xs-6">
                                                 @if(false)
                                                     <p class="row"><span class="title col-xs-3">Created at:</span> <span class="col-xs-9" data-df="yyyy/mm/dd hh:MM:ss">{{ $offer['created_at'] }}</span></p>
@@ -176,7 +181,6 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
-                                                    &nbsp;<br>
                                                     <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
                                                 </div>
                                             </div>

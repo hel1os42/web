@@ -10,18 +10,11 @@
             </div>
             <div id="marker"></div>
         </div>
+        <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
         <input type="hidden" name="latitude" value="" class="mapFields nullableFormData">
         <input type="hidden" name="longitude" value="" class="mapFields nullableFormData">
         <input type="hidden" name="radius" value="" class="mapFields nullableFormData">
-
-        @push('styles')
-            <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
-        @endpush
-
-        @push('scripts')
-            <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
-        @endpush
     </div>
 
     <div class="control-box">

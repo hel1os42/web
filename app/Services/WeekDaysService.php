@@ -30,13 +30,13 @@ interface WeekDaysService
     const SATURDAY = 1 << 6;
 
     const LIST = [
-        self::SUNDAY    => 'su',
         self::MONDAY    => 'mo',
         self::TUESDAY   => 'tu',
         self::WEDNESDAY => 'we',
         self::THURSDAY  => 'th',
         self::FRIDAY    => 'fr',
         self::SATURDAY  => 'sa',
+        self::SUNDAY    => 'su',
     ];
 
     /**

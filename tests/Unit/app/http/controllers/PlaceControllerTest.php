@@ -8,6 +8,7 @@ use App\Models\Place;
 use App\Models\User;
 use App\Repositories\Implementation\PlaceRepositoryEloquent;
 use App\Repositories\PlaceRepository;
+use App\Services\Implementation\PlaceService;
 use Faker\Factory as Faker;
 use Faker\Generator;
 use Illuminate\Auth\Access\Gate;
@@ -33,6 +34,10 @@ class PlaceControllerTest extends TestCase
      * @var PlaceRepository|PHPUnit_Framework_MockObject_MockObject
      */
     private $placeRepository;
+    /**
+     * @var PlaceService|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $placeService;
     /**
      * @var AuthManager|PHPUnit_Framework_MockObject_MockObject
      */
@@ -497,6 +502,7 @@ class PlaceControllerTest extends TestCase
         $categoriesRelation = $this->getMockBuilder(BelongsToMany::class)->disableOriginalConstructor()->getMock();
         $responseFactory    = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
         $response           = new Response();
+        $this->placeService = $this->getMockBuilder(PlaceService::class)->disableOriginalConstructor()->getMock();
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
@@ -573,7 +579,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
             ->willReturn($response);
 
-        $returnValue = $this->controller->update($request, $this->placeRepository);
+        $returnValue = $this->controller->update($request, $this->placeRepository, $this->placeService);
         self::assertSame($response, $returnValue);
     }
 

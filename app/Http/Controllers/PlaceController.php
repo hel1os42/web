@@ -8,6 +8,7 @@ use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\PlaceRepository;
 use App\Repositories\SpecialityRepository;
 use App\Repositories\TagRepository;
+use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -119,8 +120,7 @@ class PlaceController extends Controller
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
-        return \response()->render('advert.profile.place.create',
-            FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+        return \response()->render('advert.profile.place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
     /**
@@ -181,8 +181,9 @@ class PlaceController extends Controller
 
     /**
      * @param CreateUpdateRequest $request
-     * @param null|string         $uuid
      * @param PlaceRepository     $placesRepository
+     * @param PlaceService        $placeService
+     * @param string|null         $uuid
      *
      * @return Response
      * @throws AuthorizationException
@@ -192,8 +193,10 @@ class PlaceController extends Controller
     public function update(
         CreateUpdateRequest $request,
         PlaceRepository $placesRepository,
+        PlaceService $placeService,
         string $uuid = null
-    ): Response {
+    ): Response
+    {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
             : $placesRepository->find($uuid);
@@ -204,6 +207,10 @@ class PlaceController extends Controller
 
         if ($request->isMethod('put')) {
             $placeData = array_merge($place->getFillableWithDefaults(), $placeData);
+        }
+
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $placeService->disapprove($place, true);
         }
 
         $place = $placesRepository->update($placeData, $place->id);
