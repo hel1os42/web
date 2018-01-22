@@ -55,9 +55,16 @@ $( document ).ready( function() {
 // --send nau part
 
 
-function srvRequest(url, method, type, callback){
+/* 
+url - string of request-URL
+method - string 'GET', 'POST', 'PATCH', etc.
+respType - null or string 'ajax'
+callback(response) - callback-function
+*/
+
+function srvRequest(url, method, respType, callback){
     let xhr = new XMLHttpRequest();
-    if (type) xhr.responseType = type;
+    if (respType) xhr.responseType = respType;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) { callback(xhr.response); }
@@ -66,7 +73,7 @@ function srvRequest(url, method, type, callback){
         }
     };
     xhr.open(method, url, true);
-    if (type) xhr.setRequestHeader('Accept', 'application/' + type);
+    if (respType) xhr.setRequestHeader('Accept', 'application/' + respType);
     xhr.send();
 }
 
