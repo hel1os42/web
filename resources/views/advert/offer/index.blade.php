@@ -6,19 +6,39 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 dashboard-advert-header" style="background-image: url({{ asset('img/advert_img.png') }});">
-            <div class="offer-logo"><img src="{{ $authUser['picture_url'] }}" alt="offer name"></div>
+        @php
+            $coverUrl = $place instanceof \App\Models\Place ? $place->getOwnOrDefaultCoverUrl() : \App\Models\Place::getDefaultCoverUrl();
+        @endphp
+        <div class="col-sm-12 dashboard-advert-header" style="background-image: url({{ $coverUrl }});">
+            <div class="offer-logo col-sm-3">
+                @if( $place instanceof \App\Models\Place)
+                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture'])}}" onerror="imgError(this)" style="position: absolute;"><br>
+                @endif
+            </div>
             <div class="advert-header-wrap">
                 <div class="advert-header">
                     @if($isPlaceCreated)
-                        <div class="create-offer">
+                        <div class="create-offer col-sm-4 text-right">
                             <a href="{{ route('advert.offers.create') }}" class="btn-nau btn-create-offer">Create offer</a>
                         </div>
                     @endif
-                    <div class="advert-info">
-                        <p class="advert-name">{{ $authUser['name'] }}</p>
-                        <p>{{ $authUser['phone'] }}, {{ $authUser['email'] }}</p>
-                    </div>
+                    @if($place instanceof \App\Models\Place)
+                        <div class="container">
+                            <div class="">{{ $place->getName() }}</div>
+                            <div class="">{{ $place->getAddress() }}</div>
+                            <div class="">
+                                {{ str_limit($place->getDescription(), 50) }}
+                                <a href="{{ route('places.edit', $place) }}">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @else
+                        <div class="advert-info">
+                            <p class="advert-name">{{ $authUser['name'] }}</p>
+                            <p>{{ $authUser['phone'] }}, {{ $authUser['email'] }}</p>
+                        </div>
+                    @endif
                     <div class="stat-info clearfix"><!-- not need .row -->
                         <div class="col-xs-4">
                             <span class="icon-offers">Offers:</span>

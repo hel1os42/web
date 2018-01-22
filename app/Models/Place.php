@@ -17,25 +17,25 @@ use Illuminate\Support\Collection;
  * Class Place
  * @package App\Models
  *
- * @property string                       id
- * @property string                       user_id
- * @property string                       name
- * @property string                       description
- * @property string                       about
- * @property string                       address
- * @property float                        latitude
- * @property float                        longitude
- * @property int                          radius
- * @property int                          stars
- * @property bool                         is_featured
- * @property bool                         has_active_offers
- * @property string                       picture_url
- * @property string                       cover_url
- * @property int                          offers_count
- * @property int                          active_offers_count
+ * @property string id
+ * @property string user_id
+ * @property string name
+ * @property string description
+ * @property string about
+ * @property string address
+ * @property float latitude
+ * @property float longitude
+ * @property int radius
+ * @property int stars
+ * @property bool is_featured
+ * @property bool has_active_offers
+ * @property string picture_url
+ * @property string cover_url
+ * @property int offers_count
+ * @property int active_offers_count
  *
- * @property User                         user
- * @property Collection                   testimonials
+ * @property User user
+ * @property Collection testimonials
  * @property NauModels\Offer[]|Collection offers
  *
  * @method static static|Builder byUser(User $user)
@@ -57,7 +57,7 @@ class Place extends Model
     {
         $this->connection = config('database.default');
 
-        $this->table      = 'places';
+        $this->table = 'places';
         $this->primaryKey = 'id';
 
         $this->initUuid();
@@ -218,6 +218,34 @@ class Place extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getOwnOrDefaultCoverUrl(): string
+    {
+        if (file_exists($this->getCoverPath())) {
+            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        }
+
+        return self::getDefaultCoverUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverPath(): string
+    {
+        return storage_path(sprintf('app/images/place/covers/%1$s.jpg', $this->getKey()));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultCoverUrl(): string
+    {
+        return asset('/img/default_place_cover.jpg');
+    }
+
+    /**
      * @return bool
      */
     public function hasActiveOffers(): bool
@@ -353,7 +381,7 @@ class Place extends Model
 
     /**
      * @param Builder $builder
-     * @param User    $user
+     * @param User $user
      *
      * @return Builder
      * @throws \InvalidArgumentException
@@ -400,10 +428,10 @@ class Place extends Model
     }
 
     /**
-     * @param Builder     $builder
+     * @param Builder $builder
      * @param string|null $lat
      * @param string|null $lng
-     * @param int|null    $radius
+     * @param int|null $radius
      *
      * @return Builder
      * @throws \InvalidArgumentException
@@ -413,7 +441,8 @@ class Place extends Model
         string $lat = null,
         string $lng = null,
         int $radius = null
-    ): Builder {
+    ): Builder
+    {
         if (empty($lat) || empty($lng) || $radius < 1) {
             return $builder->whereNull('latitude')->whereNull('longitude')->whereNull('radius');
         }
@@ -430,7 +459,7 @@ class Place extends Model
     }
 
     /**
-     * @param Builder     $builder
+     * @param Builder $builder
      * @param string|null $lat
      * @param string|null $lng
      *
@@ -455,7 +484,7 @@ class Place extends Model
 
     /**
      * @param Builder $builder
-     * @param array   $categoryIds
+     * @param array $categoryIds
      *
      * @return Builder
      * @throws \InvalidArgumentException
