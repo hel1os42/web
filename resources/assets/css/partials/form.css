@@ -448,3 +448,69 @@
 #marker.without-radius {
 	background-color: transparent;
 }
+
+#place_retailtype label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+#place_specialties label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+#place_specialties .sgroup-title {
+    padding: 0 8px;
+    background: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#place_specialties .sgroup-title:before {
+    content: "";
+    position: relative;
+    display: inline-block;
+    top: -1px;
+    margin-right: 6px;
+    width: 1px;
+    height: 1px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #999;
+}
+#place_specialties .sgroup-title.active:before {
+    border-top: none;
+    border-bottom: 8px solid #999;
+}
+#place_specialties .sgroup-content {
+    display: none;
+}
+
+#place_tags {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#place_tags label {
+    display: inline-block;
+    margin-right: 8px;
+    font-weight: normal;
+    cursor: pointer;
+}
+#place_tags label input {
+    display: none;
+}
+#place_tags label span {
+    display: inline-block;
+    padding: 0 4px;
+    color: #bbb;
+    border-radius: 4px;
+}
+#place_tags label:hover span,
+#place_tags label input:checked + span {
+    color: #3f4c5d;
+}
+#place_tags label input:checked + span {
+    background: #ddd;
+}
+

@@ -11,9 +11,7 @@
                 <div>
                     <form action="{{ route('places.store') }}" method="post" class="nau-form" id="createPlaceForm" target="_top">
 
-                        {{ csrf_field() }}
-
-                        <p class="title">Create advertiser place</p>
+                        <p class="title" style="margin-top: 32px;">Create advertiser place</p>
 
                         <div class="control-box">
                             <p class="control-text">
@@ -59,7 +57,7 @@
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
-                                    <select id="place_category" name="category_ids[]" class="formData"></select>
+                                    <select id="place_category" name="category" class="formData"></select>
                                 </label>
                             </p>
                             <p class="hint">Please, select the category.</p>
@@ -69,11 +67,11 @@
                         <div class="control-box" id="place_retailtype">
                         </div>
 
-                        <p><strong>Specialties *</strong></p>
+                        <p><strong>Specialties</strong></p>
                         <div class="control-box" id="place_specialties">
                         </div>
 
-                        <p><strong>Tags *</strong></p>
+                        <p><strong>Tags</strong></p>
                         <div class="control-box" id="place_tags">
                         </div>
                         
@@ -167,16 +165,21 @@
             let html = '';
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
                 if (!checkbox.checked) return;
+                let s = '';
                 function reatailType(e){ return e.id === checkbox.value; }
                 request.retail_types.find(reatailType).specialities.forEach(function(e){
-                    if (e.parent_id === checkbox.value) {
+                    if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
                         let name = e.group ? 'name="group' + e.group + '"' : '';
-                        html += `<p><label><input type="${type}" ${name} value="${e.id}"> ${e.name}</label></p>`;
+                        s += `<p><label><input type="${type}" ${name} value="${e.slug}"> ${e.name}</label></p>`;
                     }
                 });
+                if (s) {
+                    html += '<div class="specialities-group" data-id="' + checkbox.value + '"><p class="sgroup-title">';
+                    html += checkbox.parentElement.innerText + ':</p><div class="sgroup-content">' + s + '</div></div>';
+                }
             });
-            formBoxRetailType.innerHTML = html ? html : 'Select Retail Type';
+            formBoxSpecialties.innerHTML = html ? html : 'Select Retail Type';
         }
 
         function createTags(request){
@@ -184,11 +187,16 @@
             request.tags.forEach(function(tag){
                 html += `<label><input type="checkbox" name="" value="${tag.slug}"> <span>${tag.name}</span></label>`;
             });
-            formBoxTags.innerHTML = '<p>' + (html ? html : 'There is no one tag.') + '</p>';
+            formBoxTags.innerHTML = html ? '<p>Please, select tags:</p><p>' + html + '</p>' : '<p>There is no one tag.</p>';
         }
 
 
-        
+
+        /* specialities accordion */
+        $('#place_specialties').on('click', '.sgroup-title', function(){
+           $(this).toggleClass('active').next().slideToggle();
+        });
+
         
         
         /* map */
@@ -215,6 +223,8 @@
 
         /* form submit */
 
+        /* TODO: валидация на Retail Type, должен быть выбран хотя-бы один тип */
+
         $("#createPlaceForm").validate({
             rules: {
                 name: {
@@ -231,7 +241,7 @@
                     required: true,
                 }
             },
-            submitHandler: function (form) {
+            submitHandler: function () {
                 let formData = $('.formData').serializeArray();
 
                 formData.push({
@@ -239,19 +249,43 @@
                     "value": $('[name="_token"]').val()
                 });
 
+                formBoxRetailType.querySelectorAll('input:checked').forEach(function(checkbox){
+                    formData.push({
+                        "name": "retail_types[]",
+                        "value": checkbox.value
+                    });
+                });
+
+                formBoxSpecialties.querySelectorAll('.specialities-group').forEach(function(group, i){
+                    formData.push({
+                        "name": `specialities[${i}][retail_type_id]`,
+                        "value": group.dataset.id
+                    });
+                    group.querySelectorAll('input:checked').forEach(function(input, j){
+                        formData.push({
+                            "name": `specialities[${i}][specs][${j}]`,
+                            "value": input.value
+                        });
+                    });
+                });
+
+                formBoxTags.querySelectorAll('input:checked').forEach(function(checkbox){
+                    formData.push({
+                        "name": "tags[]",
+                        "value": checkbox.value
+                    });
+                });
+
                 console.dir(formData);
-                return false;
 
                 $.ajax({
                     type: "POST",
                     url: $('#createPlaceForm').attr('action'),
-                    headers: {
-                        'Accept':'application/json',
-                    },
+                    headers: { 'Accept': 'application/json' },
                     data: formData,
                     success: function(data, textStatus, xhr){
                         if (201 === xhr.status){
-                                return window.location.replace("{{ route('profile') }}");
+                            return window.location.replace("{{ route('profile') }}");
                         } else {
                             alert("Something went wrong. Try again, please.");
                             console.log(xhr.status);
