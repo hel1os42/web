@@ -53,3 +53,24 @@ $( document ).ready( function() {
 } );
 
 // --send nau part
+
+
+function srvRequest(url, method, type, callback){
+    let xhr = new XMLHttpRequest();
+    if (type) xhr.responseType = type;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) { callback(xhr.response); }
+            else if (xhr.status === 400) { console.log('Error 400'); }
+            else { console.log('Something else other than 200 was returned'); }
+        }
+    };
+    xhr.open(method, url, true);
+    if (type) xhr.setRequestHeader('Accept', 'application/' + type);
+    xhr.send();
+}
+
+
+
+
+
