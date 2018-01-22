@@ -18,48 +18,65 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Name*</span>
-                                    <input name="name" value="{{old('name')}}" class="formData">
+                                    <span class="input-label">Name *</span>
+                                    <input name="name" value="{{ old('name') }}" class="formData">
                                 </label>
                             </p>
+                            <p class="hint">Please, enter the Place name.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Description*</span>
+                                    <span class="input-label">Description *</span>
                                     <textarea name="description" class="formData">{{ old('description') }}</textarea>
                                 </label>
                             </p>
+                            <p class="hint">Please, enter the Place description.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">About*</span>
+                                    <span class="input-label">About *</span>
                                     <textarea name="about" class="formData">{{ old('about') }}</textarea>
                                 </label>
                             </p>
+                            <p class="hint">Please, enter the information About Place.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Address*</span>
+                                    <span class="input-label">Address *</span>
                                     <input name="address" value="{{ old('address') }}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Offer address.</p>
+                            <p class="hint">Please, enter the Place address.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-select valid-not-empty">
                                 <label>
-                                    <span class="input-label">Place category*</span>
+                                    <span class="input-label">Place category *</span>
                                     <select id="place_category" name="category_ids[]" class="formData"></select>
                                 </label>
                             </p>
+                            <p class="hint">Please, select the category.</p>
                         </div>
+                        
+                        <p><strong>Retail Type *</strong></p>
+                        <div class="control-box" id="place_retailtype">
+                        </div>
+
+                        <p><strong>Specialties *</strong></p>
+                        <div class="control-box" id="place_specialties">
+                        </div>
+
+                        <p><strong>Tags *</strong></p>
+                        <div class="control-box" id="place_tags">
+                        </div>
+                        
 @if(false)
                         <div class="control-box">
                             <p>
@@ -74,7 +91,7 @@
                         </div>
 @endif
                         <div class="control-box">
-                            <p><strong>Setting map radius*</strong></p>
+                            <p><strong>Setting map radius *</strong></p>
                             <input type="hidden" name="latitude" value="" class="mapFields formData">
                             <input type="hidden" name="longitude" value="" class="mapFields formData">
                             <input type="hidden" name="radius" value="" class="mapFields formData">
@@ -108,29 +125,72 @@
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script>
 
-        /* offer_category */
+        /* offer category and sub-categories */
 
-        let xhr = new XMLHttpRequest();
+        let formSelectCategory = document.getElementById("place_category");
+        let formBoxRetailType = document.getElementById("place_retailtype");
+        let formBoxSpecialties = document.getElementById("place_specialties");
+        let formBoxTags = document.getElementById("place_tags");
+        
+        srvRequest("{{ route('categories') }}", 'GET', null, function(response){
+            formSelectCategory.innerHTML = response;
+            formSelectCategory.dispatchEvent(new Event('change'));
+        });
+        
+        formSelectCategory.addEventListener('change', function(){
+            let wait = '<img src="{{ asset('img/loading.gif') }}" alt="wait...">';
+            formBoxRetailType.innerHTML = wait;
+            formBoxSpecialties.innerHTML = wait;
+            formBoxTags.innerHTML = wait;
+            let url = "{{ route('categories') }}" + '/' + this.value + '?with=retailTypes;retailTypes.specialities;tags';
+            srvRequest(url, 'GET', 'json', function (request){
+                createRetailType(request);
+                createSpecialties(request);
+                createTags(request);
+            });
+        });
+        
+		function createRetailType(request) {
+            let html = '';
+            request.retail_types.forEach(function(e){
+                html += '<p><label><input type="checkbox" name="retail_types[]" value="' + e.id + '"> ' + e.name + '</label></p>';
+            });
+            formBoxRetailType.innerHTML = html;
+            formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
+                checkbox.addEventListener('change', function(){
+                    createSpecialties(request);
+                });
+            });
+        }
+        
+        function createSpecialties(request) {
+            let html = '';
+            formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
+                if (!checkbox.checked) return;
+                function reatailType(e){ return e.id === checkbox.value; }
+                request.retail_types.find(reatailType).specialities.forEach(function(e){
+                    if (e.parent_id === checkbox.value) {
+                        let type = e.group ? 'radio' : 'checkbox';
+                        let name = e.group ? 'name="group' + e.group + '"' : '';
+                        html += `<p><label><input type="${type}" ${name} value="${e.id}"> ${e.name}</label></p>`;
+                    }
+                });
+            });
+            formBoxRetailType.innerHTML = html ? html : 'Select Retail Type';
+        }
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    document.getElementById("place_category").innerHTML = xhr.responseText;
-                }
-                else if (xhr.status === 400) {
-                    console.log('Get categories: there was an error 400');
-                }
-                else {
-                    console.log('Get categories: something else other than 200 was returned');
-                }
-            }
-        };
-
-        xhr.open("GET", "{{ route('categories') }}", true);
-        xhr.send();
+        function createTags(request){
+            let html = '';
+            request.tags.forEach(function(tag){
+                html += `<label><input type="checkbox" name="" value="${tag.slug}"> <span>${tag.name}</span></label>`;
+            });
+            formBoxTags.innerHTML = '<p>' + (html ? html : 'There is no one tag.') + '</p>';
+        }
 
 
-
+        
+        
+        
         /* map */
 
         mapInit({
@@ -178,6 +238,9 @@
                     "name": "_token",
                     "value": $('[name="_token"]').val()
                 });
+
+                console.dir(formData);
+                return false;
 
                 $.ajax({
                     type: "POST",

@@ -39,10 +39,22 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><label for="formFieldAddress">Place category</label></td>
+                        <td class="details-control">
+                            <div class="control-box">
+                                <p class="control-select valid-not-empty">
+                                    <label>
+                                        <select id="place_category" name="category_ids[]" class="formData"></select>
+                                    </label>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>Picture</td>
                         <td class="details-control">
                             <div class="img-container text-center">
-                                <p><img src="{{route('places.picture.show', [$id, 'picture'])}}" onerror="imgError(this);"></p>
+                                <p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" onerror="imgError(this);"></p>
                             </div>
                         </td>
                     </tr>
@@ -50,7 +62,7 @@
                         <td>Cover</td>
                         <td class="details-control">
                             <div class="img-container text-center">
-                                <p><img src="{{route('places.picture.show', [$id, 'cover'])}}" onerror="imgError(this);"></p>
+                                <p><img src="{{ route('places.picture.show', [$id, 'cover']) }}" onerror="imgError(this);"></p>
                             </div>
                         </td>
                     </tr>
@@ -66,6 +78,7 @@
                         <div id="marker"></div>
                     </div>
                     <p id="mapradius">Radius: <span>unknown</span> km.</p>
+                    <p><span id="alat"></span> <span id="alng"></span></p>
                 </div>
 
                 <div class="submit-box" style="visibility: hidden">
@@ -73,7 +86,8 @@
                         <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
                         After the positive remark verification by Admin or Agent, your account will be approved again.
                     </p>
-                    <p><input type="submit" class="btn-nau" value="Save"></p>
+                    <!--<p><input type="submit" class="btn-nau" value="Save"></p>-->
+										<p><strong style="font-size: 36px;">[ Save ]</strong> Sorry, this function was deactivated. Need Place Category.</p>
                 </div>
 
             </form>
@@ -154,6 +168,8 @@
             $('[name="longitude"]').val(values.lng);
             $('[name="radius"]').val(values.radius);
             $('.submit-box').css('visibility', 'visible');
+            $('#alat').text(values.lat);
+            $('#alng').text(values.lng);
         }
 
 
@@ -179,10 +195,15 @@
                     "value" : $('[name="_token"]').val()
                 });
 
+                formData.push({
+                    name : "category_ids[]",
+                    value : "282f495e-6f77-4a23-87b5-e1c5d924f339"
+                });
+
                 console.dir(formData);
 
                 $.ajax({
-                    type: "POST",
+                    type: "PATCH",
                     url: $('#editPlaceForm').attr('action'),
                     headers: {
                         'Accept':'application/json',

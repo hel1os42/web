@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Create offer')
+@section('title', 'Edit offer')
 
 @section('content')
 
@@ -239,12 +239,6 @@
                         {{--<a href="#tab_step3" data-toggle="tab" class="tab-nav btn-nau pull-left">&lt; prev step</a>--}}
                         <input type="submit" class="btn-nau pull-right" value="Save">
                     </p>
-                </form>
-
-                <form method="post" action="{{ route('advert.offers.destroy', $id) }}">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="submit" class="btn btn-wd btn-md" value="Delete offer">
                 </form>
 
                 <div id="formOverlay">
