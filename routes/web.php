@@ -111,7 +111,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->patch('', 'UserController@update');
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store');
-        $router->get('place/create', 'PlaceController@create')->name('users.place.create');;
+        $router->get('place/create', 'PlaceController@create')->name('users.place.create');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
