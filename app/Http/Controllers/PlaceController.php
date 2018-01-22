@@ -24,8 +24,6 @@ class PlaceController extends Controller
      *
      * @return Response
      * @throws AuthorizationException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function index(PlaceFilterRequest $request, PlaceRepository $placeRepository): Response
     {
@@ -45,7 +43,6 @@ class PlaceController extends Controller
      * @return Response
      * @throws AuthorizationException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \LogicException
      */
     public function show(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
     {
@@ -70,7 +67,6 @@ class PlaceController extends Controller
      * @return mixed
      * @throws AuthorizationException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \LogicException
      */
     public function edit(Request $request, PlaceRepository $placesRepository, string $uuid = null)
     {
@@ -93,9 +89,6 @@ class PlaceController extends Controller
      *
      * @return Response
      * @throws AuthorizationException
-     * @throws \App\Exceptions\TokenException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository): Response
     {
@@ -115,8 +108,6 @@ class PlaceController extends Controller
      *
      * @return Response
      * @throws AuthorizationException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function create(UserRepository $userRepository, PlaceRepository $placesRepository, string $userUuid = null): Response
     {
@@ -141,7 +132,6 @@ class PlaceController extends Controller
      *
      * @return Response
      * @throws AuthorizationException
-     * @throws \LogicException
      */
     public function store(UserRepository $userRepository, CreateUpdateRequest $request, PlaceRepository $placesRepository, string $userUuid = null): Response
     {
@@ -174,7 +164,6 @@ class PlaceController extends Controller
      * @return Response
      * @throws AuthorizationException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \LogicException
      */
     public function update(
         CreateUpdateRequest $request,
