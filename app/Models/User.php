@@ -53,6 +53,8 @@ class User extends Authenticatable implements PhoneAuthenticable
 
     use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids;
 
+    const PROFILE_PICTURES_PATH = 'images/profile/pictures';
+
     public function __construct(array $attributes = [])
     {
         $this->connection = config('database.default');
@@ -490,5 +492,14 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function getFillableWithDefaults($without = []): array
     {
         return Attributes::getFillableWithDefaults($this, $without);
+    }
+
+    /**
+     * @param string $uuid User ID
+     * @return string
+     */
+    public static function getUserAvatarPath(string $uuid)
+    {
+        return storage_path(sprintf('app/%1$s/%2$s.%3$s', self::PROFILE_PICTURES_PATH, $uuid, 'jpg'));
     }
 }

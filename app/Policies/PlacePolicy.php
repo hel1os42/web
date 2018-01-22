@@ -31,16 +31,6 @@ class PlacePolicy extends Policy
     /**
      * @param User $user
      *
-     * @return bool
-     */
-    public function showMy(User $user)
-    {
-        return $user->isAdvertiser();
-    }
-
-    /**
-     * @param User $user
-     *
      * @return mixed
      */
     public function showOffers(User $user)
@@ -53,9 +43,11 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function createMy(User $user)
+    public function create(User $user, User $forUser)
     {
-        return $user->isAdvertiser();
+        return $user->isAdmin()
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($forUser))
+               || ($user->isAdvertiser() && $user->equals($forUser));
     }
 
     /**
@@ -67,6 +59,7 @@ class PlacePolicy extends Policy
     public function pictureStore(User $user, Place $place)
     {
         return $user->hasRoles([Role::ROLE_ADMIN])
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
 
@@ -79,6 +72,7 @@ class PlacePolicy extends Policy
     public function update(User $user, Place $place)
     {
         return $user->hasRoles([Role::ROLE_ADMIN])
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
 }
