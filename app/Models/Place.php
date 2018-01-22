@@ -218,6 +218,34 @@ class Place extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getOwnOrDefaultCoverUrl(): string
+    {
+        if (file_exists($this->getCoverPath())) {
+            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        }
+
+        return self::getDefaultCoverUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverPath(): string
+    {
+        return storage_path(sprintf('app/images/place/covers/%1$s.jpg', $this->getKey()));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultCoverUrl(): string
+    {
+        return asset('/img/default_place_cover.jpg');
+    }
+
+    /**
      * @return bool
      */
     public function hasActiveOffers(): bool
