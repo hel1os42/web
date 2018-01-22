@@ -7,7 +7,9 @@ use App\Http\Requests\PlaceFilterRequest;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\Implementation\PlaceRepositoryEloquent;
+use App\Repositories\Implementation\UserRepositoryEloquent;
 use App\Repositories\PlaceRepository;
+use App\Repositories\UserRepository;
 use App\Services\Implementation\PlaceService;
 use Faker\Factory as Faker;
 use Faker\Generator;
@@ -34,6 +36,11 @@ class PlaceControllerTest extends TestCase
      * @var PlaceRepository|PHPUnit_Framework_MockObject_MockObject
      */
     private $placeRepository;
+
+    /**
+     * @var UserRepository|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userRepository;
     /**
      * @var PlaceService|PHPUnit_Framework_MockObject_MockObject
      */
@@ -76,6 +83,7 @@ class PlaceControllerTest extends TestCase
         $this->guard           = $this->getMockBuilder(Guard::class)->disableOriginalConstructor()->getMock();
         $this->user            = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $this->authorizeGate   = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
+        $this->userRepository  = $this->getMockBuilder(UserRepositoryEloquent::class)->disableOriginalConstructor()->getMock();
 
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
@@ -237,73 +245,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->show($request, $uuid, $this->placeRepository);
-
-        self::assertSame($response, $returnValue);
-    }
-
-    /**
-     * @test
-     * @dataProvider showOwnerPlaceData
-     *
-     * @param bool $withOffers
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \InvalidArgumentException
-     * @throws \PHPUnit_Framework_Exception
-     * @throws \PHPUnit_Framework_MockObject_RuntimeException
-     */
-    public function showOwnerPlaceTest(bool $withOffers)
-    {
-        $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
-        $request         = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
-        $response        = new Response();
-
-        app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
-
-        $placesArray = [$withOffers];
-
-        $this->placeRepository
-            ->expects(self::once())
-            ->method('findByUser')
-            ->with($this->user)
-            ->willReturn($place);
-
-        $this->authorizeGate
-            ->expects(self::once())
-            ->method('authorize')
-            ->with('my.place.show')
-            ->willReturn(true);
-
-        if ($withOffers) {
-            $request
-                ->expects(self::once())
-                ->method('get')
-                ->with('with', '')
-                ->willReturn('offers');
-
-            $place
-                ->expects(self::once())
-                ->method('append')
-                ->with('offers')
-                ->willReturnSelf();
-        }
-
-        $place
-            ->expects(self::once())
-            ->method('toArray')
-            ->with()
-            ->willReturn($placesArray);
-
-        $responseFactory
-            ->expects(self::once())
-            ->method('__call')
-            ->with('render', ['advert.profile.place.show', $placesArray])
-            ->willReturn($response);
-
-        // test
-        $returnValue = $this->controller->showOwnerPlace($request, $this->placeRepository);
+        $returnValue = $this->controller->show($request, $this->placeRepository, $uuid);
 
         self::assertSame($response, $returnValue);
     }
@@ -383,16 +325,16 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('my.place.create')
+            ->with('places.create')
             ->willReturn(true);
 
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['advert.profile.place.create', $data])
+            ->with('render', ['place.create', $data])
             ->willReturn($response);
 
-        $returnValue = $this->controller->create($this->placeRepository);
+        $returnValue = $this->controller->create($this->userRepository, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -409,6 +351,7 @@ class PlaceControllerTest extends TestCase
      */
     public function storeTest(array $data, array $placeArray)
     {
+        $placeId         = $this->faker->uuid;
         $place           = $this->getMockBuilder(Place::class)->disableOriginalConstructor()->getMock();
         $request         = $this->getMockBuilder(CreateUpdateRequest::class)->disableOriginalConstructor()->getMock();
         $responseFactory = $this->getMockBuilder(ResponseFactory::class)->disableOriginalConstructor()->getMock();
@@ -419,7 +362,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('my.place.create')
+            ->with('places.create')
             ->willReturn(true);
 
         $this->placeRepository
@@ -433,6 +376,12 @@ class PlaceControllerTest extends TestCase
             ->method('toArray')
             ->with()
             ->willReturn($placeArray);
+
+        $place
+            ->expects(self::once())
+            ->method('getId')
+            ->with()
+            ->willReturn($placeId);
 
         $categoriesSet = array_key_exists('category_ids', $data);
 
@@ -471,10 +420,10 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
+            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('places.show', [$placeId])])
             ->willReturn($response);
 
-        $returnValue = $this->controller->store($request, $this->placeRepository);
+        $returnValue = $this->controller->store($request, $this->userRepository, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -518,9 +467,8 @@ class PlaceControllerTest extends TestCase
             ->willReturn(true);
 
         $place
-            ->expects(self::once())
-            ->method('__get')
-            ->with('id')
+            ->expects(self::any())
+            ->method('getId')
             ->willReturn($placeId);
 
         $request
@@ -573,7 +521,7 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['profile.place.show', $placeArray, Response::HTTP_CREATED, route('profile.place.show')])
+            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('places.show', [$placeId])])
             ->willReturn($response);
 
         $returnValue = $this->controller->update($request, $this->placeRepository, $this->placeService);
