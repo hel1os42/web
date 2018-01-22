@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\UserRepository;
+use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -14,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class PictureController extends AbstractPictureController
 {
-    const PROFILE_PICTURES_PATH = 'images/profile/pictures';
 
     /**
      * Saves profile image from request
@@ -67,6 +67,6 @@ class PictureController extends AbstractPictureController
      */
     protected function getPath(): string
     {
-        return self::PROFILE_PICTURES_PATH;
+        return User::PROFILE_PICTURES_PATH;
     }
 }
