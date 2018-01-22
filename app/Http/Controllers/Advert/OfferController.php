@@ -58,6 +58,8 @@ class OfferController extends Controller
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 
+        $data['place'] = $this->user()->place;
+
         return \response()->render('advert.offer.index', $data);
     }
 

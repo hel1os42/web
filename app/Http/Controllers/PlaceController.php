@@ -64,11 +64,11 @@ class PlaceController extends Controller
      * @param PlaceRepository $placesRepository
      * @param string|null     $uuid
      *
-     * @return mixed
+     * @return Response
      * @throws AuthorizationException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function edit(Request $request, PlaceRepository $placesRepository, string $uuid = null)
+    public function edit(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
     {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
