@@ -94,6 +94,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('picture.jpg', 'User\PictureController@show')->name('profile.picture.show');
         $router->get('place', 'PlaceController@show')
             ->name('profile.place.show');
+        $router->get('place/edit', 'PlaceController@edit')
+               ->name('profile.place.edit');
         $router->put('place', 'PlaceController@update');
         $router->patch('place', 'PlaceController@update')
             ->name('profile.place.update');

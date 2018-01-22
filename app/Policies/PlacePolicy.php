@@ -11,29 +11,9 @@ class PlacePolicy extends Policy
     /**
      * @param User $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function index(User $user)
-    {
-        return $user->hasAnyRole();
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return mixed
-     */
-    public function show(User $user)
-    {
-        return $user->hasAnyRole();
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return mixed
-     */
-    public function showOffers(User $user)
+    public function index(User $user): bool
     {
         return $user->hasAnyRole();
     }
@@ -43,7 +23,27 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function create(User $user, User $forUser)
+    public function show(User $user): bool
+    {
+        return $user->hasAnyRole();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function showOffers(User $user): bool
+    {
+        return $user->hasAnyRole();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function create(User $user, User $forUser): bool
     {
         return $user->isAdmin()
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($forUser))
@@ -56,7 +56,7 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function pictureStore(User $user, Place $place)
+    public function pictureStore(User $user, Place $place): bool
     {
         return $user->hasRoles([Role::ROLE_ADMIN])
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
@@ -69,7 +69,7 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function update(User $user, Place $place)
+    public function update(User $user, Place $place): bool
     {
         return $user->hasRoles([Role::ROLE_ADMIN])
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
