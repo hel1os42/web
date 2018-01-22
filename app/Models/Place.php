@@ -428,10 +428,10 @@ class Place extends Model
     }
 
     /**
-     * @param Builder $builder
+     * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
-     * @param int|null $radius
+     * @param int|null    $radius
      *
      * @return Builder
      * @throws \InvalidArgumentException
