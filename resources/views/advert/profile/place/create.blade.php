@@ -171,7 +171,8 @@
                 request.retail_types.find(reatailType).specialities.forEach(function(e){
                     if (e.parent_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
-                        html += `<p><label><input type="${type}" name="????????????" value="${e.id}"> ${e.name}</label></p>`;
+                        let name = e.group ? 'name="group' + e.group + '"' : '';
+                        html += `<p><label><input type="${type}" ${name} value="${e.id}"> ${e.name}</label></p>`;
                     }
                 });
             });
@@ -185,6 +186,7 @@
             });
             formBoxTags.innerHTML = '<p>' + (html ? html : 'There is no one tag.') + '</p>';
         }
+
 
         
         
@@ -236,6 +238,9 @@
                     "name": "_token",
                     "value": $('[name="_token"]').val()
                 });
+
+                console.dir(formData);
+                return false;
 
                 $.ajax({
                     type: "POST",
