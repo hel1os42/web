@@ -7,7 +7,9 @@ use App\Http\Requests\PlaceFilterRequest;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\Implementation\PlaceRepositoryEloquent;
+use App\Repositories\Implementation\UserRepositoryEloquent;
 use App\Repositories\PlaceRepository;
+use App\Repositories\UserRepository;
 use App\Services\Implementation\PlaceService;
 use Faker\Factory as Faker;
 use Faker\Generator;
@@ -34,6 +36,11 @@ class PlaceControllerTest extends TestCase
      * @var PlaceRepository|PHPUnit_Framework_MockObject_MockObject
      */
     private $placeRepository;
+
+    /**
+     * @var UserRepository|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userRepository;
     /**
      * @var PlaceService|PHPUnit_Framework_MockObject_MockObject
      */
@@ -76,6 +83,7 @@ class PlaceControllerTest extends TestCase
         $this->guard           = $this->getMockBuilder(Guard::class)->disableOriginalConstructor()->getMock();
         $this->user            = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
         $this->authorizeGate   = $this->getMockBuilder(Gate::class)->disableOriginalConstructor()->getMock();
+        $this->userRepository  = $this->getMockBuilder(UserRepositoryEloquent::class)->disableOriginalConstructor()->getMock();
 
         $this->authManager->method('guard')->with()->willReturn($this->guard);
         $this->guard->method('user')->with()->willReturn($this->user);
@@ -237,7 +245,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->show($request, $uuid, $this->placeRepository);
+        $returnValue = $this->controller->show($request, $this->placeRepository, $uuid);
 
         self::assertSame($response, $returnValue);
     }
@@ -317,7 +325,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('my.place.create')
+            ->with('places.create')
             ->willReturn(true);
 
         $responseFactory
@@ -326,7 +334,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['place.create', $data])
             ->willReturn($response);
 
-        $returnValue = $this->controller->create($this->placeRepository);
+        $returnValue = $this->controller->create($this->userRepository, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -354,7 +362,7 @@ class PlaceControllerTest extends TestCase
         $this->authorizeGate
             ->expects(self::once())
             ->method('authorize')
-            ->with('place.create')
+            ->with('places.create')
             ->willReturn(true);
 
         $this->placeRepository
@@ -412,10 +420,10 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('place.show', [$placeId])])
+            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('places.show', [$placeId])])
             ->willReturn($response);
 
-        $returnValue = $this->controller->store($request, $this->placeRepository);
+        $returnValue = $this->controller->store($request, $this->userRepository, $this->placeRepository);
         self::assertSame($response, $returnValue);
     }
 
@@ -459,9 +467,8 @@ class PlaceControllerTest extends TestCase
             ->willReturn(true);
 
         $place
-            ->expects(self::once())
-            ->method('__get')
-            ->with('id')
+            ->expects(self::any())
+            ->method('getId')
             ->willReturn($placeId);
 
         $request
@@ -514,7 +521,7 @@ class PlaceControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('place.show', [$placeId])])
+            ->with('render', ['place.show', $placeArray, Response::HTTP_CREATED, route('places.show', [$placeId])])
             ->willReturn($response);
 
         $returnValue = $this->controller->update($request, $this->placeRepository, $this->placeService);

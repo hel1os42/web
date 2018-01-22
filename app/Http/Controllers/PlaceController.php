@@ -133,7 +133,7 @@ class PlaceController extends Controller
      * @return Response
      * @throws AuthorizationException
      */
-    public function store(UserRepository $userRepository, CreateUpdateRequest $request, PlaceRepository $placesRepository, string $userUuid = null): Response
+    public function store(CreateUpdateRequest $request, UserRepository $userRepository, PlaceRepository $placesRepository, string $userUuid = null): Response
     {
         $forUser = is_null($userUuid)
             ? $this->user()
@@ -188,7 +188,7 @@ class PlaceController extends Controller
             $placeService->disapprove($place, true);
         }
 
-        $place = $placesRepository->update($placeData, $place->id);
+        $place = $placesRepository->update($placeData, $place->getId());
         $place->categories()->sync($request->category_ids);
 
         return \response()->render('place.show', $place->toArray(), Response::HTTP_CREATED,
