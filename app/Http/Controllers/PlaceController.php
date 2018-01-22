@@ -32,7 +32,7 @@ class PlaceController extends Controller
         $places = $placeRepository->getActiveByCategoriesAndPosition($request->category_ids, $request->latitude,
             $request->longitude, $request->radius);
 
-        return response()->render('places.index', $places->paginate());
+        return response()->render('place.index', $places->paginate());
     }
 
     /**
@@ -56,7 +56,7 @@ class PlaceController extends Controller
 
         $this->authorize('places.show', $place);
 
-        return \response()->render('places.show', $place->toArray());
+        return \response()->render('place.show', $place->toArray());
     }
 
     /**
@@ -80,7 +80,7 @@ class PlaceController extends Controller
 
         $this->authorize('places.update', $place);
 
-        return \response()->render('places.edit', $place->toArray());
+        return \response()->render('place.edit', $place->toArray());
     }
 
     /**
@@ -152,7 +152,7 @@ class PlaceController extends Controller
         return \response()->render('place.show',
             $place->toArray(),
             Response::HTTP_CREATED,
-            route('place.show', [$place->getId()]));
+            route('places.show', [$place->getId()]));
     }
 
     /**
@@ -192,6 +192,6 @@ class PlaceController extends Controller
         $place->categories()->sync($request->category_ids);
 
         return \response()->render('place.show', $place->toArray(), Response::HTTP_CREATED,
-            route('place.show', [$place->getId()]));
+            route('places.show', [$place->getId()]));
     }
 }

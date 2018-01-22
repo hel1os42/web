@@ -17,9 +17,6 @@
                 <h4>{{$address}}</h4>
                 <p>{{$about}}</p>
                 <a href="{{route('profile.place.offers')}}"></a>
-
-                @include('partials/place-picture-filepicker')
-                @include('partials/place-cover-filepicker')
             </div>
         </div>
     </div>
