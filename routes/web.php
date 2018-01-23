@@ -172,11 +172,11 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     ]);
 
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
-           ->name('transactionCreate');
+           ->name('transaction.create');
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
            ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
-           ->name('transactionList');
+           ->name('transaction.list');
 
     /**
      * Categories

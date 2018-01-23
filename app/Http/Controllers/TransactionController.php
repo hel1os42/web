@@ -98,7 +98,7 @@ class TransactionController extends Controller
             null === $transaction->id
                 ? Response::HTTP_ACCEPTED
                 : Response::HTTP_CREATED,
-            route('transaction.transactionList')
+            route('transaction.list')
         );
     }
 

@@ -40,7 +40,7 @@ class NauController extends Controller
         $result = null;
 
         $eventsDispatcher->listen(CrossChangeSuccess::class, function (CrossChangeSuccess $crossChange) use (&$result) {
-            $result = \response()->render('', $crossChange, Response::HTTP_CREATED, route('transactionList', [
+            $result = \response()->render('', $crossChange, Response::HTTP_CREATED, route('transaction.list', [
                 'transactionId' => $crossChange->nau->transaction_id
             ]));
         });
