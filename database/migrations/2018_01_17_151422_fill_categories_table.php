@@ -1,43 +1,32 @@
 <?php
 
-use Carbon\Carbon;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Database\Seeder;
+use Illuminate\Database\Migrations\Migration;
+use Carbon\Carbon;
 use Webpatser\Uuid\Uuid;
 
-/**
- * Don't use for more than 2 dimensional arrays.
- *
- * Class CategoriesTableSeeder
- */
-class CategoriesTableSeeder extends Seeder
+class FillCategoriesTable extends Migration
 {
     private $categories = \App\Helpers\RetailTypes::ALL;
 
-    const FOOD_DRINKS = 'Food & Drinks';
-    const BEAUTY_FITNESS = 'Beauty & Fitness';
-    const RETAIL_SERVICES = 'Retail & Services';
-    const ATTRACTIONS_LEISURE = 'Attractions & Leisure';
-    const OTHER_ONLINE = 'Other & Online';
+    const FOOD_DRINKS           = 'Food & Drinks';
+    const BEAUTY_FITNESS        = 'Beauty & Fitness';
+    const RETAIL_SERVICES       = 'Retail & Services';
+    const ATTRACTIONS_LEISURE   = 'Attractions & Leisure';
+    const OTHER_ONLINE          = 'Other & Online';
 
     /**
      * @var DatabaseManager
      */
     private $db;
 
-    public function __construct(DatabaseManager $database)
-    {
-        $this->db = $database;
-    }
-
-
     /**
-     * Run the database seeds.
-     *
-     * @return void
+     * @throws InvalidArgumentException
      */
-    public function run()
+    public function up()
     {
+        $this->db = app('db');
+
         $categories = $this->getCategories();
 
         $connection = $this->db->connection();
@@ -52,6 +41,16 @@ class CategoriesTableSeeder extends Seeder
 
             $connection->table('categories')->insert($category);
         }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        //
     }
 
     private function getCategories(array $categories = null, string $parent = null): iterable
@@ -104,12 +103,12 @@ class CategoriesTableSeeder extends Seeder
                 'id'
             ])
             ->whereNotNull('parent_id')
-            ->whereNotIn('name', $this->getActualNames());
+            ->whereNotIn('name', $this->getActualNames())
+            ->pluck('id');
 
         if (0 === count($outdatedCategories)) {
             return;
         }
-
 //        remove records from places_categories table
         $connection
             ->table('places_categories')
@@ -127,10 +126,11 @@ class CategoriesTableSeeder extends Seeder
      */
     private function getActualNames(): array
     {
-        $result = array();
-        foreach($this->categories as $subCategories){
+        $result = [];
+        foreach ($this->categories as $subCategories) {
             $result = array_merge($result, $subCategories);
         }
+
         return $result;
     }
 }

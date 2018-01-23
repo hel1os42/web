@@ -4,8 +4,9 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 
-class RetailTypesSeeder extends Seeder
+class TagsSeeder extends Seeder
 {
+    const SLUG_PREFIX = 'tag';
     /**
      * @var \Illuminate\Database\Connection $connection
      */
@@ -21,9 +22,9 @@ class RetailTypesSeeder extends Seeder
      */
     public function run()
     {
-        $retailTypes = \App\Helpers\RetailTypes::ALL;
+        $tags = \App\Helpers\Tags::ALL;
 
-        foreach ($retailTypes as $categoryName => $categoryRetailTypes) {
+        foreach ($tags as $categoryName => $categoryTags) {
 
             $this->command->info(sprintf('Processing category: "%s"', $categoryName));
             $category = $this->getCategory($categoryName);
@@ -34,17 +35,18 @@ class RetailTypesSeeder extends Seeder
 
             $storedSlugs = $this->getStoredSlugs($category->id);
 
-            foreach ($categoryRetailTypes as $retailType) {
+            foreach ($categoryTags as $tag) {
 
-                $slug = str_slug($retailType, \App\Helpers\Constants::SLUG_SEPARATOR);
+                $slug = self::SLUG_PREFIX . \App\Helpers\Constants::SLUG_SEPARATOR
+                        . str_slug($tag, \App\Helpers\Constants::SLUG_SEPARATOR);
 
                 if ($storedSlugs->isNotEmpty() && $storedSlugs->contains($slug)) {
-                    $this->command->warn(sprintf('Retail type %s already exists. Skipping...', $retailType));
+                    $this->command->warn(sprintf('Tag %s already exists. Skipping...', $tag));
                     continue;
                 }
 
-                if (true === $this->storeRetailType($category->id, $slug, $retailType)) {
-                    $this->command->info(sprintf('Retail type "%s" saved successfully.', $retailType));
+                if (true === $this->store($category->id, $slug, $tag)) {
+                    $this->command->info(sprintf('Tag "%s" saved successfully.', $tag));
                 }
             }
         }
@@ -73,7 +75,7 @@ class RetailTypesSeeder extends Seeder
     private function getStoredSlugs(string $categoryId): ?Collection
     {
         return $this->connection
-            ->table('retail_types')
+            ->table('tags')
             ->where('category_id', $categoryId)
             ->get()
             ->pluck('slug');
@@ -86,18 +88,18 @@ class RetailTypesSeeder extends Seeder
      *
      * @return bool
      */
-    private function storeRetailType(string $categoryId, string $slug, string $name)
+    private function store(string $categoryId, string $slug, string $name)
     {
         try {
             $this->connection
-                ->table('retail_types')
+                ->table('tags')
                 ->insert([
                     'category_id' => $categoryId,
                     'slug'        => $slug,
                     'name'        => $name
                 ]);
         } catch (Exception $exception) {
-            $this->command->error(sprintf('Can\'t save "%s" retail type.', $name, $exception->getMessage()));
+            $this->command->error(sprintf('Can\'t save "%s" tag.', $name, $exception->getMessage()));
             $this->command->comment(sprintf('error msg: %s', $exception->getMessage()));
 
             return false;
