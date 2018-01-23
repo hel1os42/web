@@ -36,6 +36,10 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\TimeframeRepositoryEloquent::class);
         $this->app->bind(Repositories\RoleRepository::class,
             Implementation\RoleRepositoryEloquent::class);
+        $this->app->bind(Repositories\SpecialityRepository::class,
+            Implementation\SpecialityRepositoryEloquent::class);
+        $this->app->bind(Repositories\TagRepository::class,
+            Implementation\TagRepositoryEloquent::class);
         $this->app->bind(Repositories\OperatorRepository::class,
             Implementation\OperatorRepositoryEloquent::class);
     }

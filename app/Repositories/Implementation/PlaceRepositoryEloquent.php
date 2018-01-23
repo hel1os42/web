@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
 use Prettus\Validator\Contracts\ValidatorInterface;
 
 /**
@@ -47,7 +48,7 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->model->without('offers');
     }
 
-    public function createForUserOrFail(array $attributes, User $user): Place
+    public function createForUserOrFail(array $attributes, User $user, array $specsIds, array $tagsIds): Place
     {
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
@@ -61,6 +62,20 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $model = $this->model->newInstance($attributes);
         $model->user()->associate($user);
         $model->save();
+
+        if (array_key_exists('retail_types', $attributes) && count($attributes['retail_types']) > 0) {
+            $categories = array_merge([$attributes['category']], $attributes['retail_types']);
+            $model->categories()->sync($categories);
+        }
+
+        if (count($tagsIds) > 0) {
+            $model->tags()->sync($tagsIds);
+        }
+
+        if (count($specsIds) > 0) {
+            $model->specialities()->sync($specsIds);
+        }
+
         $this->resetModel();
 
         if (!$model->exists) {
@@ -135,5 +150,54 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->resetModel();
 
         return $result;
+    }
+
+    /**
+     * @param array $attributes
+     * @param       $placeId
+     * @param array $specsIds
+     * @param array $tagsIds
+     *
+     * @return Place
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
+    public function updateWithRelations(array $attributes, $placeId, array $specsIds, array $tagsIds): Place
+    {
+        $this->applyScope();
+
+        if (!is_null($this->validator)) {
+            // we should pass data that has been casts by the model
+            // to make sure data type are same because validator may need to use
+            // this data to compare with data that fetch from database.
+            $attributes = $this->model->newInstance()->forceFill($attributes)->toArray();
+
+            $this->validator->with($attributes)->setId($placeId)->passesOrFail(ValidatorInterface::RULE_UPDATE);
+        }
+
+        $temporarySkipPresenter = $this->skipPresenter;
+
+        $this->skipPresenter(true);
+
+        $model = $this->model->findOrFail($placeId);
+        $model->fill($attributes);
+        $model->save();
+
+        if (array_key_exists('retail_types', $attributes) && count($attributes['retail_types']) > 0) {
+            $categories = array_merge([$attributes['category']], $attributes['retail_types']);
+            $model->categories()->sync($categories);
+        }
+
+        $model->tags()->sync($tagsIds);
+        $model->specialities()->sync($specsIds);
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        event(new RepositoryEntityUpdated($this, $model));
+
+        return $this->parserResult($model);
     }
 }

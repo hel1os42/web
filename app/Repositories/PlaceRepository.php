@@ -20,7 +20,7 @@ interface PlaceRepository extends RepositoryInterface
 {
     public function model(): string;
 
-    public function createForUserOrFail(array $placeData, User $user): Place;
+    public function createForUserOrFail(array $placeData, User $user, array $specsIds, array $tagsIds): Place;
 
     /**
      * @param User $user
@@ -48,4 +48,18 @@ interface PlaceRepository extends RepositoryInterface
     public function countByUser(User $user): int;
 
     public function existsByUser(User $user): bool;
+
+    /**
+     * @param array $attributes
+     * @param       $placeId
+     * @param array $specsIds
+     * @param array $tagsIds
+     *
+     * @return Place
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
+    public function updateWithRelations(array $attributes, $placeId, array $specsIds, array $tagsIds): Place;
 }

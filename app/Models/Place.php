@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Helpers\Attributes;
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
+use App\Models\Place\RelationsTrait;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -46,12 +43,14 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use Uuids;
+    use Uuids, RelationsTrait;
 
     /**
      * Place constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -392,42 +391,6 @@ class Place extends Model
     }
 
     /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * ATTENTION! it just stub
-     */
-    public function testimonials(): HasMany
-    {
-        return $this->hasMany(Testimonial::class);
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * @throws \App\Exceptions\TokenException
-     */
-    public function offers()
-    {
-        return $this->user->getAccountFor(Currency::NAU)->offers();
-    }
-
-    /**
      * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
@@ -505,7 +468,6 @@ class Place extends Model
     {
         return $builder->where('has_active_offers', '=', true);
     }
-
 
     /**
      * @return array
