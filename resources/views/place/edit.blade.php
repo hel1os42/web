@@ -1,119 +1,130 @@
 @extends('layouts.master')
 
-@section('title', 'Place Information')
+@section('title', 'Edit advertiser place')
 
 @section('content')
-<div class="col-md-10 col-md-offset-1">
-    <div class="card">
-        <div class="content">
 
-            <h3>Place Information</h3>
+    <div class="container">
+        <div class="row">
 
-            <form action="{{ route('places.update', $id) }}" method="PATCH" class="nau-form" id="editPlaceForm" target="_top">
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
-                {{ csrf_field() }}
+                <div>
+                    <form action="{{ route('places.store') }}" method="post" class="nau-form" id="createPlaceForm" target="_top">
 
-                <table id="table_your_offers" class="display">
-                    <tr>
-                        <td width="140"><label for="formFieldName">Name</label></td>
-                        <td class="details-control">
-                            <p><input name="name" id="formFieldName" value="{{ $name }}" class="formData"></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="formFieldDescription">Description</label></td>
-                        <td class="details-control">
-                            <p><textarea name="description" id="formFieldDescription" class="formData">{{ $description }}</textarea></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="formFieldAbout">About</label></td>
-                        <td class="details-control">
-                            <p><textarea name="about" id="formFieldAbout" class="formData">{{ $about }}</textarea></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="formFieldAddress">Address</label></td>
-                        <td class="details-control">
-                            <p><input name="address" id="formFieldAddress" value="{{ $address }}" class="formData"></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="formFieldAddress">Place category</label></td>
-                        <td class="details-control">
+                        <p class="title" style="margin-top: 32px;">Edit advertiser place</p>
+                        <p class="title" style="margin-top: 32px; font-size: 48px; color: red;">DON'T WORK NOW!!!</p>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Name *</span>
+                                    <input name="name" value="{{ old('name') }}" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place name.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Description *</span>
+                                    <textarea name="description" class="formData">{{ old('description') }}</textarea>
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place description.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">About *</span>
+                                    <textarea name="about" class="formData">{{ old('about') }}</textarea>
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the information About Place.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Address *</span>
+                                    <input name="address" value="{{ old('address') }}" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place address.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-select valid-not-empty">
+                                <label>
+                                    <span class="input-label">Place category *</span>
+                                    <select id="place_category" name="category" class="formData"></select>
+                                </label>
+                            </p>
+                            <p class="hint">Please, select the category.</p>
+                        </div>
+
+                        <p><strong>Retail Type *</strong></p>
+                        <div class="control-box" id="place_retailtype">
+                        </div>
+
+                        <p><strong>Specialties</strong></p>
+                        <div class="control-box" id="place_specialties">
+                        </div>
+
+                        <p><strong>Tags</strong></p>
+                        <div class="control-box" id="place_tags">
+                        </div>
+
+                        @if(false)
                             <div class="control-box">
-                                <p class="control-select valid-not-empty">
-                                    <label>
-                                        <select id="place_category" name="category_ids[]" class="formData"></select>
+                                <p>
+                                    <span class="input-label"><strong>Offer picture</strong></span>
+                                    <label class="control-file">
+                                        <span class="text-add">Add picture</span>
+                                        <input name="____offer_picture" type="file" class="js-imgupload" id="offerImg">
+                                        <img src="" alt="">
+                                        <span class="text-hover">Drag it here</span>
                                     </label>
                                 </p>
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Picture</td>
-                        <td class="details-control">
-                            <div class="img-container text-center">
-                                <p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" onerror="imgError(this);"></p>
+                        @endif
+                        <div class="control-box">
+                            <p><strong>Setting map radius *</strong></p>
+                            <input type="hidden" name="latitude" value="" class="mapFields formData">
+                            <input type="hidden" name="longitude" value="" class="mapFields formData">
+                            <input type="hidden" name="radius" value="" class="mapFields formData">
+                            <div class="map-wrap">
+                                <div class="leaflet-map" id="mapid"></div>
+                                <div id="marker"></div>
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Cover</td>
-                        <td class="details-control">
-                            <div class="img-container text-center">
-                                <p><img src="{{ route('places.picture.show', [$id, 'cover']) }}" onerror="imgError(this);"></p>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+                            <p id="mapradius">Radius: <span>unknown</span> km.</p>
+                        </div>
 
-                <div class="control-box">
-                    <p><strong>Map radius</strong></p>
-                    <input type="hidden" name="latitude" value="{{ $latitude }}" class="mapFields formData">
-                    <input type="hidden" name="longitude" value="{{ $longitude }}" class="mapFields formData">
-                    <input type="hidden" name="radius" value="{{ $radius }}" class="mapFields formData">
-                    <div class="map-wrap" style="max-width: 540px;">
-                        <div class="leaflet-map" id="mapid"></div>
-                        <div id="marker"></div>
-                    </div>
-                    <p id="mapradius">Radius: <span>unknown</span> km.</p>
-                    <p><span id="alat"></span> <span id="alng"></span></p>
+                        <p class="step-footer">
+                            <input type="submit" class="btn-nau pull-right" value="Save">
+                        </p>
+
+                    </form>
                 </div>
 
-                <div class="submit-box" style="visibility: hidden">
-                    <p style="color: red;">
-                        <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
-                        After the positive remark verification by Admin or Agent, your account will be approved again.
-                    </p>
-                    <!--<p><input type="submit" class="btn-nau" value="Save"></p>-->
-										<p><strong style="font-size: 36px;">[ Save ]</strong> Sorry, this function was deactivated. Need Place Category.</p>
-                </div>
-
-            </form>
-
-            <br><br><br>
-
-@if(false)
-            <!-- Что это за пустая ссылка? -->
-            <a href="{{route('profile.place.offers')}}"></a>
-@endif
-
-            @include('partials/place-picture-filepicker')
-            <p style="color: red; visibility: hidden;">
-                <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
-                After the positive remark verification by Admin or Agent, your account will be approved again.
-            </p>
-
-            @include('partials/place-cover-filepicker')
-            <p style="color: red; visibility: hidden;">
-                <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
-                After the positive remark verification by Admin or Agent, your account will be approved again.
-            </p>
-
+            </div>
         </div>
     </div>
-</div>
+
+    @include('partials/place-picture-filepicker')
+    <p style="color: red; visibility: hidden;">
+        <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
+        After the positive remark verification by Admin or Agent, your account will be approved again.
+    </p>
+
+    @include('partials/place-cover-filepicker')
+    <p style="color: red; visibility: hidden;">
+        <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
+        After the positive remark verification by Admin or Agent, your account will be approved again.
+    </p>
+
 @stop
 
 @push('styles')
