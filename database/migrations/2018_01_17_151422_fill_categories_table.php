@@ -103,12 +103,12 @@ class FillCategoriesTable extends Migration
                 'id'
             ])
             ->whereNotNull('parent_id')
-            ->whereNotIn('name', $this->getActualNames());
+            ->whereNotIn('name', $this->getActualNames())
+            ->pluck('id');
 
         if (0 === count($outdatedCategories)) {
             return;
         }
-
 //        remove records from places_categories table
         $connection
             ->table('places_categories')

@@ -76,6 +76,7 @@ class PlaceService implements PlaceServiceImpl
     }
 
     /**
+     * @param       $retailTypeId
      * @param array $slugs
      *
      * @return array
