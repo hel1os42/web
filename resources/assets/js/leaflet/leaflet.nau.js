@@ -86,6 +86,8 @@ function mapValues(map){
     let radiusPx = 190;
     res.lat = map.getCenter().lat;
     res.lng = map.getCenter().lng;
+    while (res.lng > 180) res.lng -= 360;
+    while (res.lng < -180) res.lng += 360;
     res.radius = Math.round(getRadius(radiusPx, map));
     return res;
 

@@ -38,7 +38,7 @@ class UserPolicy extends Policy
     public function update(User $user, User $editableUser, array $userData = [])
     {
         return ($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']))
-               || ($user->isAgent() && $user->hasChild($editableUser))
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser))
                || $user->isAdmin();
     }
 
@@ -170,7 +170,7 @@ class UserPolicy extends Policy
     public function pictureStore(User $user, User $editableUser)
     {
         return ($user->hasAnyRole() && $editableUser->equals($user))
-               || ($user->isAgent() && $user->hasChild($editableUser))
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser))
                || $user->isAdmin();
     }
 

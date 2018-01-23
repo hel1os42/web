@@ -6,19 +6,39 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 dashboard-advert-header" style="background-image: url({{ asset('img/advert_img.png') }});">
-            <div class="offer-logo"><img src="{{ $authUser['picture_url'] }}" alt="offer name"></div>
+        @php
+            $coverUrl = $place instanceof \App\Models\Place ? $place->getOwnOrDefaultCoverUrl() : \App\Models\Place::getDefaultCoverUrl();
+        @endphp
+        <div class="col-sm-12 dashboard-advert-header" style="background-image: url({{ $coverUrl }});">
+            <div class="offer-logo col-sm-3">
+                @if( $place instanceof \App\Models\Place)
+                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture'])}}" onerror="imgError(this)" style="position: absolute;"><br>
+                @endif
+            </div>
             <div class="advert-header-wrap">
                 <div class="advert-header">
                     @if($isPlaceCreated)
-                        <div class="create-offer">
+                        <div class="create-offer col-sm-4 text-right">
                             <a href="{{ route('advert.offers.create') }}" class="btn-nau btn-create-offer">Create offer</a>
                         </div>
                     @endif
-                    <div class="advert-info">
-                        <p class="advert-name">{{ $authUser['name'] }}</p>
-                        <p>{{ $authUser['phone'] }}, {{ $authUser['email'] }}</p>
-                    </div>
+                    @if($place instanceof \App\Models\Place)
+                        <div class="container">
+                            <div class="">{{ $place->getName() }}</div>
+                            <div class="">{{ $place->getAddress() }}</div>
+                            <div class="">
+                                {{ str_limit($place->getDescription(), 50) }}
+                                <a href="{{ route('places.edit', $place) }}">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @else
+                        <div class="advert-info">
+                            <p class="advert-name">{{ $authUser['name'] }}</p>
+                            <p>{{ $authUser['phone'] }}, {{ $authUser['email'] }}</p>
+                        </div>
+                    @endif
                     <div class="stat-info clearfix"><!-- not need .row -->
                         <div class="col-xs-4">
                             <span class="icon-offers">Offers:</span>
@@ -168,11 +188,6 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}">
-                                                <input name="_method" type="hidden" value="DELETE">
-                                                <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                <input class="btn btn-danger" type="submit" value="Delete offer">
-                                            </form>
                                             <div class="col-xs-6">
                                                 @if(false)
                                                     <p class="row"><span class="title col-xs-3">Created at:</span> <span class="col-xs-9" data-df="yyyy/mm/dd hh:MM:ss">{{ $offer['created_at'] }}</span></p>
@@ -181,6 +196,13 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
+
+                                                    <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="display: inline-block; margin-right: 16px;">
+                                                        <input name="_method" type="hidden" value="DELETE">
+                                                        <input name="_token" type="hidden" value={{ csrf_token() }}>
+                                                        <input class="btn btn-danger" type="submit" value="Delete offer">
+                                                    </form>
+
                                                     <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
                                                 </div>
                                             </div>

@@ -18,6 +18,8 @@ use App\Services\OfferReservation;
 use App\Services\OffersService;
 use App\Services\PlaceService;
 use App\Services\WeekDaysService;
+use App\Services\ImageService as ImageServiceInterface;
+use App\Services\Implementation\ImageService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
@@ -86,6 +88,12 @@ class AppServiceProvider extends ServiceProvider
             InvestorAreaService::class,
             InvestorAreaServiceImpl::class
         );
+
+        $this->app->bind(
+            ImageServiceInterface::class,
+            ImageService::class
+        );
+
         $this->app->bind(
             PlaceService::class,
             \App\Services\Implementation\PlaceService::class

@@ -47,9 +47,8 @@ class AuthServiceProvider extends ServiceProvider
 
         'places.list'          => 'PlacePolicy@index',
         'places.show'          => 'PlacePolicy@show',
-        'my.place.show'        => 'PlacePolicy@showMy',
         'places.offers.list'   => 'PlacePolicy@showOffers',
-        'my.place.create'      => 'PlacePolicy@createMy',
+        'places.create'        => 'PlacePolicy@create',
         'places.update'        => 'PlacePolicy@update',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 

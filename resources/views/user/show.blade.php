@@ -77,14 +77,11 @@
                                         <p><strong>Position</strong></p>
                                         <div class="map-wrap" style="width: 400px;">
                                             <div id="mapid" style="height: 400px; width: 600px;">
-                                                <div id="marker" style="z-index: 500;"></div>
+                                                <div id="marker" class="without-radius"></div>
                                             </div>
                                         </div>
-                                        <p id="mapradius">Radius: <span>unknown</span> km.</p>
-
-                                        <input type="hidden" name="latitude" value="{{ $place['latitude'] }}">
-                                        <input type="hidden" name="longitude" value="{{ $place['longitude'] }}">
-                                        <input type="hidden" name="radius" value="{{ $place['radius'] }}">
+                                        <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                        <input type="hidden" name="longitude" value="{{ $longitude }}">
                                     </div>
                                 </div>
 
@@ -149,11 +146,6 @@
             setTimeout(function(){
                 mapInit({
                     id: 'mapid',
-                    setPosition: {
-                        lat: $('[name="latitude"]').val(),
-                        lng: $('[name="longitude"]').val(),
-                        radius: $('[name="radius"]').val()
-                    },
                     done: mapDone,
                     move: mapMove
                 });
@@ -162,15 +154,12 @@
 
         function mapDone(map){
             let values = mapValues(map);
-            $('#mapradius').children('span').text(values.radius / 1000);
         }
 
         function mapMove(map){
             let values = mapValues(map);
-            $('#mapradius').children('span').text(values.radius / 1000);
             $('[name="latitude"]').val(values.lat);
             $('[name="longitude"]').val(values.lng);
-            $('[name="radius"]').val(values.radius);
         }
 
     </script>
