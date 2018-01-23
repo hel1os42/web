@@ -13,11 +13,11 @@
     @endif
 </li>
 <li class="sub-menu">
-    <a href="{{ route('transactionList') }}">Operations</a>
+    <a href="{{ route('transaction.list') }}">Operations</a>
     @if(false)
         <ul>
-            <li><a href="{{ route('transactionList') }}">Transactions list</a></li>
-            <li><a href="{{ route('transactionCreate') }}">Create transaction</a></li>
+            <li><a href="{{ route('transaction.list') }}">Transactions list</a></li>
+            <li><a href="{{ route('transaction.create') }}">Create transaction</a></li>
         </ul>
     @endif
 </li>

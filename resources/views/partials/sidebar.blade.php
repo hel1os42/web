@@ -80,10 +80,10 @@
 					<div class="collapse" id="operations" role="navigation" aria-expanded="false" style="height: 0px;">
 						<ul class="nav">
                             <li>
-                                <a href="{{ route('transactionList') }}">Transactions list</a>
+                                <a href="{{ route('transaction.list') }}">Transactions list</a>
                             </li>
                             <li>
-                                <a href="{{ route('transactionCreate') }}">Create transaction</a>
+                                <a href="{{ route('transaction.create') }}">Create transaction</a>
                             </li>
 						</ul>
 					</div>
