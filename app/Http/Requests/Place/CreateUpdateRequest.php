@@ -49,12 +49,17 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $required = '';
+        if ($this->isMethod('POST') || $this->isMethod('PUT')) {
+            $required = 'required|';
+        }
+
         return [
-            'name'           => 'required|string|min:3|max:255',
+            'name'           => $required . 'string|min:3|max:255',
             'description'    => 'string',
             'about'          => 'string',
             'address'        => 'string|max:255',
-            'category_ids'   => 'required|array',
+            'category_ids'   => $required . 'array',
             'category_ids.*' => sprintf(
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
