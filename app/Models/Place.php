@@ -123,20 +123,26 @@ class Place extends Model
         return $this->name;
     }
 
-    /** @return string */
-    public function getDescription(): string
+    /**
+     * @return null|string
+     */
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /** @return string */
-    public function getAbout(): string
+    /**
+     * @return null|string
+     */
+    public function getAbout(): ?string
     {
         return $this->about;
     }
 
-    /** @return string */
-    public function getAddress(): string
+    /**
+     * @return null|string
+     */
+    public function getAddress(): ?string
     {
         return $this->address;
     }
