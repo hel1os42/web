@@ -66,6 +66,7 @@
                         <p><strong>Retail Type *</strong></p>
                         <div class="control-box" id="place_retailtype">
                         </div>
+                        <p class="hint">Please, select Retail Type.</p>
 
                         <p><strong>Specialties</strong></p>
                         <div class="control-box" id="place_specialties">
@@ -129,12 +130,7 @@
         let formBoxRetailType = document.getElementById("place_retailtype");
         let formBoxSpecialties = document.getElementById("place_specialties");
         let formBoxTags = document.getElementById("place_tags");
-        
-        srvRequest("{{ route('categories') }}", 'GET', null, function(response){
-            formSelectCategory.innerHTML = response;
-            formSelectCategory.dispatchEvent(new Event('change'));
-        });
-        
+
         formSelectCategory.addEventListener('change', function(){
             let wait = '<img src="{{ asset('img/loading.gif') }}" alt="wait...">';
             formBoxRetailType.innerHTML = wait;
@@ -146,6 +142,11 @@
                 createSpecialties(request);
                 createTags(request);
             });
+        });
+
+        srvRequest("{{ route('categories') }}", 'GET', null, function(response){
+            formSelectCategory.innerHTML = response;
+            formSelectCategory.dispatchEvent(new Event('change'));
         });
         
 		function createRetailType(request) {
@@ -170,7 +171,7 @@
                 request.retail_types.find(reatailType).specialities.forEach(function(e){
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
-                        let name = e.group ? 'name="group' + e.group + '"' : '';
+                        let name = e.group ? `name="group_${e.group}"` : '';
                         s += `<p><label><input type="${type}" ${name} value="${e.slug}"> ${e.name}</label></p>`;
                     }
                 });
@@ -223,13 +224,11 @@
 
         /* form submit */
 
-        /* TODO: валидация на Retail Type, должен быть выбран хотя-бы один тип */
-
         $("#createPlaceForm").validate({
             rules: {
                 name: {
                     required: true,
-                    minlength:3,
+                    minlength :3,
                 },
                 description: {
                     required: true,
@@ -239,9 +238,15 @@
                 },
                 address: {
                     required: true,
-                }
+                },
             },
             submitHandler: function () {
+                let $place_retailtype = $('#place_retailtype');
+                if ($place_retailtype.find('input:checked').length < 1) {
+                    $place_retailtype.addClass('invalid').find('input').eq(0).focus();
+                    return false;
+                }
+
                 let formData = $('.formData').serializeArray();
 
                 formData.push({
