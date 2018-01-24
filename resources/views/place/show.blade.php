@@ -3,6 +3,9 @@
 @section('title', 'NAU show Place')
 
 @section('content')
+    @if(!auth()->user()->isImpersonated())
+        <a href="{{route('profile.place.edit')}}">Edit place</a>
+    @endif
     <div class="col-md-10 col-md-offset-1">
         <div class="card">
             <div class="content">
@@ -16,7 +19,6 @@
                 <h4>{{$description}}</h4>
                 <h4>{{$address}}</h4>
                 <p>{{$about}}</p>
-                <a href="{{route('profile.place.offers')}}"></a>
             </div>
         </div>
     </div>
