@@ -79,4 +79,12 @@ trait RelationsTrait
     {
         return $this->categories()->whereNotNull('parent_id');
     }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function category(): BelongsToMany
+    {
+        return $this->categories()->whereNull('parent_id');
+    }
 }
