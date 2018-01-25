@@ -17,7 +17,7 @@ class CreateOffersDataTable extends Migration
         {
             $table->uuid('id')->primary();;
             $table->boolean('delivery')->default(false);
-//            types: delivery, gift, bonus, second_free
+//            types: discount, gift, bonus, second_free
             $table->string('type', 12)->nullable();
             $table->string('gift_bonus_type', '5')->nullable();
             $table->string('gift_bonus_descr')->nullable();

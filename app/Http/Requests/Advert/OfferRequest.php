@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Advert;
 
 use App\Helpers\Constants;
+use App\Models\OfferData;
 use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -86,6 +87,25 @@ class OfferRequest extends FormRequest
                 'required|string|in:%s',
                 implode(',', $weekDaysService->fullList())
             ),
+            'delivery'               => 'required|boolean',
+            'type'                   => sprintf(
+                'nullable|required_with:gift_bonus_descr,discount_percent|in:%s',
+                implode(',', OfferData::OFFER_TYPES)
+            ),
+            'gift_bonus_descr'       => sprintf(
+                'nullable|required_if:type,%s,type,%s|required_with:discount_start_price|string',
+                OfferData::OFFER_TYPE_GIFT,
+                OfferData::OFFER_TYPE_BONUS
+            ),
+            'discount_percent'       => sprintf(
+                'nullable|required_if:type,%s|required_with:discount_start_price|numeric|between:0,100',
+                OfferData::OFFER_TYPE_DISCOUNT
+            ),
+            'discount_start_price'   => 'nullable|required_with:currency|numeric',
+            'currency'               => sprintf(
+                'nullable|required_with:discount_start_price|string|in:%s',
+                implode(',', Constants::CURRENCIES)
+            )
         ];
     }
 } 
