@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string      id
  * @property boolean     delivery
  * @property null|string type
- * @property null|string gift_bonus_type
  * @property null|string gift_bonus_descr
  * @property null|float  discount_percent
  * @property null|float  discount_start_price
@@ -49,7 +48,6 @@ class OfferData extends Model
             'id'                   => 'string',
             'delivery'             => 'boolean',
             'type'                 => 'string',
-            'gift_bonus_type'      => 'string',
             'gift_bonus_descr'     => 'string',
             'discount_percent'     => 'float',
             'discount_start_price' => 'float',
@@ -59,7 +57,6 @@ class OfferData extends Model
         $this->fillable = [
             'delivery',
             'type',
-            'gift_bonus_type',
             'gift_bonus_descr',
             'discount_percent',
             'discount_start_price',
@@ -69,7 +66,6 @@ class OfferData extends Model
         $this->attributes = [
             'delivery'             => false,
             'type'                 => null,
-            'gift_bonus_type'      => null,
             'gift_bonus_descr'     => null,
             'discount_percent'     => null,
             'discount_start_price' => null,

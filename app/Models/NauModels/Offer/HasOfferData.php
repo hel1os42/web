@@ -40,14 +40,6 @@ trait HasOfferData
     /**
      * @return null|string
      */
-    public function getGiftBonusTypeAttribute(): ?string
-    {
-        return $this->offerData->gift_bonus_type;
-    }
-
-    /**
-     * @return null|string
-     */
     public function getGiftBonusDescrAttribute(): ?string
     {
         return $this->offerData->gift_bonus_descr;
