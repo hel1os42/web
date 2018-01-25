@@ -10,9 +10,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
                 <div>
-                    <form action="{{ route('places.store') }}" method="POST" class="nau-form" id="createPlaceForm" target="_top">
-
-                        <input type="hidden" name="_method" value="PATCH">
+                    <form action="{{ route('places.update', $id) }}" method="PATCH" class="nau-form" id="createPlaceForm" target="_top">
 
                         <p class="title" style="margin-top: 32px;">Edit advertiser place</p>
 
@@ -64,7 +62,7 @@
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
-                                    <select id="place_category" name="category" class="formData"></select>
+                                    <select id="place_category" name="category_ids[]" class="formData"></select>
                                 </label>
                             </p>
                             <p class="hint">Please, select the category.</p>
@@ -174,6 +172,7 @@
             formBoxTags.innerHTML = wait;
             let url = "{{ route('categories') }}" + '/' + this.value + '?with=retailTypes;retailTypes.specialities;tags';
             srvRequest(url, 'GET', 'json', function (request){
+                console.dir(request);
                 createRetailType(request);
                 createSpecialties(request);
                 createTags(request);
@@ -330,11 +329,6 @@
                 let formData = $('.formData').serializeArray();
 
                 formData.push({
-                    "name": "_method",
-                    "value": $('[name="_method"]').val()
-                });
-
-                formData.push({
                     "name": "_token",
                     "value": $('[name="_token"]').val()
                 });
@@ -369,7 +363,7 @@
                 console.dir(formData);
 
                 $.ajax({
-                    type: "POST",
+                    type: "PATCH",
                     url: $('#createPlaceForm').attr('action'),
                     headers: { 'Accept': 'application/json' },
                     data: formData,
