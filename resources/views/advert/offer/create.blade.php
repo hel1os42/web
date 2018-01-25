@@ -248,9 +248,8 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
-                        return window.location.replace("{{ route('advert.offers.index') }}");
+                        //return window.location.replace("{{ route('advert.offers.index') }}");
                     } else {
-                        console.log('>>><<<');
                         console.log(xhr);
                     }
                 },
@@ -296,7 +295,14 @@
             let res = true;
             let val, $control, $hint;
 
-            /* TODO: validation */
+            /* TODO: validation Map */
+            /* Map */
+
+            /* TODO: validation Times */
+            /* Times */
+
+            /* TODO: validation Dates */
+            /* Dates */
 
             /* Offer Type */
             $hint = $('#hint_offertypebox');
@@ -311,6 +317,15 @@
             if ($('#bonus_radio').prop('checked')) {
                 $control = $('#bonus_information');
                 if ($control.val().length < 3) {
+                    $control.focus().parents('.control-text').addClass('invalid');
+                    $hint.show();
+                    res = false;
+                }
+            }
+            if ($('#discount_radio').prop('checked')) {
+                $control = $('[name="discount_percent"]');
+                val = +$control.val();
+                if (isNaN(val) || val < 0.01 || val > 100) {
                     $control.focus().parents('.control-text').addClass('invalid');
                     $hint.show();
                     res = false;
