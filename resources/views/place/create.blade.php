@@ -267,7 +267,7 @@
 
                 formBoxSpecialties.querySelectorAll('.specialities-group').forEach(function(group, i){
                     formData.push({
-                        "name": `specialities[${i}][retail_type]`,
+                        "name": `specialities[${i}][retail_type_id]`,
                         "value": group.dataset.id
                     });
                     group.querySelectorAll('input:checked').forEach(function(input, j){

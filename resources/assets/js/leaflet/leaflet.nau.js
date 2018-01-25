@@ -133,3 +133,33 @@ function getTimeZone(map, callback){
         xhr.send(null);
     }
 }
+
+function getTimeZoneGPS(gps, callback){
+    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
+    let timestamp = Math.round(new Date().valueOf() / 1000);
+    if (typeof gps.lng === 'string') gps.lng = parseFloat(gps.lng);
+    while (gps.lng > 180) gps.lng -= 360;
+    while (gps.lng < -180) gps.lng += 360;
+    let requestUrl = url + `location=${gps.lat},${gps.lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+    return httpGetAsync(requestUrl, callback);
+
+    function httpGetAsync(theUrl, callback){
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 200 === xhr.status){
+                let response = JSON.parse(xhr.responseText);
+                let tz = convertRawOffset(response.rawOffset);
+                callback(tz);
+                function convertRawOffset(raw){
+                    let absRawInHr = Math.abs(raw / 3600);
+                    let converted = isNaN(absRawInHr) ? 'error' : (absRawInHr <= 9 ? '0' : '') + absRawInHr + '00';
+                    if (converted !== 'error') converted = (raw < 0 ? '-' : '+') + converted;
+                    return converted;
+                }
+            }
+        };
+        xhr.open("GET", theUrl, true);
+        xhr.send(null);
+    }
+}

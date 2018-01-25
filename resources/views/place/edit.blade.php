@@ -372,7 +372,7 @@
                     data: formData,
                     success: function(data, textStatus, xhr){
                         if (201 === xhr.status){
-                            //return window.location.replace("{{ route('profile') }}");
+                            return window.location.replace("{{ route('profile') }}");
                         } else {
                             alert("Something went wrong. Try again, please.");
                             console.log(xhr.status);
