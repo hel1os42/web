@@ -74,7 +74,7 @@ class CreateUpdateRequest extends FormRequest
             'tags'                       => 'nullable|array',
             'tags.*'                     => 'string|exists:tags,slug',
             'specialities'               => 'nullable|array',
-            'specialities.*.retail_type' => 'string|exists:specialities,category_id',
+            'specialities.*.retail_type' => 'string|exists:specialities,retail_type_id',
             'specialities.*.specs'       => 'array',
             'specialities.*.specs.*'     => 'string|exists:specialities,slug',
         ];

@@ -9,8 +9,8 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
                 <div>
-                    <form action="{{ route('places.store') }}" method="post" class="nau-form" id="createPlaceForm" target="_top">
-
+                    <form action="{{ route('places.store') }}" method="POST" class="nau-form" id="createPlaceForm" target="_top">
+                        {{ csrf_field() }}
                         <p class="title" style="margin-top: 32px;">Create advertiser place</p>
 
                         <div class="control-box">
