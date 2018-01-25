@@ -93,7 +93,7 @@ class OfferRequest extends FormRequest
                 implode(',', OfferData::OFFER_TYPES)
             ),
             'gift_bonus_descr'       => sprintf(
-                'nullable|required_if:type,%s,type,%s|required_with:discount_start_price|string',
+                'nullable|required_if:type,%s,type,%s|string',
                 OfferData::OFFER_TYPE_GIFT,
                 OfferData::OFFER_TYPE_BONUS
             ),
