@@ -138,6 +138,10 @@
             formBoxTags.innerHTML = wait;
             let url = "{{ route('categories') }}" + '/' + this.value + '?with=retailTypes;retailTypes.specialities;tags';
             srvRequest(url, 'GET', 'json', function (request){
+
+                /* TODO: ВСЁ ПЕРЕДЕЛАТЬ!!!!! при изменении Retail Type не должны очищаться все галочки Spetialities!!! */
+                /* но чуть позже... */
+
                 createRetailType(request);
                 createSpecialties(request);
                 createTags(request);
@@ -171,7 +175,7 @@
                 request.retail_types.find(reatailType).specialities.forEach(function(e){
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
-                        let name = e.group ? `name="group_${e.group}"` : '';
+                        let name = e.group ? `name="${uuid2id(e.retail_type_id)}_${e.group}"` : '';
                         s += `<p><label><input type="${type}" ${name} value="${e.slug}"> ${e.name}</label></p>`;
                     }
                 });

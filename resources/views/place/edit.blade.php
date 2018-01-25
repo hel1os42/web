@@ -27,7 +27,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Description *</span>
+                                    <span class="input-label">Description</span>
                                     <textarea name="description" class="formData">{{ $description }}</textarea>
                                 </label>
                             </p>
@@ -37,7 +37,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">About *</span>
+                                    <span class="input-label">About</span>
                                     <textarea name="about" class="formData">{{ $about }}</textarea>
                                 </label>
                             </p>
@@ -47,7 +47,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Address *</span>
+                                    <span class="input-label">Address</span>
                                     <input name="address" value="{{ $address }}" class="formData">
                                 </label>
                             </p>
@@ -170,6 +170,10 @@
             srvRequest(url, 'GET', 'json', function (response){
                 console.log('All categories, types, spetialities, tags:');
                 console.dir(response);
+
+                /* TODO: ВСЁ ПЕРЕДЕЛАТЬ!!!!! при изменении Retail Type не должны очищаться все галочки Spetialities!!! */
+                /* но чуть позже... */
+
                 createRetailType(response);
                 createSpecialties(response);
                 createTags(response);
@@ -223,7 +227,7 @@
                 response.retail_types.find(reatailType).specialities.forEach(function(e){
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
-                        let name = e.group ? 'name="group' + e.group + '"' : '';
+                        let name = e.group ? `name="${uuid2id(e.retail_type_id)}_${e.group}"` : '';
                         let checked = '';
                         if (firstTime) checked = hasSpecialty(e.retail_type_id, e.slug) ? 'checked' : '';
                         s += `<p><label><input type="${type}" ${name} value="${e.slug}" ${checked}> ${e.name}</label></p>`;
@@ -341,7 +345,7 @@
 
                 formBoxSpecialties.querySelectorAll('.specialities-group').forEach(function(group, i){
                     formData.push({
-                        "name": `specialities[${i}][retail_type]`,
+                        "name": `specialities[${i}][retail_type_id]`,
                         "value": group.dataset.id
                     });
                     group.querySelectorAll('input:checked').forEach(function(input, j){
@@ -368,7 +372,7 @@
                     data: formData,
                     success: function(data, textStatus, xhr){
                         if (201 === xhr.status){
-                            return window.location.replace("{{ route('profile') }}");
+                            //return window.location.replace("{{ route('profile') }}");
                         } else {
                             alert("Something went wrong. Try again, please.");
                             console.log(xhr.status);
