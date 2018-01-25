@@ -248,7 +248,7 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
-                        //return window.location.replace("{{ route('advert.offers.index') }}");
+                        return window.location.replace("{{ route('advert.offers.index') }}");
                     } else {
                         console.log(xhr);
                     }
