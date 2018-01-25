@@ -50,6 +50,13 @@ iframe {
     background: linear-gradient(to top, #ff8a0e, #ff5a00);
     outline: none;
 }
+.btn-nau.btn-xs {
+    padding: 8px 20px;
+    font-size: 80%;
+    font-weight: normal;
+}
+
+
 #mainwrapper {
     min-height: 100vh;
     padding-bottom: 60px;
