@@ -117,7 +117,13 @@ class UserController extends Controller
         $user = $user->update($userData, $uuid);
         $user = $this->updateRelationData($user, $userData);
 
-        return \response()->render('user.show', $user->toArray(), Response::HTTP_CREATED, route('profile'));
+        $with = ['place'];
+
+        if ($this->user()->isAdmin() || $this->user()->isAgent()) {
+            $with = array_merge($with, ['roles', 'parents', 'children']);
+        }
+
+        return \response()->render('user.show', $user->fresh($with), Response::HTTP_CREATED, route('profile'));
     }
 
     /**
