@@ -77,6 +77,9 @@ function srvRequest(url, method, respType, callback){
     xhr.send();
 }
 
+function uuid2id(uuid) {
+    return 'id_' + uuid.replace(/-/g, '');
+}
 
 
 

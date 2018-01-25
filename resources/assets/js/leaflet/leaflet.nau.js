@@ -109,6 +109,8 @@ function getTimeZone(map, callback){
     let timestamp = Math.round(new Date().valueOf() / 1000);
     let lat = map.getCenter().lat;
     let lng = map.getCenter().lng;
+    while (lng > 180) lng -= 360;
+    while (lng < -180) lng += 360;
     let requestUrl = url + `location=${lat},${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
     return httpGetAsync(requestUrl, callback);
 
