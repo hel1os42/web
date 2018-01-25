@@ -54,15 +54,11 @@
                             <p class="hint">Please, enter the Place address.</p>
                         </div>
 
-                        <p style="color: red; font-size: 32px; line-height: 44px; font-weight: bold;">
-                            Category, Retail Type, Spetialities, Tags DO NOT WORK
-                        </p>
-
                         <div class="control-box">
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
-                                    <select id="place_category" name="category_ids[]" class="formData"></select>
+                                    <select id="place_category" name="category" class="formData"></select>
                                 </label>
                             </p>
                             <p class="hint">Please, select the category.</p>
@@ -171,17 +167,20 @@
             formBoxSpecialties.innerHTML = wait;
             formBoxTags.innerHTML = wait;
             let url = "{{ route('categories') }}" + '/' + this.value + '?with=retailTypes;retailTypes.specialities;tags';
-            srvRequest(url, 'GET', 'json', function (request){
-                console.dir(request);
-                createRetailType(request);
-                createSpecialties(request);
-                createTags(request);
+            srvRequest(url, 'GET', 'json', function (response){
+                console.log('All categories, types, spetialities, tags:');
+                console.dir(response);
+                createRetailType(response);
+                createSpecialties(response);
+                createTags(response);
                 firstTime = false;
             });
         });
 
         let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
         srvRequest(rqURL, 'GET', 'json', function(response){
+            console.log('Place categories, types, spetialities, tags:');
+            console.dir(response);
             placeInformation = response;
             srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
                 let html = '', selected;
@@ -195,9 +194,9 @@
         });
 
 
-        function createRetailType(request) {
+        function createRetailType(response) {
             let html = '', checked;
-            request.retail_types.forEach(function(e){
+            response.retail_types.forEach(function(e){
                 checked = '';
                 if (firstTime) checked = hasRetailType(e.id) ? 'checked' : '';
                 html += `<p><label><input type="checkbox" name="retail_types[]" value="${e.id}" ${checked}> ${e.name}</label></p>`;
@@ -205,7 +204,7 @@
             formBoxRetailType.innerHTML = html;
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
                 checkbox.addEventListener('change', function(){
-                    createSpecialties(request);
+                    createSpecialties(response);
                 });
             });
             function hasRetailType(id){
@@ -215,19 +214,19 @@
             }
         }
 
-        function createSpecialties(request) {
+        function createSpecialties(response) {
             let html = '';
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
                 if (!checkbox.checked) return;
                 let s = '';
                 function reatailType(e){ return e.id === checkbox.value; }
-                request.retail_types.find(reatailType).specialities.forEach(function(e){
+                response.retail_types.find(reatailType).specialities.forEach(function(e){
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
                         let name = e.group ? 'name="group' + e.group + '"' : '';
                         let checked = '';
-                        if (firstTime) checked = hasSpecialty(e.retail_type_id, e.slug) ? 'checked' : ''
-                                s += `<p><label><input type="${type}" ${name} value="${e.slug}" ${checked}> ${e.name}</label></p>`;
+                        if (firstTime) checked = hasSpecialty(e.retail_type_id, e.slug) ? 'checked' : '';
+                        s += `<p><label><input type="${type}" ${name} value="${e.slug}" ${checked}> ${e.name}</label></p>`;
                     }
                 });
                 if (s) {
@@ -245,9 +244,9 @@
             }
         }
 
-        function createTags(request){
+        function createTags(response){
             let html = '', checked;
-            request.tags.forEach(function(tag){
+            response.tags.forEach(function(tag){
                 checked = '';
                 if (firstTime) checked = hasTag(tag.slug) ? 'checked' : '';
                 html += `<label><input type="checkbox" value="${tag.slug}" ${checked}> <span>${tag.name}</span></label>`;
