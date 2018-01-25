@@ -43,7 +43,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon      updated_at
  * @property boolean     delivery
  * @property null|string type
- * @property null|string gift_bonus_type
  * @property null|string gift_bonus_descr
  * @property null|float  discount_percent
  * @property null|float  discount_start_price
@@ -475,7 +474,6 @@ class Offer extends AbstractNauModel
             'picture_url',
             'delivery',
             'type',
-            'gift_bonus_type',
             'gift_bonus_descr',
             'discount_percent',
             'discount_start_price',
@@ -511,7 +509,6 @@ class Offer extends AbstractNauModel
             'reserved'               => 'integer',
             'delivery'               => 'boolean',
             'type'                   => 'string',
-            'gift_bonus_type'        => 'string',
             'gift_bonus_descr'       => 'string',
             'discount_percent'       => 'float',
             'discount_start_price'   => 'float',
