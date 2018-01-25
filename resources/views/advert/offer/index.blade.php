@@ -293,61 +293,37 @@
 
         function fillTimeframes(){
             $(".gps").each(function(){
-                let data = {
+                let gps = {
                     lat: $(this).data('lat'),
-                    lng: $(this).data('lng'),
-                    offerId: $(this).data('offerid')
+                    lng: $(this).data('lng')
                 };
-                getTZ(data, fillTimeframesCallback);
-            });
-            function getTZ(data, callback){
-                let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
-                let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
-                let timestamp = Math.round(new Date().valueOf() / 1000);
-                let lat = data.lat;
-                let lng = data.lng;
-                let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
-                return httpGetAsync(data, requestUrl, callback);
+                let offerId = $(this).data('offerid');
+                getTimeZoneGPS(gps, fillTimeframesCallback);
 
-                function httpGetAsync(data, theUrl, callback)
-                {
-                    let xmlHttp = new XMLHttpRequest();
-                    xmlHttp.onreadystatechange = function() {
-                        if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
-                            let response = JSON.parse(xmlHttp.responseText);
-                            function convertRawOffset(raw){
-                                let absRawInHr = Math.abs(raw / 3600);
-                                let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
-                                return (raw < 0) ? ('-' + converted) : ('+' + converted);
-                            }
-                            let tz = convertRawOffset(response.rawOffset);
-                            callback(data, tz);
+                function fillTimeframesCallback(tz){
+                    /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
+
+                    let absRawInHr = tz.substr(-4,2);
+                    let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
+                    let oldweekdays = $('.workingDaysStorage[data-offerid="' + offerId + '"]').data('workingdays');
+                    $('.workingDaySpan[data-offerid="'+offerId+'"]').each(function(){
+                        let day = $(this).data('day');
+                        if (day in oldweekdays){
+                            $(this).text(addTz(oldweekdays[day].from, tzInHr) + '-' + addTz(oldweekdays[day].to, tzInHr));
                         }
+                    });
+
+                    function addTz(timeStr, tzNum) {
+                        let timeHrsNum = +timeStr.substr(0,2);
+                        let res = timeHrsNum + tzNum;
+                        if (res > 23) res -= 24;
+                        if (res < 0) res += 24;
+                        if (res < 10) res = '0' + res;
+                        return res + timeStr.substr(2);
                     }
-                    xmlHttp.open("GET", theUrl, true);
-                    xmlHttp.send(null);
                 }
-            }
+            });
 
-
-            function fillTimeframesCallback(data, tz){
-                let absRawInHr = tz.substr(-4,2);
-                let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
-
-                let oldweekdays = $('.workingDaysStorage[data-offerid="' + data.offerId + '"]').data('workingdays');
-                $('.workingDaySpan[data-offerid="'+data.offerId+'"]').each(function(){
-                    let day = $(this).data('day');
-                    if (day in oldweekdays){
-                        $(this).text(addTz(oldweekdays[day].from, tzInHr) + '-' + addTz(oldweekdays[day].to, tzInHr));
-                    }
-                });
-
-                function addTz(timeStr, tzNum)
-                {
-                    let timeHrsNum = +timeStr.substr(0,2);
-                    return (timeHrsNum+tzNum) + timeStr.substr(2);
-                }
-            }
         }
         fillTimeframes();
     </script>
