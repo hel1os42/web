@@ -26,7 +26,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Description *</span>
+                                    <span class="input-label">Description</span>
                                     <textarea name="description" class="formData">{{ old('description') }}</textarea>
                                 </label>
                             </p>
@@ -36,8 +36,8 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">About *</span>
-                                    <textarea name="about" class="formData">{{ old('about') }}</textarea>
+                                    <span class="input-label">About</span>
+                                    <textarea name="about" class="formData">{!! old('about') !!}</textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the information About Place.</p>
@@ -46,7 +46,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Address *</span>
+                                    <span class="input-label">Address</span>
                                     <input name="address" value="{{ old('address') }}" class="formData">
                                 </label>
                             </p>
