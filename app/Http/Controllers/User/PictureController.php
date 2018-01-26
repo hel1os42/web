@@ -36,7 +36,9 @@ class PictureController extends AbstractPictureController
 
         $this->authorize('users.picture.store', $editableUser);
 
-        $redirect = ($request->wantsJson()) ? route('profile.picture.show') : route('profile');
+        $redirect = ($request->wantsJson())
+            ? route('users.picture.show', [$userUuid])
+            : route('users.show', [$userUuid]);
 
         return $this->storeImageFor($request, $editableUser->getId(), $redirect);
     }
