@@ -285,11 +285,8 @@
     @endpush
 
     @push('scripts')
-        <script src="{{ asset('js/partials/create-offer-validator.js') }}"></script>
-        <script src="{{ asset('js/partials/create-offer-sender.js') }}"></script>
         <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
         <script src="{{ asset('js/partials/control-range.js') }}"></script>
-        <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
         <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
         <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
         <script>

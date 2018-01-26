@@ -310,7 +310,7 @@
 #marker {
     position: absolute;
     z-index: 500;
-    background: rgba(255, 139, 16, 0.2) url(/img/leaflet/pin.png) no-repeat 50% 50%;
+    background: rgba(255, 139, 16, 0.2);
     background-size: auto 35px;
     width: 190px;
     height: 190px;
@@ -320,8 +320,19 @@
     border-radius: 50%;
     pointer-events: none;
 }
+#marker:before {
+    content: "";
+    position: absolute;
+    z-index: 14;
+    left: 50%;
+    top: 50%;
+    margin: -36px 0 0 -15px;
+    width: 31px;
+    height: 39px;
+    background: url(/img/leaflet/pin.png) no-repeat center center;
+}
 #marker.without-radius {
-	background-color: transparent;
+	background: transparent;
 }
 
 #place_retailtype label {
@@ -423,4 +434,8 @@
 .nau-form label .offer-type-control {
     width: 144px;
     text-align: center;
+}
+
+.notice-account-deactivate strong {
+    color: red;
 }

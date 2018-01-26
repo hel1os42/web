@@ -13,6 +13,7 @@
             <form action="{{ route('advert.offers.store') }}" method="POST" class="nau-form" id="createOfferForm" target="_top">
 
                 @include('advert.offer.create-main-info')
+                @include('partials/offer-picture-filepicker')
                 @include('advert.offer.create-category')
                 @include('advert.offer.create-working')
                 @include('advert.offer.create-map')
@@ -32,11 +33,8 @@
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/partials/create-offer-validator.js') }}"></script>
-    <script src="{{ asset('js/partials/create-offer-sender.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
-    <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script>
@@ -46,9 +44,6 @@
 
         /* control range init */
         controlRangeInit();
-
-        /* image uploader init */
-        //imageUploader('.js-imgupload');
 
         /* "Working Days & Time" checking days */
         checkingDays();
@@ -120,6 +115,16 @@
                 });
             }).trigger('change');
         }
+
+
+
+        /* picture and cover */
+
+        let $offer_image_box = $('#offer_image_box');
+        $offer_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+        });
 
 
 
@@ -248,7 +253,8 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
-                        return window.location.replace("{{ route('advert.offers.index') }}");
+                        let uuid = xhr.getResponseHeader('Location').split('/');
+                        sendImages(uuid[uuid.length - 1]);
                     } else {
                         console.log(xhr);
                     }
@@ -343,6 +349,42 @@
             return res;
         }
 
+        function sendImages(uuid){
+            if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
+                let formData = new FormData();
+                formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+                formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
+                for(let i of formData) { console.log(i); }
+                $.ajax({
+                    url: `/advert/offers/${uuid}/picture`,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    method: 'POST',
+                    success: function (a, b, c) {
+                        console.log('================================');
+                        console.log('SUCCESS: image sent.');
+                        console.dir(a);
+                        console.dir(b);
+                        console.dir(c);
+                        console.log('================================');
+                        alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
+                        //window.location.replace("{{ route('advert.offers.index') }}");
+                    },
+                    error: function (a, b, c) {
+                        console.log('================================');
+                        console.log('ERROR: image not sent.');
+                        console.dir(a);
+                        console.dir(b);
+                        console.dir(c);
+                        console.log('================================');
+                    }
+                });
+            } else {
+                window.location.replace("{{ route('advert.offers.index') }}");
+            }
+            sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
+        }
     </script>
 @endpush
 

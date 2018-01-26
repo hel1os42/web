@@ -21,7 +21,7 @@
                                     <input name="name" value="{{ $name }}" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place name.</p>
+                            <p class="hint">Please, enter the Place name (minimum 3 characters).</p>
                         </div>
 
                         <div class="control-box">
@@ -67,6 +67,7 @@
                         <p><strong>Retail Type *</strong></p>
                         <div class="control-box" id="place_retailtype">
                         </div>
+                        <p class="hint">Please, select one or more Retail Type.</p>
 
                         <p><strong>Specialties</strong></p>
                         <div class="control-box" id="place_specialties">
@@ -79,7 +80,7 @@
                         @if(false)
                             <div class="control-box">
                                 <p>
-                                    <span class="input-label"><strong>Offer picture</strong></span>
+                                    <span class="input-label"><strong>Place picture</strong></span>
                                     <label class="control-file">
                                         <span class="text-add">Add picture</span>
                                         <input name="____offer_picture" type="file" class="js-imgupload" id="offerImg">
@@ -89,6 +90,10 @@
                                 </p>
                             </div>
                         @endif
+
+                        @include('partials/place-picture-filepicker')
+
+                        @include('partials/place-cover-filepicker')
 
                         <div class="control-box">
                             <p><strong>Setting map radius *</strong></p>
@@ -102,24 +107,18 @@
                             <p id="mapradius">Radius: <span>unknown</span> km.</p>
                         </div>
 
-                        <p class="step-footer">
-                            <input type="submit" class="btn-nau pull-right" value="Save">
-                        </p>
+                        @if(auth()->user()->isAdvertiser() || auth()->user()->isChiefAdvertiser())
+                            <p class="notice-account-deactivate">
+                                <strong>Notice! Your account will be disapproved, and all offers will be deactivated.</strong>
+                                After the positive remark verification by Admin or Agent, your account will be approved again.
+                            </p>
+                        @endif
+
+                        <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Save"></p>
 
                     </form>
+
                 </div>
-
-                @include('partials/place-picture-filepicker')
-                <p style="color: red; visibility: hidden;">
-                    <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
-                    After the positive remark verification by Admin or Agent, your account will be approved again.
-                </p>
-
-                @include('partials/place-cover-filepicker')
-                <p style="color: red; visibility: hidden;">
-                    <strong style="color: red;">Notice! Your account will be disapproved, and all offers will be deactivated.</strong><br>
-                    After the positive remark verification by Admin or Agent, your account will be approved again.
-                </p>
 
             </div>
         </div>
@@ -133,25 +132,10 @@
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
 
     <script>
-        function imgError(image) {
-            image.onerror = "";
-            image.src = "/img/imagenotfound.svg";
-            return true;
-        }
-
-        /* show notices (должно быть только при редактировании Главным или Обычным рекламодателем; админу и агенту это не показывать) */
-
-        $('[type="file"]').on('change', function(){
-           $(this).parents('form').next('p').css('visibility', 'visible');
-        });
-
-
-
 
         /* offer category and sub-categories */
 
@@ -273,7 +257,6 @@
 
 
 
-
         /* map */
 
         mapInit({
@@ -304,89 +287,148 @@
 
 
 
-        /* form submit */
+        /* picture and cover */
 
-        $("#createPlaceForm").validate({
-            rules: {
-                name: {
-                    required: true,
-                    minlength :3,
-                },
-                description: {
-                    required: true,
-                },
-                about: {
-                    required: true,
-                },
-                address: {
-                    required: true,
-                },
-            },
-            submitHandler: function () {
-                let $place_retailtype = $('#place_retailtype');
-                if ($place_retailtype.find('input:checked').length < 1) {
-                    $place_retailtype.addClass('invalid').find('input').eq(0).focus();
-                    return false;
-                }
+        let $place_picture_box = $('#place_picture_box');
+        let $place_cover_box = $('#place_cover_box');
+        $place_picture_box.add($place_cover_box).find('img').on('error', function(){
+            $(this).attr('src', "{{ asset('/img/image_placeholder.jpg') }}");
+        });
+        $place_picture_box.find('img').attr('src', "{{ $picture_url }}");
+        $place_cover_box.find('img').attr('src', "{{ $cover_url }}");
 
-                let formData = $('.formData').serializeArray();
-
-                formData.push({
-                    "name": "_token",
-                    "value": $('[name="_token"]').val()
-                });
-
-                formBoxRetailType.querySelectorAll('input:checked').forEach(function(checkbox){
-                    formData.push({
-                        "name": "retail_types[]",
-                        "value": checkbox.value
-                    });
-                });
-
-                formBoxSpecialties.querySelectorAll('.specialities-group').forEach(function(group, i){
-                    formData.push({
-                        "name": `specialities[${i}][retail_type_id]`,
-                        "value": group.dataset.id
-                    });
-                    group.querySelectorAll('input:checked').forEach(function(input, j){
-                        formData.push({
-                            "name": `specialities[${i}][specs][${j}]`,
-                            "value": input.value
-                        });
-                    });
-                });
-
-                formBoxTags.querySelectorAll('input:checked').forEach(function(checkbox){
-                    formData.push({
-                        "name": "tags[]",
-                        "value": checkbox.value
-                    });
-                });
-
-                console.dir(formData);
-
-                $.ajax({
-                    type: "PATCH",
-                    url: $('#createPlaceForm').attr('action'),
-                    headers: { 'Accept': 'application/json' },
-                    data: formData,
-                    success: function(data, textStatus, xhr){
-                        if (201 === xhr.status){
-                            return window.location.replace("{{ route('profile') }}");
-                        } else {
-                            alert("Something went wrong. Try again, please.");
-                            console.log(xhr.status);
-                        }
-                    },
-                    error: function (resp) {
-                        alert("Something went wrong. Try again, please.");
-                        console.log(resp.status);
-                    }
-                });
-            }
+        $place_picture_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+        });
+        $place_cover_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Cover changed');
         });
 
 
+
+
+        /* form submit */
+
+        $("#createPlaceForm").on('submit', function(e){
+            e.preventDefault();
+
+            if (!formValidation()) return false;
+            let notice = 'Your account will be disapproved.\nDo you want to continue?';
+            if ($('.notice-account-deactivate').length && !confirm(notice)) return false;
+
+            let formData = $('.formData').serializeArray();
+
+            formData.push({
+                "name": "_token",
+                "value": $('[name="_token"]').val()
+            });
+
+            formBoxRetailType.querySelectorAll('input:checked').forEach(function(checkbox){
+                formData.push({
+                    "name": "retail_types[]",
+                    "value": checkbox.value
+                });
+            });
+
+            formBoxSpecialties.querySelectorAll('.specialities-group').forEach(function(group, i){
+                formData.push({
+                    "name": `specialities[${i}][retail_type_id]`,
+                    "value": group.dataset.id
+                });
+                group.querySelectorAll('input:checked').forEach(function(input, j){
+                    formData.push({
+                        "name": `specialities[${i}][specs][${j}]`,
+                        "value": input.value
+                    });
+                });
+            });
+
+            formBoxTags.querySelectorAll('input:checked').forEach(function(checkbox){
+                formData.push({
+                    "name": "tags[]",
+                    "value": checkbox.value
+                });
+            });
+
+            console.dir(formData);
+
+            $.ajax({
+                type: "PATCH",
+                url: $('#createPlaceForm').attr('action'),
+                headers: { 'Accept': 'application/json' },
+                data: formData,
+                success: function(data, textStatus, xhr){
+                    if (201 === xhr.status){
+                        sendImages();
+                    } else {
+                        alert("Something went wrong. Try again, please.");
+                        console.log(xhr.status);
+                    }
+                },
+                error: function (resp) {
+                    alert("Something went wrong. Try again, please.");
+                    console.log(resp.status);
+                }
+            });
+
+        });
+
+        function formValidation(){
+            let res = true;
+            let $place_retailtype = $('#place_retailtype');
+            if ($place_retailtype.find('input:checked').length < 1) {
+                $place_retailtype.addClass('invalid').find('input').eq(0).focus();
+                res = false;
+            }
+            let $place_name = $('[name="name"]');
+            if ($place_name.val().length < 3) {
+                $place_name.focus().parents('.control-text').addClass('invalid');
+                res = false;
+            }
+            return res;
+        }
+
+        function sendImages(){
+            let n = { count: 0 };
+            let isNewPicture = $place_picture_box.find('[type="file"]').attr('data-changed');
+            let isNewCover = $place_cover_box.find('[type="file"]').attr('data-changed');
+            if (isNewPicture) n.count++;
+            if (isNewCover) n.count++;
+            redirectPage(n);
+            if (isNewPicture) sendImage(n, $place_picture_box, "{{ route('place.picture.store', $id) }}", redirectPage);
+            if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store', $id) }}", redirectPage);
+        }
+
+        function redirectPage(n){
+            if (n.count === 0) {
+                alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
+                //window.location.replace("{{ route('profile') }}");
+            }
+        }
+
+        function sendImage(n, $box, URI, callback){
+            let formData = new FormData();
+            formData.append('_token', $box.find('[name="_token"]').val());
+            formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
+            for(let i of formData) { console.log(i); }
+            $.ajax({
+                url: URI,
+                data: formData,
+                processData: false,
+                contentType: false,
+                method: 'POST',
+                success: function () {
+                    console.log('SUCCESS:', URI);
+                    n.count -= 1;
+                    callback(n);
+                },
+                error: function () {
+                    console.log('Error:', URI);
+                }
+            });
+        }
 
 
     </script>
