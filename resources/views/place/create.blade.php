@@ -318,8 +318,8 @@
             if (isNewPicture) n.count++;
             if (isNewCover) n.count++;
             redirectPage(n);
-            if (isNewPicture) sendImage(n, $place_picture_box, `/places/${uuid}/picture`, redirectPage);
-            if (isNewCover) sendImage(n, $place_cover_box, `/places/${uuid}/cover`, redirectPage);
+            if (isNewPicture) sendImage(n, $place_picture_box, "{{ route('place.picture.store') }}", redirectPage);
+            if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
         }
 
         function redirectPage(n){
