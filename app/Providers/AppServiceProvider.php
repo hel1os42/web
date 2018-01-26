@@ -9,8 +9,6 @@ use App\Observers\UserObserver;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Repositories\PlaceRepository;
-use App\Services\Implementation\ImpersonateService;
-use App\Services\ImpersonateService as ImpersonateServiceInterface;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
 use App\Services\Implementation\NauOfferReservation;
 use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
@@ -99,11 +97,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PlaceService::class,
             \App\Services\Implementation\PlaceService::class
-        );
-
-        $this->app->bind(
-            ImpersonateServiceInterface::class,
-            ImpersonateService::class
         );
     }
 
