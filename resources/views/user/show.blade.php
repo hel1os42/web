@@ -6,8 +6,8 @@
         <div class="col-md-2">
             <div class="card card-user">
                 <div class="author">
-                    @if (file_exists(public_path('../storage/app/images/profile/pictures/'.$id.'.jpg')))
-                        <img class="img avatar" src="{{ route('profile.picture.show') }}">
+                    @if (file_exists(public_path('../storage/app/images/profile/pictures/' . $id . '.jpg')))
+                        <img class="img avatar" src="{{ route('users.picture.show', [$id]) }}">
                     @else
                         <a href="#">
                             <img class="img avatar" src="{{ asset('img/avatar.png') }}">
