@@ -28,9 +28,11 @@
                             <div class="">{{ $place->getAddress() }}</div>
                             <div class="">
                                 {{ str_limit($place->getDescription(), 50) }}
-                                <a href="{{ route('places.edit', $place) }}">
-                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                </a>
+                                @if(!auth()->user()->isImpersonated())
+                                    <a href="{{ route('places.edit', $place) }}">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     @else
