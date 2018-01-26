@@ -229,6 +229,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/datatables.min.js') }}"></script>
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script>
         window.addEventListener('load', function(){
 
