@@ -18,7 +18,7 @@
                             <p><strong>Password</strong></p>
                             <p><strong>Password confirm</strong></p>
                             <p><strong>Phone</strong></p>
-                            <p><strong>Is it chief advertiser?</strong></p>
+                            <p><strong>Set user role</strong></p>
                         </div>
                         <div class="col-sm-6 p-10 p-5">
                             <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
@@ -31,7 +31,6 @@
                             <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
                                       value=""></p>
                             @include('role-partials.selector', ['partialRoute' => 'user.create-role'])
-
                         </div>
                         <button type="submit">Create</button>
                     </div>

@@ -112,7 +112,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->put('', 'UserController@update')->name('users.update');
         $router->patch('', 'UserController@update');
         $router->get('referrals', 'UserController@referrals');
-        $router->post('picture', 'User\PictureController@store');
+        $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
     });
 
@@ -193,6 +193,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
            ->where('uuid', '[a-z0-9-]+')
            ->name('places.offers.show');
+    $router->post('places/{uuid}/picture', 'Place\PictureController@storePicture')->name('places.picture.store');
+    $router->post('places/{uuid}/cover', 'Place\PictureController@storeCover')->name('places.cover.store');
 
 
     $router->resource('places', 'PlaceController', [

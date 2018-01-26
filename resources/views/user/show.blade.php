@@ -94,7 +94,7 @@
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <form method="POST" action="{{ route('profile.picture.store') }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <h4 class="title">Update your avatar</h4>
                                 <div class="row">
