@@ -93,7 +93,9 @@ class ImageService implements ImageServiceInterface
 
     /**
      * @param Place $place
+     *
      * @return string
+     * @throws \RuntimeException
      */
     public function savePlacePicture(Place $place): string
     {
@@ -102,6 +104,22 @@ class ImageService implements ImageServiceInterface
         $isStored = $this->resize(self::MAX_PLACE_PICTURE_WIDTH, self::MAX_PLACE_PICTURE_HEIGHT)
             ->encode(self::DEFAULT_ENCODING_FORMAT)
             ->save($destination);
+
+        return $isStored ? $destination : '';
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return string
+     * @throws \RuntimeException
+     */
+    public function savePlaceCover(Place $place): string
+    {
+        $destination = sprintf('%1$s/%2$s.%3$s', self::PLACE_COVERS_PATH, $place->getId(), self::DEFAULT_ENCODING_FORMAT);
+        $isStored = $this->resize(self::MAX_PLACE_COVER_WIDTH, self::MAX_PLACE_COVER_HEIGHT)
+                         ->encode(self::DEFAULT_ENCODING_FORMAT)
+                         ->save($destination);
 
         return $isStored ? $destination : '';
     }
