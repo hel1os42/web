@@ -84,3 +84,4 @@
     </p>
 </div>
 <p class="hint" id="hint_offertypebox">Please, enter the information.</p>
+

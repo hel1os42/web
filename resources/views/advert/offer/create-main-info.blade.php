@@ -21,15 +21,3 @@
     </p>
     <p class="hint">Please, enter the Offer description.</p>
 </div>
-
-{{--<div class="control-box">--}}
-    {{--<p>--}}
-        {{--<span class="input-label"><strong>Offer picture</strong></span>--}}
-        {{--<label class="control-file">--}}
-            {{--<span class="text-add">Add picture</span>--}}
-            {{--<input name="____offer_picture" type="file" class="js-imgupload" id="offerImg">--}}
-            {{--<img src="" alt="">--}}
-            {{--<span class="text-hover">Drag it here</span>--}}
-        {{--</label>--}}
-    {{--</p>--}}
-{{--</div>--}}
