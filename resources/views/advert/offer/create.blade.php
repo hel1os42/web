@@ -383,7 +383,6 @@
             } else {
                 window.location.replace("{{ route('advert.offers.index') }}");
             }
-            sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
         }
     </script>
 @endpush
