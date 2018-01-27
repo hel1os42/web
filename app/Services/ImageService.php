@@ -12,9 +12,6 @@ interface ImageService
     public const MAX_PLACE_PICTURE_WIDTH  = 192;
     public const MAX_PLACE_PICTURE_HEIGHT = 192;
 
-    public const MAX_PLACE_COVER_WIDTH  = 1200;
-    public const MAX_PLACE_COVER_HEIGHT = 400;
-
     const PLACE_PICTURES_PATH = 'images/place/pictures';
     const PLACE_COVERS_PATH   = 'images/place/covers';
 
@@ -27,6 +24,4 @@ interface ImageService
     public function save(string $destination): bool;
 
     public function savePlacePicture(Place $place): string;
-
-    public function savePlaceCover(Place $place): string;
 }
