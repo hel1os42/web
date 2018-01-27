@@ -4,49 +4,20 @@
 
 @section('content')
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-                <h1>Edit offer</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
-                <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
+            <h1>Edit offer</h1>
 
-                    {{ csrf_field() }}
+            <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="createOfferForm" target="_top">
 
-                    <p class="title">Name and Description</p>
+                @include('advert.offer.edit-main-info')
+                @include('partials/offer-picture-filepicker')
+                @include('advert.offer.edit-category')
+                @include('advert.offer.edit-working')
 
-                    <div class="control-box">
-                        <p class="control-text">
-                            <label>
-                                <span class="input-label">Offer name*</span>
-                                <input name="label" value="{{ $label }}" class="formData">
-                            </label>
-                        </p>
-                        <p class="hint">Please, enter the Offer name.</p>
-                    </div>
 
-                    <div class="control-box">
-                        <p class="control-text">
-                            <label>
-                                <span class="input-label">Offer description</span>
-                                <textarea name="description" class="nullableFormData">{{ $description }}</textarea>
-                            </label>
-                        </p>
-                        <p class="hint">Please, enter the Offer description.</p>
-                    </div>
-
-                    <p class="title">Category &amp; Type</p>
-
-                    <div class="control-box">
-                        <p class="control-select valid-not-empty">
-                            <label>
-                                <span class="input-label">Offer category</span>
-                                <select id="offer_category" name="category_id" class="formData" value="{{ $category_id }}"></select>
-                            </label>
-                        </p>
-                        <p class="hint">Please, select the category.</p>
-                    </div>
-                    {{--<div id="tab_step2" class="tab-pane fade">--}}
 
                     <div class="control-box">
                         <p class="title">Working dates</p>
