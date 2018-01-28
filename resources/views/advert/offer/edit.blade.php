@@ -144,7 +144,10 @@
         $offer_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
+        }).on('error', function(){
+            $(this).attr('src', "{{ asset('/img/image_placeholder.jpg') }}");
         });
+        $offer_image_box.find('img').attr('src', "{{ $picture_url }}");
 
 
 

@@ -77,20 +77,6 @@
                         <div class="control-box" id="place_tags">
                         </div>
 
-                        @if(false)
-                            <div class="control-box">
-                                <p>
-                                    <span class="input-label"><strong>Place picture</strong></span>
-                                    <label class="control-file">
-                                        <span class="text-add">Add picture</span>
-                                        <input name="____offer_picture" type="file" class="js-imgupload" id="offerImg">
-                                        <img src="" alt="">
-                                        <span class="text-hover">Drag it here</span>
-                                    </label>
-                                </p>
-                            </div>
-                        @endif
-
                         @include('partials/place-picture-filepicker')
 
                         @include('partials/place-cover-filepicker')
@@ -144,6 +130,7 @@
         let formBoxSpecialties = document.getElementById("place_specialties");
         let formBoxTags = document.getElementById("place_tags");
         let placeInformation, firstTime = true;
+        let spetialitiesCache = {};
 
         formSelectCategory.addEventListener('change', function (){
             let wait = '<img src="{{ asset('img/loading.gif') }}" alt="wait...">';
@@ -154,10 +141,6 @@
             srvRequest(url, 'GET', 'json', function (response){
                 console.log('All categories, types, spetialities, tags:');
                 console.dir(response);
-
-                /* TODO: ВСЁ ПЕРЕДЕЛАТЬ!!!!! при изменении Retail Type не должны очищаться все галочки Spetialities!!! */
-                /* но чуть позже... */
-
                 createRetailType(response);
                 createSpecialties(response);
                 createTags(response);
@@ -170,6 +153,11 @@
             console.log('Place categories, types, spetialities, tags:');
             console.dir(response);
             placeInformation = response;
+            placeInformation.specialities.forEach(function(sp){
+                if (!spetialitiesCache[sp.retail_type_id]) spetialitiesCache[sp.retail_type_id] = {};
+                spetialitiesCache[sp.retail_type_id][sp.slug] = true;
+            });
+            console.dir(spetialitiesCache);
             srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
                 let html = '', selected;
                 response.data.forEach(function(category){
@@ -181,7 +169,6 @@
             });
         });
 
-
         function createRetailType(response) {
             let html = '', checked;
             response.retail_types.forEach(function(e){
@@ -192,6 +179,7 @@
             formBoxRetailType.innerHTML = html;
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
                 checkbox.addEventListener('change', function(){
+                    if (!spetialitiesCache[this.value]) spetialitiesCache[this.value] = {};
                     createSpecialties(response);
                 });
             });
@@ -212,8 +200,7 @@
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
                         let name = e.group ? `name="${uuid2id(e.retail_type_id)}_${e.group}"` : '';
-                        let checked = '';
-                        if (firstTime) checked = hasSpecialty(e.retail_type_id, e.slug) ? 'checked' : '';
+                        let checked = spetialitiesCache[e.retail_type_id][e.slug] ? 'checked' : '';
                         s += `<p><label><input type="${type}" ${name} value="${e.slug}" ${checked}> ${e.name}</label></p>`;
                     }
                 });
@@ -252,6 +239,18 @@
         /* specialities accordion */
         $('#place_specialties').on('click', '.sgroup-title', function(){
             $(this).toggleClass('active').next().slideToggle();
+        }).on('change', 'input', function(){
+            let uuid = $(this).parents('.specialities-group').attr('data-id');
+            if ($(this).is('[type="checkbox"]')) {
+                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
+                else delete spetialitiesCache[uuid][$(this).val()];
+            } else {
+                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
+                    delete spetialitiesCache[uuid][$(this).val()];
+                }).end().filter(':checked').each(function(){
+                    spetialitiesCache[uuid][$(this).val()] = true;
+                });
+            }
         });
 
 
