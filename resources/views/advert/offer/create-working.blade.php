@@ -1,8 +1,9 @@
 <div class="control-box" style="margin-top: 32px;">
     <p class="title">Working dates</p>
-    <p class="row control-datetime valid-dates">
+    <p class="row control-datetime">
         <label class="col-xs-6"><span class="input-label">from *</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
         <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>
+        <span role="button" class="cleartime-btn" title="Clear field"></span>
     </p>
     <p class="hint">Please, select the valid range of dates.</p>
 </div>
@@ -41,14 +42,14 @@
                 weekend = day === 'sat' || day === 'sun';
                 Day = day[0].toUpperCase() + day.substr(1);
                 day2 = day.substr(0, 2);
-                html += `<p class="row day-info"><span class="col-xs-4"><span class="control-check-left">`;
-                html += `<input id="check_${day2}" name="check_${day2}" value="${day2}" type="checkbox">`;
-                html += `<label for="check_${day2}">${Day}</label></span></span>`;
-                html += `<span class="col-xs-4 control-datetime"><label>`;
-                html += `<input name="start_time_${day2}" readonly class="js-timepicker" value="" placeholder="__:__">`;
-                html += `</label></span><span class="col-xs-4 control-datetime"><label>`;
-                html += `<input name="finish_time_${day2}" readonly class="js-timepicker" value="" placeholder="__:__">`;
-                html += `</label></span></p>`;
+                html += `<p class="row day-info"><span class="col-xs-4"><span class="control-check-left">
+                    <input id="check_${day2}" name="check_${day2}" value="${day2}" type="checkbox">
+                    <label for="check_${day2}">${Day}</label></span></span>
+                    <span class="col-xs-4 control-datetime"><label>
+                    <input name="start_time_${day2}" readonly class="js-timepicker" value="" placeholder="__:__">
+                    </label></span><span class="col-xs-4 control-datetime"><label>
+                    <input name="finish_time_${day2}" readonly class="js-timepicker" value="" placeholder="__:__">
+                    </label></span></p>`;
             });
             let dayInfoBox = document.getElementById('dayInfoBox');
             dayInfoBox.innerHTML = html;

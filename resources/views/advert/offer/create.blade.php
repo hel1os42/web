@@ -44,6 +44,7 @@
 
         /* control range init */
         controlRangeInit();
+        maxRedemptionInfinity('.max-redemption input');
 
         /* "Working Days & Time" checking days */
         checkingDays();
@@ -56,7 +57,7 @@
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
-                $finishDate = $('[name="finish_date"]');
+                    $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
                 datePicker($(this), new Date());
             });
@@ -67,6 +68,17 @@
             $('.js-timepicker').on('focus click', function(){
                 timePicker($(this));
             });
+            $startDate.on('change', function(){
+                let fdate = $finishDate.val();
+                if (fdate) {
+                    let sdate = new Date($startDate.val());
+                    fdate = new Date(fdate);
+                    if (sdate > fdate) { $finishDate.val(''); }
+                }
+            });
+            $('.cleartime-btn').on('click', function(){
+                $('[name="finish_date"]').val('');
+            });
         }
 
         function controlRangeInit(){
@@ -74,6 +86,14 @@
             $('.js-numeric').parents('label').before(btn('more', '+')).after(btn('less', '-'));
             controlRange(selector);
             maxRedemptionInfinity('.max-redemption input');
+            $('[name="reward"]').on('change', function(){
+                let $reserv = $('[name="reserved"]');
+                let reservMin = $(this).val() * 10;
+                $reserv.attr('data-min', reservMin);
+                if ($reserv.val() < reservMin) {
+                    $reserv.attr('data-default', reservMin).val(reservMin);
+                }
+            });
             function btn(c, t) { return `<em role="button" class="${c}">${t}</em>`; }
         }
 
@@ -125,7 +145,6 @@
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
         });
-
 
 
 
@@ -245,7 +264,7 @@
             console.dir(formData);
 
             $.ajax({
-                type: "POST",
+                method: "POST",
                 url: $('#createOfferForm').attr('action'),
                 headers: {
                     'Accept':'application/json',
@@ -254,7 +273,7 @@
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         let uuid = xhr.getResponseHeader('Location').split('/');
-                        sendImages(uuid[uuid.length - 1]);
+                        sendImage(uuid[uuid.length - 1]);
                     } else {
                         console.log(xhr);
                     }
@@ -301,14 +320,27 @@
             let res = true;
             let val, $control, $hint;
 
-            /* TODO: validation Map */
             /* Map */
+            if ($('[name="timezone"]').val() === 'error') res = false;
 
-            /* TODO: validation Times */
             /* Times */
-
-            /* TODO: validation Dates */
-            /* Dates */
+            let $dayInfoBox = $('#dayInfoBox');
+            let $daysChecked = $dayInfoBox.find('[type="checkbox"]:checked');
+            if ($daysChecked.length < 1) {
+                $dayInfoBox.addClass('invalid');
+                $('html, body').animate({ scrollTop: $('.days-info').prev().offset().top }, 400);
+                res = false;
+            }
+            for (let i = 0; i < $daysChecked.length; i++) {
+                let times = $daysChecked.eq(i).parents('.day-info').find('[name*="time"]');
+                if (times.eq(0).val() === '') { res = emptyTimeField(times.eq(0)); break; }
+                if (times.eq(1).val() === '') { res = emptyTimeField(times.eq(1)); break; }
+            }
+            function emptyTimeField(input){
+                $dayInfoBox.addClass('invalid');
+                input.focus();
+                return false;
+            }
 
             /* Offer Type */
             $hint = $('#hint_offertypebox');
@@ -349,7 +381,7 @@
             return res;
         }
 
-        function sendImages(uuid){
+        function sendImage(uuid){
             if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
                 let formData = new FormData();
                 formData.append('_token', $offer_image_box.find('[name="_token"]').val());
@@ -361,29 +393,18 @@
                     processData: false,
                     contentType: false,
                     method: 'POST',
-                    success: function (a, b, c) {
-                        console.log('================================');
+                    success: function () {
                         console.log('SUCCESS: image sent.');
-                        console.dir(a);
-                        console.dir(b);
-                        console.dir(c);
-                        console.log('================================');
                         alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
                         //window.location.replace("{{ route('advert.offers.index') }}");
                     },
-                    error: function (a, b, c) {
-                        console.log('================================');
+                    error: function () {
                         console.log('ERROR: image not sent.');
-                        console.dir(a);
-                        console.dir(b);
-                        console.dir(c);
-                        console.log('================================');
                     }
                 });
             } else {
                 window.location.replace("{{ route('advert.offers.index') }}");
             }
-            sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
         }
     </script>
 @endpush

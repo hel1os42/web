@@ -2,7 +2,7 @@ function controlRange(selector){
 	$(selector).each(function(){
 		$(this).on('keyup', numericValidate).on('change', function(){
 			if ($(this).val() === '') {
-				let def = parseInt($(this).data('default'));
+				let def = parseInt($(this).attr('data-default'));
 				if (isNaN(def)) def = 0;
 				$(this).val(def);
 			}
@@ -13,14 +13,15 @@ function controlRange(selector){
 	});
 	function numericValidate(){
 		if ($(this).val() === '') return;
-		let def = parseInt($(this).data('default')),
-		    min = parseInt($(this).data('min')),
-		    max = parseInt($(this).data('max')),
+		let def = parseInt($(this).attr('data-default')),
+		    min = parseInt($(this).attr('data-min')),
+		    max = parseInt($(this).attr('data-max')),
 		    val = parseInt($(this).val());
 		if (isNaN(def)) def = 0;
 		if (isNaN(min)) min = 0;
 		if (isNaN(max)) max = 100;
 		if (isNaN(val)) val = def;
+		console.log(min, max, val);
 		$(this).val(Math.min(Math.max(val, min), max)).trigger('change');
 	}
 	function numericClickAction($button, t){
