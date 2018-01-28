@@ -82,5 +82,16 @@ function uuid2id(uuid) {
 }
 
 
+function waitPopup(withRqCounter){
+    let waitPopup = document.querySelector('#waitPopupOverlay');
+    if (waitPopup) waitPopup.parentNode.removeChild(waitPopup);
+    let rqCounter = withRqCounter ? '<p>Requests: <span id="waitRequests">0</span></p>' : '';
+    let html = `<div class="waitPopup"><h3 class="text-center">Wait...</h3><p class="text-center img">
+        <img src="/img/loading.gif"></p>${rqCounter}<p id="waitError"></p></div>`;
+    waitPopup = document.createElement('div');
+    waitPopup.setAttribute('id', 'waitPopupOverlay');
+    waitPopup.innerHTML = html;
+    document.body.appendChild(waitPopup);
+}
 
 
