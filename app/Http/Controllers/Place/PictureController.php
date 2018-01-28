@@ -53,9 +53,10 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storePicture(PictureRequest $request)
+    public function storePicture(string $placeId = null, PictureRequest $request)
     {
-        $place = $this->placeRepository->findByUser($this->user());
+        $placeId = $placeId ?: $this->user()->place->getId();
+        $place = $this->placeRepository->find($placeId);
 
         $this->authorize('places.picture.store', $place);
 
@@ -65,14 +66,11 @@ class PictureController extends AbstractPictureController
 
         $imageService->savePlacePicture($place);
 
-        // very strange redirect condition copy/pasted from another place
-        $redirect = !$request->wantsJson() && $this->auth->user()->isAdvertiser()
-            ? route('profile.place.show')
-            : route('profile.picture.show');
+        $location = route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]);
 
         return $request->wantsJson()
-            ? response()->render('', [], Response::HTTP_CREATED, $redirect)
-            : redirect($redirect);
+            ? response()->render('', [], Response::HTTP_CREATED, $location)
+            : redirect($location);
     }
 
     /**
@@ -84,18 +82,28 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storeCover(PictureRequest $request)
+    public function storeCover(string $placeId = null, PictureRequest $request)
     {
+        $placeId = $placeId ?: $this->user()->place->getId();
         $this->type          = self::TYPE_COVER;
         $this->pictureHeight = 400;
         $this->pictureWidth  = 1200;
 
-        return $this->store($request);
+        return $this->store($request, $placeId);
     }
 
-    private function store(PictureRequest $request)
+    /**
+     * @param PictureRequest $request
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \LogicException
+     * @throws \RuntimeException
+     */
+    private function store(PictureRequest $request, string $placeId = null)
     {
-        $place = $this->placeRepository->findByUser($this->user());
+        $place = $this->placeRepository->find($placeId);
 
         $this->authorize('places.picture.store', $place);
 
@@ -103,9 +111,8 @@ class PictureController extends AbstractPictureController
             $this->placeService->disapprove($place, true);
         }
 
-        $redirect = (!$request->wantsJson() && $this->user()->isAdvertiser()) ? route('profile.place.show') : route('profile.picture.show');
-
-        return $this->storeImageFor($request, $place->getId(), $redirect);
+        return $this->storeImageFor($request, $place->getId(),
+            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
     }
 
     /**
