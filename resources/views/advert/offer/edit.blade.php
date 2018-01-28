@@ -145,6 +145,9 @@
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
         });
+        $offer_image_box.find('img').on('error', function(){
+            $(this).attr('src', "{{ asset('/img/image_placeholder.jpg') }}");
+        }).attr('src', "{{ $picture_url }}");
 
 
 
@@ -407,7 +410,7 @@
                 formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
                 for(let i of formData) { console.log(i); }
                 $.ajax({
-                    url: "/advert/offers/{{ $id }}/picture",
+                    url: "/offers/{{ $id }}/picture",
                     data: formData,
                     processData: false,
                     contentType: false,

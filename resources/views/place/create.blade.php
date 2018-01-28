@@ -92,9 +92,7 @@
                             <p id="mapradius">Radius: <span>unknown</span> km.</p>
                         </div>
 
-                        <p class="step-footer">
-                            <input type="submit" class="btn-nau pull-right" value="Save">
-                        </p>
+                        <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Place"></p>
 
                     </form>
                 </div>
@@ -120,6 +118,7 @@
         let formBoxRetailType = document.getElementById("place_retailtype");
         let formBoxSpecialties = document.getElementById("place_specialties");
         let formBoxTags = document.getElementById("place_tags");
+        let spetialitiesCache = {};
 
         formSelectCategory.addEventListener('change', function(){
             let wait = '<img src="{{ asset('img/loading.gif') }}" alt="wait...">';
@@ -127,14 +126,10 @@
             formBoxSpecialties.innerHTML = wait;
             formBoxTags.innerHTML = wait;
             let url = "{{ route('categories') }}" + '/' + this.value + '?with=retailTypes;retailTypes.specialities;tags';
-            srvRequest(url, 'GET', 'json', function (request){
-
-                /* TODO: ВСЁ ПЕРЕДЕЛАТЬ!!!!! при изменении Retail Type не должны очищаться все галочки Spetialities!!! */
-                /* но чуть позже... */
-
-                createRetailType(request);
-                createSpecialties(request);
-                createTags(request);
+            srvRequest(url, 'GET', 'json', function (response){
+                createRetailType(response);
+                createSpecialties(response);
+                createTags(response);
             });
         });
 
@@ -151,6 +146,7 @@
             formBoxRetailType.innerHTML = html;
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
                 checkbox.addEventListener('change', function(){
+                    if (!spetialitiesCache[this.value]) spetialitiesCache[this.value] = {};
                     createSpecialties(request);
                 });
             });
@@ -166,7 +162,8 @@
                     if (e.retail_type_id === checkbox.value) {
                         let type = e.group ? 'radio' : 'checkbox';
                         let name = e.group ? `name="${uuid2id(e.retail_type_id)}_${e.group}"` : '';
-                        s += `<p><label><input type="${type}" ${name} value="${e.slug}"> ${e.name}</label></p>`;
+                        let checked = spetialitiesCache[e.retail_type_id][e.slug] ? 'checked' : '';
+                        s += `<p><label><input type="${type}" ${name} value="${e.slug}" ${checked}> ${e.name}</label></p>`;
                     }
                 });
                 if (s) {
@@ -190,7 +187,19 @@
         /* specialities accordion */
         $('#place_specialties').on('click', '.sgroup-title', function(){
            $(this).toggleClass('active').next().slideToggle();
-        });
+        }).on('change', 'input', function(){
+            let uuid = $(this).parents('.specialities-group').attr('data-id');
+            if ($(this).is('[type="checkbox"]')) {
+                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
+                else delete spetialitiesCache[uuid][$(this).val()];
+            } else {
+                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
+                    delete spetialitiesCache[uuid][$(this).val()];
+                }).end().filter(':checked').each(function(){
+                    spetialitiesCache[uuid][$(this).val()] = true;
+                });
+            }
+        });;
 
         
         
@@ -323,8 +332,7 @@
 
         function redirectPage(n){
             if (n.count === 0) {
-                alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
-                //window.location.replace("{{ route('profile') }}");
+                window.location.replace("{{ route('profile') }}");
             }
         }
 
