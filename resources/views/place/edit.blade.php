@@ -153,8 +153,10 @@
             console.log('Place categories, types, spetialities, tags:');
             console.dir(response);
             placeInformation = response;
+            placeInformation.retail_types.forEach(function(rt){
+                spetialitiesCache[rt.id] = {};
+            });
             placeInformation.specialities.forEach(function(sp){
-                if (!spetialitiesCache[sp.retail_type_id]) spetialitiesCache[sp.retail_type_id] = {};
                 spetialitiesCache[sp.retail_type_id][sp.slug] = true;
             });
             console.dir(spetialitiesCache);
@@ -402,8 +404,7 @@
 
         function redirectPage(n){
             if (n.count === 0) {
-                alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
-                //window.location.replace("{{ route('profile') }}");
+                window.location.replace("{{ route('profile') }}");
             }
         }
 

@@ -5,6 +5,13 @@
 @section('content')
 
 <div class="container">
+    <script>
+        function imgError(image) {
+            image.onerror = "";
+            image.src = "/img/imagenotfound.svg";
+            return true;
+        }
+    </script>
     <div class="row">
         @php
             $coverUrl = $place instanceof \App\Models\Place ? $place->getOwnOrDefaultCoverUrl() : \App\Models\Place::getDefaultCoverUrl();
@@ -304,12 +311,6 @@
 
         }
         fillTimeframes();
-
-        function imgError(image) {
-            image.onerror = "";
-            image.src = "/img/imagenotfound.svg";
-            return true;
-        }
     </script>
 @endpush
 

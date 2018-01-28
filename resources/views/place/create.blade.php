@@ -332,8 +332,7 @@
 
         function redirectPage(n){
             if (n.count === 0) {
-                alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
-                //window.location.replace("{{ route('profile') }}");
+                window.location.replace("{{ route('profile') }}");
             }
         }
 
