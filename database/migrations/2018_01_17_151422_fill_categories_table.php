@@ -32,15 +32,16 @@ class FillCategoriesTable extends Migration
         $connection = $this->db->connection();
 
         $this->clearOutdatedCategories();
-
+        logger()->info("Fill categories: start");
         foreach ($categories as $category) {
             if ($connection->table('categories')->where('name', $category['name'])->exists()) {
-                printf('Category %s already exists. Skipping...' . PHP_EOL, $category['name']);
+                logger()->notice(sprintf('Category %s already exists. Skipping...', $category['name']));
                 continue;
             }
 
             $connection->table('categories')->insert($category);
         }
+        logger()->info("Fill categories: finish");
     }
 
     /**

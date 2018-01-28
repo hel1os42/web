@@ -15,22 +15,24 @@ class FillSpecialitiesTable extends Migration
         $specialities     = \App\Helpers\Specialities::ALL;
         $this->connection = app('db')->connection();
 
+        logger()->info("Fill specialities: start");
+
         foreach ($specialities as $topCategoryName => $specs) {
 
-
-            printf('Processing retail types for category: "%s"', $topCategoryName);
+            logger()->info(sprintf('Processing retail types for category: "%s"', $topCategoryName));
             $retailTypes = $this->getRetailTypes($topCategoryName);
 
             if (!$retailTypes->count() > 0) {
-                printf('No retail types found for "%s". Skipping...' . PHP_EOL, $topCategoryName);
+                logger()->notice(sprintf('No retail types found for "%s". Skipping...', $topCategoryName));
                 continue;
             }
 
             foreach ($retailTypes as $retailType) {
-                printf('Processing retail type "%s:"' . PHP_EOL, $retailType->name);
+                logger()->info(sprintf('Processing retail type "%s:"', $retailType->name));
                 $this->storeRecursive($retailType, $specs);
             }
         }
+        logger()->info("Fill specialities: finish");
     }
 
     private function storeRecursive($retailType, $specs, $group = null)
@@ -47,8 +49,12 @@ class FillSpecialitiesTable extends Migration
                     . str_slug($speciality, \App\Helpers\Constants::SLUG_SEPARATOR);
 
             if ($storedSlugs->isNotEmpty() && $storedSlugs->contains($slug)) {
-                printf('Speciality %s already exists. Skipping...' . PHP_EOL, $speciality);
+                logger()->notice(sprintf('Speciality %s already exists. Skipping...', $speciality));
                 continue;
+            }
+
+            if (true === $this->store($retailType->id, $slug, $speciality, $group)) {
+                logger()->info(sprintf('Speciality "%s" saved successfully.', $speciality));
             }
         }
     }
@@ -104,8 +110,8 @@ class FillSpecialitiesTable extends Migration
                     'group'          => $group
                 ]);
         } catch (Exception $exception) {
-            printf('Can\'t save "%s" speciality.' . PHP_EOL, $name, $exception->getMessage());
-            printf('Error msg: %s' . PHP_EOL, $exception->getMessage());
+            logger()->error(sprintf('Can\'t save "%s" speciality.', $name));
+            logger()->error(sprintf('Error msg: %s', $exception->getMessage()));
 
             return false;
         }
