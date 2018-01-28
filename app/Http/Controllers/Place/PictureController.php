@@ -56,7 +56,7 @@ class PictureController extends AbstractPictureController
     public function storePicture(string $placeId = null, PictureRequest $request)
     {
         $placeId = $placeId ?: $this->user()->place->getId();
-        $place = $this->placeRepository->find($placeId);
+        $place   = $this->placeRepository->find($placeId);
 
         $this->authorize('places.picture.store', $place);
 
@@ -84,7 +84,7 @@ class PictureController extends AbstractPictureController
      */
     public function storeCover(string $placeId = null, PictureRequest $request)
     {
-        $placeId = $placeId ?: $this->user()->place->getId();
+        $placeId             = $placeId ?: $this->user()->place->getId();
         $this->type          = self::TYPE_COVER;
         $this->pictureHeight = 400;
         $this->pictureWidth  = 1200;
