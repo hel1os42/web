@@ -269,9 +269,7 @@
             $.ajax({
                 method: "POST",
                 url: $('#createOfferForm').attr('action'),
-                headers: {
-                    'Accept':'application/json',
-                },
+                headers: { 'Accept':'application/json' },
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
@@ -393,6 +391,7 @@
             $('#waitRequests').text(n);
             $.ajax({
                 url: url,
+                headers: { 'Accept':'application/json' },
                 success: function () {
                     let uuid = url.split('/');
                     sendImage(uuid[uuid.length - 1]);
