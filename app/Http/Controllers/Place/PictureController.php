@@ -41,7 +41,7 @@ class PictureController extends AbstractPictureController
         parent::__construct($imageManager, $filesystem, $authManager);
 
         $this->placeRepository = $placeRepository;
-        $this->placeService = $placeService;
+        $this->placeService    = $placeService;
     }
 
     /**
