@@ -14,13 +14,13 @@ class FillTagsTable extends Migration
     {
         $tags             = \App\Helpers\Tags::ALL;
         $this->connection = app('db')->connection();
-
+        logger()->info("Fill tags: start");
         foreach ($tags as $categoryName => $categoryTags) {
 
-            printf('Processing category: "%s"', $categoryName);
+            logger()->info(sprintf('Processing category: "%s"', $categoryName));
             $category = $this->getCategory($categoryName);
             if (null === $category) {
-                printf('Category "%s" not found in DB. Skipping...' . PHP_EOL, $categoryName);
+                logger()->notice(sprintf('Category "%s" not found in DB. Skipping...', $categoryName));
                 continue;
             }
 
@@ -32,11 +32,16 @@ class FillTagsTable extends Migration
                         . str_slug($tag, \App\Helpers\Constants::SLUG_SEPARATOR);
 
                 if ($storedSlugs->isNotEmpty() && $storedSlugs->contains($slug)) {
-                    printf('Tag %s already exists. Skipping...' . PHP_EOL, $tag);
+                    logger()->notice(sprintf('Tag %s already exists. Skipping...', $tag));
                     continue;
+                }
+
+                if (true === $this->store($category->id, $slug, $tag)) {
+                    logger()->info(sprintf('Tag "%s" saved successfully.', $tag));
                 }
             }
         }
+        logger()->info("Fill tags: finish");
     }
 
     /**
@@ -86,8 +91,8 @@ class FillTagsTable extends Migration
                     'name'        => $name
                 ]);
         } catch (Exception $exception) {
-            printf('Can\'t save "%s" tag.' . PHP_EOL, $name, $exception->getMessage());
-            printf('error msg: %s' . PHP_EOL, $exception->getMessage());
+            logger()->error(sprintf('Can\'t save "%s" tag.', $name));
+            logger()->error(sprintf('error msg: %s', $exception->getMessage()));
 
             return false;
         }
