@@ -388,7 +388,7 @@
                 formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
                 for(let i of formData) { console.log(i); }
                 $.ajax({
-                    url: `/advert/offers/${uuid}/picture`,
+                    url: `/offers/${uuid}/picture`,
                     data: formData,
                     processData: false,
                     contentType: false,
