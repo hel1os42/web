@@ -55,7 +55,8 @@ function datePicker($input, minDate){
                 } else if ($(e.target).hasClass('not-active')) {
 				    return false;
 				} else {
-					$input.val(days[day(tdate.getDay())] + ' ' + y + '/' + m + '/' + d).trigger('change').focus();
+					//$input.val(days[day(tdate.getDay())] + ' ' + y + '/' + m + '/' + d).trigger('change').focus();
+					$input.val(y + '-' + m + '-' + d).trigger('change').focus();
 					$('.picker').remove();
 				}
 			}

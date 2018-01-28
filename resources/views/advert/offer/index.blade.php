@@ -138,7 +138,7 @@
                                             <div class="col-xs-6">
                                                 <p class="row"><span class="title col-xs-3">Description:</span> <span class="col-xs-9">{{ $offer['description'] }}</span></p>
                                                 <p class="row"><span class="title col-xs-3">Location:</span> <span class="col-xs-9">{{ $offer['country'] }}, {{ $offer['city'] }} (radius: {{ $offer['radius'] / 1000 }} km)<br>{{ $offer['latitude'] }}, {{ $offer['longitude'] }}</span></p>
-                                                <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9" data-fix-category="true" data-uuid="{{ $offer['category_id'] }}">{{ $offer['category_id'] }}</span></p>
+                                                <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9 category-id" data-fix-category="true" data-uuid="{{ $offer['category_id'] }}">{{ $offer['category_id'] }}</span></p>
                                             </div>
                                             <div class="col-xs-6">
                                                 <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
@@ -165,7 +165,7 @@
                                                     @foreach($workingDays as $dayKey => $workingDay)
                                                         <p class="row">
                                                             <span class="title col-xs-4">{{$workingDay['daystr']}}:</span>
-                                                            <span class="col-xs-8 workingDaySpan" data-day="{{ $dayKey }}" data-offerid="{{ $offer['id'] }}"></span>
+                                                            <span class="col-xs-8 workingDaySpan" data-day="{{ $dayKey }}"></span>
                                                         </p>
                                                     @endforeach
                                                 </div>
@@ -236,7 +236,7 @@
         window.addEventListener('load', function(){
 
             dataTableCreate('#table_your_offers');
-//            dataTableCreate('#table_childrens_offers');
+            // dataTableCreate('#table_childrens_offers');
 
             /* date-time format */
             $('[data-df]').each(function(){
@@ -244,30 +244,12 @@
             });
 
             /* offer_category */
-            (function(){
-                let xhr = new XMLHttpRequest();
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            let categories = JSON.parse(xhr.responseText).data;
-                                $.each(categories, function(){
-                                    let name = this.name;
-                                    $('[data-uuid="'+this.id+'"]').each(function(){
-                                        this.innerHTML = [name];
-                                    }, name)
-                                });
-                        }
-                        else {
-                            console.log('Get categories:' + xhr.status);
-                        }
-                    }
-                };
-
-                xhr.open("GET", "{{ route('categories') }}", true);
-                xhr.setRequestHeader("Accept", "application/json");
-                xhr.send();
-            })();
+            srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
+                $('.category-id').each(function(){
+                    let uuid = $(this).text();
+                    $(this).text(response.data.find(function(e){ return e.id === uuid; }).name);
+                });
+            });
 
             function dataTableCreate(selector){
                 let $table = $(selector);
@@ -305,24 +287,19 @@
 
                 function fillTimeframesCallback(tz){
                     /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
-
-                    let absRawInHr = tz.substr(-4,2);
-                    let tzInHr = ('-' === tz.substr(0,1)) ? -1*(+absRawInHr) : (+absRawInHr);
-                    let oldweekdays = $('.workingDaysStorage[data-offerid="' + offerId + '"]').data('workingdays');
-                    $('.workingDaySpan[data-offerid="'+offerId+'"]').each(function(){
+                    let $box = $(`.workingDaysStorage[data-offerid="${offerId}"]`);
+                    let tf = $box.data('workingdays');
+                    $box.find('.workingDaySpan').each(function(){
                         let day = $(this).data('day');
-                        if (day in oldweekdays){
-                            $(this).text(addTz(oldweekdays[day].from, tzInHr) + '-' + addTz(oldweekdays[day].to, tzInHr));
-                        }
+                        $(this).text(getTime(tf[day].from, tz) + ' - ' + getTime(tf[day].to, tz));
                     });
 
-                    function addTz(timeStr, tzNum) {
-                        let timeHrsNum = +timeStr.substr(0,2);
-                        let res = timeHrsNum + tzNum;
-                        if (res > 23) res -= 24;
-                        if (res < 0) res += 24;
-                        if (res < 10) res = '0' + res;
-                        return res + timeStr.substr(2);
+                    function getTime(time, tz){
+                        let h = +time.substr(0, 2) + +tz.substr(0, 3);
+                        if (h > 23) h -= 24;
+                        if (h < 0) h += 24;
+                        if (h < 10) h = '0' + h;
+                        return h + ':' + time.substr(3, 2);
                     }
                 }
             });

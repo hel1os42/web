@@ -173,6 +173,38 @@
 .nau-form .control-datetime input {
     cursor: pointer;
 }
+.nau-form .control-datetime {
+    position: relative;
+}
+.nau-form .control-datetime .cleartime-btn {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    width: 21px;
+    height: 21px;
+    border: 1px solid #3f4c5d;
+    border-radius: 50%;
+    opacity: 0.2;
+    cursor: pointer;
+}
+.nau-form .control-datetime .cleartime-btn:hover {
+    opacity: 1;
+}
+.nau-form .control-datetime .cleartime-btn:before,
+.nau-form .control-datetime .cleartime-btn:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -5px 0 0 -1px;
+    width: 1px;
+    height: 11px;
+    background: #3f4c5d;
+    transform: rotate(45deg);
+}
+.nau-form .control-datetime .cleartime-btn:after {
+    transform: rotate(-45deg);
+}
 .nau-form .tabs-controls {
     margin-top: 40px;
 }
