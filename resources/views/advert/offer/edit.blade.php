@@ -414,8 +414,7 @@
                     method: 'POST',
                     success: function () {
                         console.log('SUCCESS: image sent.');
-                        alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
-                        //window.location.replace("{{ route('advert.offers.index') }}");
+                        window.location.replace("{{ route('advert.offers.index') }}");
                     },
                     error: function () {
                         console.log('ERROR: image not sent.');
