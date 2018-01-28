@@ -96,8 +96,6 @@ class PictureController extends AbstractPictureController
      * @param PictureRequest $request
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
      */
