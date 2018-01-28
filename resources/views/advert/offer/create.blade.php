@@ -57,7 +57,7 @@
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
-                    $finishDate = $('[name="finish_date"]');
+                $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
                 datePicker($(this), new Date());
             });
