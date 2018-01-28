@@ -5,6 +5,13 @@
 @section('content')
 
 <div class="container">
+    <script>
+        function imgError(image) {
+            image.onerror = "";
+            image.src = "/img/imagenotfound.svg";
+            return true;
+        }
+    </script>
     <div class="row">
         @php
             $coverUrl = $place instanceof \App\Models\Place ? $place->getOwnOrDefaultCoverUrl() : \App\Models\Place::getDefaultCoverUrl();
@@ -142,7 +149,6 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
-                                                @include('partials.offer-picture-filepicker', ['offerId' => $offer['id']])
                                             </div>
                                         </div>
                                         <div class="row set">
@@ -216,7 +222,6 @@
                     </tbody>
                 </table>
                 @include('pagination.advert')
-            <!-- if (have_childrens_offers) -->
             </div>
 
         </div>
@@ -306,14 +311,6 @@
 
         }
         fillTimeframes();
-    </script>
-
-    <script>
-        function imgError(image) {
-            image.onerror = "";
-            image.src = "/img/imagenotfound.svg";
-            return true;
-        }
     </script>
 @endpush
 
