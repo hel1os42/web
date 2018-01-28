@@ -57,7 +57,7 @@
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
-                $finishDate = $('[name="finish_date"]');
+                    $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
                 datePicker($(this), new Date());
             });
@@ -395,8 +395,7 @@
                     method: 'POST',
                     success: function () {
                         console.log('SUCCESS: image sent.');
-                        alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
-                        //window.location.replace("{{ route('advert.offers.index') }}");
+                        window.location.replace("{{ route('advert.offers.index') }}");
                     },
                     error: function () {
                         console.log('ERROR: image not sent.');
