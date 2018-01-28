@@ -1,6 +1,14 @@
 <p class="title">Offer Type</p>
 
-<input type="hidden" name="category_id" class="formData" value="{{ auth()->user()->place->category->first()->id }}">
+<input type="hidden" name="category_id" class="formData" value="<?php if (count(auth()->user()->place->category)) { echo auth()->user()->place->category->first()->id; } ?>">
+<script>
+    (function () {
+        if (document.querySelector('[name="category_id"]').value === '') {
+            alert('You must choose Category for Place');
+            window.location.replace("{{ route('profile.place.show') }}");
+        }
+    })();
+</script>
 
 <div class="control-box offer-type-box">
     <p class="control-radio-left">
@@ -30,11 +38,11 @@
         </p>
         <script>
             (function(){
-                let html = '', checked;
+                let html = '', selected;
                 let currency = "{{ $currency }}";
                 <?php echo json_encode(\App\Helpers\Constants::CURRENCIES); ?>.forEach(function(cur){
-                    checked = currency === cur ? 'checked' : '';
-                    html += `<option value="${cur}" ${checked}>${cur}</option>`;
+                    selected = currency === cur ? 'selected' : '';
+                    html += `<option value="${cur}" ${selected}>${cur}</option>`;
                 });
                 document.querySelector('[name="currency"]').innerHTML = html;
             })();

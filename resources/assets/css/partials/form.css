@@ -196,9 +196,9 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    margin: -5px 0 0 -1px;
+    margin: -6px 0 0 -1px;
     width: 1px;
-    height: 11px;
+    height: 12px;
     background: #3f4c5d;
     transform: rotate(45deg);
 }

@@ -163,7 +163,8 @@
             srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
                 let html = '', selected;
                 response.data.forEach(function(category){
-                    selected = category.id === placeInformation.category[0].id ? 'selected' : '';
+                    selected = '';
+                    if (placeInformation.category.length && placeInformation.category[0].id === category.id) selected = 'selected';
                     html += `<option value="${category.id}" ${selected}>${category.name}</option>`;
                 });
                 formSelectCategory.innerHTML = html;

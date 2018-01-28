@@ -263,6 +263,9 @@
 
             console.dir(formData);
 
+            waitPopup(true);
+            $('#waitRequests').text('1');
+
             $.ajax({
                 method: "POST",
                 url: $('#createOfferForm').attr('action'),
@@ -272,13 +275,18 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
-                        let uuid = xhr.getResponseHeader('Location').split('/');
-                        sendImage(uuid[uuid.length - 1]);
+                        if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
+                            ifOfferCreated(xhr.getResponseHeader('Location'), 2);
+                        } else {
+                            window.location.replace("{{ route('advert.offers.index') }}");
+                        }
                     } else {
+                        $('#waitError').text('Status: ' + xhr.status);
                         console.log(xhr);
                     }
                 },
                 error: function(resp){
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
                     console.log(resp);
                 }
             });
@@ -381,30 +389,45 @@
             return res;
         }
 
-        function sendImage(uuid){
-            if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
-                let formData = new FormData();
-                formData.append('_token', $offer_image_box.find('[name="_token"]').val());
-                formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
-                for(let i of formData) { console.log(i); }
-                $.ajax({
-                    url: `/offers/${uuid}/picture`,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    method: 'POST',
-                    success: function () {
-                        console.log('SUCCESS: image sent.');
-                        window.location.replace("{{ route('advert.offers.index') }}");
-                    },
-                    error: function () {
-                        console.log('ERROR: image not sent.');
-                    }
-                });
-            } else {
-                window.location.replace("{{ route('advert.offers.index') }}");
-            }
+        function ifOfferCreated(url, n){
+            $('#waitRequests').text(n);
+            $.ajax({
+                url: url,
+                success: function () {
+                    let uuid = url.split('/');
+                    sendImage(uuid[uuid.length - 1]);
+                },
+                error: function (resp) {
+                    $('#waitError').text(resp.status);
+                    setTimeout(function(){
+                        ifOfferCreated(url, n + 1);
+                    }, 1500);
+                }
+            });
         }
+
+        function sendImage(uuid){
+            let formData = new FormData();
+            formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+            formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
+            for(let i of formData) { console.log(i); }
+            $.ajax({
+                url: `/offers/${uuid}/picture`,
+                data: formData,
+                processData: false,
+                contentType: false,
+                method: 'POST',
+                success: function () {
+                    console.log('SUCCESS: image sent.');
+                    window.location.replace("{{ route('advert.offers.index') }}");
+                },
+                error: function (resp) {
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log('ERROR: image not sent.');
+                }
+            });
+        }
+
     </script>
 @endpush
 
