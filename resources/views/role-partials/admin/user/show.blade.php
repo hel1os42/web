@@ -9,14 +9,20 @@
             <p style="color:green">Yes</p>
         @else
             No
-            <form action="{{route('users.update', $id)}}" method="post"
-                  style="display:  inline-block;">
-                {{ csrf_field() }}
-                {{ method_field('PATCH') }}
+        @endif
+        <form action="{{route('users.update', $id)}}" method="post"
+              style="display:  inline-block;">
+            {{ csrf_field() }}
+            {{ method_field('PATCH') }}
+            @if($approved)
+                <input hidden type="text" name="approved" value="0">
+                <button style="display:  inline-block;" type="submit">disapprove
+                </button>
+            @else
                 <input hidden type="text" name="approved" value="1">
                 <button style="display:  inline-block;" type="submit">approve
                 </button>
-            </form>
-        @endif
+            @endif
+        </form>
     </div>
 </div>
