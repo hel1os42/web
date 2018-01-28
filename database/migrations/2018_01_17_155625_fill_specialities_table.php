@@ -50,10 +50,6 @@ class FillSpecialitiesTable extends Migration
                 printf('Speciality %s already exists. Skipping...' . PHP_EOL, $speciality);
                 continue;
             }
-
-            if (true === $this->store($retailType->id, $slug, $speciality, $group)) {
-                printf('Speciality "%s" saved successfully.' . PHP_EOL, $speciality);
-            }
         }
     }
 

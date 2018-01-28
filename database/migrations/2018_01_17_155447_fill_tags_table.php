@@ -35,10 +35,6 @@ class FillTagsTable extends Migration
                     printf('Tag %s already exists. Skipping...' . PHP_EOL, $tag);
                     continue;
                 }
-
-                if (true === $this->store($category->id, $slug, $tag)) {
-                    printf('Tag "%s" saved successfully.' . PHP_EOL, $tag);
-                }
             }
         }
     }
