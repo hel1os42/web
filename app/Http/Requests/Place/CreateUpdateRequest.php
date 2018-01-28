@@ -33,10 +33,10 @@ class CreateUpdateRequest extends FormRequest
      */
     public function authorize(PlaceRepository $repository, AuthManager $authManager)
     {
-        $authorized = $repository->existsByUser($authManager->guard()->user());
+        $authorized = true;
 
         if ($this->isMethod('post')) {
-            $authorized = !$authorized;
+            $authorized = !$repository->existsByUser($authManager->guard()->user());
         }
 
         return $authorized;

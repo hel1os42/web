@@ -58,7 +58,7 @@ class PlacePolicy extends Policy
      */
     public function pictureStore(User $user, Place $place): bool
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
@@ -71,7 +71,7 @@ class PlacePolicy extends Policy
      */
     public function update(User $user, Place $place): bool
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
