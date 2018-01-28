@@ -356,28 +356,18 @@
                 formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
                 for(let i of formData) { console.log(i); }
                 $.ajax({
-                    url: `/advert/offers/${uuid}/picture`,
+                    url: `/offers/${uuid}/picture`,
                     data: formData,
                     processData: false,
                     contentType: false,
                     method: 'POST',
                     success: function (a, b, c) {
-                        console.log('================================');
                         console.log('SUCCESS: image sent.');
-                        console.dir(a);
-                        console.dir(b);
-                        console.dir(c);
-                        console.log('================================');
                         alert('Всё ок.\nДля тестирования перезагрузка страницы отключена.\nСмотри консоль.');
                         //window.location.replace("{{ route('advert.offers.index') }}");
                     },
                     error: function (a, b, c) {
-                        console.log('================================');
                         console.log('ERROR: image not sent.');
-                        console.dir(a);
-                        console.dir(b);
-                        console.dir(c);
-                        console.log('================================');
                     }
                 });
             } else {

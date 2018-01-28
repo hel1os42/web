@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Place;
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\PlaceRepository;
-use App\Services\ImpersonateService;
 use App\Services\PlaceService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -42,6 +41,7 @@ class PictureController extends AbstractPictureController
         parent::__construct($imageManager, $filesystem, $authManager);
 
         $this->placeRepository = $placeRepository;
+        $this->placeService = $placeService;
     }
 
     /**
@@ -53,7 +53,7 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storePicture(PictureRequest $request, ImpersonateService $impersonateService)
+    public function storePicture(PictureRequest $request)
     {
         $place = $this->placeRepository->findByUser($this->user());
 
@@ -62,10 +62,6 @@ class PictureController extends AbstractPictureController
         $imageService = app()->makeWith('App\Services\ImageService', [
             'file' => $request->file('picture')
         ]);
-
-        if (!$impersonateService->impersonatedByAdminOrAgent()) {
-            $this->placeService->disapprove($place, true);
-        }
 
         $imageService->savePlacePicture($place);
 
@@ -88,30 +84,28 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storeCover(PictureRequest $request, ImpersonateService $impersonateService)
+    public function storeCover(PictureRequest $request)
+    {
+        $this->type          = self::TYPE_COVER;
+        $this->pictureHeight = 400;
+        $this->pictureWidth  = 1200;
+
+        return $this->store($request);
+    }
+
+    private function store(PictureRequest $request)
     {
         $place = $this->placeRepository->findByUser($this->user());
 
         $this->authorize('places.picture.store', $place);
 
-        if (!$impersonateService->impersonatedByAdminOrAgent()) {
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
             $this->placeService->disapprove($place, true);
         }
 
-        $imageService = app()->makeWith('App\Services\ImageService', [
-            'file' => $request->file('picture')
-        ]);
+        $redirect = (!$request->wantsJson() && $this->user()->isAdvertiser()) ? route('profile.place.show') : route('profile.picture.show');
 
-        $imageService->savePlaceCover($place);
-
-        // very strange redirect condition copy/pasted from another place
-        $redirect = !$request->wantsJson() && $this->auth->user()->isAdvertiser()
-            ? route('profile.place.show')
-            : route('profile.picture.show');
-
-        return $request->wantsJson()
-            ? response()->render('', [], Response::HTTP_CREATED, $redirect)
-            : redirect($redirect);
+        return $this->storeImageFor($request, $place->getId(), $redirect);
     }
 
     /**

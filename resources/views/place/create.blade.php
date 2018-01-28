@@ -282,8 +282,7 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (201 === xhr.status){
-                        let uuid = xhr.getResponseHeader('Location').split('/');
-                        sendImages(uuid[uuid.length - 1]);
+                        sendImages();
                     } else {
                         alert("Something went wrong. Try again, please.");
                         console.log(xhr.status);
@@ -311,15 +310,15 @@
             return res;
         }
 
-        function sendImages(uuid){
+        function sendImages(){
             let n = { count: 0 };
             let isNewPicture = $place_picture_box.find('[type="file"]').attr('data-changed');
             let isNewCover = $place_cover_box.find('[type="file"]').attr('data-changed');
             if (isNewPicture) n.count++;
             if (isNewCover) n.count++;
             redirectPage(n);
-            if (isNewPicture) sendImage(n, $place_picture_box, `/places/${uuid}/picture`, redirectPage);
-            if (isNewCover) sendImage(n, $place_cover_box, `/places/${uuid}/cover`, redirectPage);
+            if (isNewPicture) sendImage(n, $place_picture_box, "{{ route('place.picture.store') }}", redirectPage);
+            if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
         }
 
         function redirectPage(n){
