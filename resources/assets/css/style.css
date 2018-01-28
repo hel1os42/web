@@ -228,3 +228,32 @@ footer p {
 .pagenavy a.next:focus:before {
     border-color: #ff8a0e;
 }
+
+#waitPopupOverlay {
+    position: fixed;
+    z-index: 10029;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+#waitPopupOverlay .waitPopup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    padding: 15px;
+    background: #fff;
+}
+#waitPopupOverlay h3 {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay .img {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay #waitError {
+    color: red;
+    margin-bottom: 0;
+}

@@ -1,7 +1,15 @@
 <p class="title">Offer Type</p>
 
 @if($isPlaceCreated)
-    <input type="hidden" name="category_id" class="formData" value="{{ auth()->user()->place->category->first()->id }}">
+    <input type="hidden" name="category_id" class="formData" value="<?php if (count(auth()->user()->place->category)) { echo auth()->user()->place->category->first()->id; } ?>">
+    <script>
+        (function () {
+            if (document.querySelector('[name="category_id"]').value === '') {
+                alert('You must choose Category for Place');
+                window.location.replace("{{ route('profile.place.show') }}");
+            }
+        })();
+    </script>
 @else
     <script>
         alert('Fill place info');
