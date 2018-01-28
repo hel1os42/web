@@ -60,6 +60,10 @@ class PictureController extends AbstractPictureController
 
         $this->authorize('places.picture.store', $place);
 
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $this->placeService->disapprove($place, true);
+        }
+
         $imageService = app()->makeWith('App\Services\ImageService', [
             'file' => $request->file('picture')
         ]);
