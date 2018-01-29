@@ -260,7 +260,15 @@
                 let $table = $(selector);
                 if ($table.length) {
                     /* create table */
-                    let dt_table = $table.DataTable();
+                    let dt_table = $table.DataTable({
+                        "bPaginate": false,
+                        "bLengthChange": false,
+                        "bFilter": true,
+                        "bInfo": false,
+                        "bAutoWidth": false,
+                        "searching": false
+                    });
+                    /* отключаем родную пагинацию, поиск и т.п. - до лучших времён */
 
                     /* show/hide details */
                     $table.on('click', 'td.details-control', function(){

@@ -348,6 +348,12 @@
                 return false;
             }
 
+            /* Working Days */
+            $control = $('[name="start_date"]');
+            if ($control.val() === '') {
+                $control.focus().parents('.control-datetime').addClass('invalid');
+            }
+
             /* Offer Type */
             $hint = $('#hint_offertypebox');
             if ($('#gift_radio').prop('checked')) {
