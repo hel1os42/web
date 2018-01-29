@@ -352,6 +352,7 @@
             $control = $('[name="start_date"]');
             if ($control.val() === '') {
                 $control.focus().parents('.control-datetime').addClass('invalid');
+                res = false;
             }
 
             /* Offer Type */
