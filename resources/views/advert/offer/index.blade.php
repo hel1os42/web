@@ -112,7 +112,7 @@
                             <tr>
                                 <td>{{ $counter++ }}</td>
                                 <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
-                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" onerror="imgError(this);"></span></td>
+                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
                                 <td><span data-df="yyyy/mm/dd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="yyyy/mm/dd">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
@@ -319,6 +319,7 @@
 
         }
         fillTimeframes();
+        pagenavyCompact(document.getElementById('table_pager'));
     </script>
 @endpush
 

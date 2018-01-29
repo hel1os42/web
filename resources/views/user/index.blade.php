@@ -14,14 +14,16 @@
             @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
             <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
                 <thead>
-                <td>User</td>
-                <td></td>
-                <td>Place</td>
-                <td></td>
-                <td>Balance</td>
-                <td></td>
-                <td>Approved</td>
-                <td>Actions</td>
+                    <tr>
+                        <td>User</td>
+                        <td></td>
+                        <td>Place</td>
+                        <td></td>
+                        <td>Balance</td>
+                        <td></td>
+                        <td>Approved</td>
+                        <td>Actions</td>
+                    </tr>
                 </thead>
                 @foreach ($data as $user)
                     <tr>
@@ -133,6 +135,8 @@
         if ( roleSelect ) {
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
+
+        pagenavyCompact(document.getElementById('table_pager'));
 
     </script>
 @stop

@@ -93,6 +93,16 @@
                             <p id="mapradius">Radius: <span>unknown</span> km.</p>
                         </div>
 
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">GPS</span>
+                                    <input name="gps_crd" value="{{ $latitude }}, {{ $longitude }}">
+                                </label>
+                            </p>
+                            <p class="hint">Invalid GPS-format. Example: 49.4274121,27.0085986</p>
+                        </div>
+
                         @if(auth()->user()->isAdvertiser() || auth()->user()->isChiefAdvertiser())
                             <p class="notice-account-deactivate">
                                 <strong>Notice! Your account will be disapproved, and all offers will be deactivated.</strong>
@@ -275,14 +285,18 @@
         function mapDone(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
+            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
         }
 
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $('[name="latitude"]').val(values.lat);
-            $('[name="longitude"]').val(values.lng);
+            $latitude = $('[name="latitude"]');
+            $longitude = $('[name="longitude"]');
+            $latitude.val(values.lat);
+            $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
+            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             $('#alat').text(values.lat);
             $('#alng').text(values.lng);
         }
