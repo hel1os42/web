@@ -53,3 +53,45 @@ $( document ).ready( function() {
 } );
 
 // --send nau part
+
+
+/* 
+url - string of request-URL
+method - string 'GET', 'POST', 'PATCH', etc.
+respType - null or string 'ajax'
+callback(response) - callback-function
+*/
+
+function srvRequest(url, method, respType, callback){
+    let xhr = new XMLHttpRequest();
+    if (respType) xhr.responseType = respType;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) { callback(xhr.response); }
+            else if (xhr.status === 400) { console.log('Error 400'); }
+            else { console.log('Something else other than 200 was returned'); }
+        }
+    };
+    xhr.open(method, url, true);
+    if (respType) xhr.setRequestHeader('Accept', 'application/' + respType);
+    xhr.send();
+}
+
+function uuid2id(uuid) {
+    return 'id_' + uuid.replace(/-/g, '');
+}
+
+
+function waitPopup(withRqCounter){
+    let waitPopup = document.querySelector('#waitPopupOverlay');
+    if (waitPopup) waitPopup.parentNode.removeChild(waitPopup);
+    let rqCounter = withRqCounter ? '<p>Requests: <span id="waitRequests">0</span></p>' : '';
+    let html = `<div class="waitPopup"><h3 class="text-center">Wait...</h3><p class="text-center img">
+        <img src="/img/loading.gif"></p>${rqCounter}<p id="waitError"></p></div>`;
+    waitPopup = document.createElement('div');
+    waitPopup.setAttribute('id', 'waitPopupOverlay');
+    waitPopup.innerHTML = html;
+    document.body.appendChild(waitPopup);
+}
+
+

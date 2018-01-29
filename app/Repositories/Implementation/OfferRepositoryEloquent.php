@@ -85,6 +85,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
 
+        $model->offerData->fill($attributes)->save();
         $this->timeframeRepository->createManyForOffer($attributes['timeframes'], $model);
 
         $this->resetModel();
@@ -167,9 +168,11 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     /**
      * @param string $offerId
-     * @param int $accountId
+     * @param int    $accountId
      *
      * @return Offer|null
+     * @throws \InvalidArgumentException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function findByIdAndAccountId(string $offerId, int $accountId): ?Offer
     {
@@ -218,6 +221,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot update your offer.");
         }
 
+        $model->offerData->fill($attributes)->save();
         if (array_key_exists('timeframes', $attributes)) {
             $this->timeframeRepository->replaceManyForOffer($attributes['timeframes'], $model);
         }

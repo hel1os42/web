@@ -50,6 +50,13 @@ iframe {
     background: linear-gradient(to top, #ff8a0e, #ff5a00);
     outline: none;
 }
+.btn-nau.btn-xs {
+    padding: 8px 20px;
+    font-size: 80%;
+    font-weight: normal;
+}
+
+
 #mainwrapper {
     min-height: 100vh;
     padding-bottom: 60px;
@@ -220,4 +227,33 @@ footer p {
 .pagenavy a.prev:focus:before,
 .pagenavy a.next:focus:before {
     border-color: #ff8a0e;
+}
+
+#waitPopupOverlay {
+    position: fixed;
+    z-index: 10029;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+#waitPopupOverlay .waitPopup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    padding: 15px;
+    background: #fff;
+}
+#waitPopupOverlay h3 {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay .img {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay #waitError {
+    color: red;
+    margin-bottom: 0;
 }

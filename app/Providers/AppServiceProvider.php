@@ -6,17 +6,20 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
-use App\Repositories\PlaceRepository;
-use App\Services\Implementation\NauOfferReservation;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
+use App\Repositories\PlaceRepository;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
+use App\Services\Implementation\NauOfferReservation;
 use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
 use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
+use App\Services\PlaceService;
 use App\Services\WeekDaysService;
+use App\Services\ImageService as ImageServiceInterface;
+use App\Services\Implementation\ImageService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
@@ -56,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         );
+
+        $this->setUserViewsData();
     }
 
     /**
@@ -82,6 +87,55 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             InvestorAreaService::class,
             InvestorAreaServiceImpl::class
+        );
+
+        $this->app->bind(
+            ImageServiceInterface::class,
+            ImageService::class
+        );
+
+        $this->app->bind(
+            PlaceService::class,
+            \App\Services\Implementation\PlaceService::class
+        );
+    }
+
+    private function setUserViewsData()
+    {
+        ViewFacade::composer(
+            ['user.show'], function (View $view) {
+                $editableUserArray = $view->getData();
+                /** @var User $editableUserModel */
+                $editableUserModel = User::query()->find($editableUserArray['id']);
+                $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
+                $children          = $editableUserModel->children->toArray();
+
+                if (auth()->user()->isAdmin()) {
+                    $allChildren = \App\Models\User::query()->get();
+                } else {
+                    $allChildren = auth()->user()->children;
+                }
+
+                $allPossibleChildren = [];
+
+
+                if ($editableUserModel->isAgent()) {
+                    $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
+                } else {
+                    $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
+                }
+
+                foreach ($allChildren as $childValue) {
+                    if ($childValue->hasRoles($rolesForChildSet)) {
+                        $allPossibleChildren[] = $childValue->toArray();
+                    }
+                }
+
+                $view->with('roleIds', $roleIds);
+                $view->with('children', $children);
+                $view->with('allPossibleChildren', $allPossibleChildren);
+                $view->with('editableUserModel', $editableUserModel);
+            }
         );
     }
 }

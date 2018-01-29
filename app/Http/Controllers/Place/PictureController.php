@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Place;
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\PlaceRepository;
+use App\Services\PlaceService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Intervention\Image\ImageManager;
@@ -25,16 +26,22 @@ class PictureController extends AbstractPictureController
 
     private $type = 'picture';
     private $placeRepository;
+    /**
+     * @var $placeService PlaceService
+     */
+    private $placeService;
 
     public function __construct(
         ImageManager $imageManager,
         Filesystem $filesystem,
         AuthManager $authManager,
-        PlaceRepository $placeRepository
+        PlaceRepository $placeRepository,
+        PlaceService $placeService
     ) {
         parent::__construct($imageManager, $filesystem, $authManager);
 
         $this->placeRepository = $placeRepository;
+        $this->placeService    = $placeService;
     }
 
     /**
@@ -46,11 +53,28 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storePicture(PictureRequest $request)
+    public function storePicture(string $placeId = null, PictureRequest $request)
     {
-        $this->type = self::TYPE_PICTURE;
+        $placeId = $placeId ?: $this->user()->place->getId();
+        $place   = $this->placeRepository->find($placeId);
 
-        return $this->store($request);
+        $this->authorize('places.picture.store', $place);
+
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $this->placeService->disapprove($place, true);
+        }
+
+        $imageService = app()->makeWith('App\Services\ImageService', [
+            'file' => $request->file('picture')
+        ]);
+
+        $imageService->savePlacePicture($place);
+
+        $location = route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]);
+
+        return $request->wantsJson()
+            ? response()->render('', [], Response::HTTP_CREATED, $location)
+            : redirect($location);
     }
 
     /**
@@ -62,24 +86,35 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function storeCover(PictureRequest $request)
+    public function storeCover(string $placeId = null, PictureRequest $request)
     {
+        $placeId             = $placeId ?: $this->user()->place->getId();
         $this->type          = self::TYPE_COVER;
-        $this->pictureHeight = 200;
-        $this->pictureWidth  = 600;
+        $this->pictureHeight = 400;
+        $this->pictureWidth  = 1200;
 
-        return $this->store($request);
+        return $this->store($request, $placeId);
     }
 
-    private function store(PictureRequest $request)
+    /**
+     * @param PictureRequest $request
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @throws \LogicException
+     * @throws \RuntimeException
+     */
+    private function store(PictureRequest $request, string $placeId = null)
     {
-        $place = $this->placeRepository->findByUser($this->user());
+        $place = $this->placeRepository->find($placeId);
 
         $this->authorize('places.picture.store', $place);
 
-        $redirect = (!$request->wantsJson() && $this->auth->user()->isAdvertiser()) ? route('profile.place.show') : route('profile.picture.show');
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $this->placeService->disapprove($place, true);
+        }
 
-        return $this->storeImageFor($request, $place->getId(), $redirect);
+        return $this->storeImageFor($request, $place->getId(),
+            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
     }
 
     /**

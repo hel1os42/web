@@ -32,6 +32,12 @@ class AuthServiceProvider extends ServiceProvider
         'offers.list' => 'OfferPolicy@index',
         'offers.show' => 'OfferPolicy@show',
 
+        'operators.list'   => 'OperatorPolicy@index',
+        'operators.show'   => 'OperatorPolicy@show',
+        'operators.create' => 'OperatorPolicy@create',
+        'operators.delete' => 'OperatorPolicy@destroy',
+        'operators.update' => 'OperatorPolicy@update',
+
         'my.offers.list'       => 'OfferPolicy@indexMy',
         'my.offer.show'        => 'OfferPolicy@showMy',
         'offers.create'        => 'OfferPolicy@create',
@@ -41,9 +47,8 @@ class AuthServiceProvider extends ServiceProvider
 
         'places.list'          => 'PlacePolicy@index',
         'places.show'          => 'PlacePolicy@show',
-        'my.place.show'        => 'PlacePolicy@showMy',
         'places.offers.list'   => 'PlacePolicy@showOffers',
-        'my.place.create'      => 'PlacePolicy@createMy',
+        'places.create'        => 'PlacePolicy@create',
         'places.update'        => 'PlacePolicy@update',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
@@ -54,22 +59,21 @@ class AuthServiceProvider extends ServiceProvider
         'roles.list' => 'RolePolicy@index',
         'roles.show' => 'RolePolicy@show',
 
-        'transactions.list'   => 'TransactPolicy@index',
-        'transactions.create' => 'TransactPolicy@create',
+        'transactions.list'          => 'TransactPolicy@index',
+        'transactions.create'        => 'TransactPolicy@create',
         'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
-        'transaction.show'    => 'TransactPolicy@show',
+        'transaction.show'           => 'TransactPolicy@show',
 
-        'users.create'          => 'UserPolicy@create',
-        'users.list'            => 'UserPolicy@index',
-        'users.show'            => 'UserPolicy@show',
-        'users.update'          => 'UserPolicy@update',
-        'users.referrals.list'  => 'UserPolicy@referrals',
-        'users.picture.store'   => 'UserPolicy@pictureStore',
-        'users.update.children' => 'UserPolicy@updateChildren',
-        'users.update.parents'  => 'UserPolicy@updateParents',
-        'users.update.roles'    => 'UserPolicy@updateRoles',
-        'users.update.approve'  => 'UserPolicy@approve',
-        'impersonate'           => 'UserPolicy@impersonate',
+        'users.create'         => 'UserPolicy@create',
+        'users.list'           => 'UserPolicy@index',
+        'users.show'           => 'UserPolicy@show',
+        'users.update'         => 'UserPolicy@update',
+        'users.referrals.list' => 'UserPolicy@referrals',
+        'users.picture.store'  => 'UserPolicy@pictureStore',
+        'user.update.children' => 'UserPolicy@updateChildren',
+        'user.update.parents'  => 'UserPolicy@updateParents',
+        'user.update.roles'    => 'UserPolicy@updateRoles',
+        'impersonate'          => 'UserPolicy@impersonate',
     ];
 
     /**

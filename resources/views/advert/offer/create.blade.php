@@ -10,55 +10,16 @@
 
             <h1>Create offer</h1>
 
-            <form action="{{route('advert.offers.store')}}" method="post" class="nau-form" id="createOfferForm" target="_top">
+            <form action="{{ route('advert.offers.store') }}" method="POST" class="nau-form" id="createOfferForm" target="_top">
 
-                {{--<ul class="tab-step-control js-tabs">--}}
-                    {{--<li class="active"><a href="#tab_step1" data-toggle="tab"><em>1</em> Main<br>Information</a></li>--}}
-                    {{--<li><a href="#tab_step2" data-toggle="tab"><em>2</em> Working Dates<br>&amp; Times</a></li>--}}
-                    {{--<li><a href="#tab_step3" data-toggle="tab"><em>3</em> Working<br>Area</a></li>--}}
-                    {{--<li><a href="#tab_step4" data-toggle="tab"><em>4</em> Additional<br>Settings</a></li>--}}
-                {{--</ul>--}}
-
-                {{--<div class="tab-content tab-step-content">--}}
-                    @include('advert.offer.create-step1')
-                    @include('advert.offer.create-step2')
-                    @include('advert.offer.create-step3')
-                    @include('advert.offer.create-step4')
-                {{--</div>--}}
+                @include('advert.offer.create-main-info')
+                @include('partials/offer-picture-filepicker')
+                @include('advert.offer.create-category')
+                @include('advert.offer.create-working')
+                @include('advert.offer.create-map')
+                @include('advert.offer.create-redemption')
 
             </form>
-
-            <div id="formOverlay">
-                <div id="formInformationModal">
-                    <p class="msg">Sending...</p>
-                    <img src="{{ asset('img/loading.gif') }}" alt="loading..." class="loading">
-                </div>
-            </div>
-
-            @push('scripts')
-                <script type="text/javascript">
-                    /* offer_category */
-                    let xhr = new XMLHttpRequest();
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                            if (xhr.status === 200) {
-                                document.getElementById("offer_category").innerHTML = xhr.responseText;
-                            }
-                            else if (xhr.status === 400) {
-                                console.log('Get categories: there was an error 400');
-                            }
-                            else {
-                                console.log('Get categories: something else other than 200 was returned');
-                            }
-                        }
-                    };
-
-                    xhr.open("GET", "{{ route('categories') }}", true);
-                    xhr.send();
-                </script>
-
-            @endpush
 
         </div>
     </div>
@@ -66,30 +27,24 @@
 
 
 @push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/partials/create-offer-validator.js') }}"></script>
-    <script src="{{ asset('js/partials/create-offer-sender.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
-    <script src="{{ asset('js/partials/image-uploader.js') }}"></script>
-	<script>
+    <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script>
 
         /* dateTime picker init */
         dateTimePickerInit();
 
         /* control range init */
-        controlRange('.js-numeric');
+        controlRangeInit();
         maxRedemptionInfinity('.max-redemption input');
-
-        /* image uploader init */
-        imageUploader('.js-imgupload');
-
-        /* tab-step-control and tab-validator */
-        tabStepControlInit();
 
         /* "Working Days & Time" checking days */
         checkingDays();
@@ -113,19 +68,33 @@
             $('.js-timepicker').on('focus click', function(){
                 timePicker($(this));
             });
+            $startDate.on('change', function(){
+                let fdate = $finishDate.val();
+                if (fdate) {
+                    let sdate = new Date($startDate.val());
+                    fdate = new Date(fdate);
+                    if (sdate > fdate) { $finishDate.val(''); }
+                }
+            });
+            $('.cleartime-btn').on('click', function(){
+                $('[name="finish_date"]').val('');
+            });
         }
 
-        function tabStepControlInit() {
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                if ($(e.target).hasClass('tab-nav')) {
-                    let idActiveTab = $(e.target).attr('href');
-                    $('.tab-step-control > li.active').removeClass('active');
-                    $('.tab-step-control [href="' + idActiveTab + '"]').parents('.tab-step-control > li').addClass('active');
+        function controlRangeInit(){
+            let selector = '.js-numeric';
+            $('.js-numeric').parents('label').before(btn('more', '+')).after(btn('less', '-'));
+            controlRange(selector);
+            maxRedemptionInfinity('.max-redemption input');
+            $('[name="reward"]').on('change', function(){
+                let $reserv = $('[name="reserved"]');
+                let reservMin = $(this).val() * 10;
+                $reserv.attr('data-min', reservMin);
+                if ($reserv.val() < reservMin) {
+                    $reserv.attr('data-default', reservMin).val(reservMin);
                 }
-                $('.tab-step-control li.active').prevAll().find('a').each(function () {
-                    tabValidator[$(this).attr('href')]();
-                });
             });
+            function btn(c, t) { return `<em role="button" class="${c}">${t}</em>`; }
         }
 
         function checkingDays(){
@@ -135,35 +104,27 @@
                 if (!$cb.is(':checked')) $p.addClass('passive');
                 $cb.on('change', function(){
                     $p.toggleClass('passive', !$(this).is(':checked'));
-                    let $inputs = $p.find('.js-timepicker');
-                    let passive = $p.hasClass('passive');
-                    $inputs.eq(0).val(passive ? '00:00' : '');
-                    $inputs.eq(1).val(passive ? '23:59' : '');
                 }).trigger('change');
+            });
+            $('#selectWorkingDays').add('#selectWeekends').on('click', function(){
+                $('.day-info').each(function(){
+                    let $cb = $(this).find('[type="checkbox"]');
+                    $(this)[($cb.is(':checked') ? 'remove' : 'add') + 'Class']('passive');
+                });
             });
         }
 
         function wokrTimeSynchronization(){
-            /* да, сложно и запутанно */
-            $('#check_wd8, #check_wd9').on('change', function(){
-                let state = this.checked;
-                $('[data-relation="' + $(this).attr('id') + '"]').prop('checked', state).trigger('change');
-            });
-            $('#time_wd8f, #time_wd8t').on('change', function(){
+            $('.day-info').find('[name^="start_time_"], [name^="finish_time_"]').on('change', function(){
+                let name = $(this).attr('name').substr(0,8);
                 let val = $(this).val();
-                if ($('#check_wd8').is(':checked')) {
-                    $('[data-relation="check_wd8"]').parents('p').find('[data-relation="' + $(this).attr('id') + '"]');
-                }
-                if ($('#check_wd9').is(':checked')) {
-                    $('[data-relation="check_wd9"]').parents('p').find('[data-relation="' + $(this).attr('id') + '"]');
-                }
+                $(this).parents('.day-info').nextAll('.day-info').each(function(){
+                    if ($(this).find('[type="checkbox"]').prop('checked')) {
+                        let input = $(this).find(`[name^="${name}"]`);
+                        if (!input.val()) input.val(val);
+                    }
+                });
             });
-            /*$('[data-relation^="time_wd8f_"]').each(function(){
-                $(this).on('change', function(){ $('#time_wd8f').val($(this).val()); });
-            });
-            $('[data-relation^="time_wd8t_"]').each(function(){
-                $(this).on('change', function(){ $('#time_wd8t').val($(this).val()); });
-            });*/
         }
 
         function offerTypeController(){
@@ -175,234 +136,305 @@
             }).trigger('change');
         }
 
-        $( document ).ready( function() {
-            let GPS = {};
-            let defaultZoom = 1;
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition( getGPS, defaultGPS );
-            }
-
-            function getGPS( pos ) {
-                GPS = {
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
-                };
-                defaultZoom = 13;
-                mapInitialize( GPS, defaultZoom );
-            }
-            function defaultGPS() {
-                GPS = {
-                    lat: 0,
-                    lng: 0
-                };
-                mapInitialize( GPS, defaultZoom );
-            }
 
 
-            function mapInitialize( GPS, defaultZoom ) {
+        /* picture and cover */
 
-                let map = L.map( 'mapid', {
-                    center: GPS,
-                    zoom:   defaultZoom// 13
-                } );
-
-                L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom:       19,
-                    minZoom:       1,
-                    maxNativeZoom: 18,
-                    attribution:   '© OpenStreetMap',
-                } ).addTo( map );
+        let $offer_image_box = $('#offer_image_box');
+        $offer_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+        });
 
 
-                function fillMapFields(map){
-                    let radiusPx = 190;
-                    $('[name="latitude"]').val(map.getCenter().lat);
-                    $('[name="longitude"]').val(map.getCenter().lng);
-                    $('[name="radius"]').val(Math.round(getRadius(radiusPx, map)));
-                    console.log(map.getZoom());
-                    function getRadius(radiusPx, map) {
-                        return 40075016.686 * Math.abs(Math.cos(map.getCenter().lat / 180 * Math.PI)) / Math.pow(2, map.getZoom()+8) * radiusPx;
-                    }
 
-                    function getZoom(latitude, radius) {
-                        let zoom = this.round(Math.log2(40075016.686 * 75 * Math.abs(Math.cos(latitude / 180 * Math.PI)) / radius) - 8, 0.25);
-                        return zoom;
-                    }
+        /* map */
 
-                    function round(value, step) {
-                        step || (step = 1.0);
-                        let inv = 1.0 / step;
-                        return Math.round(value * inv) / inv;
-                    }
-                }
+        mapInit({
+            id: 'mapid',
+            done: mapDone,
+            move: mapMove
+        });
 
-                $(map).on('zoomend, moveend', function(){
-                    fillMapFields(this);
-                });
-
-                fillMapFields(map);
-                handleForm(map);
-            }
-        } );
-
-        function handleForm(map){
-            $('#createOfferForm').on('submit', function (e){
+        function mapDone(map){
+            mapMove(map);
+            $('#createOfferForm').on('submit', function (e) {
                 e.preventDefault();
-
-                function getTZ(map, callback){
-                    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
-                    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
-                    let timestamp = Math.round(new Date().valueOf() / 1000);
-                    let lat = map.getCenter().lat;
-                    let lng = map.getCenter().lng;
-                    let requestUrl = url + `location=${lat}, ${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
-                    return httpGetAsync(map, requestUrl, callback);
-
-                    function httpGetAsync(map, theUrl, callback)
-                    {
-                        let xmlHttp = new XMLHttpRequest();
-                        xmlHttp.onreadystatechange = function() {
-                            if (4 == xmlHttp.readyState && 200 == xmlHttp.status){
-                                let response = JSON.parse(xmlHttp.responseText);
-                                function convertRawOffset(raw){
-                                    let absRawInHr = Math.abs(raw / 3600);
-                                    let converted = (absRawInHr <= 9) ? ('0'+absRawInHr+'00') : (absRawInHr+'00');
-                                    return (raw < 0) ? ('-' + converted) : ('+' + converted);
-                                }
-                                let tz = convertRawOffset(response.rawOffset);
-                                callback(map, tz);
-                            }
-                        }
-                        xmlHttp.open("GET", theUrl, true);
-                        xmlHttp.send(null);
-                    }
+                if (formValidation()) {
+                    getTimeZone(map, getFormData);
                 }
+            });
+            validationOnFly();
+        }
 
-                getTZ(map, getFormData);
+        function mapMove(map){
+            let values = mapValues(map);
+            $('#mapradius').children('span').text(values.radius / 1000);
+            $('[name="latitude"]').val(values.lat);
+            $('[name="longitude"]').val(values.lng);
+            $('[name="radius"]').val(values.radius);
+            getTimeZone(map, function(tz){
+                $('[name="timezone"]').val(tz);
+                $('#map_box').toggleClass('invalid', tz === 'error')
+            });
+        }
 
-                function getFormData(map, tz){
-                    let timeframes = [];
-                    if (true === $('#tab_wdt1').hasClass('active')){
-                        let weekdays = {
-                            "all" : ["mo", "tu", "we", "th", "fr", "su", "sa"],
-                            "working" : ["mo", "tu", "we", "th", "fr"],
-                            "weekend" : ["su", "sa"]
-                        };
-                        let workingDaysState = $('input[name="____wd_working_days"]').is(':checked');
-                        let weekendDaysState = $('input[name="____wd_weekend"]').is(':checked');
-                        let startTime = $('input[name="start_time"]').val();
-                        let finishTime = $('input[name="finish_time"]').val();
-                        if(true === workingDaysState && true === weekendDaysState) {
-                            timeframes.push(compactTimeframe(weekdays.all, startTime, finishTime, tz));
-                        } else if (true === workingDaysState) {
-                            timeframes.push(compactTimeframe(weekdays.working, startTime, finishTime, tz));
-                        } else if (true === weekendDaysState){
-                            timeframes.push(compactTimeframe(weekdays.weekend, startTime, finishTime, tz));
+        function getFormData(tz){
+            let formData = $('.formData').serializeArray();
+
+            formData.push({
+                "name" : "_token",
+                "value" : $('[name="_token"]').val()
+            });
+
+            $('.nullableLimit').each(function(){
+                formData.push({
+                    "name" : $(this).attr('name'),
+                    "value" : $(this).val() === '0' ? null : $(this).val()
+                });
+            });
+            $('.nullableFormData').each(function(){
+                let val = $(this).val();
+                if (val === '0' || val === '' || val === undefined) val = null;
+                formData.push({
+                    "name" : $(this).attr('name'),
+                    "value" : val
+                });
+            });
+
+            /* offer type */
+            formData.push({
+                "name" : "type",
+                "value" : $('[name="offer_type"]:checked').val()
+            });
+            formData.push({
+                "name" : "delivery",
+                "value" : $('[name="delivery"]').prop('checked') ? "1" : "0"
+            });
+            let discount_start_price = parseInt($('[name="discount_start_price"]').val());
+            if (discount_start_price > 0) {
+                formData.push({
+                    "name" : "discount_start_price",
+                    "value" : discount_start_price.toString()
+                });
+                formData.push({
+                    "name" : "currency",
+                    "value" : $('[name="currency"]').val()
+                });
+            }
+            let gift_bonus_descr = '';
+            if ($('#bonus_radio').prop('checked')) gift_bonus_descr = $('#bonus_information').val();
+            if ($('#gift_radio').prop('checked')) gift_bonus_descr = $('#gift_information').val();
+            if (gift_bonus_descr) {
+                formData.push({
+                    "name" : "gift_bonus_descr",
+                    "value" : gift_bonus_descr
+                });
+            }
+
+            /* working dates */
+            let startDateVal = $('[name="start_date"]').val();
+            formData.push({
+                "name" : "start_date",
+                "value" : prepareDate(new Date(startDateVal), tz)
+            });
+            let finishDateVal = $('[name="finish_date"]').val();
+            formData.push({
+                "name" : "finish_date",
+                "value" : '' === finishDateVal ? null : prepareDate(new Date(finishDateVal), tz)
+            });
+
+            /* working times */
+            $('#dayInfoBox').find('[type="checkbox"]:checked').each(function(i){
+                let $cb = $(this), $day = $(this).parents('.day-info');
+                formData.push({
+                    "name" : `timeframes[${i}][from]`,
+                    "value" : $day.find('[name^="start_time"]').val() + ':00.000000' + tz
+                });
+                formData.push({
+                    "name" : `timeframes[${i}][to]`,
+                    "value" : $day.find('[name^="finish_time"]').val() + ':00.000000' + tz
+                });
+                formData.push({
+                    "name" : `timeframes[${i}][days][]`,
+                    "value" : $cb.val()
+                });
+            });
+
+            console.dir(formData);
+
+            waitPopup(true);
+            $('#waitRequests').text('1');
+
+            $.ajax({
+                method: "POST",
+                url: $('#createOfferForm').attr('action'),
+                headers: { 'Accept':'application/json' },
+                data: formData,
+                success: function(data, textStatus, xhr){
+                    if (202 === xhr.status){
+                        if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
+                            ifOfferCreated(xhr.getResponseHeader('Location'), 2);
+                        } else {
+                            window.location.replace("{{ route('advert.offers.index') }}");
                         }
-                    } else if (true === $('#tab_wdt2').hasClass('active')){
-                        let weekdays = {};
-                        $('[data-relation="check_wd8"]:checked, [data-relation="check_wd9"]:checked').each(function(){
-                            currentWeekday = $(this).data('weekday');
-                            timeFrom = $('[data-relation="time_wd8f"][data-weekday="' + currentWeekday + '"]').val();
-                            timeTo = $('[data-relation="time_wd8t"][data-weekday="' + currentWeekday + '"]').val();
-                            key = timeFrom + '-' + timeTo;
-                            weekdays[key] = (Array.isArray(weekdays[key])) ? weekdays[key].concat(currentWeekday) : new Array(currentWeekday);
-                        });
-                        $.each(weekdays, function(times, days){
-                            timesArray = times.split('-');
-                            timeframes.push(compactTimeframe(days, timesArray[0], timesArray[1], tz));
-                        });
+                    } else {
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.log(xhr);
                     }
+                },
+                error: function(resp){
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log(resp);
+                }
+            });
 
-                    let formData = $('.formData').serializeArray();
-                    $('.nullableLimit').each(function(){
-                        formData.push({
-                            "name" : $(this).prop('name'),
-                            "value" : ($(this).val() === '0') ? null : $(this).val()
-                        });
-                    });
-                    $('.nullableFormData').each(function(){
-                        let value = (
-                                        $(this).val() === '0'
-                                        || $(this).val() === undefined
-                                        || $(this).val() === ''
-                                    ) ? null : $(this).val();
-                        formData.push({
-                            "name" : $(this).prop('name'),
-                            "value" : value
-                        });
-                    });
-                    let startDateObj = new Date($('[name="start_date"]').val());
-                    formData.push({
-                        "name" : "start_date",
-                        "value" : prepareDate(startDateObj, tz)
-                    });
-                    let finishDateVal = $('[name="finish_date"]').val();
-                    formData.push({
-                        "name" : "finish_date",
-                        "value" : ('' == finishDateVal) ? null : prepareDate(new Date(finishDateVal), tz)
-                    });
+            function prepareDate(date, tz) {
+                return date.getFullYear() + "-" + prependWithZero(date.getMonth() + 1) + "-" + prependWithZero(date.getDate()) + ' 00:00:00.000000' + tz;
+                function prependWithZero(n) { return ("0" + n).slice(-2); }
+            }
 
-                    function prepareDate(date, tz) {
-                        return date.getFullYear()+"-"+prependWithZero(date.getMonth()+1)+"-"+prependWithZero(date.getDate())+' 00:00:00.000000'+ tz;
-                        function prependWithZero(number) {
-                            return ("0" + number).slice(-2);
-                        }
-                    }
+        }
 
-                    $.each(timeframes, function(key, timeframe){
-                        formData.push({
-                            "name" : "timeframes[" + key + "][from]",
-                            "value" : timeframe.from
-                        });
-                        formData.push({
-                            "name" : "timeframes[" + key + "][to]",
-                            "value" : timeframe.to
-                        });
-                        $.each(timeframe.days, function(dayKey, day){
-                            formData.push({
-                                "name" : "timeframes[" + key + "][days][" + dayKey + "]",
-                                "value" : day
-                            });
-                        }, key);
-                    });
+        function validationOnFly() {
 
-                    formData.push({
-                        "name" : "_token",
-                        "value" : $('[name="_token"]').val()
-                    });
-console.log(formData);
-                    $.ajax({
-                        type: "POST",
-                        url: $('#createOfferForm').attr('action'),
-                        headers: {
-                            'Accept':'application/json',
-                        },
-                        data: formData,
-                        success: function(data, textStatus, xhr){
-                            if (202 == xhr.status){
-                                return window.location.replace("{{ route('advert.offers.index') }}");
-                            } else {
-                                console.log(xhr.status);
-                            }
-                        },
-                        error: function(resp){
-                            console.log(resp.status);
-                        }
-                    });
-                };
+            /* Offer Type */
 
-                function compactTimeframe(days, from, to, timezoneStr){
-                    return {
-                        "from": from + ':00.000000' + timezoneStr,
-                        "to": to + ':00.000000' + timezoneStr,
-                        "days": days
-                    };
+            $('[name="discount_percent"]').on('change', function(){
+                /* string to integer or float with 1-2 digits after dot */
+                let val = $(this).val().trim().replace(',', '.');
+                val = !val ? '1' : val;
+                let dot = val.indexOf('.');
+                if (dot >= 0) {
+                    let a = val.substr(0, dot);
+                    let b = val.substr(dot + 1, 2);
+                    a = +a === 0 ? '0' : a;
+                    val = b ? a + '.' + b : a;
+                }
+                let test = +val;
+                if (isNaN(test)) val = '1';
+                else {
+                    if (test > 100) val = '100';
+                    else if (test < 0.01) val = '1';
+                }
+                $(this).val(val);
+            });
+
+        }
+
+        function formValidation() {
+            let res = true;
+            let val, $control, $hint;
+
+            /* Map */
+            if ($('[name="timezone"]').val() === 'error') res = false;
+
+            /* Times */
+            let $dayInfoBox = $('#dayInfoBox');
+            let $daysChecked = $dayInfoBox.find('[type="checkbox"]:checked');
+            if ($daysChecked.length < 1) {
+                $dayInfoBox.addClass('invalid');
+                $('html, body').animate({ scrollTop: $('.days-info').prev().offset().top }, 400);
+                res = false;
+            }
+            for (let i = 0; i < $daysChecked.length; i++) {
+                let times = $daysChecked.eq(i).parents('.day-info').find('[name*="time"]');
+                if (times.eq(0).val() === '') { res = emptyTimeField(times.eq(0)); break; }
+                if (times.eq(1).val() === '') { res = emptyTimeField(times.eq(1)); break; }
+            }
+            function emptyTimeField(input){
+                $dayInfoBox.addClass('invalid');
+                input.focus();
+                return false;
+            }
+
+            /* Working Days */
+            $control = $('[name="start_date"]');
+            if ($control.val() === '') {
+                $control.focus().parents('.control-datetime').addClass('invalid');
+                res = false;
+            }
+
+            /* Offer Type */
+            $hint = $('#hint_offertypebox');
+            if ($('#gift_radio').prop('checked')) {
+                $control = $('#gift_information');
+                if ($control.val().length < 3) {
+                    $control.focus().parents('.control-text').addClass('invalid');
+                    $hint.show();
+                    res = false;
+                }
+            }
+            if ($('#bonus_radio').prop('checked')) {
+                $control = $('#bonus_information');
+                if ($control.val().length < 3) {
+                    $control.focus().parents('.control-text').addClass('invalid');
+                    $hint.show();
+                    res = false;
+                }
+            }
+            if ($('#discount_radio').prop('checked')) {
+                $control = $('[name="discount_percent"]');
+                val = +$control.val();
+                if (isNaN(val) || val < 0.01 || val > 100) {
+                    $control.focus().parents('.control-text').addClass('invalid');
+                    $hint.show();
+                    res = false;
+                }
+            }
+
+            /* Offer name */
+            $control = $('[name="label"]');
+            val = $control.val().length;
+            if (val < 3 || val > 128) {
+                $control.focus().parents('.control-text').addClass('invalid');
+                res = false;
+            }
+
+            return res;
+        }
+
+        function ifOfferCreated(url, n){
+            $('#waitRequests').text(n);
+            $.ajax({
+                url: url,
+                headers: { 'Accept':'application/json' },
+                success: function () {
+                    let uuid = url.split('/');
+                    sendImage(uuid[uuid.length - 1]);
+                },
+                error: function (resp) {
+                    $('#waitError').text(resp.status);
+                    setTimeout(function(){
+                        ifOfferCreated(url, n + 1);
+                    }, 1500);
                 }
             });
         }
 
-	</script>
+        function sendImage(uuid){
+            let formData = new FormData();
+            formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+            formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
+            for(let i of formData) { console.log(i); }
+            $.ajax({
+                url: `/offers/${uuid}/picture`,
+                data: formData,
+                processData: false,
+                contentType: false,
+                method: 'POST',
+                success: function () {
+                    console.log('SUCCESS: image sent.');
+                    window.location.replace("{{ route('advert.offers.index') }}");
+                },
+                error: function (resp) {
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log('ERROR: image not sent.');
+                }
+            });
+        }
+
+    </script>
 @endpush
 
 @stop

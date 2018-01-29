@@ -278,7 +278,7 @@ class TransactionControllerTest extends TestCase
         $responseFactory
             ->expects(self::once())
             ->method('__call')
-            ->with('render', ['transaction.in-progress', null, Response::HTTP_ACCEPTED, route('transaction.complete')])
+            ->with('render', ['transaction.in-progress', null, Response::HTTP_ACCEPTED, route('transaction.list')])
             ->willReturn($response);
 
         $returnValue = $this->controller->completeTransaction($request);

@@ -6,13 +6,18 @@ use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\PlaceRepository;
+use App\Repositories\UserRepository;
+use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class PlaceController
+ *
  * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceController extends Controller
 {
@@ -37,16 +42,19 @@ class PlaceController extends Controller
 
     /**
      * @param Request         $request
-     * @param string          $uuid
      * @param PlaceRepository $placesRepository
+     * @param string|null     $uuid
      *
      * @return Response
      * @throws AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, string $uuid, PlaceRepository $placesRepository): Response
+    public function show(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
     {
-        $place = $placesRepository->find($uuid);
+        $place = is_null($uuid)
+            ? $placesRepository->findByUser($this->user())
+            : $placesRepository->find($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
@@ -60,23 +68,26 @@ class PlaceController extends Controller
     /**
      * @param Request         $request
      * @param PlaceRepository $placesRepository
+     * @param string|null     $uuid
      *
      * @return Response
      * @throws AuthorizationException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function showOwnerPlace(Request $request, PlaceRepository $placesRepository): Response
+    public function edit(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
     {
-        $this->authorize('my.place.show');
-
-        $place = $placesRepository->findByUser($this->user());
+        $place = is_null($uuid)
+            ? $placesRepository->findByUser($this->user())
+            : $placesRepository->find($uuid);
 
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
 
-        return \response()->render('advert.profile.place.show', $place->toArray());
+        $this->authorize('places.update', $place);
+
+        return \response()->render('place.edit', $place->toArray());
     }
 
     /**
@@ -101,82 +112,108 @@ class PlaceController extends Controller
     }
 
     /**
+     * @param UserRepository  $userRepository
      * @param PlaceRepository $placesRepository
+     * @param string|null     $userUuid
      *
      * @return Response
      * @throws AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function create(PlaceRepository $placesRepository): Response
+    public function create(UserRepository $userRepository, PlaceRepository $placesRepository, string $userUuid = null): Response
     {
-        $this->authorize('my.place.create');
+        $forUser = is_null($userUuid)
+            ? $this->user()
+            : $userRepository->find($userUuid);
 
-        if ($placesRepository->existsByUser($this->user())) {
+        $this->authorize('places.create', $forUser);
+
+        if ($placesRepository->existsByUser($forUser)) {
             return \response()->error(Response::HTTP_NOT_ACCEPTABLE, 'You\'ve already created a place.');
         }
 
-        return \response()->render('advert.profile.place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
+        return \response()->render('place.create', FormRequest::preFilledFormRequest(CreateUpdateRequest::class));
     }
 
     /**
      * @param CreateUpdateRequest $request
+     * @param UserRepository      $userRepository
      * @param PlaceRepository     $placesRepository
+     * @param PlaceService        $placeService
+     * @param string|null         $userUuid
      *
      * @return Response
      * @throws AuthorizationException
      * @throws \LogicException
      */
-    public function store(CreateUpdateRequest $request, PlaceRepository $placesRepository): Response
-    {
-        $this->authorize('my.place.create');
+    public function store(
+        CreateUpdateRequest $request,
+        UserRepository $userRepository,
+        PlaceRepository $placesRepository,
+        PlaceService $placeService,
+        string $userUuid = null)
+    : Response {
+        $forUser = is_null($userUuid)
+            ? $this->user()
+            : $userRepository->find($userUuid);
 
-        $placeData = $request->all();
+        $this->authorize('places.create', $forUser);
 
-        $place = $placesRepository->createForUserOrFail($placeData, $this->user());
+        $placeData = $request->except('specialities', 'tags');
 
-        if ($request->has('category_ids') === true) {
-            $place->categories()->attach($request->category_ids);
-        }
+        $specsIds = $placeService->parseSpecialities($request->get('specialities', []));
+        $tagsIds  = $placeService->parseTags($placeData['category'], $request->get('tags', []));
 
-        return \response()->render('profile.place.show',
+        $place = $placesRepository->createForUserOrFail($placeData, $this->user(), $specsIds, $tagsIds);
+
+        return \response()->render('place.show',
             $place->toArray(),
             Response::HTTP_CREATED,
-            route('profile.place.show'));
+            route('places.show', [$place->getId()]));
     }
 
     /**
      * @param CreateUpdateRequest $request
-     * @param null|string         $uuid
      * @param PlaceRepository     $placesRepository
+     * @param PlaceService        $placeService
+     * @param string|null         $uuid
      *
      * @return Response
      * @throws AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
      */
     public function update(
         CreateUpdateRequest $request,
         PlaceRepository $placesRepository,
+        PlaceService $placeService,
         string $uuid = null
-    ): Response
-    {
+    ): Response {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
             : $placesRepository->find($uuid);
 
         $this->authorize('places.update', $place);
 
-        $placeData = $request->all();
+        $placeData = $request->except('specialities', 'tags');
+        $specsIds  = $placeService->parseSpecialities($request->get('specialities', []));
+        $tagsIds   = $placeService->parseTags($placeData['category'], $request->get('tags', []));
 
         if ($request->isMethod('put')) {
             $placeData = array_merge($place->getFillableWithDefaults(), $placeData);
         }
 
-        $place = $placesRepository->update($placeData, $place->id);
-        $place->categories()->sync($request->category_ids);
+        if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
+            $placeService->disapprove($place, true);
+        }
 
-        return \response()->render('profile.place.show', $place->toArray(), Response::HTTP_CREATED,
-            route('profile.place.show'));
+        $place = $placesRepository->updateWithRelations($placeData, $place->id, $specsIds, $tagsIds);
+
+        return \response()->render('place.show', $place->toArray(), Response::HTTP_CREATED,
+            route('places.show', [$place->getId()]));
     }
 }

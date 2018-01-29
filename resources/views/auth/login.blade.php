@@ -29,4 +29,10 @@
     </div>
 {!! Form::close() !!}
 
+@push('scripts')
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/login.js') }}"></script>
+@endpush
+
 @stop
