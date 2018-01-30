@@ -17,7 +17,7 @@ class CategoriesTableSeeder extends Seeder
     const FOOD_DRINKS = 'Food & Drinks';
     const BEAUTY_FITNESS = 'Beauty & Fitness';
     const RETAIL_SERVICES = 'Retail & Services';
-    const ATTRACTIONS_LEISURE = 'Attractions & Leisure';
+    const ATTRACTIONS_LEISURE = 'Accommodation & Leisure';
     const OTHER_ONLINE = 'Other & Online';
 
     /**
