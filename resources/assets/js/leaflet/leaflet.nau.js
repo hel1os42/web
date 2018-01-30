@@ -163,3 +163,25 @@ function getTimeZoneGPS(gps, callback){
         xhr.send(null);
     }
 }
+
+function gpsField(map, input, mapMove){
+    console.log('gpsField');
+    input.addEventListener('keyup', gpsFieldValidator);
+    input.addEventListener('change', gpsFieldValidator);
+    input.addEventListener('paste', gpsFieldValidator);
+    function gpsFieldValidator(){
+        console.log('gpsField event');
+        let value = this.value;
+        /* TODO: плохой поиск родителя, переделать! */
+        let p = this.parentElement.parentElement;
+        let gps = value.split(',').map(function(e){ return parseFloat(e.trim()); });
+        console.dir(gps);
+        if (gps.length !== 2 || isNaN(gps[0]) || isNaN(gps[1])) {
+            p.classList.add('invalid');
+        } else {
+            p.classList.remove('invalid');
+            map.panTo(new L.LatLng(gps[0], gps[1]));
+            mapMove(map);
+        }
+    }
+}

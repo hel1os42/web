@@ -172,21 +172,28 @@ footer p {
 }
 
 .pagenavy {
-    margin-bottom: 32px;
+    margin: 16px 0 24px;
     text-align: right;
 }
 .pagenavy span,
 .pagenavy a {
     position: relative;
     display: inline-block;
-    margin: 0 2px;
+    margin: 0 2px 8px;
     padding: 0 6px;
     min-width: 32px;
     height: 32px;
     vertical-align: top;
     text-align: center;
+    line-height: 32px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
+}
+.pagenavy span {
+    cursor: default;
+}
+.pagenavy span.dots {
+    border: none;
 }
 .pagenavy a {
     color: #ff5a00;
@@ -195,8 +202,7 @@ footer p {
 .pagenavy a:hover,
 .pagenavy a:active,
 .pagenavy a:focus {
-    color: #ff8a0e;
-    border-color: #ff8a0e;
+    background-color: rgba(255, 138, 14, 0.4);
     text-decoration: none;
 }
 .pagenavy .prev:before,
