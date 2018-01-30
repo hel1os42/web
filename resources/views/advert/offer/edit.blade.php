@@ -174,14 +174,18 @@
             });
             validationOnFly();
             getTimeZone(map, fillTimeframes);
+            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
         }
 
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $('[name="latitude"]').val(values.lat);
-            $('[name="longitude"]').val(values.lng);
+            $latitude = $('[name="latitude"]');
+            $longitude = $('[name="longitude"]');
+            $latitude.val(values.lat);
+            $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
+            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             getTimeZone(map, function(tz){
                 $('[name="timezone"]').val(tz);
                 $('#map_box').toggleClass('invalid', tz === 'error')

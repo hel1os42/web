@@ -1,19 +1,17 @@
-<br><br>
 @if($last_page > 1)
-    <ul class="pagination">
+    <p class="pagenavy" id="table_pager">
         @if($prev_page_url)
-            <li class="page-item"><a class="page-link" href="{{$prev_page_url}}" rel="prev">prev</a></li>
+            <a href="{{ $prev_page_url }}" class="prev"></a>
         @endif
-        @for($i=1; $i<=$last_page; $i++)
+        @for($i=1; $i <= $last_page; $i++)
             @if($current_page == $i)
-                <strong>{{$i}}</strong>
+                <span class="current">{{ $i }}</span>
             @else
-                {{$i}}
+                <a href="{{ $path }}?page={{ $i }}">{{ $i }}</a>
             @endif
-            &nbsp;|&nbsp;
         @endfor
         @if($next_page_url)
-            <li class="page-item"><a class="page-link" href="{{$next_page_url}}" rel="next">next</a></li>
+            <a href="{{ $next_page_url }}" class="next"></a>
         @endif
-    </ul>
+    </p>
 @endif

@@ -94,4 +94,28 @@ function waitPopup(withRqCounter){
     document.body.appendChild(waitPopup);
 }
 
+function pagenavyCompact(pagenavy){
+    console.log('pagenavyCompact', new Date());
+    let buttons = pagenavy.children;
+    let currentIndex = 0, cntBefore = 0, cntAfter = 0;
+    for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].classList.contains('current')) { currentIndex = i; break; }
+    }
+    for (let i = 3; i < currentIndex - 2; i++) {
+        buttons[i].style.display = 'none';
+        cntBefore++;
+    }
+    for (let i = currentIndex + 3; i < buttons.length - 3; i++) {
+        buttons[i].style.display = 'none';
+        cntAfter++;
+    }
+    if (cntBefore) pagenavy.insertBefore(dots(), buttons[3]);
+    if (cntAfter) pagenavy.insertBefore(dots(), buttons[currentIndex + 4]);
+    function dots(){
+        let span = document.createElement('span');
+        span.classList.add('dots');
+        span.innerText = '...';
+        return span;
+    }
+}
 

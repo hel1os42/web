@@ -20,6 +20,16 @@
 <div class="control-box">
     <p class="control-text">
         <label>
+            <span class="input-label">GPS</span>
+            <input name="gps_crd" value="{{ $latitude }}, {{ $longitude }}">
+        </label>
+    </p>
+    <p class="hint">Invalid GPS-format. Example: 49.4274121,27.0085986</p>
+</div>
+
+<div class="control-box">
+    <p class="control-text">
+        <label>
             <span class="input-label">Country</span>
             <input name="country" value="{{ $country ?: '' }}" class="nullableFormData">
         </label>

@@ -92,6 +92,16 @@
                             <p id="mapradius">Radius: <span>unknown</span> km.</p>
                         </div>
 
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">GPS</span>
+                                    <input name="gps_crd" value="">
+                                </label>
+                            </p>
+                            <p class="hint">Invalid GPS-format. Example: 49.4274121,27.0085986</p>
+                        </div>
+
                         <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Place"></p>
 
                     </form>
@@ -213,14 +223,18 @@
 
         function mapDone(map){
             mapMove(map);
+            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
         }
 
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $('[name="latitude"]').val(values.lat);
-            $('[name="longitude"]').val(values.lng);
+            $latitude = $('[name="latitude"]');
+            $longitude = $('[name="longitude"]');
+            $latitude.val(values.lat);
+            $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
+            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
         }
 
 
