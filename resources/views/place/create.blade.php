@@ -209,7 +209,7 @@
                     spetialitiesCache[uuid][$(this).val()] = true;
                 });
             }
-        });;
+        });
 
         
         
@@ -298,6 +298,8 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 type: "POST",
                 url: $('#createPlaceForm').attr('action'),
@@ -307,12 +309,14 @@
                     if (201 === xhr.status){
                         sendImages();
                     } else {
-                        alert("Something went wrong. Try again, please.");
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.log("Something went wrong. Try again, please.");
                         console.log(xhr.status);
                     }
                 },
                 error: function (resp) {
-                    alert("Something went wrong. Try again, please.");
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log("Something went wrong. Try again, please.");
                     console.log(resp.status);
                 }
             });
@@ -366,7 +370,8 @@
                     n.count -= 1;
                     callback(n);
                 },
-                error: function () {
+                error: function (resp) {
+                    $('#waitError').text(resp.status);
                     console.log('Error:', URI);
                 }
             });
