@@ -27,13 +27,13 @@
         <p class="control-range">
             <span class="input-label">Start price</span>
             <label>
-                <input name="discount_start_price" data-min="0" data-max="999999999" data-default="0" value="{{ $discount_start_price ?: '0' }}" class="js-numeric">
+                <input name="discount_start_price" data-min="0" data-max="999999999" data-default="0" value="{{ $discount_start_price ?: '0' }}" class="formData js-numeric">
             </label>
         </p>
         <p class="control-select clearfix">
             <span class="input-label">Currency</span>
             <label class="pull-right">
-                <select name="currency" class="offer-type-control"></select>
+                <select name="currency" class="formData offer-type-control"></select>
             </label>
         </p>
         <script>

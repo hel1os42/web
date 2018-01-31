@@ -6,16 +6,15 @@
     <p>{{$id}}</p>
     <div>
         @if($approved)
-            <p style="color:green">Yes</p>
+            <p style="color: green;">Yes</p>
         @else
             No
             <form action="{{route('users.update', $id)}}" method="post"
-                  style="display:  inline-block;">
+                  style="display: inline-block;">
                 {{ csrf_field() }}
                 {{ method_field('PATCH') }}
-                <input hidden type="text" name="approved" value="1">
-                <button style="display:  inline-block;" type="submit">approve
-                </button>
+                <input type="hidden" name="approved" value="1">
+                <button type="submit" class="btn btn-xs">approve</button>
             </form>
         @endif
     </div>

@@ -127,7 +127,7 @@
                                             {{ csrf_field() }}
                                             {{ method_field('PUT') }}
                                             <input type="hidden" name="status" value="active">
-                                            <button style="display:  inline-block;" type="submit" class="btn btn-warning">activate</button>
+                                            <button style="display:  inline-block;" type="submit" class="btn btn-xs btn-warning">activate</button>
                                         </form>
                                     @else
                                         <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
@@ -135,7 +135,7 @@
                                             {{ csrf_field() }}
                                             {{ method_field('PUT') }}
                                             <input type="hidden" name="status" value="deactive">
-                                            <button style="display:  inline-block;" type="submit" class="btn btn-primary">deactivate</button>
+                                            <button style="display:  inline-block;" type="submit" class="btn btn-xs btn-primary">deactivate</button>
                                         </form>
                                     @endif
                                 </td>
