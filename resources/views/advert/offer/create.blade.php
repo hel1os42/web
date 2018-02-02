@@ -272,7 +272,9 @@
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
-                            ifOfferCreated(xhr.getResponseHeader('Location'), 2);
+                            $('#waitRequests').text(2);
+                            let uuid = xhr.getResponseHeader('Location').split('/');
+                            sendImage(uuid[uuid.length - 1]);
                         } else {
                             window.location.replace("{{ route('advert.offers.index') }}");
                         }
@@ -390,24 +392,6 @@
             }
 
             return res;
-        }
-
-        function ifOfferCreated(url, n){
-            $('#waitRequests').text(n);
-            $.ajax({
-                url: url,
-                headers: { 'Accept':'application/json' },
-                success: function () {
-                    let uuid = url.split('/');
-                    sendImage(uuid[uuid.length - 1]);
-                },
-                error: function (resp) {
-                    $('#waitError').text(resp.status);
-                    setTimeout(function(){
-                        ifOfferCreated(url, n + 1);
-                    }, 1500);
-                }
-            });
         }
 
         function sendImage(uuid){
