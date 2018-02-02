@@ -172,14 +172,17 @@ function gpsField(map, input, mapMove){
     function gpsFieldValidator(){
         console.log('gpsField event');
         let value = this.value;
-        /* TODO: плохой поиск родителя, переделать! */
-        let p = this.parentElement.parentElement;
+        let p = this;
+        while (p) {
+            p = p.parentElement;
+            if (p.classList.contains('control-text')) break;
+        }
         let gps = value.split(',').map(function(e){ return parseFloat(e.trim()); });
         console.dir(gps);
         if (gps.length !== 2 || isNaN(gps[0]) || isNaN(gps[1])) {
-            p.classList.add('invalid');
+            if (p) p.classList.add('invalid');
         } else {
-            p.classList.remove('invalid');
+            if (p) p.classList.remove('invalid');
             map.panTo(new L.LatLng(gps[0], gps[1]));
             mapMove(map);
         }

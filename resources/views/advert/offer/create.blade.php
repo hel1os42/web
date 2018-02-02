@@ -152,6 +152,11 @@
 
         mapInit({
             id: 'mapid',
+            setPosition: {
+                lat: $('[name="latitude"]').val(),
+                lng: $('[name="longitude"]').val(),
+                radius: $('[name="radius"]').val()
+            },
             done: mapDone,
             move: mapMove
         });
@@ -215,17 +220,6 @@
                 "name" : "delivery",
                 "value" : $('[name="delivery"]').prop('checked') ? "1" : "0"
             });
-            let discount_start_price = parseInt($('[name="discount_start_price"]').val());
-            if (discount_start_price > 0) {
-                formData.push({
-                    "name" : "discount_start_price",
-                    "value" : discount_start_price.toString()
-                });
-                formData.push({
-                    "name" : "currency",
-                    "value" : $('[name="currency"]').val()
-                });
-            }
             let gift_bonus_descr = '';
             if ($('#bonus_radio').prop('checked')) gift_bonus_descr = $('#bonus_information').val();
             if ($('#gift_radio').prop('checked')) gift_bonus_descr = $('#gift_information').val();

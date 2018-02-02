@@ -193,6 +193,8 @@ footer p {
     cursor: default;
 }
 .pagenavy span.dots {
+    padding: 0;
+    min-width: 0;
     border: none;
 }
 .pagenavy a {
