@@ -44,10 +44,10 @@ class UserController extends Controller
 
         $users = $this->user()->isAdmin()
             ? $this->userRepository
-            : $this->userRepository;
+            : $this->userRepository->getChildrenByUser($this->user());
         return \response()
             ->render('user.index', $users->with(['roles', 'accounts', 'place'])
-                ->orderBy('updated_at', 'desc')->paginate());
+            ->orderBy('updated_at', 'desc')->paginate());
     }
 
     /**
@@ -82,7 +82,6 @@ class UserController extends Controller
         $user = $this->userRepository->with($with)->find($uuid);
 
         $this->authorize('users.show', $user);
-
 
         return \response()->render('user.show', $user->toArray());
     }
