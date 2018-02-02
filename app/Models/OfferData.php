@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property null|float  discount_start_price
  * @property null|float  discount_finish_price
  * @property null|string currency
+ * @property null|string owner_id
  */
 class OfferData extends Model
 {
@@ -52,6 +53,7 @@ class OfferData extends Model
             'discount_percent'     => 'float',
             'discount_start_price' => 'float',
             'currency'             => 'string',
+            'owner_id'             => 'string',
         ];
 
         $this->fillable = [
@@ -60,7 +62,8 @@ class OfferData extends Model
             'gift_bonus_descr',
             'discount_percent',
             'discount_start_price',
-            'currency'
+            'currency',
+            'owner_id',
         ];
 
         $this->attributes = [
@@ -69,7 +72,7 @@ class OfferData extends Model
             'gift_bonus_descr'     => null,
             'discount_percent'     => null,
             'discount_start_price' => null,
-            'currency'             => null
+            'currency'             => null,
         ];
 
         $this->appends = [
@@ -112,6 +115,18 @@ class OfferData extends Model
     }
 
     /**
+     * @param null|string $ownerId
+     *
+     * @return OfferData
+     */
+    public function setOwnerId(?string $ownerId): OfferData
+    {
+        $this->owner_id = $ownerId;
+
+        return $this;
+    }
+
+    /**
      * @return BelongsTo
      */
     public function offer(): BelongsTo
@@ -121,5 +136,13 @@ class OfferData extends Model
                     ->withDefault(function ($model) {
                         $model->id = $this->getId();
                     });
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 }
