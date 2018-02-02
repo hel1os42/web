@@ -54,6 +54,7 @@ class OfferController extends Controller
         $paginator    = $this->offerRepository
             ->with('timeframes')
             ->scopeAccount($account)
+            ->orderBy('updated_at', 'desc')
             ->paginateWithoutGlobalScopes();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
