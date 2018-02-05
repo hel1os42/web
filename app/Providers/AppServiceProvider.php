@@ -141,7 +141,6 @@ class AppServiceProvider extends ServiceProvider
 
         ViewFacade::composer(
             ['user.index'], function (View $view) {
-
                 $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
                 $accountRepository = app(AccountRepository::class);
                 $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();

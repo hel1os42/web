@@ -110,9 +110,9 @@ class User extends AbstractNauModel
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public static function getSpecialUsersArray(): ?array
+    public static function getSpecialUsersArray(): array
     {
         return [
             self::MASTER_USER_UUID         => 'Master User',
