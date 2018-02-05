@@ -2,13 +2,13 @@
     <form method="POST" action="{{ route('place.picture.store') }}" enctype="multipart/form-data">
 @endif
 
-<p><strong>Place picture:</strong></p>
+<p><strong>Place logo:</strong></p>
 <div class="form-group" id="place_picture_box">
     {{ csrf_field() }}
     <div class="fileinput fileinput-new text-center" data-provides="fileinput">
         <div class="fileinput fileinput-new text-center" data-provides="fileinput">
             <div class="fileinput-new thumbnail">
-                <img src="{{ asset('img/image_placeholder.jpg') }}" alt="Place picture">
+                <img src="{{ asset('img/image_placeholder.jpg') }}" alt="Place logo">
             </div>
             <div class="fileinput-preview fileinput-exists thumbnail" style=""></div>
             <div class="btn btn-default btn-fill btn-file">

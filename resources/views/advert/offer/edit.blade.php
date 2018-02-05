@@ -295,21 +295,19 @@
             $.ajax({
                 method: "PATCH",
                 url: $('#editOfferForm').attr('action'),
-                headers: {
-                    'Accept':'application/json',
-                },
+                headers: { 'Accept':'application/json' },
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         sendImage();
                     } else {
                         $('#waitError').text('Status: ' + xhr.status);
-                        console.log(xhr);
+                        console.dir(xhr);
                     }
                 },
                 error: function(resp){
                     $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.log(resp);
+                    console.dir(resp);
                 }
             });
 
