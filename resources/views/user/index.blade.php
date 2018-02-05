@@ -3,37 +3,40 @@
 @section('title', 'NAU show advertiser list')
 
 @section('content')
-<style>
-    td { padding: 10px; }
-</style>
+    <style>
+        td {
+            padding: 10px;
+        }
+    </style>
 
-<div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
-    @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-    <table style="margin-top: 24px;">
-        <thead>
-            <tr>
-                <th>User</th>
-                <th></th>
-                <th>Place</th>
-                <th></th>
-                <th>Balance</th>
-                <th></th>
-                <th>Approved</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        @foreach ($data as $user)
-            <tr>
-                <td>{{$user['name'] ?: '-'}}
-                    <br>
-                    <span>{{$user['email']}}</span><br>
-                    <span>{{$user['phone']}}</span>
-                </td>
-                <td>
-                    <a href="{{route('users.show', $user['id'])}}">
-                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                    </a>
-                </td>
+    <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
+        <div class="card card-very-long">
+            @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
+            <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
+                <thead>
+                    <tr>
+                        <td>User</td>
+                        <td></td>
+                        <td>Place</td>
+                        <td></td>
+                        <td>Balance</td>
+                        <td></td>
+                        <td>Approved</td>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                @foreach ($data as $user)
+                    <tr>
+                        <td>{{$user['name'] ?: '-'}}
+                            <br>
+                            <span style="font-size: 19px;">{{$user['email']}}</span><br>
+                            <span style="font-size: 19px;">{{$user['phone']}}</span>
+                        </td>
+                        <td>
+                            <a href="{{route('users.show', $user['id'])}}">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </a>
+                        </td>
 
                 @if(isset($user['place']['id']))
                     <td>
@@ -57,7 +60,6 @@
                         <button type="submit"
                                 class="btn btn-sm transaction-open-dialog"
                                 data-toggle="modal"
-                                data-source="{{auth()->user()->getAccountForNau()->getAddress()}}"
                                 data-destination="{{$user['accounts']['NAU']['address']}}"
                                 data-target="#sendNauModal">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
@@ -89,9 +91,8 @@
                 <h4 class="modal-title">Send NAU</h4>
             </div>
             <div class="transaction modal-body" data-url="{{route('transaction.complete')}}">
-                <p>Your balance: {{auth()->user()->getAccountForNau()->getBalance()}}</p>
                 {{ csrf_field() }}
-                <input type="hidden" name="source" id="source" value="">
+                @include('role-partials.selector', ['partialRoute' => 'user.index-balance-form', 'data' => ['specialUserAccounts' => $specialUserAccounts]])
                 <input type="hidden" name="destination" id="destination" value="">
                 <input type="hidden" name="no_fee" id="noFee" value="1">
                 <label for="amount">Amount</label>
