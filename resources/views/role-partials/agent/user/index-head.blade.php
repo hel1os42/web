@@ -1,5 +1,5 @@
 <h1>Users list</h1>
-<a href="{{route('users.create')}}" style="float:right" class="btn-link">+ Add new user</a>
+<a href="{{route('users.create')}}" style="float:right" class="btn">+ Add new user</a>
 <div id="admin-users-search">
     <label for="phone">By email:</label>
     <input type="text" name="email" id="email" value="">

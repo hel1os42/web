@@ -28,7 +28,6 @@ function setPickerPosition($input, pickerId){
 
 function datePicker($input, minDate){
 	let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     $('.picker').remove();
     let date = new Date();
     if ($input.val()) { date = new Date($input.val()); }

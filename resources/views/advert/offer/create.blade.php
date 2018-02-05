@@ -152,6 +152,11 @@
 
         mapInit({
             id: 'mapid',
+            setPosition: {
+                lat: $('[name="latitude"]').val(),
+                lng: $('[name="longitude"]').val(),
+                radius: $('[name="radius"]').val()
+            },
             done: mapDone,
             move: mapMove
         });
@@ -215,17 +220,6 @@
                 "name" : "delivery",
                 "value" : $('[name="delivery"]').prop('checked') ? "1" : "0"
             });
-            let discount_start_price = parseInt($('[name="discount_start_price"]').val());
-            if (discount_start_price > 0) {
-                formData.push({
-                    "name" : "discount_start_price",
-                    "value" : discount_start_price.toString()
-                });
-                formData.push({
-                    "name" : "currency",
-                    "value" : $('[name="currency"]').val()
-                });
-            }
             let gift_bonus_descr = '';
             if ($('#bonus_radio').prop('checked')) gift_bonus_descr = $('#bonus_information').val();
             if ($('#gift_radio').prop('checked')) gift_bonus_descr = $('#gift_information').val();
@@ -278,7 +272,9 @@
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
-                            ifOfferCreated(xhr.getResponseHeader('Location'), 2);
+                            $('#waitRequests').text(2);
+                            let uuid = xhr.getResponseHeader('Location').split('/');
+                            sendImage(uuid[uuid.length - 1]);
                         } else {
                             window.location.replace("{{ route('advert.offers.index') }}");
                         }
@@ -396,24 +392,6 @@
             }
 
             return res;
-        }
-
-        function ifOfferCreated(url, n){
-            $('#waitRequests').text(n);
-            $.ajax({
-                url: url,
-                headers: { 'Accept':'application/json' },
-                success: function () {
-                    let uuid = url.split('/');
-                    sendImage(uuid[uuid.length - 1]);
-                },
-                error: function (resp) {
-                    $('#waitError').text(resp.status);
-                    setTimeout(function(){
-                        ifOfferCreated(url, n + 1);
-                    }, 1500);
-                }
-            });
         }
 
         function sendImage(uuid){
