@@ -52,7 +52,6 @@ class OfferController extends Controller
         $this->authorize('my.offers.list');
         $account      = $this->user()->getAccountForNau();
         $paginator    = $this->offerRepository
-            ->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'))
             ->with('timeframes')
             ->scopeAccount($account)
             ->paginateWithoutGlobalScopes();

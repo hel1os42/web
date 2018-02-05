@@ -44,9 +44,7 @@ class UserController extends Controller
 
         $users = $this->user()->isAdmin()
             ? $this->userRepository
-                ->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'))
-            : $this->userRepository->getChildrenByUser($this->user())
-                ->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            : $this->userRepository->getChildrenByUser($this->user());
         return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])->paginate());
     }
 
