@@ -15,7 +15,7 @@ class CreateOffersDataTable extends Migration
     {
         Schema::create('offers_data', function (Blueprint $table)
         {
-            $table->uuid('id')->primary();;
+            $table->uuid('id')->primary();
             $table->boolean('delivery')->default(false);
 //            types: discount, gift, bonus, second_free
             $table->string('type', 12)->nullable();

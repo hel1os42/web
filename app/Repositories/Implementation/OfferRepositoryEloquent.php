@@ -85,7 +85,10 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
 
-        $model->offerData->fill($attributes)->save();
+        $model->offerData->fill($attributes)
+                         ->setOwnerId($account->getOwner()->getId())
+                         ->save();
+
         $this->timeframeRepository->createManyForOffer($attributes['timeframes'], $model);
 
         $this->resetModel();
