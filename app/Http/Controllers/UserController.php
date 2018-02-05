@@ -44,10 +44,10 @@ class UserController extends Controller
 
         $users = $this->user()->isAdmin()
             ? $this->userRepository
-            : $this->userRepository->getChildrenByUser($this->user());
-        return \response()
-            ->render('user.index', $users->with(['roles', 'accounts', 'place'])
-            ->orderBy('updated_at', 'desc')->paginate());
+                ->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'))
+            : $this->userRepository->getChildrenByUser($this->user())
+                ->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])->paginate());
     }
 
     /**
