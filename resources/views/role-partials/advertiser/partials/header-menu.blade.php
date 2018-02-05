@@ -4,7 +4,7 @@
     <li><a href="{{ route('profile.place.show') }}">Place</a></li>
 @endif
 @if($isPlaceCreated)
-    <li><a href="{{ route('advert.offers.index') }}">Offers</a></li>
+    <li><a href="{{ route('advert.offers.index').'?orderBy=updated_at&sortedBy=desc' }}">Offers</a></li>
 @endif
 <li><a href="{{ route('transaction.list') }}">Operations</a></li>
 <li class="sub-menu">
