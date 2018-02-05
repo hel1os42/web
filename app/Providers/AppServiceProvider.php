@@ -137,5 +137,11 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('editableUserModel', $editableUserModel);
             }
         );
+
+        ViewFacade::composer(
+            ['user.index'], function (View $view) {
+                $view->with('specialUserAccounts', \App\Models\NauModels\User::getSpecialUsersAccounts());
+            }
+        );
     }
 }

@@ -1,0 +1,1 @@
+<input hidden type="text" name="source" id="source" value="{{auth()->user()->getAccountForNau()->getAddress()}}">

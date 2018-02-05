@@ -14,16 +14,16 @@
             @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
             <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
                 <thead>
-                    <tr>
-                        <td>User</td>
-                        <td></td>
-                        <td>Place</td>
-                        <td></td>
-                        <td>Balance</td>
-                        <td></td>
-                        <td>Approved</td>
-                        <td>Actions</td>
-                    </tr>
+                <tr>
+                    <td>User</td>
+                    <td></td>
+                    <td>Place</td>
+                    <td></td>
+                    <td>Balance</td>
+                    <td></td>
+                    <td>Approved</td>
+                    <td>Actions</td>
+                </tr>
                 </thead>
                 @foreach ($data as $user)
                     <tr>
@@ -62,7 +62,6 @@
                                 <button style="display:  inline-block;" type="submit"
                                         class="btn transaction-open-dialog"
                                         data-toggle="modal"
-                                        data-source="{{auth()->user()->getAccountForNau()->getAddress()}}"
                                         data-destination="{{$user['accounts']['NAU']['address']}}"
                                         data-target="#sendNauModal">
                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>
@@ -94,9 +93,8 @@
                     <h4 class="modal-title">Send NAU</h4>
                 </div>
                 <div class="transaction modal-body" data-url="{{route('transaction.complete')}}">
-                    <p>Your balance: {{auth()->user()->getAccountForNau()->getBalance()}}</p>
                     {{ csrf_field() }}
-                    <input hidden type="text" name="source" id="source" value="">
+                    @include('role-partials.selector', ['partialRoute' => 'user.index-balance-form', 'data' => ['specialUserAccounts' => $specialUserAccounts]])
                     <input hidden type="text" name="destination" id="destination" value="">
                     <input hidden type="text" name="no_fee" id="noFee" value="1">
                     <label for="amount">Amount</label>
@@ -136,7 +134,7 @@
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
 
-        pagenavyCompact(document.getElementById('table_pager'));
+        pagenavyCompact( document.getElementById( 'table_pager' ) );
 
     </script>
 @stop

@@ -9,7 +9,6 @@ $( document ).ready( function() {
         $( "#sendTransaction" ).prop('disabled', false);
         modalBody.show();
         resultBody.hide();
-        modalBody.find( '#source' ).val( $( this ).data( 'source' ) );
         modalBody.find( '#destination' ).val( $( this ).data( 'destination' ) );
     } );
 

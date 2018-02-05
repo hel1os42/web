@@ -52,7 +52,10 @@ class AccountRepositoryEloquent extends BaseRepository implements AccountReposit
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->byAddress($address)->byOwner($user);
+        $model = $this->model->byAddress($address);
+        if(!$user->isAdmin()) {
+            $model = $model->byOwner($user);
+        }
         $this->resetModel();
 
         return $model->exists();
