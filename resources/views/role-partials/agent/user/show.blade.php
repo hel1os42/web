@@ -6,7 +6,7 @@
     <p>{{$id}}</p>
     <div>
         @if($approved)
-            <p style="color:green">Yes</p>
+            <p style="color: green;">Yes</p>
         @else
             No
         @endif
@@ -15,12 +15,12 @@
             {{ csrf_field() }}
             {{ method_field('PATCH') }}
             @if($approved)
-                <input hidden type="text" name="approved" value="0">
-                <button style="display:  inline-block;" type="submit">disapprove
+                <input type="hidden" name="approved" value="0">
+                <button class="btn btn-xs" type="submit">disapprove
                 </button>
             @else
-                <input hidden type="text" name="approved" value="1">
-                <button style="display:  inline-block;" type="submit">approve
+                <input type="hidden" name="approved" value="1">
+                <button class="btn btn-xs" type="submit">approve
                 </button>
             @endif
         </form>

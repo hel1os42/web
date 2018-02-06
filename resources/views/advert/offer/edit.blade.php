@@ -290,6 +290,8 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 method: "PATCH",
                 url: $('#editOfferForm').attr('action'),
@@ -301,10 +303,12 @@
                     if (202 === xhr.status){
                         sendImage();
                     } else {
+                        $('#waitError').text('Status: ' + xhr.status);
                         console.log(xhr);
                     }
                 },
                 error: function(resp){
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
                     console.log(resp);
                 }
             });
@@ -423,7 +427,8 @@
                         console.log('SUCCESS: image sent.');
                         window.location.replace("{{ route('advert.offers.index') }}");
                     },
-                    error: function () {
+                    error: function (resp) {
+                        $('#waitError').text(resp.status);
                         console.log('ERROR: image not sent.');
                     }
                 });

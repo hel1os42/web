@@ -16,9 +16,9 @@
 <script src="{{ asset('js/script.js') }}"></script>
 
 <script src="{{ asset('js/jasny-bootstrap.min.js') }}"></script>
-<script src="{{ asset('js/amaze.js') }}"></script>
 
 @if(false)
+    <script src="{{ asset('js/amaze.js') }}"></script>
     <!--
     подключать только на нужных страницах:
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQ81-fUpHTJ73LOtZLzZjGjkUWl0TtvWA&libraries=places"></script>
