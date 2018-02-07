@@ -471,3 +471,10 @@
 .notice-account-deactivate strong {
     color: red;
 }
+
+.nau-form .address-examples {
+    font-size: 80%;
+}
+.nau-form #btn_gps_crd {
+    margin-bottom: 10px;
+}

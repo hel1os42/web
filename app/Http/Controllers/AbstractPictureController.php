@@ -16,7 +16,7 @@ abstract class AbstractPictureController extends Controller
 {
     protected $pictureWidth   = 192;
     protected $pictureHeight  = 192;
-    protected $pictureQuality = 100;
+    protected $pictureQuality = 80;
     protected $pictureFormat  = 'jpg';
 
     protected $pictureMimeTypes = [

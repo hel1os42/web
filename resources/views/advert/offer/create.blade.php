@@ -23,6 +23,7 @@
 
         </div>
     </div>
+    <button id="aaaCCC_btn">Test GPS</button>
 </div>
 
 
@@ -170,7 +171,8 @@
                 }
             });
             validationOnFly();
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -181,7 +183,6 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             getTimeZone(map, function(tz){
                 $('[name="timezone"]').val(tz);
                 $('#map_box').toggleClass('invalid', tz === 'error')
@@ -414,6 +415,47 @@
                     console.log('ERROR: image not sent.');
                 }
             });
+        }
+
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
+            }
         }
 
     </script>
