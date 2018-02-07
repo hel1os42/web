@@ -144,6 +144,9 @@
 
     <script type="text/javascript">
 
+        /* approve/disapprove buttons */
+        userStatusControl();
+
         /* map */
 
         /*$('a[href="#edit"]').one('shown.bs.tab', function() {
@@ -161,6 +164,42 @@
             $('[name="latitude"]').val(values.lat);
             $('[name="longitude"]').val(values.lng);
         }*/
+
+        function userStatusControl(){
+            $('.user-approve-controls form').on('submit', function(e){
+                e.preventDefault();
+
+                let $box = $(this).parents('.user-approve-controls');
+                let $user_status = $box.find('[name="approved"]');
+                let $err = $box.find('.waiting-response');
+
+                $box.removeClass('status-approved status-disapproved').addClass('status-wait');
+                let formData = $(this).serializeArray();
+                console.log('Change User Status:');
+                console.dir(formData);
+
+                $.ajax({
+                    method: "PUT",
+                    url: $(this).attr('action'),
+                    headers: { 'Accept':'application/json' },
+                    data: formData,
+                    success: function(data, textStatus, xhr){
+                        if (201 === xhr.status){
+                            $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
+                            $user_status.val($user_status.val() === '0' ? '1' : '0');
+                        } else {
+                            $err.text('err-st: ' + xhr.status);
+                            console.dir(xhr);
+                        }
+                    },
+                    error: function(resp){
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
+                });
+            });
+        }
 
     </script>
 @endpush
