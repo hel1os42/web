@@ -201,12 +201,22 @@
                 let m = +val.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
                 if (m > 59) { m -=60; h++; }
                 if (m < 0) { m +=60; h--; }
-                if (m < 10) m = '0' + m;
+                m = add0(m);
                 if (h > 23) h -= 24;
                 if (h < 0) h += 24;
-                if (h < 10) h = '0' + h;
+                h = add0(h);
                 $(this).val(h + ':' + m);
             });
+            $('[name="start_date"]').add('[name="finish_date"]').each(function(){
+                let val = $(this).val();
+                if (val.length > 1) {
+                    let date = new Date(val);
+                    date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
+                    date.setHours(date.getHours() + +tz.substr(0, 3));
+                    $(this).val(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                }
+            });
+            function add0(n) { return n < 10 ? '0' + n : n; }
         }
 
         function getFormData(tz){

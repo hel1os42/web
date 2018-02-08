@@ -23,7 +23,6 @@
 
         </div>
     </div>
-    <button id="aaaCCC_btn">Test GPS</button>
 </div>
 
 
