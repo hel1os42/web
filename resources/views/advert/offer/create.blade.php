@@ -260,7 +260,7 @@
             });
 
             console.dir(formData);
-return false;
+
             waitPopup(true);
             $('#waitRequests').text('1');
 
