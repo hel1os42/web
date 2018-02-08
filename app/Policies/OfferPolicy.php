@@ -112,4 +112,17 @@ class OfferPolicy extends Policy
                || $user->isAdmin()
                || ($user->isAgent() && $user->hasChild($offer->getOwner()));
     }
+
+    /**
+     * @param User $user
+     * @param User $owner
+     *
+     * @return bool
+     */
+    public function pictureStoreByOfferData(User $user, User $owner): bool
+    {
+        return ($user->isAdvertiser() && $user->equals($owner))
+               || $user->isAdmin()
+               || ($user->isAgent() && $user->hasChild($owner));
+    }
 }
