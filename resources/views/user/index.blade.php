@@ -128,7 +128,7 @@
     if (sortedByText) {
         let sortedBy = document.createElement('input');
         sortedBy.type = 'hidden';
-        sortedBy.name = 'orderBy';
+        sortedBy.name = 'sortedBy';
         sortedBy.value = sortedByText[1];
         searchForm.appendChild(sortedBy);
     }
