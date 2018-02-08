@@ -7,7 +7,7 @@
         td { padding: 10px; }
     </style>
 
-    <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
+    <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
         <table style="margin-top: 24px;">
             <thead>
@@ -109,25 +109,39 @@
 
 @push('scripts')
 <script type="text/javascript">
-    let searchBlock = document.getElementById( 'admin-users-search' );
-    let phoneInput = searchBlock.querySelector( '#email' );
-    let roleSelect = searchBlock.querySelector( '#role' );
+    let searchBlock = document.getElementById('admin-users-search');
+    let searchForm = searchBlock.getElementById('search-form');
+    let emailInput = searchBlock.getElementById('email');
+    let roleSelect = searchBlock.getElementById('role');
 
-    var updateAdminUsersSearchForm = function() {
+    let searchOptions = location.search.substr(1).split('&');
+    searchOptions = searchOptions.map(function(e){ return e.split('='); });
+    let orderByText = searchOptions.find(function(e){ return e[0] === 'orderBy' });
+    let sortedByText = searchOptions.find(function(e){ return e[0] === 'sortedBy' });
+    if (orderByText) {
+        let orderBy = document.createElement('input');
+        orderBy.type = 'hidden';
+        orderBy.name = 'orderBy';
+        orderBy.value = orderByText[1];
+        searchForm.appendChild(orderBy);
+    }
+    if (sortedByText) {
+        let sortedBy = document.createElement('input');
+        sortedBy.type = 'hidden';
+        sortedBy.name = 'orderBy';
+        sortedBy.value = sortedByText[1];
+        searchForm.appendChild(sortedBy);
+    }
+
+    function updateAdminUsersSearchForm() {
         let result = '';
-        if ( phoneInput.value !== '' ) {
-            result = 'email:' + phoneInput.value;
-        }
-        if ( phoneInput.value !== '' && roleSelect.value !== '' ) {
-            result += ';';
-        }
-        if ( roleSelect.value !== '' ) {
-            result += 'roles.name:' + roleSelect.value;
-        }
-        searchBlock.querySelector( '#search-field' ).value = result;
-    };
+        if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
+        if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
+        if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
+        searchBlock.getElementById('search-field').value = result;
+    }
 
-    phoneInput.addEventListener( "input", updateAdminUsersSearchForm );
+    emailInput.addEventListener( "input", updateAdminUsersSearchForm );
     if ( roleSelect ) {
         roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
     }

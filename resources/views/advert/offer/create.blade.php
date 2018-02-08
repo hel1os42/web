@@ -23,7 +23,6 @@
 
         </div>
     </div>
-    <button id="aaaCCC_btn">Test GPS</button>
 </div>
 
 
@@ -261,7 +260,7 @@
             });
 
             console.dir(formData);
-
+return false;
             waitPopup(true);
             $('#waitRequests').text('1');
 
