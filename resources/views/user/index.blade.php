@@ -4,39 +4,36 @@
 
 @section('content')
     <style>
-        td {
-            padding: 10px;
-        }
+        td { padding: 10px; }
     </style>
 
     <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
-        <div class="card card-very-long">
-            @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-            <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
-                <thead>
-                    <tr>
-                        <td>User</td>
-                        <td></td>
-                        <td>Place</td>
-                        <td></td>
-                        <td>Balance</td>
-                        <td></td>
-                        <td>Approved</td>
-                        <td>Actions</td>
-                    </tr>
-                </thead>
-                @foreach ($data as $user)
-                    <tr>
-                        <td>{{$user['name'] ?: '-'}}
-                            <br>
-                            <span style="font-size: 19px;">{{$user['email']}}</span><br>
-                            <span style="font-size: 19px;">{{$user['phone']}}</span>
-                        </td>
-                        <td>
-                            <a href="{{route('users.show', $user['id'])}}">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                            </a>
-                        </td>
+        @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
+        <table style="margin-top: 24px;">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th></th>
+                    <th>Place</th>
+                    <th></th>
+                    <th>Balance</th>
+                    <th></th>
+                    <th>Approved</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            @foreach ($data as $user)
+                <tr>
+                    <td>{{$user['name'] ?: '-'}}
+                        <br>
+                        <span>{{$user['email']}}</span><br>
+                        <span>{{$user['phone']}}</span>
+                    </td>
+                    <td>
+                        <a href="{{route('users.show', $user['id'])}}">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
 
                 @if(isset($user['place']['id']))
                     <td>
@@ -74,11 +71,12 @@
                 <td>
                     @include('role-partials.selector', ['partialRoute' => 'user.index-approved', 'data' => ['user' => $user]])
                 </td>
-                <td><a href="{{route('impersonate', $user['id'])}}">login as</a>
+                <td>
+                    <a href="{{route('impersonate', $user['id'])}}">login as</a>
                 </td>
             </tr>
-        @endforeach
-    </table>
+            @endforeach
+        </table>
     @include('pagination.default', compact('current_page','from','last_page','next_page_url','path','per_page','prev_page_url','to','total'))
 </div>
 
