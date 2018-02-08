@@ -110,9 +110,9 @@
 @push('scripts')
 <script type="text/javascript">
     let searchBlock = document.getElementById('admin-users-search');
-    let searchForm = searchBlock.getElementById('search-form');
-    let emailInput = searchBlock.getElementById('email');
-    let roleSelect = searchBlock.getElementById('role');
+    let searchForm = searchBlock.querySelector('#search-form');
+    let emailInput = searchBlock.querySelector('#email');
+    let roleSelect = searchBlock.querySelector('#role');
 
     let searchOptions = location.search.substr(1).split('&');
     searchOptions = searchOptions.map(function(e){ return e.split('='); });
@@ -138,7 +138,7 @@
         if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
         if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
         if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
-        searchBlock.getElementById('search-field').value = result;
+        searchBlock.querySelector('#search-field').value = result;
     }
 
     emailInput.addEventListener( "input", updateAdminUsersSearchForm );
