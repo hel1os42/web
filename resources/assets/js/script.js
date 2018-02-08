@@ -105,7 +105,7 @@ function pagenavyCompact(pagenavy){
     }
     searchOptions = '&' + searchOptions.join('&');
     for (let i = 0; i < buttons.length; i++) {
-        buttons.setAttribute('href', buttons[i].getAttribute('href') + searchOptions);
+        buttons[i].setAttribute('href', buttons[i].getAttribute('href') + searchOptions);
     }
     for (let i = 0; i < buttons.length; i++) {
         if (buttons[i].classList.contains('current')) { currentIndex = i; break; }
