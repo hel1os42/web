@@ -13,7 +13,6 @@ use App\Repositories\OfferRepository;
 use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -58,6 +57,8 @@ class OfferController extends Controller
             ->paginateWithoutGlobalScopes();
         $data         = $paginator->toArray();
         $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
+
+        $data['place'] = $this->user()->place;
 
         return \response()->render('advert.offer.index', $data);
     }

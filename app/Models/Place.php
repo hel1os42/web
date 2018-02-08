@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Helpers\Attributes;
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
+use App\Models\Place\RelationsTrait;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -46,12 +43,14 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use Uuids;
+    use Uuids, RelationsTrait;
 
     /**
      * Place constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -124,20 +123,26 @@ class Place extends Model
         return $this->name;
     }
 
-    /** @return string */
-    public function getDescription(): string
+    /**
+     * @return null|string
+     */
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /** @return string */
-    public function getAbout(): string
+    /**
+     * @return null|string
+     */
+    public function getAbout(): ?string
     {
         return $this->about;
     }
 
-    /** @return string */
-    public function getAddress(): string
+    /**
+     * @return null|string
+     */
+    public function getAddress(): ?string
     {
         return $this->address;
     }
@@ -215,6 +220,34 @@ class Place extends Model
     public function getCoverUrlAttribute(): string
     {
         return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getOwnOrDefaultCoverUrl(): string
+    {
+        if (file_exists($this->getCoverPath())) {
+            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        }
+
+        return self::getDefaultCoverUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverPath(): string
+    {
+        return storage_path(sprintf('app/images/place/covers/%1$s.jpg', $this->getKey()));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultCoverUrl(): string
+    {
+        return asset('/img/default_place_cover.jpg');
     }
 
     /**
@@ -364,42 +397,6 @@ class Place extends Model
     }
 
     /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * ATTENTION! it just stub
-     */
-    public function testimonials(): HasMany
-    {
-        return $this->hasMany(Testimonial::class);
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * @throws \App\Exceptions\TokenException
-     */
-    public function offers()
-    {
-        return $this->user->getAccountFor(Currency::NAU)->offers();
-    }
-
-    /**
      * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
@@ -477,7 +474,6 @@ class Place extends Model
     {
         return $builder->where('has_active_offers', '=', true);
     }
-
 
     /**
      * @return array

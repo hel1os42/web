@@ -18,7 +18,7 @@
                             <p><strong>Password</strong></p>
                             <p><strong>Password confirm</strong></p>
                             <p><strong>Phone</strong></p>
-                            <p><strong>Is it chief advertiser?</strong></p>
+                            <p><strong>Set user role</strong></p>
                         </div>
                         <div class="col-sm-6 p-10 p-5">
                             <p><input style="line-height: 14px; font-size: 14px;" type="text" name="email"
@@ -30,27 +30,7 @@
                                       placeholder="password_confirmation"></p>
                             <p><input style="line-height: 14px; font-size: 14px;" type="text" name="phone"
                                       value=""></p>
-                            <p>
-                                <input style="line-height: 14px; font-size: 14px;" type="radio"
-                                       onclick="checkUserRole(true)"
-                                       name="role_ids[]"
-                                       value="{{$roles::findByName('advertiser')->getId()}}" checked> Advertiser + user
-                            </p>
-                            <input hidden style="line-height: 14px; font-size: 14px;" type="checkbox"
-                                   id="role_ids_user"
-                                   name="role_ids[]"
-                                   value="{{$roles::findByName('user')->getId()}}" checked>
-
-                            <p><input style="line-height: 14px; font-size: 14px;" type="radio"
-                                      onclick="checkUserRole(false)"
-                                      name="role_ids[]"
-                                      value="{{$roles::findByName('chief_advertiser')->getId()}}"> Chief advertiser</p>
-
-
-                            <input hidden style="line-height: 14px; font-size: 14px;" type="radio"
-                                   onclick="checkUserRole(false)"
-                                   name="parent_ids[]"
-                                   value="{{auth()->user()->getId()}}" checked>
+                            @include('role-partials.selector', ['partialRoute' => 'user.create-role'])
                         </div>
                         <button type="submit">Create</button>
                     </div>
@@ -58,9 +38,4 @@
             </div>
         </div>
     </div>
-    <script type="application/javascript">
-        function checkUserRole( userFlag ) {
-            document.getElementById( 'role_ids_user' ).checked = userFlag;
-        }
-    </script>
 @stop

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Helpers\FormRequest as FormRequestHelper;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -63,5 +64,14 @@ class RegisterRequest extends FormRequest
     public function getRegistrator(): ?User
     {
         return auth()->user();
+    }
+
+    /**
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public static function preFilledFormRequest()
+    {
+        return FormRequestHelper::preFilledFormRequest(self::class);
     }
 }

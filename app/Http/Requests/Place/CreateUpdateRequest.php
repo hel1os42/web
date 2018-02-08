@@ -33,10 +33,10 @@ class CreateUpdateRequest extends FormRequest
      */
     public function authorize(PlaceRepository $repository, AuthManager $authManager)
     {
-        $authorized = $repository->existsByUser($authManager->guard()->user());
+        $authorized = true;
 
         if ($this->isMethod('post')) {
-            $authorized = !$authorized;
+            $authorized = !$repository->existsByUser($authManager->guard()->user());
         }
 
         return $authorized;
@@ -49,19 +49,34 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $required = '';
+        if ($this->isMethod('POST') || $this->isMethod('PUT')) {
+            $required = 'required|';
+        }
+
         return [
-            'name'           => 'required|string|min:3|max:255',
-            'description'    => 'string',
-            'about'          => 'string',
-            'address'        => 'string|max:255',
-            'category_ids'   => 'required|array',
-            'category_ids.*' => sprintf(
+            'name'                       => $required . 'string|min:3|max:255',
+            'description'                => 'nullable|string',
+            'about'                      => 'nullable|string',
+            'address'                    => 'nullable|string|max:255',
+            'category'                   => sprintf(
+                $required . 'string|regex:%s|exists:categories,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
+            'retail_types'               => $required . 'array',
+            'retail_types.*'             => sprintf(
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'latitude'       => 'required_with:longitude,radius|numeric|between:-90,90',
-            'longitude'      => 'required_with:latitude,radius|numeric|between:-180,180',
-            'radius'         => 'required_with:latitude,longitude|integer|min:1'
+            'latitude'                   => 'required_with:longitude,radius|numeric|between:-90,90',
+            'longitude'                  => 'required_with:latitude,radius|numeric|between:-180,180',
+            'radius'                     => 'required_with:latitude,longitude|integer|min:1',
+            'tags'                       => 'nullable|array',
+            'tags.*'                     => 'string|exists:tags,slug',
+            'specialities'               => 'nullable|array',
+            'specialities.*.retail_type' => 'string|exists:specialities,retail_type_id',
+            'specialities.*.specs'       => 'array',
+            'specialities.*.specs.*'     => 'string|exists:specialities,slug',
         ];
     }
 }

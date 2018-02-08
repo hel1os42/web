@@ -50,6 +50,13 @@ iframe {
     background: linear-gradient(to top, #ff8a0e, #ff5a00);
     outline: none;
 }
+.btn-nau.btn-xs {
+    padding: 8px 20px;
+    font-size: 80%;
+    font-weight: normal;
+}
+
+
 #mainwrapper {
     min-height: 100vh;
     padding-bottom: 60px;
@@ -165,21 +172,30 @@ footer p {
 }
 
 .pagenavy {
-    margin-bottom: 32px;
+    margin: 16px 0 24px;
     text-align: right;
 }
 .pagenavy span,
 .pagenavy a {
     position: relative;
     display: inline-block;
-    margin: 0 2px;
+    margin: 0 2px 8px;
     padding: 0 6px;
     min-width: 32px;
     height: 32px;
     vertical-align: top;
     text-align: center;
+    line-height: 32px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
+}
+.pagenavy span {
+    cursor: default;
+}
+.pagenavy span.dots {
+    padding: 0;
+    min-width: 0;
+    border: none;
 }
 .pagenavy a {
     color: #ff5a00;
@@ -188,8 +204,7 @@ footer p {
 .pagenavy a:hover,
 .pagenavy a:active,
 .pagenavy a:focus {
-    color: #ff8a0e;
-    border-color: #ff8a0e;
+    background-color: rgba(255, 138, 14, 0.4);
     text-decoration: none;
 }
 .pagenavy .prev:before,
@@ -221,3 +236,90 @@ footer p {
 .pagenavy a.next:focus:before {
     border-color: #ff8a0e;
 }
+
+#waitPopupOverlay {
+    position: fixed;
+    z-index: 10029;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+#waitPopupOverlay .waitPopup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    padding: 15px;
+    background: #fff;
+}
+#waitPopupOverlay h3 {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay .img {
+    margin: 0 0 15px;
+}
+#waitPopupOverlay #waitError {
+    color: red;
+    margin-bottom: 0;
+}
+
+.offer_status_control {
+	text-align: center;
+}
+.offer_status_control form {
+	display: inline-block;
+}
+.offer_status_control button {
+	display: none;
+}
+.offer_status_control .waiting-response {
+	display: none;
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	line-height: 22px;
+	color: red;
+}
+.offer_status_control .waiting-response img {
+	display: block;
+	margin: 0 auto;
+	width: 22px;
+}
+.offer_status_control.osc_active button.b-deactivate,
+.offer_status_control.osc_deactive button.b-activate {
+	display: inline-block;
+}
+.offer_status_control.osc_wait .waiting-response {
+	display: block;
+}
+
+.user-approve-controls form {
+    display: inline-block;
+}
+.user-approve-controls .span-approved {
+    color: green;
+}
+.user-approve-controls .span-approved,
+.user-approve-controls .span-disapproved,
+.user-approve-controls .span-wait,
+.user-approve-controls .waiting-response,
+.user-approve-controls .b-approved,
+.user-approve-controls .b-disapproved {
+    display: none;
+}
+
+.user-approve-controls.status-approve .span-approved,
+.user-approve-controls.status-approve .b-approved,
+.user-approve-controls.status-disapprove .span-disapproved,
+.user-approve-controls.status-disapprove .b-disapproved,
+.user-approve-controls.status-wait .span-wait,
+.user-approve-controls.status-wait .waiting-response {
+    display: inline-block;
+}
+
+
+
+

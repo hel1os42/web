@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\TokenException;
+use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
@@ -51,6 +52,8 @@ class User extends Authenticatable implements PhoneAuthenticable
 {
 
     use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids;
+
+    const PROFILE_PICTURES_PATH = 'images/profile/pictures';
 
     public function __construct(array $attributes = [])
     {
@@ -479,5 +482,24 @@ class User extends Authenticatable implements PhoneAuthenticable
 
         return session()->has($keyName) !== false;
 
+    }
+
+    /**
+     * @param array $without
+     *
+     * @return array
+     */
+    public function getFillableWithDefaults($without = []): array
+    {
+        return Attributes::getFillableWithDefaults($this, $without);
+    }
+
+    /**
+     * @param string $uuid User ID
+     * @return string
+     */
+    public static function getUserAvatarPath(string $uuid)
+    {
+        return storage_path(sprintf('app/%1$s/%2$s.%3$s', self::PROFILE_PICTURES_PATH, $uuid, 'jpg'));
     }
 }

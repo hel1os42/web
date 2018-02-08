@@ -17,6 +17,12 @@ interface OfferRepository extends RepositoryInterface
 {
     public function model(): string;
 
+    /**
+     * @param array $attributes
+     * @param Account $account
+     *
+     * @return Offer
+     */
     public function createForAccountOrFail(array $attributes, Account $account): Offer;
 
     /**

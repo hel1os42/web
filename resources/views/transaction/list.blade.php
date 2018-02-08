@@ -32,7 +32,7 @@
             @foreach ($data as $transaction)
                 <tr>
                     <td style="padding-left: 10px">
-                        <a href="{{route('transactionList', $transaction['id'])}}">{{ $transaction['amount'] }}</a>
+                        <a href="{{route('transaction.list', $transaction['id'])}}">{{ $transaction['amount'] }}</a>
                     </td>
                     <td style="padding-left: 10px">
                         {{ $transaction['status'] }}

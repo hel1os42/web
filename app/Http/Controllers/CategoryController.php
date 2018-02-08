@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\CategoryRepository;
+use App\Repositories\SpecialityRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -22,9 +23,11 @@ class CategoryController extends Controller
         $this->authorize('categories.list');
 
         $categories = $categoryRepository
-            ->getWithNoParent();
+            ->getWithNoParent()
+            ->get()
+            ->toArray();
 
-        return \response()->render('category.list', $categories->paginate());
+        return \response()->render('category.list', ['data' => $categories]);
     }
 
     /**

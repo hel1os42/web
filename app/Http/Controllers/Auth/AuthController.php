@@ -11,6 +11,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
@@ -39,5 +41,24 @@ class AuthController extends Controller
         $this->jwtAuth        = $jwtAuth;
 
         parent::__construct($auth);
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return mixed
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        if ($request->expectsJson()) {
+            return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+        }
+
+        $errors = ['email' => trans('auth.failed')];
+
+        return redirect()->back()
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors($errors);
     }
 }

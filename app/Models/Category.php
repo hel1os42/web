@@ -58,7 +58,6 @@ class Category extends Model
 
         $this->appends = [
             'children_count',
-            'retail_types_count',
         ];
 
         parent::__construct($attributes);
@@ -104,19 +103,6 @@ class Category extends Model
         return $this->children()->count();
     }
 
-    /**
-     * @return int
-     */
-    public function getRetailTypesCountAttribute(): int
-    {
-        return $this->retailTypes()->count();
-    }
-
-    public function scopeWithParent(Builder $builder, Category $parent)
-    {
-        return $builder->where('parent_id', $parent->getId());
-    }
-
     public function scopeWithNoParent(Builder $builder)
     {
         return $builder->whereNull('parent_id');
@@ -125,8 +111,24 @@ class Category extends Model
     /**
      * @return HasMany
      */
+    public function tags(): HasMany
+    {
+        return $this->hasMany(Tag::class, 'category_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function specialities(): HasMany
+    {
+        return $this->hasMany(Speciality::class, 'retail_type_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
     public function retailTypes(): HasMany
     {
-        return $this->hasMany(RetailTypes::class, 'category_id', 'id');
+        return $this->children();
     }
 }
