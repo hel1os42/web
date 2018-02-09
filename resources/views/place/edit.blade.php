@@ -18,7 +18,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Name *</span>
-                                    <input name="name" value="{{ $name }}" class="formData">
+                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="20">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place name (minimum 3 characters).</p>
@@ -28,7 +28,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Description</span>
-                                    <textarea name="description" class="formData">{{ $description }}</textarea>
+                                    <textarea name="description" class="formData" data-max-length="100">{{ $description }}</textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place description.</p>
@@ -197,6 +197,9 @@
                 formSelectCategory.dispatchEvent(new Event('change'));
             });
         });
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
 
         function createRetailType(response) {
             let html = '', checked;
