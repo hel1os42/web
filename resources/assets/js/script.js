@@ -128,3 +128,16 @@ function pagenavyCompact(pagenavy){
     }
 }
 
+function setFieldLimit(selector){
+    document.querySelectorAll(selector).forEach(function(input){
+        ['keyup', 'paste', 'change'].forEach(function(e){
+            input.addEventListener(e, trimValue);
+        });
+    });
+    function trimValue(){
+        let val = this.value.replace(/\{.+?\}/g, '');
+        let len = parseInt(this.dataset.maxLength);
+        if (val.length > len) this.value = val.substr(0, len);
+    }
+}
+

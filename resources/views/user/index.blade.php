@@ -109,43 +109,50 @@
 
 @push('scripts')
 <script type="text/javascript">
-    let searchBlock = document.getElementById('admin-users-search');
-    let searchForm = searchBlock.querySelector('#search-form');
-    let emailInput = searchBlock.querySelector('#email');
-    let roleSelect = searchBlock.querySelector('#role');
 
-    let searchOptions = location.search.substr(1).split('&');
-    searchOptions = searchOptions.map(function(e){ return e.split('='); });
-    let orderByText = searchOptions.find(function(e){ return e[0] === 'orderBy' });
-    let sortedByText = searchOptions.find(function(e){ return e[0] === 'sortedBy' });
-    if (orderByText) {
-        let orderBy = document.createElement('input');
-        orderBy.type = 'hidden';
-        orderBy.name = 'orderBy';
-        orderBy.value = orderByText[1];
-        searchForm.appendChild(orderBy);
-    }
-    if (sortedByText) {
-        let sortedBy = document.createElement('input');
-        sortedBy.type = 'hidden';
-        sortedBy.name = 'sortedBy';
-        sortedBy.value = sortedByText[1];
-        searchForm.appendChild(sortedBy);
-    }
-
-    function updateAdminUsersSearchForm() {
-        let result = '';
-        if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
-        if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
-        if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
-        searchBlock.querySelector('#search-field').value = result;
-    }
-
-    emailInput.addEventListener( "input", updateAdminUsersSearchForm );
-    if ( roleSelect ) {
-        roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
-    }
+    searchForm();
 
     pagenavyCompact(document.getElementById('table_pager'));
+
+    function searchForm(){
+        let searchBlock = document.getElementById('admin-users-search');
+        let searchForm = searchBlock.querySelector('#search-form');
+        let emailInput = searchBlock.querySelector('#email');
+        let roleSelect = searchBlock.querySelector('#role');
+
+        let searchOptions = location.search.substr(1).split('&');
+        searchOptions = searchOptions.map(function(e){ return e.split('='); });
+        let orderByText = searchOptions.find(function(e){ return e[0] === 'orderBy' });
+        let sortedByText = searchOptions.find(function(e){ return e[0] === 'sortedBy' });
+        if (orderByText) {
+            let orderBy = document.createElement('input');
+            orderBy.type = 'hidden';
+            orderBy.name = 'orderBy';
+            orderBy.value = orderByText[1];
+            searchForm.appendChild(orderBy);
+        }
+        if (sortedByText) {
+            let sortedBy = document.createElement('input');
+            sortedBy.type = 'hidden';
+            sortedBy.name = 'sortedBy';
+            sortedBy.value = sortedByText[1];
+            searchForm.appendChild(sortedBy);
+        }
+
+        function updateAdminUsersSearchForm() {
+            let result = '';
+            if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
+            if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
+            if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
+            searchBlock.querySelector('#search-field').value = result;
+        }
+
+        emailInput.addEventListener( "input", updateAdminUsersSearchForm );
+        if ( roleSelect ) {
+            roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
+        }
+
+    }
+
 </script>
 @endpush
