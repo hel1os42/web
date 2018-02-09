@@ -1,6 +1,6 @@
 <h1>Advertiser list</h1>
 <div id="admin-users-search">
-    <label for="phone">By email:</label>
+    <label for="email">By email:</label>
     <input type="text" name="email" id="email" value="">
 
     <form method="get" action="{{route('users.index')}}" id="search-form" style="display: inline-block;">
@@ -9,3 +9,7 @@
         <button type="submit" class="btn">Search</button>
     </form>
 </div>
+
+<script>
+    
+</script>
