@@ -32,7 +32,7 @@ return [
             ]
         ],
         'smsfly'     => [
-            'base_api_url' => 'http://sms-fly2.com',
+            'base_api_url' => 'http://sms-fly.com',
             'main_path'    => '/api/api.noai.php',
             'auth_data'    => [
                 'login'    => env('SMSFLY_LOGIN', ''),
