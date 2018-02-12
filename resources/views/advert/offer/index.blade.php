@@ -113,7 +113,7 @@
                                 </td>
                                 <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
+                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status"><span class="offer-status-text">{{ $offer['status'] }}</span></td>
@@ -300,18 +300,29 @@
                         let day = $(this).data('day');
                         $(this).text(getTime(tf[day].from, tz) + ' - ' + getTime(tf[day].to, tz));
                     });
+                    $box = $(`.gps[data-offerid="${offerId}"]`).parents('td').eq(0).siblings('.working-period');
+                    $box.find('.js-date-convert').each(function(){
+                        let val = $(this).text();
+                        if (val.length > 1) {
+                            let date = new Date(val);
+                            date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
+                            date.setHours(date.getHours() + +tz.substr(0, 3));
+                            $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                        }
+                    });
 
                     function getTime(time, tz){
                         let h = +time.substr(0, 2) + +tz.substr(0, 3);
                         let m = +time.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
                         if (m > 59) { m -=60; h++; }
                         if (m < 0) { m +=60; h--; }
-                        if (m < 10) m = '0' + m;
+                        m = add0(m);
                         if (h > 23) h -= 24;
                         if (h < 0) h += 24;
-                        if (h < 10) h = '0' + h;
+                        h = add0(h);
                         return h + ':' + m;
                     }
+                    function add0(n) { return n < 10 ? '0' + n : n; }
                 }
             });
         }
@@ -375,16 +386,22 @@
                 let duration = 1000, frame = 50, start_time = Date.now();
                 let $nau = $('#nau_balance');
                 let $naus = $nau.add('#header_nau_balance');
-                let nau = parseFloat($nau.attr('data-balance'));
-                let nau_text = parseFloat($nau.text());
+                let nau = parseFloat($nau.attr('data-balance')) * 10000;
+                let nau_text = parseFloat($nau.text()) * 10000;
                 let delta = (nau - nau_text) / duration * frame;
                 let timerID = $nau.attr('data-timerid');
                 if (timerID) clearInterval(parseInt(timerID));
                 $nau.attr('data-timerid', setInterval(function(){
-                    $naus.text(Math.round(nau_text += delta));
+                    let text = (nau_text += delta) / 10000 + '';
+                    let dot = text.indexOf('.');
+                    if (dot > -1) text = text.substr(0, dot) + text.substr(dot, 5);
+                    $naus.text(text);
                     if (Date.now() > start_time + duration) {
                         clearInterval(parseInt($nau.attr('data-timerid')));
-                        $naus.text(nau);
+                        let text = nau / 10000 + '';
+                        let dot = text.indexOf('.');
+                        if (dot > -1) text = text.substr(0, dot) + text.substr(dot, 5);
+                        $naus.text(text);
                     }
                 }, frame));
             }

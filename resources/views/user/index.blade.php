@@ -4,39 +4,36 @@
 
 @section('content')
     <style>
-        td {
-            padding: 10px;
-        }
+        td { padding: 10px; }
     </style>
 
-    <div class="col-md-9" style="margin-left:200px; margin-top: 40px;">
-        <div class="card card-very-long">
-            @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-            <table style="font-family: serif; color:black; font-size: 26px; text-align: left; margin-top: 50px;">
-                <thead>
-                    <tr>
-                        <td>User</td>
-                        <td></td>
-                        <td>Place</td>
-                        <td></td>
-                        <td>Balance</td>
-                        <td></td>
-                        <td>Approved</td>
-                        <td>Actions</td>
-                    </tr>
-                </thead>
-                @foreach ($data as $user)
-                    <tr>
-                        <td>{{$user['name'] ?: '-'}}
-                            <br>
-                            <span style="font-size: 19px;">{{$user['email']}}</span><br>
-                            <span style="font-size: 19px;">{{$user['phone']}}</span>
-                        </td>
-                        <td>
-                            <a href="{{route('users.show', $user['id'])}}">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                            </a>
-                        </td>
+    <div class="container" style="margin-top: 40px;">
+        @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
+        <table style="margin-top: 24px;">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th></th>
+                    <th>Place</th>
+                    <th></th>
+                    <th>Balance</th>
+                    <th></th>
+                    <th>Approved</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            @foreach ($data as $user)
+                <tr>
+                    <td>{{$user['name'] ?: '-'}}
+                        <br>
+                        <span>{{$user['email']}}</span><br>
+                        <span>{{$user['phone']}}</span>
+                    </td>
+                    <td>
+                        <a href="{{route('users.show', $user['id'])}}">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
 
                 @if(isset($user['place']['id']))
                     <td>
@@ -74,11 +71,12 @@
                 <td>
                     @include('role-partials.selector', ['partialRoute' => 'user.index-approved', 'data' => ['user' => $user]])
                 </td>
-                <td><a href="{{route('impersonate', $user['id'])}}">login as</a>
+                <td>
+                    <a href="{{route('impersonate', $user['id'])}}">login as</a>
                 </td>
             </tr>
-        @endforeach
-    </table>
+            @endforeach
+        </table>
     @include('pagination.default', compact('current_page','from','last_page','next_page_url','path','per_page','prev_page_url','to','total'))
 </div>
 
@@ -111,29 +109,50 @@
 
 @push('scripts')
 <script type="text/javascript">
-    let searchBlock = document.getElementById( 'admin-users-search' );
-    let phoneInput = searchBlock.querySelector( '#email' );
-    let roleSelect = searchBlock.querySelector( '#role' );
 
-    var updateAdminUsersSearchForm = function() {
-        let result = '';
-        if ( phoneInput.value !== '' ) {
-            result = 'email:' + phoneInput.value;
-        }
-        if ( phoneInput.value !== '' && roleSelect.value !== '' ) {
-            result += ';';
-        }
-        if ( roleSelect.value !== '' ) {
-            result += 'roles.name:' + roleSelect.value;
-        }
-        searchBlock.querySelector( '#search-field' ).value = result;
-    };
-
-    phoneInput.addEventListener( "input", updateAdminUsersSearchForm );
-    if ( roleSelect ) {
-        roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
-    }
+    searchForm();
 
     pagenavyCompact(document.getElementById('table_pager'));
+
+    function searchForm(){
+        let searchBlock = document.getElementById('admin-users-search');
+        let searchForm = searchBlock.querySelector('#search-form');
+        let emailInput = searchBlock.querySelector('#email');
+        let roleSelect = searchBlock.querySelector('#role');
+
+        let searchOptions = location.search.substr(1).split('&');
+        searchOptions = searchOptions.map(function(e){ return e.split('='); });
+        let orderByText = searchOptions.find(function(e){ return e[0] === 'orderBy' });
+        let sortedByText = searchOptions.find(function(e){ return e[0] === 'sortedBy' });
+        if (orderByText) {
+            let orderBy = document.createElement('input');
+            orderBy.type = 'hidden';
+            orderBy.name = 'orderBy';
+            orderBy.value = orderByText[1];
+            searchForm.appendChild(orderBy);
+        }
+        if (sortedByText) {
+            let sortedBy = document.createElement('input');
+            sortedBy.type = 'hidden';
+            sortedBy.name = 'sortedBy';
+            sortedBy.value = sortedByText[1];
+            searchForm.appendChild(sortedBy);
+        }
+
+        function updateAdminUsersSearchForm() {
+            let result = '';
+            if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
+            if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
+            if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
+            searchBlock.querySelector('#search-field').value = result;
+        }
+
+        emailInput.addEventListener( "input", updateAdminUsersSearchForm );
+        if ( roleSelect ) {
+            roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
+        }
+
+    }
+
 </script>
 @endpush

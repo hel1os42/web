@@ -23,7 +23,6 @@
 
         </div>
     </div>
-    <button id="aaaCCC_btn">Test GPS</button>
 </div>
 
 
@@ -55,6 +54,9 @@
 
         /* offer type = discount */
         offerTypeController();
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -277,7 +279,7 @@
                             let uuid = xhr.getResponseHeader('Location').split('/');
                             sendImage(uuid[uuid.length - 1]);
                         } else {
-                            window.location.replace("{{ route('advert.offers.index') }}");
+                            window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                         }
                     } else {
                         $('#waitError').text('Status: ' + xhr.status);
@@ -408,7 +410,7 @@
                 method: 'POST',
                 success: function () {
                     console.log('SUCCESS: image sent.');
-                    window.location.replace("{{ route('advert.offers.index') }}");
+                    window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                 },
                 error: function (resp) {
                     $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
