@@ -18,7 +18,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Name *</span>
-                                    <input name="name" value="{{ $name }}" class="formData">
+                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="20">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place name (minimum 3 characters).</p>
@@ -28,7 +28,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Description</span>
-                                    <textarea name="description" class="formData">{{ $description }}</textarea>
+                                    <textarea name="description" class="formData" data-max-length="100">{{ $description }}</textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place description.</p>
@@ -94,13 +94,29 @@
                         </div>
 
                         <div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">GPS</span>
-                                    <input name="gps_crd" value="{{ $latitude }}, {{ $longitude }}">
-                                </label>
+                            <div class="row gps-crd-box">
+                                <div class="col-xs-10">
+                                    <p class="control-text">
+                                        <label>
+                                            <span class="input-label">Address or GPS</span>
+                                            <input name="gps_crd" value="">
+                                        </label>
+                                    </p>
+                                </div>
+                                <div class="col-xs-2">
+                                    &nbsp;<br>
+                                    <span class="btn" id="btn_gps_crd">Go</span>
+                                </div>
+                            </div>
+                            <p class="hint">Invalid address or GPS coordinates: object not found.</p>
+                            <p class="address-examples">
+                                Examples of address:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>6931 Atlantic LA CA</em><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Australia, Melbourne, Peate Ave, 16</em><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Львів, Кобиляньської 16</em><br><br>
+                                Example of GPS coordinates:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>49.4213687,26.9971402</em>
                             </p>
-                            <p class="hint">Invalid GPS-format. Example: 49.4274121,27.0085986</p>
                         </div>
 
                         @if(auth()->user()->isAdvertiser() || auth()->user()->isChiefAdvertiser())
@@ -181,6 +197,9 @@
                 formSelectCategory.dispatchEvent(new Event('change'));
             });
         });
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
 
         function createRetailType(response) {
             let html = '', checked;
@@ -285,7 +304,8 @@
         function mapDone(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -296,7 +316,6 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             $('#alat').text(values.lat);
             $('#alng').text(values.lng);
         }
@@ -370,6 +389,8 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 type: "PATCH",
                 url: $('#createPlaceForm').attr('action'),
@@ -379,12 +400,14 @@
                     if (201 === xhr.status){
                         sendImages();
                     } else {
-                        alert("Something went wrong. Try again, please.");
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.log("Something went wrong. Try again, please.");
                         console.log(xhr.status);
                     }
                 },
                 error: function (resp) {
-                    alert("Something went wrong. Try again, please.");
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log("Something went wrong. Try again, please.");
                     console.log(resp.status);
                 }
             });
@@ -439,12 +462,52 @@
                     n.count -= 1;
                     callback(n);
                 },
-                error: function () {
+                error: function (resp) {
+                    $('#waitError').text(resp.status);
                     console.log('Error:', URI);
                 }
             });
         }
 
-
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
+            }
+        }
     </script>
 @endpush

@@ -3,26 +3,19 @@
     <p><strong>Approved</strong></p>
 </div>
 <div class="col-sm-6 p-5">
-    <p>{{$id}}</p>
-    <div>
-        @if($approved)
-            <p style="color:green">Yes</p>
-        @else
-            No
-        @endif
-        <form action="{{route('users.update', $id)}}" method="post"
-              style="display:  inline-block;">
+    <p>{{ $id }}</p>
+    <div class="user-approve-controls status-{{ $approved ? '' : 'dis' }}approved">
+        <span class="span-approved">Yes</span>
+        <span class="span-disapproved">No</span>
+        <span class="span-wait">...</span>
+
+        <form action="{{ route('users.update', $id) }}" method="PATCH">
             {{ csrf_field() }}
             {{ method_field('PATCH') }}
-            @if($approved)
-                <input hidden type="text" name="approved" value="0">
-                <button style="display:  inline-block;" type="submit">disapprove
-                </button>
-            @else
-                <input hidden type="text" name="approved" value="1">
-                <button style="display:  inline-block;" type="submit">approve
-                </button>
-            @endif
+            <input type="hidden" name="approved" value="{{ $approved ? '0' : '1' }}">
+            <button type="submit" class="btn btn-xs b-approved">disapprove</button>
+            <button type="submit" class="btn btn-xs b-disapproved">approve</button>
+            <span class="waiting-response"><img src="{{ asset('img/loading.gif') }}" alt="wait..."></span>
         </form>
     </div>
 </div>

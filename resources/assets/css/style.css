@@ -193,6 +193,8 @@ footer p {
     cursor: default;
 }
 .pagenavy span.dots {
+    padding: 0;
+    min-width: 0;
     border: none;
 }
 .pagenavy a {
@@ -263,3 +265,61 @@ footer p {
     color: red;
     margin-bottom: 0;
 }
+
+.offer_status_control {
+	text-align: center;
+}
+.offer_status_control form {
+	display: inline-block;
+}
+.offer_status_control button {
+	display: none;
+}
+.offer_status_control .waiting-response {
+	display: none;
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	line-height: 22px;
+	color: red;
+}
+.offer_status_control .waiting-response img {
+	display: block;
+	margin: 0 auto;
+	width: 22px;
+}
+.offer_status_control.osc_active button.b-deactivate,
+.offer_status_control.osc_deactive button.b-activate {
+	display: inline-block;
+}
+.offer_status_control.osc_wait .waiting-response {
+	display: block;
+}
+
+.user-approve-controls form {
+    display: inline-block;
+}
+.user-approve-controls .span-approved {
+    color: green;
+}
+.user-approve-controls .span-approved,
+.user-approve-controls .span-disapproved,
+.user-approve-controls .span-wait,
+.user-approve-controls .waiting-response,
+.user-approve-controls .b-approved,
+.user-approve-controls .b-disapproved {
+    display: none;
+}
+
+.user-approve-controls.status-approve .span-approved,
+.user-approve-controls.status-approve .b-approved,
+.user-approve-controls.status-disapprove .span-disapproved,
+.user-approve-controls.status-disapprove .b-disapproved,
+.user-approve-controls.status-wait .span-wait,
+.user-approve-controls.status-wait .waiting-response {
+    display: inline-block;
+}
+
+
+
+

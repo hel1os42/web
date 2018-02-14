@@ -6,6 +6,7 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
+use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
@@ -144,6 +145,19 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('children', $children);
                 $view->with('allPossibleChildren', $allPossibleChildren);
                 $view->with('editableUserModel', $editableUserModel);
+            }
+        );
+
+        ViewFacade::composer(
+            ['user.index'], function (View $view) {
+                $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
+                $accountRepository = app(AccountRepository::class);
+                $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
+                foreach ($accounts as $accountKey => $account) {
+                    $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
+                }
+
+                $view->with('specialUserAccounts', $accounts);
             }
         );
     }

@@ -72,18 +72,22 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <p><strong>Position</strong></p>
-                                        <div class="map-wrap" style="width: 400px;">
-                                            <div id="mapid" style="height: 400px; width: 600px;">
-                                                <div id="marker" class="without-radius"></div>
+                                @if(false)
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <p><strong>Position</strong></p>
+                                            <div class="map-wrap" style="width: 400px;">
+                                                <div id="mapid" style="height: 400px; width: 600px;">
+                                                    <div id="marker" class="without-radius"></div>
+                                                </div>
                                             </div>
+                                            <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                            <input type="hidden" name="longitude" value="{{ $longitude }}">
                                         </div>
-                                        <input type="hidden" name="latitude" value="{{ $latitude }}">
-                                        <input type="hidden" name="longitude" value="{{ $longitude }}">
                                     </div>
-                                </div>
+                                @endif
+                                <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                <input type="hidden" name="longitude" value="{{ $longitude }}">
 
                                 <div class="row">
                                     @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
@@ -140,26 +144,61 @@
 
     <script type="text/javascript">
 
+        /* approve/disapprove buttons */
+        userStatusControl();
+
         /* map */
 
-        $('a[href="#edit"]').one('shown.bs.tab', function() {
+        /*$('a[href="#edit"]').one('shown.bs.tab', function() {
             setTimeout(function(){
                 mapInit({
                     id: 'mapid',
-                    done: mapDone,
+                    //done: mapDone,
                     move: mapMove
                 });
             }, 100);
         });
 
-        function mapDone(map){
-            let values = mapValues(map);
-        }
-
         function mapMove(map){
             let values = mapValues(map);
             $('[name="latitude"]').val(values.lat);
             $('[name="longitude"]').val(values.lng);
+        }*/
+
+        function userStatusControl(){
+            $('.user-approve-controls form').on('submit', function(e){
+                e.preventDefault();
+
+                let $box = $(this).parents('.user-approve-controls');
+                let $user_status = $box.find('[name="approved"]');
+                let $err = $box.find('.waiting-response');
+
+                $box.removeClass('status-approved status-disapproved').addClass('status-wait');
+                let formData = $(this).serializeArray();
+                console.log('Change User Status:');
+                console.dir(formData);
+
+                $.ajax({
+                    method: "PUT",
+                    url: $(this).attr('action'),
+                    headers: { 'Accept':'application/json' },
+                    data: formData,
+                    success: function(data, textStatus, xhr){
+                        if (201 === xhr.status){
+                            $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
+                            $user_status.val($user_status.val() === '0' ? '1' : '0');
+                        } else {
+                            $err.text('err-st: ' + xhr.status);
+                            console.dir(xhr);
+                        }
+                    },
+                    error: function(resp){
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
+                });
+            });
         }
 
     </script>
