@@ -6,6 +6,7 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
+use App\Repositories\CategoryRepository;
 use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Repositories\PlaceRepository;
@@ -57,6 +58,14 @@ class AppServiceProvider extends ServiceProvider
                     $placesRepository = app(PlaceRepository::class);
                     $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
                 }
+            }
+        );
+
+        ViewFacade::composer(
+            ['category.*', 'tag.*'],
+            function (View $view) {
+                $categoryRepository = app(CategoryRepository::class);
+                $view->with('mainCategories', $categoryRepository->getWithNoParent()->get());
             }
         );
 
