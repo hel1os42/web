@@ -25,6 +25,7 @@ use Illuminate\Support\Collection;
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
+ * @property string                       alias
  * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
@@ -40,6 +41,7 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
  * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|Builder byAlias(String $alias)
  */
 class Place extends Model
 {
@@ -72,6 +74,7 @@ class Place extends Model
             'radius'            => 'integer',
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
+            'alias'             => 'string',
             'has_active_offers' => 'boolean',
         ];
 
@@ -86,7 +89,8 @@ class Place extends Model
             'address',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'alias',
         ];
 
         $this->attributes = [
@@ -481,5 +485,17 @@ class Place extends Model
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $alias
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByAlias($builder, string $alias): Builder
+    {
+        return $builder->where('alias', $alias);
     }
 }

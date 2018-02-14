@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Repositories\PlaceRepository;
+use App\Repositories\UserRepository;
 use App\Services\Auth\Otp\OtpAuth;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
@@ -11,10 +14,20 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\JWTAuth;
 
 class LoginController extends AuthController
 {
     use ThrottlesLogins;
+
+    public function __construct(PlaceRepository $placeRepository, UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
+    {
+        $this->placeRepository = $placeRepository;
+        $this->userRepository  = $userRepository;
+        $this->jwtAuth         = $jwtAuth;
+
+        parent::__construct($userRepository, $jwtAuth, $auth);
+    }
 
     /**
      * @return Response
@@ -92,9 +105,12 @@ class LoginController extends AuthController
     public function login(LoginRequest $request, Session $session)
     {
         $user            = null;
-        $defaultProvider = 'users';
+        $defaultProvider = $request->input('provider') ?? 'users';
+        $credentials     = $request->credentials();
 
-        $credentials = $request->credentials();
+        unset($credentials['provider']);
+        $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+        unset($credentials['alias']);
 
         foreach (\config('auth.guards') as $guardName => $config) {
             try {

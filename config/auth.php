@@ -48,7 +48,12 @@ return [
 
         'otp' => [
             'driver'   => 'otp',
-            'provider' => 'otp-users'
+            'provider' => 'otp-users',
+        ],
+
+        'operator' => [
+            'driver'   => 'jwt',
+            'provider' => 'operators',
         ]
     ],
 
@@ -78,6 +83,11 @@ return [
         'otp-users' => [
             'driver' => 'otp-eloquent',
             'model'  => App\Models\User::class,
+        ],
+
+        'operators' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\Operator::class,
         ],
     ],
 
