@@ -15,7 +15,7 @@ class PictureController extends AbstractPictureController
 {
     const CATEGORY_PICTURES_PATH = 'images/category/pictures';
 
-    protected $pictureFormat  = 'svg';
+    protected $pictureFormat = 'svg';
 
     protected $pictureMimeTypes = [
         'svg' => 'image/svg+xml',
@@ -36,7 +36,7 @@ class PictureController extends AbstractPictureController
         $category = $categoryRepository->find($categoryId);
         $this->authorize('categories.picture.store', $category);
 
-        $request->file('picture')->storePubliclyAs(self::CATEGORY_PICTURES_PATH . '/',$categoryId . '.svg');
+        $request->file('picture')->storePubliclyAs(self::CATEGORY_PICTURES_PATH . '/', $categoryId . '.svg');
 
         return $request->wantsJson()
             ? \response()->render('', [], Response::HTTP_CREATED, route('categories.show', $categoryId))
