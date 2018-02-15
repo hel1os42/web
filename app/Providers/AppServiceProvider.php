@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @throws \InvalidArgumentException
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function boot()
     {
@@ -72,6 +72,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->setUserViewsData();
+
 
         Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
             $count = \DB::table('tags')->where('id', '<>', $parameters[1])
