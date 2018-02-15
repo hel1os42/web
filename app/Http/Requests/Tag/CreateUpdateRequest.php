@@ -38,7 +38,7 @@ class CreateUpdateRequest extends FormRequest
                 Constants::UUID_REGEX,
                 implode(',', array_column(Category::withNoParent()->get()->toArray(), 'id'))),
             'name'      => 'required|string|min:2|max:191',
-            'slug'      => sprintf('required|string|min:2|max:191|unique:categories,name,%s,id', $this->segment(2))
+            'slug'      => 'required|string|min:2|max:191|regex:/[a-z0-9-]+/'
         ];
     }
 } 
