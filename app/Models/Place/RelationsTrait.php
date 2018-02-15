@@ -77,7 +77,7 @@ trait RelationsTrait
      */
     public function retailTypes()
     {
-        return $this->categories()->whereNotNull('parent_id');
+        return $this->categories()->whereNotNull('parent_id')->orderBy('name');
     }
 
     /**

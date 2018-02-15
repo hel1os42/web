@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Category;
+use App\Models\Tag;
 use App\Models\User;
 
-class CategoryPolicy extends Policy
+class TagPolicy extends Policy
 {
     /**
      * @param User $user
@@ -38,22 +38,11 @@ class CategoryPolicy extends Policy
     }
 
     /**
-     * @param User     $user
-     * @param Category $category
+     * @param User $user
      *
      * @return bool
      */
-    public function update(User $user, Category $category): bool
-    {
-        return $category->parent_id !== null && $user->isAdmin();
-    }
-
-    /**
-     * @param User     $user
-     *
-     * @return bool
-     */
-    public function pictureStore(User $user): bool
+    public function update(User $user): bool
     {
         return $user->isAdmin();
     }
