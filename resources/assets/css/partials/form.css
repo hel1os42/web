@@ -478,3 +478,13 @@
 .nau-form #btn_gps_crd {
     margin-bottom: 10px;
 }
+
+.character-counter {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    color: #bdbdbd;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: normal;
+}

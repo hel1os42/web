@@ -33,6 +33,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>

@@ -18,7 +18,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Name *</span>
-                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="20">
+                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="30">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place name (minimum 3 characters).</p>
@@ -144,10 +144,12 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
-
     <script>
+
+        let redirectUrl;
 
         /* offer category and sub-categories */
 
@@ -398,6 +400,7 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (201 === xhr.status){
+                        redirectUrl = xhr.getResponseHeader('Location');
                         sendImages();
                     } else {
                         $('#waitError').text('Status: ' + xhr.status);
@@ -442,7 +445,8 @@
 
         function redirectPage(n){
             if (n.count === 0) {
-                window.location.replace("{{ route('profile') }}");
+                //window.location.replace("{{ route('profile') }}");
+                window.location.replace(redirectUrl);
             }
         }
 
