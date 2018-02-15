@@ -20,6 +20,10 @@
                         <input type="text" name="name" id="name" class="form-control" value="{{$name}}">
                     </div>
                     <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input type="text" name="slug" id="slug" class="form-control" value="{{$slug}}">
+                    </div>
+                    <div class="form-group">
                         <label for="category_id">Category</label>
                         <select class="form-control" name="category_id" id="category_id">
                             @foreach($mainCategories as $mainCategory)
