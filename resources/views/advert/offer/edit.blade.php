@@ -10,7 +10,7 @@
 
             <h1>Edit offer</h1>
 
-            <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="editOfferForm" target="_top">
+            <form action="{{ route('advert.offers.update', $id) }}" method="POST" class="nau-form" id="editOfferForm" target="_top">
 
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
@@ -33,6 +33,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>

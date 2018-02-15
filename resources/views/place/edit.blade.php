@@ -10,7 +10,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
                 <div>
-                    <form action="{{ route('places.update', $id) }}" method="PATCH" class="nau-form" id="createPlaceForm" target="_top">
+                    <form action="{{ route('places.update', $id) }}" method="POST" class="nau-form" id="createPlaceForm" target="_top">
 
                         <p class="title" style="margin-top: 32px;">Edit advertiser place</p>
 
@@ -18,7 +18,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Name *</span>
-                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="20">
+                                    <input name="name" value="{{ $name }}" class="formData" data-max-length="30">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place name (minimum 3 characters).</p>
@@ -144,10 +144,12 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
-
     <script>
+
+        let redirectUrl;
 
         /* offer category and sub-categories */
 
@@ -176,7 +178,7 @@
 
         let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
         srvRequest(rqURL, 'GET', 'json', function(response){
-            console.log('Place categories, types, spetialities, tags:');
+            console.log('Place categories, types, specialities, tags:');
             console.dir(response);
             placeInformation = response;
             placeInformation.retail_types.forEach(function(rt){
@@ -398,6 +400,7 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (201 === xhr.status){
+                        redirectUrl = xhr.getResponseHeader('Location');
                         sendImages();
                     } else {
                         $('#waitError').text('Status: ' + xhr.status);
@@ -442,7 +445,8 @@
 
         function redirectPage(n){
             if (n.count === 0) {
-                window.location.replace("{{ route('profile') }}");
+                //window.location.replace("{{ route('profile') }}");
+                window.location.replace(redirectUrl);
             }
         }
 
