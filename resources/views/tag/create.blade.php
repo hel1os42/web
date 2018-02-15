@@ -20,7 +20,8 @@
                     </div>
                     <div class="form-group">
                         <label for="slug">Slug</label>
-                        <input type="text" name="slug" id="slug" class="form-control" value="{{old('slug')}}">
+                        <input type="text" name="slug" id="slug" class="form-control" aria-describedby="slugHelp" value="{{old('slug')}}">
+                        <small id="slugHelp" class="form-text text-muted">If you have the same tag in other categories, you should set the same name and slug here.</small>
                     </div>
                     <div class="form-group">
                         <label for="category_id">Category</label>

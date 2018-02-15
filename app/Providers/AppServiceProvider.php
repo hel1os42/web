@@ -23,6 +23,7 @@ use App\Services\WeekDaysService;
 use App\Services\ImageService as ImageServiceInterface;
 use App\Services\Implementation\ImageService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -38,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @return void
+     * @throws \InvalidArgumentException
      */
     public function boot()
     {
@@ -71,6 +72,14 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->setUserViewsData();
+
+        Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
+            $count = \DB::table('tags')->where('id', '<>', $parameters[1])
+                       ->where('category_id', $value)
+                       ->where('slug', $parameters[0])
+                       ->count();
+            return $count === 0;
+        });
     }
 
     /**
