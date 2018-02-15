@@ -10,7 +10,7 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
                 <div>
-                    <form action="{{ route('places.update', $id) }}" method="PATCH" class="nau-form" id="createPlaceForm" target="_top">
+                    <form action="{{ route('places.update', $id) }}" method="POST" class="nau-form" id="createPlaceForm" target="_top">
 
                         <p class="title" style="margin-top: 32px;">Edit advertiser place</p>
 
@@ -178,7 +178,7 @@
 
         let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
         srvRequest(rqURL, 'GET', 'json', function(response){
-            console.log('Place categories, types, spetialities, tags:');
+            console.log('Place categories, types, specialities, tags:');
             console.dir(response);
             placeInformation = response;
             placeInformation.retail_types.forEach(function(rt){

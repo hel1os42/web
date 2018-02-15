@@ -196,7 +196,7 @@
                                     </div>
                                 </td>
                                 <td class="offer_status_control osc_{{ $offer['status'] }}">
-                                    <form action="{{ route('advert.offer.updateStatus', $offer['id']) }}" method="PUT">
+                                    <form action="{{ route('advert.offer.updateStatus', $offer['id']) }}" method="POST">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="status" value="{{ $offer['status'] === 'active' ? 'deactive' : 'active' }}">
                                         <button type="submit" class="b-activate btn btn-xs btn-primary" data-reserved="{{ $offer['reserved'] }}">activate</button>

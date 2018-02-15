@@ -4,7 +4,7 @@
         <span class="span-disapproved">No</span>
         <span class="span-wait">...</span>
 
-        <form action="{{ route('users.update', $user['id']) }}" method="PATCH">
+        <form action="{{ route('users.update', $user['id']) }}" method="POST">
             {{ csrf_field() }}
             {{ method_field('PATCH') }}
             <input type="hidden" name="approved" value="{{ $user['approved'] ? '0' : '1' }}">

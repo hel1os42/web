@@ -372,7 +372,7 @@
             if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
         }
 
-        function redirectPage(n, url){
+        function redirectPage(n){
             if (n.count === 0) {
                 //window.location.replace("{{ route('profile') }}");
                 window.location.replace(redirectUrl);

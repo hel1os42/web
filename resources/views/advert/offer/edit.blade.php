@@ -10,7 +10,7 @@
 
             <h1>Edit offer</h1>
 
-            <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="editOfferForm" target="_top">
+            <form action="{{ route('advert.offers.update', $id) }}" method="POST" class="nau-form" id="editOfferForm" target="_top">
 
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
