@@ -19,4 +19,6 @@ interface CategoryRepository extends RepositoryInterface
     public function getWithNoParent(): Builder;
 
     public function getSubcategory(string $parentId): Builder;
+
+    public function ordered(): Builder;
 }

@@ -181,10 +181,26 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     /**
      * Categories
      */
-    $router->get('categories', 'CategoryController@index')
+    $router->get('categories/index', 'CategoryController@index')
+           ->name('categories.index');
+    $router->get('categories', 'CategoryController@mainCategories')
            ->name('categories');
-    $router->get('categories/{uuid}', 'CategoryController@show')
-           ->name('categories.show');
+    $router->resource('categories', 'CategoryController', [
+        'except' => [
+            'index',
+            'destroy'
+        ]
+    ]);
+    $router->post('categories/{uuid}/picture', 'Category\PictureController@store')->name('categories.picture.store');
+
+    /**
+     * Tags
+     */
+    $router->resource('tags', 'TagController', [
+        'except' => [
+            'destroy'
+        ]
+    ]);
 
     /**
      * Places
@@ -231,3 +247,5 @@ $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where(
     'uuid',
     '[a-z0-9-]+'
 ])->name('places.picture.show');
+$router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
+    '[a-z0-9-]+')->name('categories.picture.show');
