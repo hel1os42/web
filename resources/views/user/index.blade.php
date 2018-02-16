@@ -172,7 +172,7 @@
             console.dir(formData);
 
             $.ajax({
-                method: "PUT",
+                method: "PATCH",
                 url: $(this).attr('action'),
                 headers: { 'Accept':'application/json' },
                 data: formData,
