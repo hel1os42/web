@@ -89,9 +89,8 @@
                                 <input type="hidden" name="latitude" value="{{ $latitude }}">
                                 <input type="hidden" name="longitude" value="{{ $longitude }}">
 
-                                <div class="row">
-                                    @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
-                                </div>
+                                @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
+
                                 <div class="row">
                                     <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
                                 </div>
@@ -140,9 +139,7 @@
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
 
-    @include('role-partials.selector', ['partialRoute' => 'user.show-scripts'])
-
-    <script type="text/javascript">
+    <script>
 
         /* approve/disapprove buttons */
         userStatusControl();
