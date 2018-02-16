@@ -9,7 +9,7 @@
 
     <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        <table style="margin-top: 24px;">
+        <table style="margin-top: 24px; width: 100%;">
             <thead>
                 <tr>
                     <th>User</th>
@@ -195,7 +195,8 @@
     }
 
     function fillSearchForm(){
-        let searchOptions = location.search.substr(1).split('&');
+        console.log('Fill Search Form');
+        let searchOptions = decodeURIComponent(location.search.substr(1)).split('&');
         searchOptions = searchOptions.map(function(e){ return e.split('='); });
         let search = searchOptions.find(function(e){ return e[0] === 'search' });
         if (search) {
