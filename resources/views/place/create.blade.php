@@ -27,7 +27,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Description</span>
-                                    <textarea name="description" class="formData" data-max-length="100"></textarea>
+                                    <textarea name="description" class="formData" data-max-length="120"></textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place description.</p>
@@ -37,7 +37,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">About</span>
-                                    <textarea name="about" class="formData"></textarea>
+                                    <textarea name="about" class="formData" data-max-length="1024"></textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the information About Place.</p>
