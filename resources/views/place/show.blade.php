@@ -43,14 +43,20 @@
         <div class="col-xs-9"><p>{{ $latitude }},{{ $longitude }}, radius: {{ $radius }}</div>
     </div>
     <div class="row">
+        <div class="col-xs-12">
         @if(!auth()->user()->isImpersonated() && auth()->user()->isAdvertiser())
-            <a href="{{route('places.edit', [$id])}}" class="pull-right btn btn-nau"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit place</a>
+            <a href="{{ route('places.edit', [$id]) }}" class="pull-right btn btn-nau"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit place</a>
         @endif
+        </div>
     </div>
-    <p><strong>Place picture:</strong></p>
-    <p><img src="{{route('places.picture.show', [$id, 'cover'])}}" alt="Place picture" style="max-width: 100%;"></p>
-    <p><strong>Place cover:</strong></p>
-    <p><img src="{{route('places.picture.show', [$id, 'picture'])}}" alt="Place cover" style="max-width: 100%;"></p>
+    <div class="row">
+        <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" alt="Place logo" style="max-width: 100%;"></p></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3"><p><strong>Place cover:</strong></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}" alt="Place cover" style="max-width: 100%;"></p></div>
+    </div>
 </div>
 
 @stop
@@ -68,5 +74,6 @@
         document.getElementById('placeInfoSpecialities').innerText = response.specialities.length ? response.specialities.map(function(e){ return e.name; }).join(', ') : '-';
         document.getElementById('placeInfoTags').innerText = response.tags.length ? response.tags.map(function(e){ return e.name; }).join(', ') : '-';
     });
+    
 </script>
 @endpush
