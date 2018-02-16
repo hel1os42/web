@@ -109,7 +109,11 @@ class LoginController extends AuthController
         $credentials     = $request->credentials();
 
         unset($credentials['provider']);
-        $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+
+        if (isset($credentials['place_uuid'])){
+            $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+        };
+
         unset($credentials['alias']);
 
         foreach (\config('auth.guards') as $guardName => $config) {
