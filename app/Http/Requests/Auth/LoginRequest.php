@@ -51,10 +51,13 @@ class LoginRequest extends FormRequest
 
     public function credentials()
     {
-        if (!$this->email && !$this->phone && $this->alias) return $this->aliasCredentials();
-        elseif (!$this->phone && !$this->alias && $this->email) return $this->emailCredentials();
-        elseif (!$this->alias && !$this->email && $this->phone) return $this->phoneCredentials();
-        return null;
+        if (!$this->email && !$this->phone && $this->alias) {
+            return $this->aliasCredentials();
+        } elseif (!$this->phone && !$this->alias && $this->email) {
+            return $this->emailCredentials();
+        } elseif (!$this->alias && !$this->email && $this->phone) {
+            return $this->phoneCredentials();
+        } return null;
     }
 
     private function emailCredentials()

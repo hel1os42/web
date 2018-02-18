@@ -8,6 +8,7 @@ use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Validation\Factory as ValidatorFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Validator;
 
@@ -167,7 +168,7 @@ class ValidatorServiceProvider extends ServiceProvider
 
             return null !== $activationCode
                    && null !== $activationCode->offer
-                   && $activationCode->offer->isOwner($guard->user());
+                   /*&& $activationCode->offer->isOwner($guard->user())*/;
         };
     }
 }

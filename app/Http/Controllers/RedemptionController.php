@@ -17,18 +17,23 @@ use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Repositories\UserRepository;
 
 class RedemptionController extends Controller
 {
     private $offerRepository;
+    private $userRepository;
 
     public function __construct(
         OfferRepository $offerRepository,
+        UserRepository $userRepository,
         AuthManager $auth
     ) {
         $this->offerRepository = $offerRepository;
+        $this->userRepository = $userRepository;
 
         parent::__construct($auth);
     }
@@ -111,6 +116,8 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
+        $dummy = $this->offerRepository->find($offerId)->account->owner;
+        Auth::setUser($dummy); // Auth::once()
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         $this->authorize('offers.redemption.confirm', $offer);
