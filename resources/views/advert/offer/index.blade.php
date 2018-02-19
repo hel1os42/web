@@ -230,7 +230,6 @@
         dataTableCreate('#table_your_offers');
 
         /* date and time */
-        datesSetFormat();
         fillTimeframes();
 
         /* offer category */
@@ -276,13 +275,6 @@
             }
         }
 
-        function datesSetFormat(){
-            $('.js-date-convert').each(function(){
-                let val = $(this).text();
-                $(this).html(val ? val.substr(0, 10) : '&#8734;');
-            });
-        }
-
         function fillTimeframes(){
             $(".gps").each(function(){
                 let gps = {
@@ -308,6 +300,8 @@
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                        } else {
+                            $(this).html('&#8734;');
                         }
                     });
 
