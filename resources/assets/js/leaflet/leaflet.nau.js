@@ -123,7 +123,7 @@ function getTimeZone(map, callback){
                 callback(tz);
                 function convertRawOffset(raw){
                     let converted = 'error';
-                    if (raw) {
+                    if (raw || raw === 0) {
                         let absRawInHr = Math.abs(raw / 3600);
                         let h = Math.trunc(absRawInHr);
                         let m = Math.round((absRawInHr - h) * 60);
@@ -159,7 +159,7 @@ function getTimeZoneGPS(gps, callback){
                 callback(tz);
                 function convertRawOffset(raw){
                     let converted = 'error';
-                    if (raw) {
+                    if (raw || raw === 0) {
                         let absRawInHr = Math.abs(raw / 3600);
                         let h = Math.trunc(absRawInHr);
                         let m = Math.round((absRawInHr - h) * 60);

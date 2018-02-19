@@ -9,7 +9,7 @@
 
     <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        <table style="margin-top: 24px; width: 100%;">
+        <table class="table-users">
             <thead>
                 <tr>
                     <th>User</th>
@@ -208,7 +208,7 @@
             let roleSelect = document.getElementById('role');
             if (searchByRole && roleSelect) {
                 let options = roleSelect.children;
-                for (let i = 0; i < options.length; i++) if (options.value === searchByRole[1]) options[i].selected = true;
+                for (let i = 0; i < options.length; i++) if (options[i].value === searchByRole[1]) options[i].selected = true;
             }
         }
     }
