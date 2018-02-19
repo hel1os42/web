@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Services\Auth\Guards\JwtGuard;
-use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
+use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -107,9 +107,8 @@ class AuthServiceProvider extends ServiceProvider
             return new OtpGuard($authManager->createUserProvider($config['provider']));
         });
 
-        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
-        $authManager->extend('jwt', function ($app, $name, array $config) use ($authManager) {
-            return new OperatorGuard($authManager->createUserProvider($config['provider']));
+        $authManager->provider('operator', function ($app, array $config) {
+            return new OperatorUserProvider($app['hash'], $config['model']);
         });
     }
 }

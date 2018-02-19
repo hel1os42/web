@@ -53,7 +53,7 @@ return [
 
         'operator' => [
             'driver'   => 'jwt',
-            'provider' => 'operators',
+            'provider' => 'operator',
         ]
     ],
 
@@ -85,8 +85,8 @@ return [
             'model'  => App\Models\User::class,
         ],
 
-        'operators' => [
-            'driver' => 'eloquent',
+        'operator' => [
+            'driver' => 'operator',
             'model'  => App\Models\Operator::class,
         ],
     ],

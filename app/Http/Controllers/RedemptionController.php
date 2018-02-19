@@ -116,9 +116,10 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        $offer = $this->validateOfferAndGetOwn($offerId);
+        //$offer = $this->validateOfferAndGetOwn($offerId);
+        $offer = $this->offerRepository->find($offerId);
 
-        $this->authorize('offers.redemption.confirm', $offer);
+        //$this->authorize('offers.redemption.confirm', $offer);
 
         $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
 
