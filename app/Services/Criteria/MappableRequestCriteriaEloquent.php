@@ -6,27 +6,14 @@
  * Time: 14:32
  */
 
-namespace App\Repositories\Criteria;
-
-use Prettus\Repository\Contracts\RepositoryInterface;
-use Prettus\Repository\Criteria\RequestCriteria;
+namespace App\Services\Criteria;
 
 /**
  * Class MappableRequestCriteriaEloquent
- * @package App\Repositories\Criteria
+ * @package App\Services\Criteria
  */
-class MappableRequestCriteriaEloquent extends RequestCriteria implements MappableRequestCriteria
+class MappableRequestCriteriaEloquent extends RequestCriteriaEloquent implements MappableRequestCriteria
 {
-    protected $model;
-
-    public function apply($model, RepositoryInterface $repository)
-    {
-        $this->model = $model;
-
-        return parent::apply($model, $repository);
-    }
-
-
     /**
      * @param $search
      *
