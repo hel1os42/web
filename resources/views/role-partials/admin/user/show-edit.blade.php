@@ -16,6 +16,7 @@
 
             function loadRoles() {
                 let xhr = new XMLHttpRequest();
+                xhr.responseType = 'json';
                 let currentRoles = {!! json_encode(array_column($roles, 'id')) !!};
 
                 xhr.onreadystatechange = function() {
@@ -23,7 +24,7 @@
                         if (xhr.status === 200) {
                             console.dir(xhr.response);
                             let html = '', checked;
-                            xhr.response.forEach(function(e, i){
+                            xhr.response.roles.forEach(function(e, i){
                                 checked = currentRoles.indexOf(option.value) !== -1 ? ' checked' : '';
                                 html += '<p><label><input type="checkbox" name="role_ids[' + i + ']" value="' + e.id + '"' + checked + '> ' + e.name + '</label></p>';
                             });
@@ -37,6 +38,7 @@
                 };
 
                 xhr.open( "GET", "{{ route('roles') }}", true );
+                xhr.setRequestHeader('Accept', 'application/json');
                 xhr.send();
             }
         })();
