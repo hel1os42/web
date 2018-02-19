@@ -25,7 +25,7 @@
                             console.dir(xhr.response);
                             let html = '', checked;
                             xhr.response.roles.forEach(function(e, i){
-                                checked = currentRoles.indexOf(option.value) !== -1 ? ' checked' : '';
+                                checked = currentRoles.indexOf(e.id) !== -1 ? ' checked' : '';
                                 html += '<p><label><input type="checkbox" name="role_ids[' + i + ']" value="' + e.id + '"' + checked + '> ' + e.name + '</label></p>';
                             });
                             document.getElementById('roles').innerHTML = html;
