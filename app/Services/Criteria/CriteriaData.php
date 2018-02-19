@@ -22,7 +22,7 @@ interface CriteriaData
     public function getFieldsSearchable();
 
     /**
-     * @return mixed
+     * @return array|null
      */
     public function getSearchFields();
 
@@ -37,7 +37,7 @@ interface CriteriaData
     public function getSearchJoin();
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getOrderBy();
 
@@ -47,19 +47,19 @@ interface CriteriaData
     public function getSortedBy();
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getFilter();
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getWith();
 
     /**
      * @param string $field
      *
-     * @return null|mixed
+     * @return string|array|null
      */
     public function getSearchValueByField(string $field);
 }

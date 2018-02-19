@@ -316,7 +316,7 @@ class CriteriaDataImpl implements CriteriaData
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getSortedBy()
     {
