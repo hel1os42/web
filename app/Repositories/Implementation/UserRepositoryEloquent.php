@@ -15,6 +15,8 @@ use Prettus\Validator\Contracts\ValidatorInterface;
  * NS: App\Repositories
  *
  * @property User $model
+ *
+ * @method User setApproved(bool $approve)
  */
 class UserRepositoryEloquent extends BaseRepository implements UserRepository
 {
@@ -96,19 +98,5 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         $this->resetModel();
 
         return $this->parserResult($model);
-    }
-
-    /**
-     * @param string $referrerId
-     *
-     * @return UserRepository|null
-     */
-    public function scopeReferrerId(string $referrerId): ?UserRepository
-    {
-        return $this->scopeQuery(
-            function ($builder) use ($referrerId) {
-                return $builder->referrerId($referrerId);
-            }
-        );
     }
 }
