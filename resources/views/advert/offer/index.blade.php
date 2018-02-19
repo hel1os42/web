@@ -230,7 +230,6 @@
         dataTableCreate('#table_your_offers');
 
         /* date and time */
-        datesSetFormat();
         fillTimeframes();
 
         /* offer category */
@@ -274,13 +273,6 @@
                     }
                 });
             }
-        }
-
-        function datesSetFormat(){
-            $('.js-date-convert').each(function(){
-                let val = $(this).text();
-                $(this).html(val ? val.substr(0, 10) : '&#8734;');
-            });
         }
 
         function fillTimeframes(){
