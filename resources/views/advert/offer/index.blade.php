@@ -300,6 +300,8 @@
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                        } else {
+                            $(this).html('&#8734;');
                         }
                     });
 
