@@ -10,7 +10,7 @@
 
             <h1>Edit offer</h1>
 
-            <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="editOfferForm" target="_top">
+            <form action="{{ route('advert.offers.update', $id) }}" method="POST" class="nau-form" id="editOfferForm" target="_top">
 
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
@@ -33,6 +33,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
@@ -54,6 +55,9 @@
 
         /* offer type = discount */
         offerTypeController();
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -174,7 +178,8 @@
             });
             validationOnFly();
             getTimeZone(map, fillTimeframes);
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -185,7 +190,6 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             getTimeZone(map, function(tz){
                 $('[name="timezone"]').val(tz);
                 $('#map_box').toggleClass('invalid', tz === 'error')
@@ -196,14 +200,27 @@
             let $box = $('#dayInfoBox');
             $box.find('[data-checked="true"]').prop('checked', true).parents('.day-info').removeClass('passive');
             $box.find('input[data-value]').each(function(){
-                /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
                 let val = $(this).attr('data-value');
                 let h = +val.substr(0, 2) + +tz.substr(0, 3);
+                let m = +val.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
+                if (m > 59) { m -=60; h++; }
+                if (m < 0) { m +=60; h--; }
+                m = add0(m);
                 if (h > 23) h -= 24;
                 if (h < 0) h += 24;
-                if (h < 10) h = '0' + h;
-                $(this).val(h + ':' + val.substr(3, 2));
+                h = add0(h);
+                $(this).val(h + ':' + m);
             });
+            $('[name="start_date"]').add('[name="finish_date"]').each(function(){
+                let val = $(this).val();
+                if (val.length > 1) {
+                    let date = new Date(val);
+                    date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
+                    date.setHours(date.getHours() + +tz.substr(0, 3));
+                    $(this).val(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                }
+            });
+            function add0(n) { return n < 10 ? '0' + n : n; }
         }
 
         function getFormData(tz){
@@ -290,22 +307,24 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 method: "PATCH",
                 url: $('#editOfferForm').attr('action'),
-                headers: {
-                    'Accept':'application/json',
-                },
+                headers: { 'Accept':'application/json' },
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         sendImage();
                     } else {
-                        console.log(xhr);
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.dir(xhr);
                     }
                 },
                 error: function(resp){
-                    console.log(resp);
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.dir(resp);
                 }
             });
 
@@ -421,14 +440,56 @@
                     method: 'POST',
                     success: function () {
                         console.log('SUCCESS: image sent.');
-                        window.location.replace("{{ route('advert.offers.index') }}");
+                        window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
-                    error: function () {
+                    error: function (resp) {
+                        $('#waitError').text(resp.status);
                         console.log('ERROR: image not sent.');
                     }
                 });
             } else {
-                window.location.replace("{{ route('advert.offers.index') }}");
+                window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
+            }
+        }
+
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
             }
         }
     </script>

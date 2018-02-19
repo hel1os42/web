@@ -33,6 +33,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
@@ -54,6 +55,9 @@
 
         /* offer type = discount */
         offerTypeController();
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -152,6 +156,11 @@
 
         mapInit({
             id: 'mapid',
+            setPosition: {
+                lat: $('[name="latitude"]').val(),
+                lng: $('[name="longitude"]').val(),
+                radius: $('[name="radius"]').val()
+            },
             done: mapDone,
             move: mapMove
         });
@@ -165,7 +174,8 @@
                 }
             });
             validationOnFly();
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -176,7 +186,6 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             getTimeZone(map, function(tz){
                 $('[name="timezone"]').val(tz);
                 $('#map_box').toggleClass('invalid', tz === 'error')
@@ -215,17 +224,6 @@
                 "name" : "delivery",
                 "value" : $('[name="delivery"]').prop('checked') ? "1" : "0"
             });
-            let discount_start_price = parseInt($('[name="discount_start_price"]').val());
-            if (discount_start_price > 0) {
-                formData.push({
-                    "name" : "discount_start_price",
-                    "value" : discount_start_price.toString()
-                });
-                formData.push({
-                    "name" : "currency",
-                    "value" : $('[name="currency"]').val()
-                });
-            }
             let gift_bonus_descr = '';
             if ($('#bonus_radio').prop('checked')) gift_bonus_descr = $('#bonus_information').val();
             if ($('#gift_radio').prop('checked')) gift_bonus_descr = $('#gift_information').val();
@@ -282,7 +280,7 @@
                             let uuid = xhr.getResponseHeader('Location').split('/');
                             sendImage(uuid[uuid.length - 1]);
                         } else {
-                            window.location.replace("{{ route('advert.offers.index') }}");
+                            window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                         }
                     } else {
                         $('#waitError').text('Status: ' + xhr.status);
@@ -413,13 +411,54 @@
                 method: 'POST',
                 success: function () {
                     console.log('SUCCESS: image sent.');
-                    window.location.replace("{{ route('advert.offers.index') }}");
+                    window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                 },
                 error: function (resp) {
                     $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
                     console.log('ERROR: image not sent.');
                 }
             });
+        }
+
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
+            }
         }
 
     </script>

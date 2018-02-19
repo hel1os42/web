@@ -37,6 +37,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         'status'      => '=',
         'start_date'  => '<=',
         'finish_date' => '>=',
+        'updated_at',
     ];
 
     public function __construct(

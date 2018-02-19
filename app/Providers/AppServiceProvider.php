@@ -6,6 +6,8 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
+use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
 use App\Repositories\PlaceRepository;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
 use App\Services\Implementation\NauOfferReservation;
@@ -20,6 +22,7 @@ use App\Services\WeekDaysService;
 use App\Services\ImageService as ImageServiceInterface;
 use App\Services\Implementation\ImageService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -35,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      *
-     * @return void
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function boot()
     {
@@ -59,7 +62,24 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
+        ViewFacade::composer(
+            ['category.*', 'tag.*'],
+            function (View $view) {
+                $categoryRepository = app(CategoryRepository::class);
+                $view->with('mainCategories', $categoryRepository->getWithNoParent()->get());
+            }
+        );
+
         $this->setUserViewsData();
+
+
+        Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
+            $count = \DB::table('tags')->where('id', '<>', $parameters[1])
+                       ->where('category_id', $value)
+                       ->where('slug', $parameters[0])
+                       ->count();
+            return $count === 0;
+        });
     }
 
     /**
@@ -128,6 +148,19 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('children', $children);
                 $view->with('allPossibleChildren', $allPossibleChildren);
                 $view->with('editableUserModel', $editableUserModel);
+            }
+        );
+
+        ViewFacade::composer(
+            ['user.index'], function (View $view) {
+                $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
+                $accountRepository = app(AccountRepository::class);
+                $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
+                foreach ($accounts as $accountKey => $account) {
+                    $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
+                }
+
+                $view->with('specialUserAccounts', $accounts);
             }
         );
     }

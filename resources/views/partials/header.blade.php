@@ -23,7 +23,7 @@
 
             <div class="advert-name pull-right">
                 @if(isset($authUser["accounts"]["NAU"]["balance"]))
-                Balance: <span style="color: #f08301;"> {{$authUser["accounts"]["NAU"]["balance"]}}  NAU</span>
+                Balance: <span style="color: #f08301;"><span id="header_nau_balance">{{ $authUser["accounts"]["NAU"]["balance"] }}</span> NAU</span>
                 @else
                     The problem of getting a balance, contact us if this message does not disappear in the near future.
                     @endif

@@ -28,10 +28,10 @@ function setPickerPosition($input, pickerId){
 
 function datePicker($input, minDate){
 	let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     $('.picker').remove();
-    let date = new Date();
-    if ($input.val()) { date = new Date($input.val()); }
+    let date = newDate();
+	if (minDate) minDate = newDate(minDate.getTime());
+    if ($input.val()) { date = newDate($input.val()); }
     $(document.body).append(createPicker(date, $input, minDate));
     setPickerPosition($input, '#datepicker');
 	function createPicker(date, $input, minDate){
@@ -48,7 +48,7 @@ function datePicker($input, minDate){
 			    let y = $(e.target).data('year'),
                     m = add0(parseInt($(e.target).data('month')) + 1),
                     d = add0($(e.target).data('date'));
-				tdate = new Date(y + '/' + m + '/' + d);
+				tdate = newDate(y + '/' + m + '/' + d);
 				if ($(e.target).hasClass('not-this-month')) {
                     $(picker).find('table').html(getTable(tdate, minDate));
                     $(picker).find('.controls strong').text(months[m - 1] + ', ' + y);
@@ -62,7 +62,7 @@ function datePicker($input, minDate){
 			}
 			if ($(e.target).is('span') && $(e.target).parent().hasClass('controls')) {
 				let $td = $(picker).find('td').not('.not-this-month').eq(0);
-				tdate = new Date($td.data('year') + '/' + add0(parseInt($td.data('month')) + 1) + '/' + '01');
+				tdate = newDate($td.data('year') + '/' + add0(parseInt($td.data('month')) + 1) + '/' + '01');
 				tdate.setMonth(tdate.getMonth() + parseInt($(e.target).data('shift')));
 				$(picker).find('table').html(getTable(tdate, minDate));
                 $(picker).find('.controls strong').text(months[tdate.getMonth()] + ', ' + tdate.getFullYear());
@@ -71,8 +71,10 @@ function datePicker($input, minDate){
 		return $(picker);
 	}
 	function getTable(date, minDate){
-		let d = new Date(date.getTime());
-		let now = new Date();
+		let d = newDate(date.getTime());
+		let now = newDate();
+		console.dir(d);
+		console.dir(now);
 		d.setDate(1);
 		d.setDate(1 - day(d.getDay()));
 		let html = '<tr><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th class="weekend">S</th><th class="weekend">S</th></tr>';
@@ -83,7 +85,7 @@ function datePicker($input, minDate){
 				if (d.getMonth() !== date.getMonth()) cls.push('not-this-month');
 				if (day(d.getDay()) > 4) cls.push('weekend');
 				if (equalDates(d, now)) cls.push('today');
-				if (minDate && minDate > d && d.getMonth() === date.getMonth()) cls.push('not-active');
+				if (minDate && minDate.getTime() > d.getTime() && d.getMonth() === date.getMonth()) cls.push('not-active');
 				/*if (equalDates(d, date_se)) cls.push('selected');*/
 				cls = cls.length ? ' class="' + cls.join(' ') + '"' : '';
 				let data = ' data-year="' + d.getFullYear() + '" data-month="' + d.getMonth() + '" data-date="' + d.getDate() + '"';
@@ -99,6 +101,14 @@ function datePicker($input, minDate){
 	}
 	function equalDates(a, b){
 		return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+	}
+	function newDate(date){
+		let today = date ? new Date(date) : new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		today.setMilliseconds(0);
+		return today;
 	}
 }
 
