@@ -165,10 +165,7 @@ class ValidatorServiceProvider extends ServiceProvider
             }
 
             $activationCode = $activationCodeRepository->findByCodeAndNotRedeemed($value);
-
-            return null !== $activationCode
-                   && null !== $activationCode->offer
-                   /*&& $activationCode->offer->isOwner($guard->user())*/;
+            return null !== $activationCode && null !== $activationCode->offer;
         };
     }
 }

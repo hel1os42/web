@@ -116,8 +116,6 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        $dummy = $this->offerRepository->find($offerId)->account->owner;
-        Auth::setUser($dummy); // Auth::once()
         $offer = $this->validateOfferAndGetOwn($offerId);
 
         $this->authorize('offers.redemption.confirm', $offer);

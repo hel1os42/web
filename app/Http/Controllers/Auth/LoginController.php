@@ -105,16 +105,13 @@ class LoginController extends AuthController
     public function login(LoginRequest $request, Session $session)
     {
         $user            = null;
-        $defaultProvider = $request->input('provider') ?? 'users';
+        $defaultProvider = 'users';
         $credentials     = $request->credentials();
 
-        unset($credentials['provider']);
-
-        if (isset($credentials['place_uuid'])){
+        if (isset($credentials['alias'])){
             $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+            unset($credentials['alias']);
         };
-
-        unset($credentials['alias']);
 
         foreach (\config('auth.guards') as $guardName => $config) {
             try {

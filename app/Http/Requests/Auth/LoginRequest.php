@@ -44,8 +44,7 @@ class LoginRequest extends FormRequest
             'code'     => 'required_with:phone|nullable|digits:6|otp',
             'alias'    => 'required_without_all:phone,email|nullable|min:3|max:255',
             'login'    => 'required_with:alias|nullable|min:3|max:255',
-            'pin'      => 'required_with:alias|nullable|different:alias|min:3|max:255',
-            'provider' => 'required_with:alias|nullable|min:3|max:255',
+            'pin'      => 'required_with:alias|nullable|different:alias|different:login|min:3|max:255',
         ];
     }
 
@@ -82,7 +81,6 @@ class LoginRequest extends FormRequest
             'login'    => $this->login,
             'password' => $this->pin,
             'alias'    => $this->alias,
-            'provider' => $this->provider,
         ];
     }
 }
