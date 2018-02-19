@@ -96,4 +96,18 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
         return $this->parserResult($model);
     }
+
+    /**
+     * @param string $referrerId
+     *
+     * @return UserRepository|null
+     */
+    public function scopeReferrerId(string $referrerId): ?UserRepository
+    {
+        return $this->scopeQuery(
+            function ($builder) use ($referrerId) {
+                return $builder->referrerId($referrerId);
+            }
+        );
+    }
 }

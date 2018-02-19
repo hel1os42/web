@@ -188,6 +188,7 @@ return [
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        App\Providers\CriteriaServiceProvider::class,
     ],
 
     /*

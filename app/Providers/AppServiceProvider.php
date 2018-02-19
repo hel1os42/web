@@ -6,12 +6,11 @@ use App\Models\NauModels\Offer;
 use App\Models\User;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
-use App\Repositories\Criteria\MappableRequestCriteria;
-use App\Repositories\Criteria\MappableRequestCriteriaEloquent;
 use App\Repositories\PlaceRepository;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
 use App\Services\Implementation\NauOfferReservation;
 use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
+use App\Services\Implementation\PlaceService as PlaceServiceImpl;
 use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
@@ -81,22 +80,16 @@ class AppServiceProvider extends ServiceProvider
             OfferReservation::class,
             NauOfferReservation::class);
         $this->app->bind(
-            MappableRequestCriteria::class,
-            MappableRequestCriteriaEloquent::class
-        );
-        $this->app->bind(
             InvestorAreaService::class,
             InvestorAreaServiceImpl::class
         );
-
         $this->app->bind(
             ImageServiceInterface::class,
             ImageService::class
         );
-
         $this->app->bind(
             PlaceService::class,
-            \App\Services\Implementation\PlaceService::class
+            PlaceServiceImpl::class
         );
     }
 

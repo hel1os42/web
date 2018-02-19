@@ -11,6 +11,7 @@ use App\Models\User\RelationsTrait;
 use App\Models\User\RoleTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -455,6 +456,18 @@ class User extends Authenticatable implements PhoneAuthenticable
     public function hasParent(User $parent)
     {
         return $this->parents->contains($parent->getId());
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $referrerId
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeReferrerId(Builder $builder, string $referrerId): Builder
+    {
+        return $builder->where('referrer_id', $referrerId);
     }
 
     /**

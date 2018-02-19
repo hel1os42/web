@@ -24,6 +24,8 @@ interface UserRepository extends RepositoryInterface
     public function findByPhone(string $phone): ?User;
     public function findByInvite(string $inviteCode): ?User;
 
+    public function scopeReferrerId(string $referrerId): ?UserRepository;
+
     /**
      * @param User $user
      *
