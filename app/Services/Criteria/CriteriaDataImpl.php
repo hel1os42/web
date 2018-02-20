@@ -100,8 +100,8 @@ class CriteriaDataImpl implements CriteriaData
 
         $this->searchFields = $this->searchFieldsParam();
 
-        $this->initSearchFields()
-             ->initSearchValue();
+        $this->initSearchValue()
+             ->initSearchFields();
 
         $this->searchJoin = strtolower($this->searchJoinParam()) === 'and' ? 'and' : 'or';
         $this->orderBy    = $this->orderByParam();
@@ -186,24 +186,23 @@ class CriteriaDataImpl implements CriteriaData
     protected function initSearchValue(): CriteriaData
     {
         $search = $this->searchParam();
-        if (stripos($search, ';') || stripos($search, ':')) {
-            $values = explode(';', $search);
-            foreach ($values as $value) {
-                $searchValue = explode(':', $value);
-                if (count($searchValue) == 1) {
+        if (false !== stripos($search, ';') || false !== stripos($search, ':')) {
+            $params = explode(';', $search);
+            foreach ($params as $param) {
+                $delimiterPosition = stripos($param, ':');
+                if (false === $delimiterPosition) {
                     continue;
                 }
-                if (count($searchValue) == 2) {
-                    $this->searchValues[$searchValue[0]] = $searchValue[1];
-                    continue;
-                }
-                $this->searchValues[$searchValue[0]] = array_slice($searchValue, 1);
+                $field                      = substr($param, 0, $delimiterPosition);
+                $values                     = substr($param, ++$delimiterPosition, strlen($param));
+                $this->searchValues[$field] = (false === stripos($values, '|'))
+                    ? $values
+                    : explode('|', $values);
             }
         }
 
         return $this;
     }
-
 
     /**
      * @return string|null

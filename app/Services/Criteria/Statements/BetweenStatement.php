@@ -11,16 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 class BetweenStatement extends AbstractStatement
 {
     /**
-     * @return SearchStatement
-     */
-    public function init(): SearchStatement
-    {
-        $this->value = explode('|', $this->value);
-
-        return $this;
-    }
-
-    /**
      * @param Builder $query
      *
      * @return Builder
