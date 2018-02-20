@@ -1,24 +1,18 @@
 @if(in_array('advertiser', array_column($user['roles'], 'name')))
-    @if($user['approved'])
-        <span style="color:green">Yes</span>
-    @else
-        <span style="color:red">No</span>
-    @endif
-        <form action="{{route('users.update', $user['id'])}}" method="post"
-              style="display:  inline-block;">
+    <div class="user-approve-controls status-{{ $user['approved'] ? '' : 'dis' }}approved">
+        <span class="span-approved">Yes</span>
+        <span class="span-disapproved">No</span>
+        <span class="span-wait">...</span>
+
+        <form action="{{ route('users.update', $user['id']) }}" method="POST">
             {{ csrf_field() }}
             {{ method_field('PATCH') }}
-            @if($user['approved'])
-                <input hidden type="text" name="approved" value="0">
-                <button style="display:  inline-block;" type="submit">disapprove
-                </button>
-            @else
-                <input hidden type="text" name="approved" value="1">
-                <button style="display:  inline-block; padding: 3px;" type="submit" class="btn">approve
-                </button>
-            @endif
+            <input type="hidden" name="approved" value="{{ $user['approved'] ? '0' : '1' }}">
+            <button type="submit" class="btn btn-xs b-approved">disapprove</button>
+            <button type="submit" class="btn btn-xs b-disapproved">approve</button>
+            <span class="waiting-response"><img src="{{ asset('img/loading.gif') }}" alt="wait..."></span>
         </form>
-
+    </div>
 @else
     -
 @endif

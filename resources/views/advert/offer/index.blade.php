@@ -196,7 +196,7 @@
                                     </div>
                                 </td>
                                 <td class="offer_status_control osc_{{ $offer['status'] }}">
-                                    <form action="{{ route('advert.offer.updateStatus', $offer['id']) }}" method="PUT">
+                                    <form action="{{ route('advert.offer.updateStatus', $offer['id']) }}" method="POST">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="status" value="{{ $offer['status'] === 'active' ? 'deactive' : 'active' }}">
                                         <button type="submit" class="b-activate btn btn-xs btn-primary" data-reserved="{{ $offer['reserved'] }}">activate</button>
@@ -230,7 +230,6 @@
         dataTableCreate('#table_your_offers');
 
         /* date and time */
-        datesSetFormat();
         fillTimeframes();
 
         /* offer category */
@@ -276,13 +275,6 @@
             }
         }
 
-        function datesSetFormat(){
-            $('.js-date-convert').each(function(){
-                let val = $(this).text();
-                $(this).html(val ? val.substr(0, 10) : '&#8734;');
-            });
-        }
-
         function fillTimeframes(){
             $(".gps").each(function(){
                 let gps = {
@@ -293,7 +285,6 @@
                 getTimeZoneGPS(gps, fillTimeframesCallback);
 
                 function fillTimeframesCallback(tz){
-                    /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
                     let $box = $(`.workingDaysStorage[data-offerid="${offerId}"]`);
                     let tf = $box.data('workingdays');
                     $box.find('.workingDaySpan').each(function(){
@@ -302,12 +293,14 @@
                     });
                     $box = $(`.gps[data-offerid="${offerId}"]`).parents('td').eq(0).siblings('.working-period');
                     $box.find('.js-date-convert').each(function(){
-                        let val = $(this).text();
+                        let val = $(this).text().replace(' ', 'T');
                         if (val.length > 1) {
                             let date = new Date(val);
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                        } else {
+                            $(this).html('&#8734;');
                         }
                     });
 

@@ -5,13 +5,13 @@
  * Date: 20.10.17
  * Time: 14:31
  */
-namespace App\Repositories\Criteria;
+namespace App\Services\Criteria;
 
 use Prettus\Repository\Contracts\CriteriaInterface;
 
 /**
  * Interface OfferRequestCriteria
- * @package App\Repositories\Criteria
+ * @package App\Services\Criteria
  *
  * @inheritdoc
  */

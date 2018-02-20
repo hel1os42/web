@@ -9,7 +9,7 @@
 
     <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        <table style="margin-top: 24px;">
+        <table class="table-users">
             <thead>
                 <tr>
                     <th>User</th>
@@ -112,7 +112,11 @@
 
     searchForm();
 
+    fillSearchForm();
+
     pagenavyCompact(document.getElementById('table_pager'));
+
+    userStatusControl();
 
     function searchForm(){
         let searchBlock = document.getElementById('admin-users-search');
@@ -152,6 +156,61 @@
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
 
+    }
+
+    function userStatusControl(){
+        $('.user-approve-controls form').on('submit', function(e){
+            e.preventDefault();
+
+            let $box = $(this).parents('.user-approve-controls');
+            let $user_status = $box.find('[name="approved"]');
+            let $err = $box.find('.waiting-response');
+
+            $box.removeClass('status-approved status-disapproved').addClass('status-wait');
+            let formData = $(this).serializeArray();
+            console.log('Change User Status:');
+            console.dir(formData);
+
+            $.ajax({
+                method: "PATCH",
+                url: $(this).attr('action'),
+                headers: { 'Accept':'application/json' },
+                data: formData,
+                success: function(data, textStatus, xhr){
+                    if (201 === xhr.status){
+                        $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
+                        $user_status.val($user_status.val() === '0' ? '1' : '0');
+                    } else {
+                        $err.text('err-st: ' + xhr.status);
+                        console.dir(xhr);
+                    }
+                },
+                error: function(resp){
+                    $err.text('err-st: ' + resp.status);
+                    console.dir(resp);
+                    alert(`Error ${resp.status}: ${resp.responseText}`);
+                }
+            });
+        });
+    }
+
+    function fillSearchForm(){
+        console.log('Fill Search Form');
+        let searchOptions = decodeURIComponent(location.search.substr(1)).split('&');
+        searchOptions = searchOptions.map(function(e){ return e.split('='); });
+        let search = searchOptions.find(function(e){ return e[0] === 'search' });
+        if (search) {
+            search = search[1].split(';');
+            search = search.map(function(e){ return e.split(':'); });
+            let searchByEmail = search.find(function(e){ return e[0] === 'email' });
+            if (searchByEmail) document.getElementById('email').value = searchByEmail[1];
+            let searchByRole = search.find(function(e){ return e[0] === 'roles.name' });
+            let roleSelect = document.getElementById('role');
+            if (searchByRole && roleSelect) {
+                let options = roleSelect.children;
+                for (let i = 0; i < options.length; i++) if (options[i].value === searchByRole[1]) options[i].selected = true;
+            }
+        }
     }
 
 </script>

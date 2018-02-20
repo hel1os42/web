@@ -94,6 +94,7 @@ function waitPopup(withRqCounter){
 
 function pagenavyCompact(pagenavy){
     console.log('pagenavyCompact', new Date());
+    if (!pagenavy) return false;
     let buttons = pagenavy.children;
     let currentIndex = 0, cntBefore = 0, cntAfter = 0;
     let searchOptions = location.search.substr(1).split('&');
@@ -130,14 +131,25 @@ function pagenavyCompact(pagenavy){
 
 function setFieldLimit(selector){
     document.querySelectorAll(selector).forEach(function(input){
+        createSpan(input);
         ['keyup', 'paste', 'change'].forEach(function(e){
             input.addEventListener(e, trimValue);
         });
     });
     function trimValue(){
-        let val = this.value.replace(/\{.+?\}/g, '');
+        let val = getValue(this);
         let len = parseInt(this.dataset.maxLength);
         if (val.length > len) this.value = val.substr(0, len);
+        this.parentElement.querySelector('.character-counter').innerText = val.length + ' / ' + len;
+    }
+    function createSpan(input){
+        let span = document.createElement('span');
+        span.classList.add('character-counter');
+        span.innerText = getValue(input).length + ' / ' + input.dataset.maxLength;
+        input.parentElement.appendChild(span);
+    }
+    function getValue(e){
+        return e.value.replace(/\{.+?\}/g, '');
     }
 }
 

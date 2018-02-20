@@ -1,15 +1,15 @@
-<div class="col-sm-6 p-5">
+<div class="col-sm-3 p-5">
     <p><strong>Id</strong></p>
     <p><strong>Approved</strong></p>
 </div>
-<div class="col-sm-6 p-5">
+<div class="col-sm-9 p-5">
     <p>{{ $id }}</p>
     <div class="user-approve-controls status-{{ $approved ? '' : 'dis' }}approved">
         <span class="span-approved">Yes</span>
         <span class="span-disapproved">No</span>
         <span class="span-wait">...</span>
 
-        <form action="{{ route('users.update', $id) }}" method="PATCH">
+        <form action="{{ route('users.update', $id) }}" method="POST">
             {{ csrf_field() }}
             {{ method_field('PATCH') }}
             <input type="hidden" name="approved" value="{{ $approved ? '0' : '1' }}">

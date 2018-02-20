@@ -1,8 +1,8 @@
 <div class="control-box" style="margin-top: 32px;">
     <p class="title">Working dates</p>
     <p class="row control-datetime">
-        <label class="col-xs-6"><span class="input-label">from *</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value="{{ $start_date->format('Y-m-d') }}"></label>
-        <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value="{{ $finish_date ? $finish_date->format('Y-m-d') : '' }}"></label>
+        <label class="col-xs-6"><span class="input-label">from *</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value="{{ $start_date }}"></label>
+        <label class="col-xs-6"><span class="input-label">to</span> <input name="finish_date" readonly class="js-datepicker" placeholder="Select date" value="{{ $finish_date ?: '' }}"></label>
         <span role="button" class="cleartime-btn" title="Clear field"></span>
     </p>
     <p class="hint">Please, select the valid range of dates.</p>

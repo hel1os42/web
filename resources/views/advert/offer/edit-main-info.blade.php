@@ -16,7 +16,7 @@
     <p class="control-text">
         <label>
             <span class="input-label">Offer description</span>
-            <textarea name="description" class="nullableFormData" data-max-length="160">{{ $description ?: '' }}</textarea>
+            <textarea name="description" class="nullableFormData" data-max-length="200">{{ $description ?: '' }}</textarea>
         </label>
     </p>
     <p class="hint">Please, enter the Offer description.</p>
