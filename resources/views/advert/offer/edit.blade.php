@@ -211,8 +211,8 @@
                 h = add0(h);
                 $(this).val(h + ':' + m);
             });
-            $('[name="start_date"]').add('[name="finish_date"]').each(function(){
-                let val = $(this).val();
+            $('[name="start_date"], [name="finish_date"]').each(function(){
+                let val = $(this).val().replace(' ', 'T');
                 if (val.length > 1) {
                     let date = new Date(val);
                     date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
