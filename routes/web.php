@@ -69,7 +69,7 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 // Authorized users
 
-$router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
+$router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($router) {
 
     $router->get('/', function () {
         return response()->render('home', []);

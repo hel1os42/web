@@ -52,7 +52,7 @@ return [
         ],
 
         'operator' => [
-            'driver'   => 'jwt',
+            'driver'   => 'operator',
             'provider' => 'operator',
         ]
     ],

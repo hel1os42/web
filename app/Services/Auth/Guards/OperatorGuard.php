@@ -5,20 +5,14 @@ namespace App\Services\Auth\Guards;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Tymon\JWTAuth\JWTAuth;
 
 class OperatorGuard implements Guard
 {
     use GuardHelpers;
 
-    /**
-     * @var JWTAuth
-     */
-    private $jwtAuth;
-
     public function logout()
     {
-        $this->jwtAuth->invalidate();
+        //
     }
 
     /**
@@ -29,23 +23,15 @@ class OperatorGuard implements Guard
     public function __construct(UserProvider $provider)
     {
         $this->provider = $provider;
-        $this->jwtAuth  = app('tymon.jwt.auth');
     }
 
     /**
      * Get the currently authenticated user.
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     *
-     * @throws \Tymon\JWTAuth\Exceptions\JWTException
-     * @throws \Tymon\JWTAuth\Exceptions\TokenBlacklistedException
      */
     public function user()
     {
-        if (is_null($this->user) && $this->jwtAuth->getToken() !== false) {
-            $this->user = $this->jwtAuth->authenticate();
-        }
-
         return $this->user;
     }
 
