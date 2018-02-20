@@ -47,8 +47,7 @@ class ProcessSendOtpRequest implements ShouldQueue
      */
     public function handle()
     {
-        /*list($sec, $usec) = explode('.', round(microtime(true) + (exp($this->attempts()) / 27), 4));
-        $this->release(new \DateTime(date('Y-m-d\TH:i:s', $sec) . '.' . $usec));*/
+        usleep(exp($this->attempts()) / 27 * 1000000);
         $gate = app($this->gateClass);
 
         list($method, $path, $data, $headers, $auth) = $this->data;
@@ -56,8 +55,10 @@ class ProcessSendOtpRequest implements ShouldQueue
         $result  = $gate->request($method, $path, $data, $headers, $auth);
         $success = $gate->validateResponseString($result);
 
+
+
         if (!$success) {
-            if ($this->attempts() > 2) {
+            if ($this->attempts() > 1) {
                 $this->delete();
             }
             $gate->otpError('Gate result not OK.');
