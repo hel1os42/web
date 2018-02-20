@@ -114,12 +114,10 @@ class Offer extends AbstractNauModel
         'reserved',
     ];
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     protected static function boot()
     {
         parent::boot();
+
         self::bootGlobalScopes();
     }
 
@@ -455,7 +453,8 @@ class Offer extends AbstractNauModel
             'categ',
             'min_level',
             'lat',
-            'lng'
+            'lng',
+            'offerData',
         ];
     }
 

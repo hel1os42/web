@@ -15,6 +15,8 @@ use Prettus\Validator\Contracts\ValidatorInterface;
  * NS: App\Repositories
  *
  * @property User $model
+ *
+ * @method User setApproved(bool $approve)
  */
 class UserRepositoryEloquent extends BaseRepository implements UserRepository
 {
