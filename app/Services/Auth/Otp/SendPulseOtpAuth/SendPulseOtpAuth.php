@@ -48,14 +48,29 @@ class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
         ];
 
         $header = ['Authorization' => "Bearer " . $this->token];
-        $result = $this->request(HttpRequest::METHOD_POST, '/sms/send', $data, $header);
-        $result = json_decode($result);
+        $this->createSendOtpRequestJob(
+            HttpRequest::METHOD_POST,
+            '/sms/send',
+            $data,
+            $header);
+
+        $this->cacheOtpCode($phoneNumber, $code);
+    }
+
+    /**
+     * @param null|string $responce
+     *
+     * @return bool
+     * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
+     */
+    public function validateResponseString(?string $responce)
+    {
+        $result = json_decode($responce);
 
         if (!isset($result->result) || $result->result === false) {
             $this->otpError('Can\'t send otp code. ' . json_encode($result));
         }
-
-        $this->cacheOtpCode($phoneNumber, $code);
+        return true;
     }
 
     /**

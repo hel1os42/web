@@ -44,7 +44,7 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
             'auth' => [$this->configData['auth_data']['login'], $this->configData['auth_data']['password']]
         ];
 
-        $result = $this->request(
+        $this->createSendOtpRequestJob(
             Request::METHOD_POST,
             $this->configData['main_path'],
             $data,
@@ -52,12 +52,6 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
             $auth
 
         );
-
-        $success = $this->validateResponce($result);
-
-        if (!$success) {
-            $this->otpError('Gate result not OK . ');
-        }
 
         $this->cacheOtpCode($phoneNumber, $code);
     }
@@ -68,15 +62,16 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
      * @return bool
      * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
      */
-    private function validateResponce(?string $responce)
+    public function validateResponseString(?string $responce)
     {
+        $result = 'ACCEPTED';
+
         try {
             $xml = new \DOMDocument('1.0', 'utf - 8');
             $xml->loadXML($responce);
             $result = $xml->getElementsByTagName('to')->item(0)->attributes->getNamedItem('status')->nodeValue;
-            //->getElementsByTagName('result')->item(0)->nodeValue;
-        } catch (Exception $exception) {
-            $this->otpError('OTP: Can\'t decode responce.' . $exception->getMessage());
+        } catch (\ErrorException $exception) {
+            $this->otpError('OTP: Can\'t decode responce.' . $exception->getMessage(), null, false);
         }
 
         return $result === 'ACCEPTED';

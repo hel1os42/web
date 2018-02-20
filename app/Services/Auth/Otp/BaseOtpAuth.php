@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth\Otp;
 
+use App\Jobs\ProcessSendOtpRequest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -25,18 +26,18 @@ class BaseOtpAuth
     }
 
     /**
-     * @param string            $method
-     * @param string            $path
-     * @param array|string|null $postData
-     * @param array|null        $headers
+     * @param string     $method
+     * @param string     $path
+     * @param null       $postData
+     * @param array|null $headers
+     * @param null       $basicAuth
      *
      * @return string
-     * @throws UnprocessableEntityHttpException
+     * @throws ConnectException
      * @throws \InvalidArgumentException
      * @throws \LogicException
-     * @throws \RuntimeException
      */
-    protected function request(
+    public function request(
         string $method,
         string $path,
         $postData = null,
@@ -66,5 +67,32 @@ class BaseOtpAuth
         }
 
         return $result->getBody()->getContents();
+    }
+
+    protected function createSendOtpRequestJob(
+        string $method,
+        string $path,
+        $postData = null,
+        array $headers = null,
+        $basicAuth = null
+    ) {
+        ProcessSendOtpRequest::dispatch(config('otp.gate_class.' . $this->gateName), [
+            $method,
+            $path,
+            $postData,
+            $headers,
+            $basicAuth
+        ])->onQueue('otp');
+    }
+
+    /**
+     * @param null|string $responce
+     *
+     * @return bool
+     * @SuppressWarnings("unused")
+     */
+    public function validateResponseString(?string $responce)
+    {
+        return true;
     }
 }
