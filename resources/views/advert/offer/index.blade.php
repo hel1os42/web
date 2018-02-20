@@ -285,7 +285,6 @@
                 getTimeZoneGPS(gps, fillTimeframesCallback);
 
                 function fillTimeframesCallback(tz){
-                    /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
                     let $box = $(`.workingDaysStorage[data-offerid="${offerId}"]`);
                     let tf = $box.data('workingdays');
                     $box.find('.workingDaySpan').each(function(){
@@ -294,7 +293,7 @@
                     });
                     $box = $(`.gps[data-offerid="${offerId}"]`).parents('td').eq(0).siblings('.working-period');
                     $box.find('.js-date-convert').each(function(){
-                        let val = $(this).text();
+                        let val = $(this).text().replace(' ', 'T');
                         if (val.length > 1) {
                             let date = new Date(val);
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
