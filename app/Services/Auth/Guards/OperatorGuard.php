@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth\Guards;
 
+use App\Repositories\OperatorRepository;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -26,10 +27,11 @@ class OperatorGuard implements Guard
      *
      * @param  \Illuminate\Contracts\Auth\UserProvider $provider
      */
-    public function __construct(UserProvider $provider)
+    public function __construct(UserProvider $provider, OperatorRepository $operatorRepository)
     {
-        $this->provider = $provider;
-        $this->jwtAuth  = app('tymon.jwt.auth');
+        $this->provider           = $provider;
+        $this->jwtAuth            = app('tymon.jwt.auth');
+        $this->operatorRepository = $operatorRepository;
     }
 
     /**
@@ -42,8 +44,9 @@ class OperatorGuard implements Guard
      */
     public function user()
     {
-        if (is_null($this->user) && $this->jwtAuth->getToken() !== false) {
-            $this->user = $this->jwtAuth->authenticate();
+        if (is_null($this->user) && false !== $this->jwtAuth->getToken()) {
+            $user  = $this->operatorRepository->find($this->id());
+            $this->setuser($user);
         }
 
         return $this->user;
@@ -71,9 +74,11 @@ class OperatorGuard implements Guard
      */
     public function validate(array $credentials = [])
     {
-        $user = $this->provider->retrieveByCredentials($credentials);
-
-        return $this->hasValidCredentials($user, $credentials);
+        if (isset($credentials['alias'])) {
+            $user = $this->provider->retrieveByCredentials($credentials);
+            return $this->hasValidCredentials($user, $credentials);
+        }
+        return false;
     }
 
     /**

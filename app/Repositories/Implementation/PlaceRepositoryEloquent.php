@@ -205,7 +205,7 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      * @param string $alias
      * @return Place
      */
-    public function findIdByAlias(string $alias): Place
+    public function findByAlias(string $alias): Place
     {
         $this->applyCriteria();
         $this->applyScope();

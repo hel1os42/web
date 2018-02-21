@@ -29,9 +29,8 @@ class RedemptionPolicy extends Policy
     public function confirm($user, Offer $offer)
     {
         if ($user instanceof Operator) {
-            $offer->getOwner()->id === $user->place()->user_id ? true : false;
+            return $offer->getOwner()->id === $user->place()->first()->user_id ? true : false;
         }
-
         return $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
     }
 

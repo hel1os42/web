@@ -96,11 +96,6 @@ class RedemptionController extends Controller
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
-        if(!Auth::user()) {
-            $user = $this->operatorRepository->find(Auth::id());
-            $this->auth->guard('operator')->setUser($user);
-        }
-        $this->authorize('offers.redemption.confirm', new Offer);
         $code = $request->code;
 
         $activationCode = $offersService->getActivationCodeByCode($code);

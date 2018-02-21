@@ -66,8 +66,8 @@ class OperatorUserProvider implements UserProvider
             return null;
         }
 
-        $this->placeRepository->findIdByAlias($credentials['alias'])->id;
-        $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+        $credentials['place_uuid'] = $this->placeRepository->findByAlias($credentials['alias'])->id;
+
         unset($credentials['alias']);
 
         $query = $this->createModel()->newQuery();
@@ -89,8 +89,7 @@ class OperatorUserProvider implements UserProvider
      */
     public function createModel()
     {
-        $class = '\\'.ltrim('App\Models\Operator', '\\');
-        return new $class;
+        return new Operator;
     }
 
     /**
@@ -102,6 +101,12 @@ class OperatorUserProvider implements UserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return true;
+        if ($user instanceof Operator) {
+            return !(empty($credentials['alias'])
+                && empty($credentials['alias'])
+                && empty($credentials['alias']));
+        }
+
+        return parent::validateCredentials($user, $credentials);
     }
 }

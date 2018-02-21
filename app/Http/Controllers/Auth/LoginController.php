@@ -20,10 +20,10 @@ class LoginController extends AuthController
 {
     use ThrottlesLogins;
 
-    public function __construct(PlaceRepository $placeRepository, UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth)
+    public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth, PlaceRepository $placeRepository)
     {
         $this->placeRepository = $placeRepository;
-        $this->userRepository  = $userRepository;
+        $this->auth            = $auth;
         $this->jwtAuth         = $jwtAuth;
 
         parent::__construct($userRepository, $jwtAuth, $auth);

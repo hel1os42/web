@@ -85,7 +85,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate, PlaceRepository $placeRepository)
+    public function boot(Gate $gate, PlaceRepository $placeRepository, OperatorRepository $operatorRepository)
     {
         $this->registerPolicies();
 
@@ -115,8 +115,8 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
-        $authManager->extend('operator', function ($app, $name, array $config) use ($authManager) {
-            return new OperatorGuard($authManager->createUserProvider($config['provider']));
+        $authManager->extend('operator', function ($app, $name, array $config) use ($authManager, $operatorRepository) {
+            return new OperatorGuard($authManager->createUserProvider($config['provider']), $operatorRepository);
         });
     }
 }

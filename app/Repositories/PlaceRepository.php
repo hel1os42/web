@@ -15,7 +15,7 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  * @method Place first($columns = ['*'])
  * @method Place find($id, $columns = ['*'])
  * @method Place update(array $attributes, $id)
- * @method Place findIdByAlias(string $alias)
+ * @method Place findByAlias(string $alias)
  */
 interface PlaceRepository extends RepositoryInterface
 {
