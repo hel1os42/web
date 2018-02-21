@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use App\Models\Operator;
 use App\Models\Role;
 use App\Models\User;
 
@@ -20,13 +21,17 @@ class RedemptionPolicy extends Policy
     }
 
     /**
-     * @param User  $user
+     * @param $user
      * @param Offer $offer
      *
      * @return bool
      */
-    public function confirm(User $user, Offer $offer)
+    public function confirm($user, Offer $offer)
     {
+        if ($user instanceof Operator) {
+            $offer->getOwner()->id === $user->place()->user_id ? true : false;
+        }
+
         return $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
     }
 

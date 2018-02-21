@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\OperatorRepository;
+use App\Repositories\PlaceRepository;
 use App\Services\Auth\Guards\JwtGuard;
 use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
@@ -83,7 +85,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate)
+    public function boot(Gate $gate, PlaceRepository $placeRepository)
     {
         $this->registerPolicies();
 
@@ -108,8 +110,8 @@ class AuthServiceProvider extends ServiceProvider
             return new OtpGuard($authManager->createUserProvider($config['provider']));
         });
 
-        $authManager->provider('operator', function ($app, array $config) {
-            return new OperatorUserProvider($app['hash'], $config['model']);
+        $authManager->provider('operator', function () use ($placeRepository) {
+            return new OperatorUserProvider($placeRepository);
         });
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */

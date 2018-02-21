@@ -3,25 +3,21 @@
 namespace App\Services\Auth\UsersProviders;
 
 use App\Http\Exceptions\NotImplementedException;
+use App\Models\Operator;
+use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Support\Str;
+use Illuminate\Contracts\Auth\UserProvider;
 
-class OperatorUserProvider extends EloquentUserProvider
+class OperatorUserProvider implements UserProvider
 {
-//    protected $placeRepository;
-//    protected $model;
-//    protected $hasher;
-//
-//    public function __construct(HasherContract $hasher, $model, PlaceRepository $placeRepository)
-//    {
-//        $this->placeRepository = $placeRepository;
-//        $this->model = $model;
-//        $this->hasher = $hasher;
-//        parent::__construct($hasher, $model);
-//    }
+    protected $placeRepository;
+
+    public function __construct(PlaceRepository $placeRepository)
+    {
+        $this->placeRepository = $placeRepository;
+    }
 
     /**
      * Retrieve a user by their unique identifier.
@@ -37,7 +33,7 @@ class OperatorUserProvider extends EloquentUserProvider
     /**
      * Retrieve a user by their unique identifier and "remember me" token.
      *
-     * @param  mixed   $identifier
+     * @param  mixed  $identifier
      * @param  string  $token
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
@@ -70,7 +66,8 @@ class OperatorUserProvider extends EloquentUserProvider
             return null;
         }
 
-        $credentials['place_uuid'] = 'abb1468d-1794-4869-9440-5d9886c61738';//$this->placeRepository->findIdByAlias($credentials['alias'])->id;
+        $this->placeRepository->findIdByAlias($credentials['alias'])->id;
+        $credentials['place_uuid'] = $this->placeRepository->findIdByAlias($credentials['alias'])->id;
         unset($credentials['alias']);
 
         $query = $this->createModel()->newQuery();
@@ -81,7 +78,19 @@ class OperatorUserProvider extends EloquentUserProvider
             }
         }
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $query->first();
+    }
+
+    /**
+     * Create a new instance of the model operator.
+     *
+     * @return Operator
+     */
+    public function createModel()
+    {
+        $class = '\\'.ltrim('App\Models\Operator', '\\');
+        return new $class;
     }
 
     /**

@@ -131,7 +131,6 @@ class LoginController extends AuthController
         }
 
         $session->migrate(true);
-        session()->put(['user' => $user]);
 
         return $request->wantsJson()
             ? $this->postLoginJwt($user)

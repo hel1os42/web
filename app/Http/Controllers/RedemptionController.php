@@ -11,8 +11,10 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
+use App\Models\Operator;
 use App\Models\User;
 use App\Repositories\OfferRepository;
+use App\Repositories\OperatorRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
 use Illuminate\Auth\AuthManager;
@@ -21,19 +23,23 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Repositories\UserRepository;
+use Tymon\JWTAuth\JWTAuth;
 
 class RedemptionController extends Controller
 {
     private $offerRepository;
+    private $operatorRepository;
     private $userRepository;
 
     public function __construct(
         OfferRepository $offerRepository,
+        OperatorRepository $operatorRepository,
         UserRepository $userRepository,
         AuthManager $auth
     ) {
-        $this->offerRepository = $offerRepository;
-        $this->userRepository = $userRepository;
+        $this->offerRepository    = $offerRepository;
+        $this->operatorRepository = $operatorRepository;
+        $this->userRepository     = $userRepository;
 
         parent::__construct($auth);
     }
@@ -90,6 +96,11 @@ class RedemptionController extends Controller
      */
     public function store(RedemptionRequest $request, OffersService $offersService): Response
     {
+        if(!Auth::user()) {
+            $user = $this->operatorRepository->find(Auth::id());
+            $this->auth->guard('operator')->setUser($user);
+        }
+        $this->authorize('offers.redemption.confirm', new Offer);
         $code = $request->code;
 
         $activationCode = $offersService->getActivationCodeByCode($code);
@@ -116,11 +127,9 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        dd(Auth::user());
-        //$offer = $this->validateOfferAndGetOwn($offerId);
-        $offer = $this->offerRepository->find($offerId);
+        $offer = $this->validateOfferAndGetOwn($offerId);
 
-        //$this->authorize('offers.redemption.confirm', $offer);
+        $this->authorize('offers.redemption.confirm', $offer);
 
         $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
 
