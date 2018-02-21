@@ -28,18 +28,12 @@ use Tymon\JWTAuth\JWTAuth;
 class RedemptionController extends Controller
 {
     private $offerRepository;
-    private $operatorRepository;
-    private $userRepository;
 
     public function __construct(
         OfferRepository $offerRepository,
-        OperatorRepository $operatorRepository,
-        UserRepository $userRepository,
         AuthManager $auth
     ) {
-        $this->offerRepository    = $offerRepository;
-        $this->operatorRepository = $operatorRepository;
-        $this->userRepository     = $userRepository;
+        $this->offerRepository = $offerRepository;
 
         parent::__construct($auth);
     }
