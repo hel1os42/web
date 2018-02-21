@@ -11,12 +11,23 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
+    use AuthenticatesUsers;
+
+    /**
+     * @var int
+     */
+    public $maxAttempts = 1;
+    /**
+     * @var int
+     */
+    public $decayMinutes = 1;
     /**
      * @var UserRepository
      */
@@ -60,5 +71,13 @@ class AuthController extends Controller
         return redirect()->back()
             ->withInput($request->only('email', 'remember'))
             ->withErrors($errors);
+    }
+
+    /**
+     * @return string
+     */
+    public function username()
+    {
+        return 'phone';
     }
 }
