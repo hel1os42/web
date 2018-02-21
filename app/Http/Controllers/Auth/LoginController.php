@@ -8,14 +8,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class LoginController extends AuthController
 {
-    use ThrottlesLogins;
-
     /**
      * @return Response
      */
@@ -43,8 +40,14 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
+        if ($this->hasTooManyLoginAttempts(\request())) {
+            return $this->sendLockoutResponse(\request());
+        }
+
         /** @var OtpAuth $otpAuth */
         $otpAuth->generateCode($user->phone);
+
+        $this->incrementLoginAttempts(\request());
 
         return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
             Response::HTTP_ACCEPTED, route('register'));
