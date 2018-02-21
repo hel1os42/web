@@ -82,7 +82,7 @@ class BaseOtpAuth
             $postData,
             $headers,
             $basicAuth
-        ])->onQueue('otp');
+        ]);
     }
 
     /**
