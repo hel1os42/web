@@ -11,14 +11,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
-    use AuthenticatesUsers;
+    use ThrottlesLogins;
 
     /**
      * @var int
