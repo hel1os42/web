@@ -41,13 +41,6 @@ return [
             'retry_after' => 90,
         ],
 
-        'database-otp' => [
-            'driver' => 'database',
-            'table' => 'jobs',
-            'queue' => 'otp',
-            'retry_after' => 90,
-        ],
-
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_HOST', 'localhost'),
