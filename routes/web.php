@@ -241,9 +241,10 @@ $router->get('users/{uuid}/picture.jpg', 'User\PictureController@show')->where('
     '[a-z0-9-]+')->name('users.picture.show');
 $router->get('offers/{offerId}/picture.jpg', 'Offer\PictureController@show')->where('offerId',
     '[a-z0-9-]+')->name('offer.picture.show');
-$router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where([
+$router->get('places/{uuid}/{type}.{format}', 'Place\PictureController@show')->where([
     'uuid',
     '[a-z0-9-]+'
-])->name('places.picture.show');
+],
+    ['format', '[jpg|png]'])->name('places.picture.show');
 $router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
     '[a-z0-9-]+')->name('categories.picture.show');

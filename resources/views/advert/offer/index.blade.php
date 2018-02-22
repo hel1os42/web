@@ -19,7 +19,7 @@
         <div class="col-sm-12 dashboard-advert-header" style="background-image: url({{ $coverUrl }});">
             <div class="offer-logo col-sm-3">
                 @if( $place instanceof \App\Models\Place)
-                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture'])}}" onerror="imgError(this)" style="position: absolute;"><br>
+                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture', 'png'])}}" onerror="imgError(this)" style="position: absolute;"><br>
                 @endif
             </div>
             <div class="advert-header-wrap">

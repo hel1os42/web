@@ -16,6 +16,8 @@ class PictureController extends AbstractPictureController
 {
     const OFFER_PICTURES_PATH = 'images/offer/pictures';
 
+    protected $pictureObjectType = 'offer';
+
     /**
      * @param PictureRequest  $request
      * @param string          $offerId
@@ -57,11 +59,11 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $offerId, OfferRepository $offerRepository): Response
+    public function show(\Illuminate\Http\Request $request, string $offerId, OfferRepository $offerRepository): Response
     {
         $offer = $offerRepository->findWithoutGlobalScopes($offerId);
 
-        return $this->respondWithImageFor($offer->id);
+        return $this->respondWithImageFor($offer->id, $request->get('size', 'original'));
     }
 
     /**

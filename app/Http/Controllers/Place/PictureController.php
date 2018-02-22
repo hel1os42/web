@@ -26,6 +26,7 @@ class PictureController extends AbstractPictureController
 
     private $type = 'picture';
     private $placeRepository;
+
     /**
      * @var $placeService PlaceService
      */
@@ -70,7 +71,7 @@ class PictureController extends AbstractPictureController
 
         $imageService->savePlacePicture($place);
 
-        $location = route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]);
+        $location = route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type, 'format' => 'png']);
 
         return $request->wantsJson()
             ? response()->render('', [], Response::HTTP_CREATED, $location)
@@ -113,8 +114,10 @@ class PictureController extends AbstractPictureController
             $this->placeService->disapprove($place, true);
         }
 
+        $this->pictureFormat = 'png';
+
         return $this->storeImageFor($request, $place->getId(),
-            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
+            route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type, 'format' => $this->type === 'cover' ? 'jpg' : 'png']));
     }
 
     /**
@@ -128,12 +131,14 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $placeId, string $type): Response
+    public function show(\Illuminate\Http\Request $request, string $placeId, string $type, string $format = 'png'): Response
     {
-        $this->type = $type;
-        $place      = $this->placeRepository->find($placeId);
+        $this->type              = $type;
+        $this->pictureObjectType = sprintf('place_%s', $type);
+        $place                   = $this->placeRepository->find($placeId);
+        $this->pictureFormat     = $format === 'png' ? $format : 'jpg';
 
-        return $this->respondWithImageFor($place->id);
+        return $this->respondWithImageFor($place->id, $request->get('size', 'original'));
     }
 
     protected function getPath(): string

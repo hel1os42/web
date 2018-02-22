@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
 use App\Repositories\UserRepository;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -16,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PictureController extends AbstractPictureController
 {
 
+    protected $pictureObjectType = 'user';
     /**
      * Saves profile image from request
      *
@@ -53,7 +55,7 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $userUuid = null): Response
+    public function show(Request $request, string $userUuid = null): Response
     {
         $userUuid = $userUuid ?? $this->guard->id();
 
@@ -61,7 +63,7 @@ class PictureController extends AbstractPictureController
             throw new NotFoundHttpException();
         }
 
-        return $this->respondWithImageFor($userUuid);
+        return $this->respondWithImageFor($userUuid, $request->get('size', 'original'));
     }
 
     /**
