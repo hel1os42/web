@@ -16,7 +16,6 @@ window.addEventListener('resize', function(){
 			imageCropperSetPosition(img);
 		}
 	});
-
 });
 
 function imageCropperInit(img){
@@ -236,7 +235,6 @@ function _cropperCrop(e){
 			let b = bottom + deltaY;
 			let maxX = right - Math.round(24 * cropRatio);
 			let minY = top + Math.round(24 / cropRatio);
-			document.querySelector('h2').innerText = l + ' ' + b + ' >>> min: ' + maxX + ' ' + minY;
 			if (l < 0) { l = 0; b = bottom + Math.round(left / cropRatio); }
 			if (b > imgHeight) { b = imgHeight; l = left - Math.round((imgHeight - bottom) * cropRatio); }
 			if (l > maxX || b < minY) { l = maxX; b = minY; }
