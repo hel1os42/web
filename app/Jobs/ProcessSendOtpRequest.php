@@ -18,7 +18,7 @@ class ProcessSendOtpRequest implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 0;
+    public $tries = 1;
 
     /**
      * @var BaseOtpAuth

@@ -118,31 +118,39 @@ class BaseOtpAuth
             Psr7Response $response = null,
             RequestException $exception = null
         ) {
-            if ($retries >= $this->tries || $response) {
+            if ($retries >= 5) {
                 return false;
             }
 
-            if (!($this->isServerError($response) || $this->isConnectError($exception))) {
-                return false;
+            if ($this->isServerError($response) || $this->isConnectError($exception)) {
+                $this->otpError(sprintf('Retry to send otp. Uri:%s Retry:%d Last error message:%s',
+                    $request->getUri(),
+                    $retries,
+                    $exception->getMessage()),
+                    null, false
+                );
+
+                return true;
             }
 
-            $this->otpError(sprintf('Retries to send otp.   Uri:%s   Retry:%d   Last error message:%s', $request->getUri(), $retries, $exception->getMessage(), null, false));
-
-            return true;
+            return false;
         };
 
     }
 
     /**
      * @param Psr7Response $response
+     *
      * @return bool
      */
     private function isServerError(Psr7Response $response = null)
     {
         return $response && $response->getStatusCode() >= 500;
     }
+
     /**
      * @param RequestException $exception
+     *
      * @return bool
      */
     private function isConnectError(RequestException $exception = null)
@@ -153,9 +161,10 @@ class BaseOtpAuth
     /**
      * @return \Closure
      */
-    private function exponentialDelay() {
-        return function( $retryNumber ) {
-            return (int) pow(2, $retryNumber + 6);
+    private function exponentialDelay()
+    {
+        return function ($retryNumber) {
+            return (int)pow(2, $retryNumber + 6);
         };
     }
 }
