@@ -162,13 +162,14 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
-
-    $router->resource('redemptions', 'RedemptionController', [
-        'except' => [
-            'update',
-            'destroy'
-        ]
-    ]);
+    $router->group(['middleware' => 'auth:operator'], function () use ($router) {
+        $router->resource('redemptions', 'RedemptionController', [
+            'except' => [
+                'update',
+                'destroy'
+            ]
+        ]);
+    });
 
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
            ->name('transaction.create');
