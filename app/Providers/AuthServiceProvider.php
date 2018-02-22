@@ -97,6 +97,7 @@ class AuthServiceProvider extends ServiceProvider
         /** @var AuthManager $authManager */
         $authManager = $this->app->make('auth');
 
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->provider('otp-eloquent', function ($app, array $config) {
             return new OtpEloquentUserProvider($app['hash'], $config['model']);
         });
@@ -111,6 +112,7 @@ class AuthServiceProvider extends ServiceProvider
             return new OtpGuard($authManager->createUserProvider($config['provider']));
         });
 
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->provider('operator', function () use ($placeRepository, $operatorRepository, $hasher) {
             return new OperatorUserProvider($placeRepository, $operatorRepository, $hasher);
         });

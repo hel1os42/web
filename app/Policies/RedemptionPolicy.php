@@ -9,7 +9,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-
 class RedemptionPolicy extends Policy
 {
     /**
@@ -35,7 +34,7 @@ class RedemptionPolicy extends Policy
         }
 
         return $user instanceof User && $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
-}
+    }
 
     /**
      * @param User       $user

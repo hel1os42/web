@@ -39,6 +39,7 @@ class OperatorUserProvider implements UserProvider
      * @param  mixed  $identifier
      * @param  string  $token
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function retrieveByToken($identifier, $token)
     {
@@ -51,6 +52,7 @@ class OperatorUserProvider implements UserProvider
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  string  $token
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {

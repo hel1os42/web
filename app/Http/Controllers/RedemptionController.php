@@ -165,11 +165,11 @@ class RedemptionController extends Controller
     private function validateOffer(string $offerId): void
     {
         $validator = $this->getValidationFactory()
-            ->make(['offerId' => $offerId],
-                [
-                    'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
-                        Constants::UUID_REGEX)
-                ]);
+                          ->make(['offerId' => $offerId],
+                              [
+                                  'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
+                                      Constants::UUID_REGEX)
+                              ]);
 
         if ($validator->fails()) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));

@@ -44,7 +44,7 @@ class OperatorGuard extends JwtGuard
     public function user()
     {
         if (is_null($this->user) && false !== $this->jwtAuth->getToken()) {
-            $user  = $this->provider->retrieveById($this->id());
+            $user       = $this->provider->retrieveById($this->id());
             $this->user = $user;
         }
 
