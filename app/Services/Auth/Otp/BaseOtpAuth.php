@@ -118,7 +118,7 @@ class BaseOtpAuth
             Psr7Response $response = null,
             RequestException $exception = null
         ) {
-            if ($retries >= 5) {
+            if ($retries >= $this->tries) {
                 return false;
             }
 
