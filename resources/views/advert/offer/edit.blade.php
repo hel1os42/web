@@ -30,6 +30,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
@@ -38,6 +40,8 @@
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
 
         /* dateTime picker init */
@@ -58,6 +62,34 @@
 
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
+
+        /* picture */
+        imageUploader('#offer_image_box .image-box');
+        let $offer_image_box = $('#offer_image_box');
+        $offer_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+            $offer_image_box.find('.image').attr('data-cropratio', '1');
+        });
+        $offer_image_box.find('.image').attr('src', "{{ $picture_url }}").on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+
+        /* map */
+        mapInit({
+            id: 'mapid',
+            setPosition: {
+                lat: $('[name="latitude"]').val(),
+                lng: $('[name="longitude"]').val(),
+                radius: $('[name="radius"]').val()
+            },
+            done: mapDone,
+            move: mapMove
+        });
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -140,34 +172,6 @@
             }).trigger('change');
         }
 
-
-
-        /* picture and cover */
-
-        let $offer_image_box = $('#offer_image_box');
-        $offer_image_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Picture changed');
-        });
-        $offer_image_box.find('img').on('error', function(){
-            $(this).attr('src', "{{ asset('/img/image_placeholder.jpg') }}");
-        }).attr('src', "{{ $picture_url }}");
-
-
-
-        /* map */
-
-        mapInit({
-            id: 'mapid',
-            setPosition: {
-                lat: $('[name="latitude"]').val(),
-                lng: $('[name="longitude"]').val(),
-                radius: $('[name="radius"]').val()
-            },
-            done: mapDone,
-            move: mapMove
-        });
-
         function mapDone(map){
             mapMove(map);
             $('#editOfferForm').on('submit', function (e) {
@@ -185,8 +189,8 @@
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $latitude = $('[name="latitude"]');
-            $longitude = $('[name="longitude"]');
+            let $latitude = $('[name="latitude"]');
+            let $longitude = $('[name="longitude"]');
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
@@ -427,10 +431,13 @@
         }
 
         function sendImage(){
-            if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
+            let $file = $offer_image_box.find('[type="file"]');
+            let $img = $offer_image_box.find('.image');
+            if ($file.attr('data-changed') && $img.attr('data-crop')) {
                 let formData = new FormData();
                 formData.append('_token', $offer_image_box.find('[name="_token"]').val());
-                formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
+                let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
                 for(let i of formData) { console.log(i); }
                 $.ajax({
                     url: "/offers/{{ $id }}/picture",
@@ -453,7 +460,7 @@
         }
 
         function setMapPositionByGpsOrAddress(map){
-            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            /* TODO: need refactoring, this code in 4-th pages */
             let $country = $('[name="country"]');
             let $city = $('[name="city"]');
             let $gps_crd = $('[name="gps_crd"]');
@@ -492,6 +499,7 @@
                 return {lat, lng};
             }
         }
+
     </script>
 @endpush
 

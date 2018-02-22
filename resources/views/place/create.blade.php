@@ -131,12 +131,16 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
     <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
 
         let redirectUrl;
@@ -170,6 +174,55 @@
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
 
+        /* specialities accordion */
+        $('#place_specialties').on('click', '.sgroup-title', function(){
+           $(this).toggleClass('active').next().slideToggle();
+        }).on('change', 'input', function(){
+            let uuid = $(this).parents('.specialities-group').attr('data-id');
+            if ($(this).is('[type="checkbox"]')) {
+                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
+                else delete spetialitiesCache[uuid][$(this).val()];
+            } else {
+                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
+                    delete spetialitiesCache[uuid][$(this).val()];
+                }).end().filter(':checked').each(function(){
+                    spetialitiesCache[uuid][$(this).val()] = true;
+                });
+            }
+        });
+
+        /* picture and cover */
+        imageUploader('#logo_image_box .image-box');
+        imageUploader('#cover_image_box .image-box');
+        let $logo_image_box = $('#logo_image_box');
+        let $cover_image_box = $('#cover_image_box');
+        $logo_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Logo changed');
+        });
+        $logo_image_box.find('.image').on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+        });
+        $cover_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Cover changed');
+            $cover_image_box.find('.image').attr('data-cropratio', '3');
+        });
+        $cover_image_box.find('.image').on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+
+        /* map */
+        mapInit({
+            id: 'mapid',
+            done: mapDone,
+            move: mapMove
+        });
+
         function createRetailType(request) {
             let html = '';
             request.retail_types.forEach(function(e){
@@ -183,7 +236,7 @@
                 });
             });
         }
-        
+
         function createSpecialties(request) {
             let html = '';
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
@@ -214,35 +267,6 @@
             formBoxTags.innerHTML = html ? '<p>Please, select tags:</p><p>' + html + '</p>' : '<p>There is no one tag.</p>';
         }
 
-
-
-        /* specialities accordion */
-        $('#place_specialties').on('click', '.sgroup-title', function(){
-           $(this).toggleClass('active').next().slideToggle();
-        }).on('change', 'input', function(){
-            let uuid = $(this).parents('.specialities-group').attr('data-id');
-            if ($(this).is('[type="checkbox"]')) {
-                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
-                else delete spetialitiesCache[uuid][$(this).val()];
-            } else {
-                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
-                    delete spetialitiesCache[uuid][$(this).val()];
-                }).end().filter(':checked').each(function(){
-                    spetialitiesCache[uuid][$(this).val()] = true;
-                });
-            }
-        });
-
-        
-        
-        /* map */
-
-        mapInit({
-            id: 'mapid',
-            done: mapDone,
-            move: mapMove
-        });
-
         function mapDone(map){
             mapMove(map);
             /* set map position by GPS or Address */
@@ -252,31 +276,13 @@
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $latitude = $('[name="latitude"]');
-            $longitude = $('[name="longitude"]');
+            let $latitude = $('[name="latitude"]');
+            let $longitude = $('[name="longitude"]');
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
             $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
         }
-
-
-
-        /* picture and cover */
-
-        let $place_picture_box = $('#place_picture_box');
-        let $place_cover_box = $('#place_cover_box');
-        $place_picture_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Picture changed');
-        });
-        $place_cover_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Cover changed');
-        });
-
-
-
 
         /* form submit */
 
@@ -363,18 +369,19 @@
 
         function sendImages(){
             let n = { count: 0 };
-            let isNewPicture = $place_picture_box.find('[type="file"]').attr('data-changed');
-            let isNewCover = $place_cover_box.find('[type="file"]').attr('data-changed');
-            if (isNewPicture) n.count++;
+            let $logo = $logo_image_box.find('[type="file"]');
+            let $cover = $cover_image_box.find('[type="file"]');
+            let isNewLogo = $logo.attr('data-changed') && $logo.val();
+            let isNewCover = $cover.attr('data-changed') && $cover.val();
+            if (isNewLogo) n.count++;
             if (isNewCover) n.count++;
             redirectPage(n);
-            if (isNewPicture) sendImage(n, $place_picture_box, "{{ route('place.picture.store') }}", redirectPage);
-            if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
+            if (isNewLogo) sendImage(n, $logo_image_box, "{{ route('place.picture.store') }}", redirectPage);
+            if (isNewCover) sendImage(n, $cover_image_box, "{{ route('place.cover.store') }}", redirectPage);
         }
 
         function redirectPage(n){
             if (n.count === 0) {
-                //window.location.replace("{{ route('profile') }}");
                 window.location.replace(redirectUrl);
             }
         }
@@ -382,7 +389,12 @@
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
             formData.append('_token', $box.find('[name="_token"]').val());
-            formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
+            if ($box.attr('id') === 'logo_image_box') {
+                formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
+            } else {
+                let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'cover.jpg');
+            }
             for(let i of formData) { console.log(i); }
             $.ajax({
                 url: URI,
@@ -403,7 +415,7 @@
         }
 
         function setMapPositionByGpsOrAddress(map){
-            /* TODO: нужен рефакторинг, копия кода на 4-х страницах */
+            /* TODO: need refactoring, this code in 4-th pages */
             let $country = $('[name="country"]');
             let $city = $('[name="city"]');
             let $gps_crd = $('[name="gps_crd"]');
