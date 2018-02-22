@@ -53,15 +53,15 @@ class OperatorGuard extends JwtGuard
 
     /**
      * Get the id currently authenticated user.
-     * @SuppressWarnings
+     * @SuppressWarnings(PHPMD.ShortMethodName)
      * @return string
      */
     public function id()
     {
-        $token = $this->jwtAuth->getToken();
-        $id    = $this->jwtAuth->getPayload($token)->get('sub');
+        $token  = $this->jwtAuth->getToken();
+        $authId = $this->jwtAuth->getPayload($token)->get('sub');
 
-        return $id;
+        return $authId;
     }
 
     /**
