@@ -97,30 +97,18 @@
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
-                                {{ csrf_field() }}
-                                <h4 class="title">Update your avatar</h4>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-4">
-                                        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
-                                            <div class="fileinput fileinput-new text-center"
-                                                 data-provides="fileinput">
-                                                <div class="fileinput-new thumbnail img-circle">
-                                                    <img src="{{asset('img/placeholder.jpg')}}" alt="...">
-                                                </div>
-                                            </div>
-                                            <div class="fileinput-preview fileinput-exists thumbnail img-circle" style=""></div>
-                                            <div class="btn btn-default btn-fill btn-file">
-                                                <span class="fileinput-new">Pick photo</span>
-                                                <span class="fileinput-exists">Change logo</span>
-                                                <input type="hidden">
-                                                <input type="file" name="picture">
-                                            </div>
+                            <h4 class="title">Update your avatar</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
+                                        <div class="form-group" id="userpic_image_box">
+                                            {{ csrf_field() }}
+                                            <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
-                                    </div>
+                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                    </form>
                                 </div>
-                                <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -133,19 +121,66 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
 
     <script>
 
         /* approve/disapprove buttons */
         userStatusControl();
 
-        /* map */
+        /* userpic */
+        imageUploader('#userpic_image_box .image-box');
+        let $userpic_image_box = $('#userpic_image_box');
+        $userpic_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+            $userpic_image_box.find('.image').attr('data-cropratio', '1');
+        });
+        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+        $userpic_image_box.parents('form').on('submit', function(e){
+            e.preventDefault();
+            let $file = $userpic_image_box.find('[type="file"]');
+            let $img = $userpic_image_box.find('.image');
+            if ($file.attr('data-changed') && $img.attr('data-crop')) {
+                let url = $(this).attr('action');
+                let formData = new FormData();
+                formData.append('_token', $userpic_image_box.find('[name="_token"]').val());
+                let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
+                for(let i of formData) { console.log(i); }
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    method: 'POST',
+                    success: function () {
+                        console.log('SUCCESS: image sent.');
+                        window.location.reload();
+                    },
+                    error: function (resp) {
+                        console.log('ERROR: image not sent.');
+                        console.dir(resp);
+                    }
+                });
+            }
+        });
 
+        /* map */
         /*$('a[href="#edit"]').one('shown.bs.tab', function() {
             setTimeout(function(){
                 mapInit({
