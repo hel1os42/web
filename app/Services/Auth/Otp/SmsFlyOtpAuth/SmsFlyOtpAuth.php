@@ -55,25 +55,4 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
 
         $this->cacheOtpCode($phoneNumber, $code);
     }
-
-    /**
-     * @param null|string $responce
-     *
-     * @return bool
-     * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
-     */
-    public function validateResponseString(?string $responce)
-    {
-        $result = 'ACCEPTED';
-
-        try {
-            $xml = new \DOMDocument('1.0', 'utf - 8');
-            $xml->loadXML($responce);
-            $result = $xml->getElementsByTagName('to')->item(0)->attributes->getNamedItem('status')->nodeValue;
-        } catch (\ErrorException $exception) {
-            $this->otpError('OTP: Can\'t decode responce.' . $exception->getMessage(), null, false);
-        }
-
-        return $result === 'ACCEPTED';
-    }
 }
