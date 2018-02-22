@@ -10,7 +10,7 @@
 
             <h1>Edit offer</h1>
 
-            <form action="{{ route('advert.offers.update', $id) }}" method="PATCH" class="nau-form" id="editOfferForm" target="_top">
+            <form action="{{ route('advert.offers.update', $id) }}" method="POST" class="nau-form" id="editOfferForm" target="_top">
 
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
@@ -30,13 +30,18 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
 
         /* dateTime picker init */
@@ -54,6 +59,37 @@
 
         /* offer type = discount */
         offerTypeController();
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
+
+        /* picture */
+        imageUploader('#offer_image_box .image-box');
+        let $offer_image_box = $('#offer_image_box');
+        $offer_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+            $offer_image_box.find('.image').attr('data-cropratio', '1');
+        });
+        $offer_image_box.find('.image').attr('src', "{{ $picture_url }}").on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+
+        /* map */
+        mapInit({
+            id: 'mapid',
+            setPosition: {
+                lat: $('[name="latitude"]').val(),
+                lng: $('[name="longitude"]').val(),
+                radius: $('[name="radius"]').val()
+            },
+            done: mapDone,
+            move: mapMove
+        });
 
         function dateTimePickerInit(){
             let $startDate = $('[name="start_date"]'),
@@ -136,34 +172,6 @@
             }).trigger('change');
         }
 
-
-
-        /* picture and cover */
-
-        let $offer_image_box = $('#offer_image_box');
-        $offer_image_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Picture changed');
-        });
-        $offer_image_box.find('img').on('error', function(){
-            $(this).attr('src', "{{ asset('/img/image_placeholder.jpg') }}");
-        }).attr('src', "{{ $picture_url }}");
-
-
-
-        /* map */
-
-        mapInit({
-            id: 'mapid',
-            setPosition: {
-                lat: $('[name="latitude"]').val(),
-                lng: $('[name="longitude"]').val(),
-                radius: $('[name="radius"]').val()
-            },
-            done: mapDone,
-            move: mapMove
-        });
-
         function mapDone(map){
             mapMove(map);
             $('#editOfferForm').on('submit', function (e) {
@@ -174,18 +182,18 @@
             });
             validationOnFly();
             getTimeZone(map, fillTimeframes);
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $latitude = $('[name="latitude"]');
-            $longitude = $('[name="longitude"]');
+            let $latitude = $('[name="latitude"]');
+            let $longitude = $('[name="longitude"]');
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
             getTimeZone(map, function(tz){
                 $('[name="timezone"]').val(tz);
                 $('#map_box').toggleClass('invalid', tz === 'error')
@@ -196,14 +204,27 @@
             let $box = $('#dayInfoBox');
             $box.find('[data-checked="true"]').prop('checked', true).parents('.day-info').removeClass('passive');
             $box.find('input[data-value]').each(function(){
-                /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
                 let val = $(this).attr('data-value');
                 let h = +val.substr(0, 2) + +tz.substr(0, 3);
+                let m = +val.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
+                if (m > 59) { m -=60; h++; }
+                if (m < 0) { m +=60; h--; }
+                m = add0(m);
                 if (h > 23) h -= 24;
                 if (h < 0) h += 24;
-                if (h < 10) h = '0' + h;
-                $(this).val(h + ':' + val.substr(3, 2));
+                h = add0(h);
+                $(this).val(h + ':' + m);
             });
+            $('[name="start_date"], [name="finish_date"]').each(function(){
+                let val = $(this).val().replace(' ', 'T');
+                if (val.length > 1) {
+                    let date = new Date(val);
+                    date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
+                    date.setHours(date.getHours() + +tz.substr(0, 3));
+                    $(this).val(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                }
+            });
+            function add0(n) { return n < 10 ? '0' + n : n; }
         }
 
         function getFormData(tz){
@@ -290,22 +311,24 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 method: "PATCH",
                 url: $('#editOfferForm').attr('action'),
-                headers: {
-                    'Accept':'application/json',
-                },
+                headers: { 'Accept':'application/json' },
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (202 === xhr.status){
                         sendImage();
                     } else {
-                        console.log(xhr);
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.dir(xhr);
                     }
                 },
                 error: function(resp){
-                    console.log(resp);
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.dir(resp);
                 }
             });
 
@@ -408,10 +431,13 @@
         }
 
         function sendImage(){
-            if ($offer_image_box.find('[type="file"]').attr('data-changed')) {
+            let $file = $offer_image_box.find('[type="file"]');
+            let $img = $offer_image_box.find('.image');
+            if ($file.attr('data-changed') && $img.attr('data-crop')) {
                 let formData = new FormData();
                 formData.append('_token', $offer_image_box.find('[name="_token"]').val());
-                formData.append('picture', $offer_image_box.find('[type="file"]').get(0).files[0]);
+                let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
                 for(let i of formData) { console.log(i); }
                 $.ajax({
                     url: "/offers/{{ $id }}/picture",
@@ -421,16 +447,59 @@
                     method: 'POST',
                     success: function () {
                         console.log('SUCCESS: image sent.');
-                        window.location.replace("{{ route('advert.offers.index') }}");
+                        window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
-                    error: function () {
+                    error: function (resp) {
+                        $('#waitError').text(resp.status);
                         console.log('ERROR: image not sent.');
                     }
                 });
             } else {
-                window.location.replace("{{ route('advert.offers.index') }}");
+                window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
             }
         }
+
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: need refactoring, this code in 4-th pages */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
+            }
+        }
+
     </script>
 @endpush
 

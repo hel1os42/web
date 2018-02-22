@@ -1,0 +1,92 @@
+.image-cropper {
+	position: absolute;
+	z-index: 101;
+	display: block;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.image-cropper span {
+	display: block;
+	position: absolute;
+}
+.image-cropper .crop-area:before {
+	content: "";
+	position: absolute;
+	z-index: 10;
+	left: -2px;
+	top: -2px;
+	right: -2px;
+	bottom: -2px;
+	border: 2px solid #ff5a00;
+}
+.image-cropper .shade {
+	z-index: 5;
+	background: rgba(0, 0, 0, 0.7);
+}
+.image-cropper .shade-w {
+	left: 0;
+}
+.image-cropper .shade-n {
+	left: 0;
+	top: 0;
+}
+.image-cropper .shade-e {
+	right: 0;
+}
+.image-cropper .shade-s {
+	right: 0;
+	bottom: 0;
+}
+.image-cropper .point {
+	width: 12px;
+	height: 12px;
+	z-index: 20;
+}
+.image-cropper .point:before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 8px;
+	height: 8px;
+	transform: translate(-50%, -50%);
+	background: #ff5a00;
+}
+.image-cropper .point-nw {
+	left: 0;
+	top: 0;
+	transform: translate(-50%, -50%);
+}
+.image-cropper .point-ne {
+	right: 0;
+	top: 0;
+	transform: translate(50%, -50%);
+}
+.image-cropper .point-sw {
+	left: 0;
+	bottom: 0;
+	transform: translate(-50%, 50%);
+}
+.image-cropper .point-se {
+	right: 0;
+	bottom: 0;
+	transform: translate(50%, 50%);
+}
+.image-cropper .point-nw,
+.image-cropper .point-se {
+	cursor: nwse-resize;
+}
+.image-cropper .point-ne,
+.image-cropper .point-sw {
+	cursor: nesw-resize;
+}
+.move-area {
+	z-index: 15;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	cursor: move;
+}

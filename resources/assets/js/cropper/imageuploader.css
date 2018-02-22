@@ -1,0 +1,76 @@
+.image-uploader-box {
+	position: relative;
+	padding: 10px 10px 4px;
+	min-height: 120px;
+	text-align: center;
+	background: #f6f6f6;
+	border: 1px solid #ddd;
+}
+.image-uploader-box:before {
+	content: "Check image";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+.image-uploader-box.dnd-hover:before {
+	content: "";
+}
+.image-uploader-box .image-wrap {
+	position: relative;
+	display: inline-block;
+	max-width: 100%;
+	line-height: 0;
+}
+.image-uploader-box.cropper .image-wrap {
+	z-index: 12;
+}
+.image-uploader-box img {
+	position: relative;
+	z-index: 2;
+	display: block;
+	max-width: 100%;
+}
+.image-uploader-box.img-hide img {
+	display: none;
+}
+.image-uploader-box [type="file"] {
+	position: absolute;
+	z-index: 10;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	cursor: pointer;
+	opacity: 0;
+}
+.image-uploader-box [type="file"]:focus {
+	outline: none;
+}
+.image-uploader-box .dnd-hint {
+	position: absolute;
+	z-index: 4;
+	left: 10px;
+	top: 10px;
+	right: 10px;
+	bottom: 10px;
+	display: none;
+	color: #ff5a00;
+	font-size: 32px;
+	line-height: 40px;
+	border: 6px dashed #ff5a00;
+}
+.image-uploader-box .dnd-hint:before {
+	content: "Drop here";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+.image-uploader-box.dnd-hover .dnd-hint {
+	display: block;
+}
+.image-uploader-box .cropper-container {
+	z-index: 40;
+}

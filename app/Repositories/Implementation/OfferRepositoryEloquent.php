@@ -6,7 +6,7 @@ use App\Models\Category;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\CategoryRepository;
-use App\Repositories\Criteria\MappableRequestCriteria;
+use App\Services\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
@@ -37,6 +37,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         'status'      => '=',
         'start_date'  => '<=',
         'finish_date' => '>=',
+        'updated_at',
     ];
 
     public function __construct(

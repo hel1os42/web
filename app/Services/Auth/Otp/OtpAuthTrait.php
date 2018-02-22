@@ -19,16 +19,6 @@ trait OtpAuthTrait
      */
     protected $configData;
 
-    public function __construct()
-    {
-
-        if (!isset($this->client)) {
-            $this->client = new Client([
-                'base_uri' => $this->configData['base_api_url']
-            ]);
-        }
-    }
-
     /**
      * @return array
      */
@@ -65,11 +55,13 @@ trait OtpAuthTrait
      *
      * @throws UnprocessableEntityHttpException
      */
-    protected function otpError(string $loggerMessage, string $exceptionMessage = null)
+    public function otpError(string $loggerMessage, string $exceptionMessage = null, $throw = true)
     {
         $exceptionMessage = $exceptionMessage ?: 'Can\'t send otp code. Try again later.';
         logger('OTP: ' . $loggerMessage . ' Gate:' . $this->gateName);
-        throw new UnprocessableEntityHttpException($exceptionMessage);
+        if($throw) {
+            throw new UnprocessableEntityHttpException($exceptionMessage);
+        }
     }
 
     /**

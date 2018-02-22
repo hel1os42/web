@@ -90,8 +90,8 @@ class PictureController extends AbstractPictureController
     {
         $placeId             = $placeId ?: $this->user()->place->getId();
         $this->type          = self::TYPE_COVER;
-        $this->pictureHeight = 400;
-        $this->pictureWidth  = 1200;
+        $this->pictureHeight = 500;
+        $this->pictureWidth  = 1500;
 
         return $this->store($request, $placeId);
     }

@@ -460,7 +460,7 @@ class Place extends Model
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
-            $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
+            $builder->whereIn('id', $categoryIds)->whereNull('parent_id');
         });
     }
 

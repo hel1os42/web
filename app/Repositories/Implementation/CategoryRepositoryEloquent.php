@@ -41,7 +41,7 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
     {
         $this->applyCriteria();
 
-        return $this->model->withNoParent();
+        return $this->model->withNoParent()->ordered();
     }
 
     /**
@@ -55,5 +55,10 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
         $this->applyCriteria();
 
         return $this->model->where('parent_id', $parentId);
+    }
+
+    public function ordered(): Builder
+    {
+        return $this->model->ordered();
     }
 }

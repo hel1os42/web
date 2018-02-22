@@ -122,15 +122,21 @@ function getTimeZone(map, callback){
                 let tz = convertRawOffset(response.rawOffset);
                 callback(tz);
                 function convertRawOffset(raw){
-                    let absRawInHr = Math.abs(raw / 3600);
-                    let converted = isNaN(absRawInHr) ? 'error' : (absRawInHr <= 9 ? '0' : '') + absRawInHr + '00';
-                    if (converted !== 'error') converted = (raw < 0 ? '-' : '+') + converted;
+                    let converted = 'error';
+                    if (raw || raw === 0) {
+                        let absRawInHr = Math.abs(raw / 3600);
+                        let h = Math.trunc(absRawInHr);
+                        let m = Math.round((absRawInHr - h) * 60);
+                        converted = (raw < 0 ? '-' : '+') + add0(h) + add0(m);
+                    }
+                    console.log('timezone: ' + converted);
                     return converted;
                 }
             }
         };
         xhr.open("GET", theUrl, true);
         xhr.send(null);
+        function add0(n) { return n < 10 ? '0' + n : '' + n; }
     }
 }
 
@@ -152,11 +158,36 @@ function getTimeZoneGPS(gps, callback){
                 let tz = convertRawOffset(response.rawOffset);
                 callback(tz);
                 function convertRawOffset(raw){
-                    let absRawInHr = Math.abs(raw / 3600);
-                    let converted = isNaN(absRawInHr) ? 'error' : (absRawInHr <= 9 ? '0' : '') + absRawInHr + '00';
-                    if (converted !== 'error') converted = (raw < 0 ? '-' : '+') + converted;
+                    let converted = 'error';
+                    if (raw || raw === 0) {
+                        let absRawInHr = Math.abs(raw / 3600);
+                        let h = Math.trunc(absRawInHr);
+                        let m = Math.round((absRawInHr - h) * 60);
+                        converted = (raw < 0 ? '-' : '+') + add0(h) + add0(m);
+                    }
+                    console.log('timezone: ' + converted);
                     return converted;
                 }
+            }
+        };
+        xhr.open("GET", theUrl, true);
+        xhr.send(null);
+        function add0(n) { return n < 10 ? '0' + n : '' + n; }
+    }
+}
+
+function getGpsByAddress(address, callback){
+    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+    let url = 'https://maps.googleapis.com/maps/api/geocode/json?';
+    let requestUrl = url + `address=${encodeURIComponent(address)}&key=${googleApiKey}`;
+    return httpGetAsync(requestUrl, callback);
+
+    function httpGetAsync(theUrl, callback){
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 200 === xhr.status){
+                let response = JSON.parse(xhr.responseText);
+                callback(response);
             }
         };
         xhr.open("GET", theUrl, true);
@@ -164,24 +195,3 @@ function getTimeZoneGPS(gps, callback){
     }
 }
 
-function gpsField(map, input, mapMove){
-    console.log('gpsField');
-    input.addEventListener('keyup', gpsFieldValidator);
-    input.addEventListener('change', gpsFieldValidator);
-    input.addEventListener('paste', gpsFieldValidator);
-    function gpsFieldValidator(){
-        console.log('gpsField event');
-        let value = this.value;
-        /* TODO: плохой поиск родителя, переделать! */
-        let p = this.parentElement.parentElement;
-        let gps = value.split(',').map(function(e){ return parseFloat(e.trim()); });
-        console.dir(gps);
-        if (gps.length !== 2 || isNaN(gps[0]) || isNaN(gps[1])) {
-            p.classList.add('invalid');
-        } else {
-            p.classList.remove('invalid');
-            map.panTo(new L.LatLng(gps[0], gps[1]));
-            mapMove(map);
-        }
-    }
-}
