@@ -107,9 +107,6 @@ class BaseOtpAuth
         ]);
     }
 
-    /**
-     * @return \Closure
-     */
     private function createRetryHandler()
     {
         return function (

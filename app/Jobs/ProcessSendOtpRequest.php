@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\Exception;
 use App\Services\Auth\Otp\BaseOtpAuth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -42,13 +43,17 @@ class ProcessSendOtpRequest implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     *
      */
     public function handle()
     {
         $gate = app($this->gateClass);
 
-        list($method, $path, $data, $headers, $auth) = $this->data;
+        try{
+            list($method, $path, $data, $headers, $auth) = $this->data;
+        }catch (Exception $exception){
+            logger($exception->getMessage());
+        }
 
         $gate->request($method, $path, $data, $headers, $auth);
     }
