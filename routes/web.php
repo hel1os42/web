@@ -69,7 +69,7 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 // Authorized users
 
-$router->group(['middleware' => 'auth:operator,jwt,web'], function () use ($router) {
+$router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
     $router->get('/', function () {
         return response()->render('home', []);
@@ -163,13 +163,14 @@ $router->group(['middleware' => 'auth:operator,jwt,web'], function () use ($rout
             'destroy'
         ]
     ]);
-
-    $router->resource('redemptions', 'RedemptionController', [
-        'except' => [
-            'update',
-            'destroy'
-        ]
-    ]);
+    $router->group(['middleware' => 'auth:operator'], function () use ($router) {
+        $router->resource('redemptions', 'RedemptionController', [
+            'except' => [
+                'update',
+                'destroy'
+            ]
+        ]);
+    });
 
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
            ->name('transaction.create');

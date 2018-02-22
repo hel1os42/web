@@ -103,10 +103,8 @@ class OperatorUserProvider implements UserProvider
     {
         if ($user instanceof Operator) {
             return !(empty($credentials['alias'])
-                && empty($credentials['alias'])
-                && empty($credentials['alias']));
+                && empty($credentials['password'])
+                && empty($credentials['place_uuid']));
         }
-
-        return parent::validateCredentials($user, $credentials);
     }
 }
