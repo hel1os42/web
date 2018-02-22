@@ -40,14 +40,8 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
-        if ($this->hasTooManyLoginAttempts(\request())) {
-            return $this->sendLockoutResponse(\request());
-        }
-
         /** @var OtpAuth $otpAuth */
         $otpAuth->generateCode($user->phone);
-
-        $this->incrementLoginAttempts(\request());
 
         return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
             Response::HTTP_ACCEPTED, route('register'));

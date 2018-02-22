@@ -57,7 +57,7 @@ class LoginRequest extends FormRequest
         return null !== $this->email
             ? $this->emailCredentials()
             : $this->phoneCredentials();
-        }
+    }
 
     private function emailCredentials()
     {
