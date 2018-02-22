@@ -14,15 +14,15 @@ use Intervention\Image\ImageManager;
  */
 abstract class AbstractPictureController extends Controller
 {
-    const MOBILE_SIZE_TYPE = 'mobile';
+    const MOBILE_SIZE_TYPE  = 'mobile';
     const DESKTOP_SIZE_TYPE = 'desktop';
 
     protected $pictureObjectType = 'user';
 
-    protected $pictureWidth = 1024;
-    protected $pictureHeight = 1024;
+    protected $pictureWidth   = 1024;
+    protected $pictureHeight  = 1024;
     protected $pictureQuality = 80;
-    protected $pictureFormat = 'jpg';
+    protected $pictureFormat  = 'jpg';
 
     protected $pictureMimeTypes = [
         'jpg' => 'image/jpeg',
@@ -140,7 +140,7 @@ abstract class AbstractPictureController extends Controller
      */
     protected function loadFormatSize(string $sizeType = 'original')
     {
-        $imageTypesConfig    = config('nau.image_types.' . $this->pictureObjectType);
+        $imageTypesConfig = config('nau.image_types.' . $this->pictureObjectType);
         switch ($sizeType) {
             case self::DESKTOP_SIZE_TYPE || self::MOBILE_SIZE_TYPE:
                 $pictureSizeType = $sizeType;
@@ -150,7 +150,7 @@ abstract class AbstractPictureController extends Controller
         }
         $pictureFormatSize = $imageTypesConfig[$pictureSizeType];
 
-        $this->pictureWidth   = $pictureFormatSize['width'];
-        $this->pictureHeight  = $pictureFormatSize['height'];
+        $this->pictureWidth  = $pictureFormatSize['width'];
+        $this->pictureHeight = $pictureFormatSize['height'];
     }
 }

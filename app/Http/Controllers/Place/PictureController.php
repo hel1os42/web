@@ -131,14 +131,14 @@ class PictureController extends AbstractPictureController
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(\Illuminate\Http\Request $request, string $placeId, string $type, string $format = 'png'): Response
+    public function show(string $placeId, string $type, string $format = 'png'): Response
     {
         $this->type              = $type;
         $this->pictureObjectType = sprintf('place_%s', $type);
         $place                   = $this->placeRepository->find($placeId);
         $this->pictureFormat     = $format === 'png' ? $format : 'jpg';
 
-        return $this->respondWithImageFor($place->id, $request->get('size', 'original'));
+        return $this->respondWithImageFor($place->id, request()->get('size', 'original'));
     }
 
     protected function getPath(): string
