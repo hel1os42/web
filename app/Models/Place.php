@@ -211,7 +211,7 @@ class Place extends Model
      */
     public function getPictureUrlAttribute(): string
     {
-        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'picture']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'picture', 'format' => 'png']);
     }
 
     /**
@@ -219,7 +219,7 @@ class Place extends Model
      */
     public function getCoverUrlAttribute(): string
     {
-        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover', 'format' => 'jpg']);
     }
 
     /**
@@ -228,7 +228,7 @@ class Place extends Model
     public function getOwnOrDefaultCoverUrl(): string
     {
         if (file_exists($this->getCoverPath())) {
-            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover', 'format' => 'jpg']);
         }
 
         return self::getDefaultCoverUrl();

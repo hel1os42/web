@@ -51,11 +51,11 @@
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" alt="Place logo" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture', 'png']) }}" alt="Place logo" style="max-width: 100%;"></p></div>
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place cover:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}" alt="Place cover" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover', 'jpg']) }}" alt="Place cover" style="max-width: 100%;"></p></div>
     </div>
 </div>
 
@@ -74,6 +74,6 @@
         document.getElementById('placeInfoSpecialities').innerText = response.specialities.length ? response.specialities.map(function(e){ return e.name; }).join(', ') : '-';
         document.getElementById('placeInfoTags').innerText = response.tags.length ? response.tags.map(function(e){ return e.name; }).join(', ') : '-';
     });
-    
+
 </script>
 @endpush
