@@ -53,7 +53,7 @@ class OperatorGuard extends JwtGuard
 
     /**
      * Get the id currently authenticated user.
-     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return string
      */
     public function id()
