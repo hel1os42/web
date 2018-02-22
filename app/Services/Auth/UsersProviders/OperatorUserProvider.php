@@ -3,22 +3,23 @@
 namespace App\Services\Auth\UsersProviders;
 
 use App\Http\Exceptions\NotImplementedException;
-use App\Models\Operator;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class OperatorUserProvider implements UserProvider
 {
     protected $placeRepository;
     protected $operatorRepository;
+    protected $hasher;
 
-    public function __construct(PlaceRepository $placeRepository, OperatorRepository $operatorRepository)
+    public function __construct(PlaceRepository $placeRepository, OperatorRepository $operatorRepository, Hasher $hasher)
     {
         $this->placeRepository    = $placeRepository;
         $this->operatorRepository = $operatorRepository;
+        $this->hasher             = $hasher;
     }
 
     /**
@@ -85,9 +86,6 @@ class OperatorUserProvider implements UserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return $user instanceof \App\Models\Operator
-            && $user->place->alias === $credentials['alias']
-            && $user->login === $credentials['login']
-            && Hash::check($credentials['password'], $user->password);
+        return $this->hasher->check($credentials['password'], $user->getAuthPassword());
     }
 }

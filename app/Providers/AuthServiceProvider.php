@@ -12,6 +12,7 @@ use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -85,7 +86,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate, PlaceRepository $placeRepository, OperatorRepository $operatorRepository)
+    public function boot(Gate $gate, PlaceRepository $placeRepository, OperatorRepository $operatorRepository, Hasher $hasher)
     {
         $this->registerPolicies();
 
@@ -110,8 +111,8 @@ class AuthServiceProvider extends ServiceProvider
             return new OtpGuard($authManager->createUserProvider($config['provider']));
         });
 
-        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository) {
-            return new OperatorUserProvider($placeRepository, $operatorRepository);
+        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository, $hasher) {
+            return new OperatorUserProvider($placeRepository, $operatorRepository, $hasher);
         });
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
