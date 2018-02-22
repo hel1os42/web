@@ -58,22 +58,6 @@ class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
     }
 
     /**
-     * @param null|string $responce
-     *
-     * @return bool
-     * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
-     */
-    public function validateResponseString(?string $responce)
-    {
-        $result = json_decode($responce);
-
-        if (!isset($result->result) || $result->result === false) {
-            $this->otpError('Can\'t send otp code. ' . json_encode($result));
-        }
-        return true;
-    }
-
-    /**
      * @return mixed
      * @throws \InvalidArgumentException
      * @throws \LogicException

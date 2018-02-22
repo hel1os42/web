@@ -19,16 +19,6 @@ trait OtpAuthTrait
      */
     protected $configData;
 
-    public function __construct()
-    {
-
-        if (!isset($this->client)) {
-            $this->client = new Client([
-                'base_uri' => $this->configData['base_api_url']
-            ]);
-        }
-    }
-
     /**
      * @return array
      */
