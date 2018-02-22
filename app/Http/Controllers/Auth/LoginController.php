@@ -3,32 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
-use App\Repositories\PlaceRepository;
-use App\Repositories\UserRepository;
 use App\Services\Auth\Otp\OtpAuth;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\JWTAuth;
 
 class LoginController extends AuthController
 {
-    use ThrottlesLogins;
-
-    public function __construct(UserRepository $userRepository, JWTAuth $jwtAuth, AuthManager $auth, PlaceRepository $placeRepository)
-    {
-        $this->placeRepository = $placeRepository;
-        $this->auth            = $auth;
-        $this->jwtAuth         = $jwtAuth;
-
-        parent::__construct($userRepository, $jwtAuth, $auth);
-    }
-
     /**
      * @return Response
      */
@@ -56,8 +40,14 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
+        if ($this->hasTooManyLoginAttempts(\request())) {
+            return $this->sendLockoutResponse(\request());
+        }
+
         /** @var OtpAuth $otpAuth */
         $otpAuth->generateCode($user->phone);
+
+        $this->incrementLoginAttempts(\request());
 
         return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
             Response::HTTP_ACCEPTED, route('register'));
@@ -106,7 +96,8 @@ class LoginController extends AuthController
     {
         $user            = null;
         $defaultProvider = 'users';
-        $credentials     = $request->credentials();
+
+        $credentials = $request->credentials();
 
         foreach (\config('auth.guards') as $guardName => $config) {
             try {

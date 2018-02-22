@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Tymon\JWTAuth\JWTAuth;
 
-class OperatorGuard implements Guard
+class OperatorGuard extends JwtGuard
 {
     use GuardHelpers;
 
@@ -27,11 +27,10 @@ class OperatorGuard implements Guard
      *
      * @param  \Illuminate\Contracts\Auth\UserProvider $provider
      */
-    public function __construct(UserProvider $provider, OperatorRepository $operatorRepository)
+    public function __construct(UserProvider $provider)
     {
-        $this->provider           = $provider;
-        $this->jwtAuth            = app('tymon.jwt.auth');
-        $this->operatorRepository = $operatorRepository;
+        $this->provider = $provider;
+        $this->jwtAuth  = app('tymon.jwt.auth');
     }
 
     /**
@@ -45,8 +44,8 @@ class OperatorGuard implements Guard
     public function user()
     {
         if (is_null($this->user) && false !== $this->jwtAuth->getToken()) {
-            $user  = $this->operatorRepository->find($this->id());
-            $this->setuser($user);
+            $user  = $this->provider->retrieveById($this->id());
+            $this->user = $user;
         }
 
         return $this->user;
@@ -74,10 +73,9 @@ class OperatorGuard implements Guard
      */
     public function validate(array $credentials = [])
     {
-        if (isset($credentials['alias'])) {
-            $user = $this->provider->retrieveByCredentials($credentials);
-            return $this->hasValidCredentials($user, $credentials);
-        }
+        $user = $this->provider->retrieveByCredentials($credentials);
+        return $this->hasValidCredentials($user, $credentials);
+
         return false;
     }
 

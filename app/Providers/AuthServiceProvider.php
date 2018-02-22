@@ -110,8 +110,8 @@ class AuthServiceProvider extends ServiceProvider
             return new OtpGuard($authManager->createUserProvider($config['provider']));
         });
 
-        $authManager->provider('operator', function () use ($placeRepository) {
-            return new OperatorUserProvider($placeRepository);
+        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository) {
+            return new OperatorUserProvider($placeRepository, $operatorRepository);
         });
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */

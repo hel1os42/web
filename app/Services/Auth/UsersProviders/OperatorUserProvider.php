@@ -7,16 +7,18 @@ use App\Models\Operator;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Str;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\Hash;
 
 class OperatorUserProvider implements UserProvider
 {
     protected $placeRepository;
+    protected $operatorRepository;
 
-    public function __construct(PlaceRepository $placeRepository)
+    public function __construct(PlaceRepository $placeRepository, OperatorRepository $operatorRepository)
     {
-        $this->placeRepository = $placeRepository;
+        $this->placeRepository    = $placeRepository;
+        $this->operatorRepository = $operatorRepository;
     }
 
     /**
@@ -27,7 +29,7 @@ class OperatorUserProvider implements UserProvider
      */
     public function retrieveById($identifier)
     {
-        throw new NotImplementedException();
+        return $this->operatorRepository->find($identifier);
     }
 
     /**
@@ -62,34 +64,16 @@ class OperatorUserProvider implements UserProvider
      */
     public function retrieveByCredentials(array $credentials)
     {
-        if (empty($credentials)) {
+        if (empty($credentials)
+            || !isset($credentials['alias'])
+            || !isset($credentials['login'])) {
             return null;
         }
 
-        $credentials['place_uuid'] = $this->placeRepository->findByAlias($credentials['alias'])->id;
+        $place = $this->placeRepository->findByAlias($credentials['alias']);
 
-        unset($credentials['alias']);
-
-        $query = $this->createModel()->newQuery();
-
-        foreach ($credentials as $key => $value) {
-            if (!Str::contains($key, ['password', 'login', 'place_uuid'])) {
-                $query->where($key, $value);
-            }
-        }
-
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $query->first();
-    }
-
-    /**
-     * Create a new instance of the model operator.
-     *
-     * @return Operator
-     */
-    public function createModel()
-    {
-        return new Operator;
+        return $this->operatorRepository
+            ->findByPlaceAndLogin($place, $credentials['login']);
     }
 
     /**
@@ -101,10 +85,9 @@ class OperatorUserProvider implements UserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        if ($user instanceof Operator) {
-            return !(empty($credentials['alias'])
-                && empty($credentials['password'])
-                && empty($credentials['place_uuid']));
-        }
+        return $user instanceof \App\Models\Operator
+            && $user->place->alias === $credentials['alias']
+            && $user->login === $credentials['login']
+            && Hash::check($credentials['password'], $user->password);
     }
 }

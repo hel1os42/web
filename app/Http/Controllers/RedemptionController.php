@@ -11,19 +11,14 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
-use App\Models\Operator;
 use App\Models\User;
 use App\Repositories\OfferRepository;
-use App\Repositories\OperatorRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Repositories\UserRepository;
-use Tymon\JWTAuth\JWTAuth;
 
 class RedemptionController extends Controller
 {
@@ -170,11 +165,11 @@ class RedemptionController extends Controller
     private function validateOffer(string $offerId): void
     {
         $validator = $this->getValidationFactory()
-                          ->make(['offerId' => $offerId],
-                              [
-                                  'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
-                                      Constants::UUID_REGEX)
-                              ]);
+            ->make(['offerId' => $offerId],
+                [
+                    'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
+                        Constants::UUID_REGEX)
+                ]);
 
         if ($validator->fails()) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));

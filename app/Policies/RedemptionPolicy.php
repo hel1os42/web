@@ -7,6 +7,8 @@ use App\Models\NauModels\Redemption;
 use App\Models\Operator;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+
 
 class RedemptionPolicy extends Policy
 {
@@ -26,12 +28,14 @@ class RedemptionPolicy extends Policy
      *
      * @return bool
      */
-    public function confirm($user, Offer $offer)
+    public function confirm(Authenticatable $user, Offer $offer)
     {
-        $user = $user->place()->first()->user ?? null;
+        if ($user instanceof Operator) {
+            $user = $user->place->user ?? null;
+        }
 
-        return $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
-    }
+        return $user instanceof User && $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
+}
 
     /**
      * @param User       $user
