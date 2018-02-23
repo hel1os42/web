@@ -6,7 +6,7 @@ use App\Models\Place;
 
 interface ImageService
 {
-    public const DEFAULT_ENCODING_FORMAT = 'png';
+    public const DEFAULT_ENCODING_FORMAT = 'jpg';
     public const DEFAULT_QUALITY         = 80;
 
     public const MAX_PLACE_PICTURE_WIDTH  = 1024;

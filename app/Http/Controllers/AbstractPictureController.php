@@ -100,7 +100,7 @@ abstract class AbstractPictureController extends Controller
             throw new \RuntimeException('Cannot create directory at: ' . $path);
         }
 
-        return sprintf($path . '/%s.%s', $uuid, $this->pictureObjectType === 'place_picture' ? 'png' : $this->pictureFormat);
+        return sprintf($path . '/%s.%s', $uuid, $this->pictureFormat);
     }
 
     abstract protected function getPath(): string;
@@ -124,8 +124,7 @@ abstract class AbstractPictureController extends Controller
                 ->resize($this->pictureWidth, $this->pictureHeight, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
-                })
-                ->encode($this->pictureFormat, $this->pictureQuality);
+                });
 
             return \response($picture, Response::HTTP_OK)->header('Content-Type',
                 $this->pictureMimeTypes[$this->pictureFormat]);
