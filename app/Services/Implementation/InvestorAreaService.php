@@ -32,6 +32,7 @@ class InvestorAreaService implements \App\Services\InvestorAreaService
         $data = array_except($data, 'signature');
 
         array_walk($data, function (&$value, $key) {
+            if (!is_string($value)) { $value = json_encode($value); }
             $value = sprintf('%s=%s', urlencode($key), urlencode($value));
         });
 
