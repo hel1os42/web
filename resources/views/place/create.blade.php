@@ -60,7 +60,7 @@
                                     <input name="alias" value="" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Alies.</p>
+                            <p class="hint">Please, enter the Place Alias.</p>
                         </div>
 
                         <div class="control-box">

@@ -50,12 +50,8 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $required    = '';
-        $uniqueAlias = sprintf('|unique:places,alias,%s', $this->segment(2));
-        if ($this->isMethod('POST') || $this->isMethod('PUT')) {
-            $required    = 'required|';
-            $uniqueAlias = '|unique:places,alias';
-        }
+        $required    = $this->isMethod('POST') || $this->isMethod('PUT') ? 'required|' : '';
+        $uniqueAlias = $this->isMethod('POST') ? '|unique:places,alias' : sprintf('|unique:places,alias,%s', $this->segment(2));
 
         return [
             'name'                       => $required . 'string|min:3|max:255',
