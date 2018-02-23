@@ -100,7 +100,7 @@ abstract class AbstractPictureController extends Controller
             throw new \RuntimeException('Cannot create directory at: ' . $path);
         }
 
-        return sprintf($path . '/%s.%s', $uuid, $this->pictureFormat);
+        return sprintf($path . '/%s.%s', $uuid, $this->pictureObjectType === 'place_picture' ? 'png' : $this->pictureFormat);
     }
 
     abstract protected function getPath(): string;
