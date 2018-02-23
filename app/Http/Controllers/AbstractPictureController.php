@@ -124,7 +124,8 @@ abstract class AbstractPictureController extends Controller
                 ->resize($this->pictureWidth, $this->pictureHeight, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
-                });
+                })
+                ->encode();
 
             return \response($picture, Response::HTTP_OK)->header('Content-Type',
                 $this->pictureMimeTypes[$this->pictureFormat]);
