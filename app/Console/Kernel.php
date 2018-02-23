@@ -15,7 +15,6 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         FixZeroReservedOffers::class,
-        ConvertPlacePicturesToPng::class,
     ];
 
     /**
