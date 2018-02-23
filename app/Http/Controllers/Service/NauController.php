@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\Exception\RequestException;
@@ -75,6 +76,12 @@ class NauController extends Controller
     public function getAccount(User $user)
     {
         return \response()->render('', $user->getAccountForNau()->toArray());
+    }
+
+    public function getAccounts(Request $request, AccountRepository $accountRepository)
+    {
+        return \response()->render('',
+            $accountRepository->findWhereIn('owner_id', $request->json('accounts'))->toArray());
     }
 
     /**
