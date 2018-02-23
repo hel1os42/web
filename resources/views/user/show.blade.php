@@ -72,52 +72,43 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <p><strong>Position</strong></p>
-                                        <div class="map-wrap" style="width: 400px;">
-                                            <div id="mapid" style="height: 400px; width: 600px;">
-                                                <div id="marker" class="without-radius"></div>
+                                @if(false)
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <p><strong>Position</strong></p>
+                                            <div class="map-wrap" style="width: 400px;">
+                                                <div id="mapid" style="height: 400px; width: 600px;">
+                                                    <div id="marker" class="without-radius"></div>
+                                                </div>
                                             </div>
+                                            <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                            <input type="hidden" name="longitude" value="{{ $longitude }}">
                                         </div>
-                                        <input type="hidden" name="latitude" value="{{ $latitude }}">
-                                        <input type="hidden" name="longitude" value="{{ $longitude }}">
                                     </div>
-                                </div>
+                                @endif
+                                <input type="hidden" name="latitude" value="{{ $latitude }}">
+                                <input type="hidden" name="longitude" value="{{ $longitude }}">
 
-                                <div class="row">
-                                    @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
-                                </div>
+                                @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
+
                                 <div class="row">
                                     <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
                                 </div>
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
-                                {{ csrf_field() }}
-                                <h4 class="title">Update your avatar</h4>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-4">
-                                        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
-                                            <div class="fileinput fileinput-new text-center"
-                                                 data-provides="fileinput">
-                                                <div class="fileinput-new thumbnail img-circle">
-                                                    <img src="{{asset('img/placeholder.jpg')}}" alt="...">
-                                                </div>
-                                            </div>
-                                            <div class="fileinput-preview fileinput-exists thumbnail img-circle" style=""></div>
-                                            <div class="btn btn-default btn-fill btn-file">
-                                                <span class="fileinput-new">Pick photo</span>
-                                                <span class="fileinput-exists">Change logo</span>
-                                                <input type="hidden">
-                                                <input type="file" name="picture">
-                                            </div>
+                            <h4 class="title">Update your avatar</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
+                                        <div class="form-group" id="userpic_image_box">
+                                            {{ csrf_field() }}
+                                            <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
-                                    </div>
+                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                    </form>
                                 </div>
-                                <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,36 +121,116 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
 
-    @include('role-partials.selector', ['partialRoute' => 'user.show-scripts'])
+    <script>
 
-    <script type="text/javascript">
+        /* approve/disapprove buttons */
+        userStatusControl();
+
+        /* userpic */
+        imageUploader('#userpic_image_box .image-box');
+        let $userpic_image_box = $('#userpic_image_box');
+        $userpic_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Picture changed');
+            $userpic_image_box.find('.image').attr('data-cropratio', '1');
+        });
+        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+        $userpic_image_box.parents('form').on('submit', function(e){
+            e.preventDefault();
+            let $file = $userpic_image_box.find('[type="file"]');
+            let $img = $userpic_image_box.find('.image');
+            if ($file.attr('data-changed') && $img.attr('data-crop')) {
+                let url = $(this).attr('action');
+                let formData = new FormData();
+                formData.append('_token', $userpic_image_box.find('[name="_token"]').val());
+                let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
+                for(let i of formData) { console.log(i); }
+                $.ajax({
+                    url: url,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    method: 'POST',
+                    success: function () {
+                        console.log('SUCCESS: image sent.');
+                        window.location.reload();
+                    },
+                    error: function (resp) {
+                        console.log('ERROR: image not sent.');
+                        console.dir(resp);
+                    }
+                });
+            }
+        });
 
         /* map */
-
-        $('a[href="#edit"]').one('shown.bs.tab', function() {
+        /*$('a[href="#edit"]').one('shown.bs.tab', function() {
             setTimeout(function(){
                 mapInit({
                     id: 'mapid',
-                    done: mapDone,
+                    //done: mapDone,
                     move: mapMove
                 });
             }, 100);
         });
 
-        function mapDone(map){
-            let values = mapValues(map);
-        }
-
         function mapMove(map){
             let values = mapValues(map);
             $('[name="latitude"]').val(values.lat);
             $('[name="longitude"]').val(values.lng);
+        }*/
+
+        function userStatusControl(){
+            $('.user-approve-controls form').on('submit', function(e){
+                e.preventDefault();
+
+                let $box = $(this).parents('.user-approve-controls');
+                let $user_status = $box.find('[name="approved"]');
+                let $err = $box.find('.waiting-response');
+
+                $box.removeClass('status-approved status-disapproved').addClass('status-wait');
+                let formData = $(this).serializeArray();
+                console.log('Change User Status:');
+                console.dir(formData);
+
+                $.ajax({
+                    method: "PATCH",
+                    url: $(this).attr('action'),
+                    headers: { 'Accept':'application/json' },
+                    data: formData,
+                    success: function(data, textStatus, xhr){
+                        if (201 === xhr.status){
+                            $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
+                            $user_status.val($user_status.val() === '0' ? '1' : '0');
+                        } else {
+                            $err.text('err-st: ' + xhr.status);
+                            console.dir(xhr);
+                        }
+                    },
+                    error: function(resp){
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
+                });
+            });
         }
 
     </script>

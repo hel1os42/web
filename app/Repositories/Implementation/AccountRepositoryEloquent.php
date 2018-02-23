@@ -58,6 +58,16 @@ class AccountRepositoryEloquent extends BaseRepository implements AccountReposit
         return $model->exists();
     }
 
+    public function existsByAddress(string $address): bool
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->byAddress($address);
+        $this->resetModel();
+
+        return $model->exists();
+    }
+
     public function existsByAddressAndBalanceGreaterThan(string $address, float $amount): bool
     {
         $this->applyCriteria();
@@ -66,5 +76,21 @@ class AccountRepositoryEloquent extends BaseRepository implements AccountReposit
         $this->resetModel();
 
         return $model->exists();
+    }
+
+    /**
+     * @param array $userIdsArray
+     *
+     * @return \Illuminate\Support\Collection|mixed
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function findAndSortByOwnerIds(array $userIdsArray): \Illuminate\Support\Collection
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $result = $this->model->byOwners($userIdsArray)->orderBy('owner_id')->get();
+        $this->resetModel();
+
+        return $this->parserResult($result);
     }
 }

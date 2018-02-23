@@ -31,14 +31,12 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
                    ->name('login');
 
             $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
-                   ->middleware(['throttle:1,1'])
                    ->where('phone_number', '\+[0-9]+')
                    ->name('get-login-otp-code');
         });
 
         $router->group(['prefix' => 'register'], function () use ($router) {
             $router->get('{invite}/{phone_number}/code', 'Auth\RegisterController@getOtpCode')
-                   ->middleware(['throttle:1,1'])
                    ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
                    ->name('get-register-otp-code');
 
@@ -182,10 +180,26 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     /**
      * Categories
      */
-    $router->get('categories', 'CategoryController@index')
+    $router->get('categories/index', 'CategoryController@index')
+           ->name('categories.index');
+    $router->get('categories', 'CategoryController@mainCategories')
            ->name('categories');
-    $router->get('categories/{uuid}', 'CategoryController@show')
-           ->name('categories.show');
+    $router->resource('categories', 'CategoryController', [
+        'except' => [
+            'index',
+            'destroy'
+        ]
+    ]);
+    $router->post('categories/{uuid}/picture', 'Category\PictureController@store')->name('categories.picture.store');
+
+    /**
+     * Tags
+     */
+    $router->resource('tags', 'TagController', [
+        'except' => [
+            'destroy'
+        ]
+    ]);
 
     /**
      * Places
@@ -232,3 +246,5 @@ $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where(
     'uuid',
     '[a-z0-9-]+'
 ])->name('places.picture.show');
+$router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
+    '[a-z0-9-]+')->name('categories.picture.show');

@@ -7,10 +7,10 @@ use App\Models\Place;
 interface ImageService
 {
     public const DEFAULT_ENCODING_FORMAT = 'jpg';
-    public const DEFAULT_QUALITY         = 100;
+    public const DEFAULT_QUALITY         = 80;
 
-    public const MAX_PLACE_PICTURE_WIDTH  = 192;
-    public const MAX_PLACE_PICTURE_HEIGHT = 192;
+    public const MAX_PLACE_PICTURE_WIDTH  = 1024;
+    public const MAX_PLACE_PICTURE_HEIGHT = 1024;
 
     const PLACE_PICTURES_PATH = 'images/place/pictures';
     const PLACE_COVERS_PATH   = 'images/place/covers';

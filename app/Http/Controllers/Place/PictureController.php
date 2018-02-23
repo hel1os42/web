@@ -26,6 +26,7 @@ class PictureController extends AbstractPictureController
 
     private $type = 'picture';
     private $placeRepository;
+
     /**
      * @var $placeService PlaceService
      */
@@ -90,8 +91,8 @@ class PictureController extends AbstractPictureController
     {
         $placeId             = $placeId ?: $this->user()->place->getId();
         $this->type          = self::TYPE_COVER;
-        $this->pictureHeight = 400;
-        $this->pictureWidth  = 1200;
+        $this->pictureHeight = 500;
+        $this->pictureWidth  = 1500;
 
         return $this->store($request, $placeId);
     }
@@ -130,10 +131,11 @@ class PictureController extends AbstractPictureController
      */
     public function show(string $placeId, string $type): Response
     {
-        $this->type = $type;
-        $place      = $this->placeRepository->find($placeId);
+        $this->type              = $type;
+        $this->pictureObjectType = sprintf('place_%s', $type);
+        $place                   = $this->placeRepository->find($placeId);
 
-        return $this->respondWithImageFor($place->id);
+        return $this->respondWithImageFor($place->id, request()->get('size', 'original'));
     }
 
     protected function getPath(): string

@@ -25,23 +25,21 @@
             <div class="advert-header-wrap">
                 <div class="advert-header">
                     @if($isPlaceCreated)
-                        <div class="create-offer col-sm-4 text-right">
+                        <div class="create-offer text-right">
                             <a href="{{ route('advert.offers.create') }}" class="btn-nau btn-create-offer">Create offer</a>
                         </div>
                     @endif
                     @if($place instanceof \App\Models\Place)
-                        <div class="container">
-                            <div class="">{{ $place->getName() }}</div>
-                            <div class="">{{ $place->getAddress() }}</div>
-                            <div class="">
-                                {{ str_limit($place->getDescription(), 50) }}
-                                @if(!auth()->user()->isImpersonated())
-                                    <a href="{{ route('places.edit', $place) }}">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
+                        <p>{{ $place->getName() }}</p>
+                        <p>{{ $place->getAddress() }}</p>
+                        <p>{{ str_limit($place->getDescription(), 300) }}</p>
+                        @if(!auth()->user()->isImpersonated())
+                            <p>
+                                <a href="{{ route('places.edit', $place) }}">
+                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Place
+                                </a>
+                            </p>
+                        @endif
                     @else
                         <div class="advert-info">
                             <p class="advert-name">{{ $authUser['name'] }}</p>
@@ -55,7 +53,7 @@
                         </div>
                         <div class="col-xs-4">
                             <span class="icon-nau">NAU:</span>
-                            <strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong>
+                            <strong id="nau_balance" data-balance="{{ $authUser['accounts']['NAU']['balance'] }}">{{ $authUser['accounts']['NAU']['balance'] }}</strong>
                         </div>
                         @if(false)
                             <div class="col-xs-4">
@@ -71,7 +69,6 @@
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#tab_your_offers">Your Offers</a></li>
         </ul>
-
 
         <div class="tab-content">
 
@@ -110,35 +107,16 @@
                         @endphp
                         @foreach ($data as $offer)
                             <tr>
-                                <td>{{ $counter++ }}</td>
-                                <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
+                                <td>
+                                    {{ $counter++ }}
+                                    <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
+                                </td>
                                 <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td><span data-df="yyyy/mm/dd">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span data-df="yyyy/mm/dd">{{ $offer['finish_date'] }}</span></td>
+                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
-                                <td>
-                                    {{ $offer['status'] }}
-                                </td>
-                                <td>
-                                    @if($offer['status'] === 'deactive')
-                                        <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
-                                              style="display:  inline-block;">
-                                            {{ csrf_field() }}
-                                            {{ method_field('PUT') }}
-                                            <input type="hidden" name="status" value="active">
-                                            <button style="display:  inline-block;" type="submit" class="btn btn-warning">activate</button>
-                                        </form>
-                                    @else
-                                        <form action="{{route('advert.offer.updateStatus', $offer['id'])}}" method="post"
-                                              style="display:  inline-block;">
-                                            {{ csrf_field() }}
-                                            {{ method_field('PUT') }}
-                                            <input type="hidden" name="status" value="deactive">
-                                            <button style="display:  inline-block;" type="submit" class="btn btn-primary">deactivate</button>
-                                        </form>
-                                    @endif
-                                </td>
+                                <td class="offer-status"><span class="offer-status-text">{{ $offer['status'] }}</span></td>
                                 <td class="details-code" style="display: none;">
                                     <div>
                                         <div class="row set">
@@ -217,6 +195,15 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="offer_status_control osc_{{ $offer['status'] }}">
+                                    <form action="{{ route('advert.offer.updateStatus', $offer['id']) }}" method="POST">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="status" value="{{ $offer['status'] === 'active' ? 'deactive' : 'active' }}">
+                                        <button type="submit" class="b-activate btn btn-xs btn-primary" data-reserved="{{ $offer['reserved'] }}">activate</button>
+                                        <button type="submit" class="b-deactivate btn btn-xs btn-warning">deactivate</button>
+                                        <span class="waiting-response"><img src="{{ asset('img/loading.gif') }}" alt="wait..."></span>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -238,56 +225,55 @@
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script>
-        window.addEventListener('load', function(){
 
-            dataTableCreate('#table_your_offers');
-            // dataTableCreate('#table_childrens_offers');
+        /* dataTable */
+        dataTableCreate('#table_your_offers');
 
-            /* date-time format */
-            $('[data-df]').each(function(){
-                $(this).text(dateFormat($(this).text(), $(this).data('df')));
-            });
+        /* date and time */
+        fillTimeframes();
 
-            /* offer_category */
-            srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
-                $('.category-id').each(function(){
-                    let uuid = $(this).text();
-                    $(this).text(response.data.find(function(e){ return e.id === uuid; }).name);
+        /* offer category */
+        offerCategory();
+
+        /* offer status buttons */
+        offerStatusControl();
+
+        /* page navigation optimizer */
+        pagenavyCompact(document.getElementById('table_pager'));
+
+        /* disabling button "activate" when not enough NAU */
+        disableButtonActivate();
+
+        function dataTableCreate(selector){
+            let $table = $(selector);
+            if ($table.length) {
+                /* create table */
+                let dt_table = $table.DataTable({
+                    "bPaginate": false,
+                    "bLengthChange": false,
+                    "bFilter": true,
+                    "bInfo": false,
+                    "bAutoWidth": false,
+                    "searching": false
                 });
-            });
+                /* отключаем родную пагинацию, поиск и т.п. - до лучших времён */
 
-            function dataTableCreate(selector){
-                let $table = $(selector);
-                if ($table.length) {
-                    /* create table */
-                    let dt_table = $table.DataTable({
-                        "bPaginate": false,
-                        "bLengthChange": false,
-                        "bFilter": true,
-                        "bInfo": false,
-                        "bAutoWidth": false,
-                        "searching": false
-                    });
-                    /* отключаем родную пагинацию, поиск и т.п. - до лучших времён */
-
-                    /* show/hide details */
-                    $table.on('click', 'td.details-control', function(){
-                        let $tr = $(this).closest('tr');
-                        let row = dt_table.row($tr);
-                        if (row.child.isShown()) {
-                            $tr.next().children('td').children('div').slideUp(function(){
-                                row.child.hide();
-                                $tr.removeClass('shown');
-                            });
-                        } else {
-                            row.child($tr.children('td.details-code').html()).show();
-                            $tr.addClass('shown').next().children('td').children('div').hide().slideDown();
-                        }
-                    });
-                }
+                /* show/hide details */
+                $table.on('click', 'td.details-control', function(){
+                    let $tr = $(this).closest('tr');
+                    let row = dt_table.row($tr);
+                    if (row.child.isShown()) {
+                        $tr.next().children('td').children('div').slideUp(function(){
+                            row.child.hide();
+                            $tr.removeClass('shown');
+                        });
+                    } else {
+                        row.child($tr.children('td.details-code').html()).show();
+                        $tr.addClass('shown').next().children('td').children('div').hide().slideDown();
+                    }
+                });
             }
-
-        });
+        }
 
         function fillTimeframes(){
             $(".gps").each(function(){
@@ -299,27 +285,137 @@
                 getTimeZoneGPS(gps, fillTimeframesCallback);
 
                 function fillTimeframesCallback(tz){
-                    /* TODO: когда-нибудь переделать чтоб понимало таймзоны с отличием в 15-30 мин. */
                     let $box = $(`.workingDaysStorage[data-offerid="${offerId}"]`);
                     let tf = $box.data('workingdays');
                     $box.find('.workingDaySpan').each(function(){
                         let day = $(this).data('day');
                         $(this).text(getTime(tf[day].from, tz) + ' - ' + getTime(tf[day].to, tz));
                     });
+                    $box = $(`.gps[data-offerid="${offerId}"]`).parents('td').eq(0).siblings('.working-period');
+                    $box.find('.js-date-convert').each(function(){
+                        let val = $(this).text().replace(' ', 'T');
+                        if (val.length > 1) {
+                            let date = new Date(val);
+                            date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
+                            date.setHours(date.getHours() + +tz.substr(0, 3));
+                            $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                        } else {
+                            $(this).html('&#8734;');
+                        }
+                    });
 
                     function getTime(time, tz){
                         let h = +time.substr(0, 2) + +tz.substr(0, 3);
+                        let m = +time.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
+                        if (m > 59) { m -=60; h++; }
+                        if (m < 0) { m +=60; h--; }
+                        m = add0(m);
                         if (h > 23) h -= 24;
                         if (h < 0) h += 24;
-                        if (h < 10) h = '0' + h;
-                        return h + ':' + time.substr(3, 2);
+                        h = add0(h);
+                        return h + ':' + m;
                     }
+                    function add0(n) { return n < 10 ? '0' + n : n; }
                 }
             });
-
         }
-        fillTimeframes();
-        pagenavyCompact(document.getElementById('table_pager'));
+
+        function offerStatusControl(){
+            $('.offer_status_control form').on('submit', function(e){
+                e.preventDefault();
+
+                let $nau_balance = $('#nau_balance');
+                let $box = $(this).parents('.offer_status_control');
+                let $offer_status = $box.find('[name="status"]');
+                let $err = $box.find('.waiting-response');
+
+                let deltaNau = parseFloat($box.find('.b-activate').attr('data-reserved'));
+                if ($offer_status.val() === 'active') deltaNau = -deltaNau;
+                setNauBalance($nau_balance, deltaNau);
+
+                $box.removeClass('osc_active osc_deactive').addClass('osc_wait');
+                let formData = $(this).serializeArray();
+                console.log('Change Offer Status:');
+                console.dir(formData);
+
+                disableButtonActivate();
+                /* делаем красиво изменение баланса */
+                balanceFineChanging();
+
+                $.ajax({
+                    method: "PUT",
+                    url: $(this).attr('action'),
+                    headers: { 'Accept':'application/json' },
+                    data: formData,
+                    success: function(data, textStatus, xhr){
+                        if (202 === xhr.status){
+                            $box.parent().children('.offer-status').find('.offer-status-text').text($offer_status.val());
+                            $box.removeClass('osc_wait').addClass('osc_' + $offer_status.val());
+                            $offer_status.val($offer_status.val() === 'active' ? 'deactive' : 'active');
+                            /* проверяем доступность кнопок "activate" */
+                            disableButtonActivate();
+                        } else {
+                            setNauBalance($nau_balance, -deltaNau);
+                            disableButtonActivate();
+                            balanceFineChanging();
+                            $err.text('err-st: ' + xhr.status);
+                            console.dir(xhr);
+                        }
+                    },
+                    error: function(resp){
+                        setNauBalance($nau_balance, -deltaNau);
+                        disableButtonActivate();
+                        balanceFineChanging();
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
+                });
+            });
+            function setNauBalance($nau_balance, delta){
+                $nau_balance.attr('data-balance', parseFloat($nau_balance.attr('data-balance')) + delta);
+            }
+            function balanceFineChanging(){
+                let duration = 1000, frame = 50, start_time = Date.now();
+                let $nau = $('#nau_balance');
+                let $naus = $nau.add('#header_nau_balance');
+                let nau = parseFloat($nau.attr('data-balance')) * 10000;
+                let nau_text = parseFloat($nau.text()) * 10000;
+                let delta = (nau - nau_text) / duration * frame;
+                let timerID = $nau.attr('data-timerid');
+                if (timerID) clearInterval(parseInt(timerID));
+                $nau.attr('data-timerid', setInterval(function(){
+                    let text = (nau_text += delta) / 10000 + '';
+                    let dot = text.indexOf('.');
+                    if (dot > -1) text = text.substr(0, dot) + text.substr(dot, 5);
+                    $naus.text(text);
+                    if (Date.now() > start_time + duration) {
+                        clearInterval(parseInt($nau.attr('data-timerid')));
+                        let text = nau / 10000 + '';
+                        let dot = text.indexOf('.');
+                        if (dot > -1) text = text.substr(0, dot) + text.substr(dot, 5);
+                        $naus.text(text);
+                    }
+                }, frame));
+            }
+        }
+
+        function offerCategory(){
+            srvRequest("{{ route('categories') }}", 'GET', 'json', function(response){
+                $('.category-id').each(function(){
+                    let uuid = $(this).text();
+                    $(this).text(response.data.find(function(e){ return e.id === uuid; }).name);
+                });
+            });
+        }
+
+        function disableButtonActivate(){
+            let nau = parseFloat(document.querySelector('#nau_balance').dataset.balance);
+            document.querySelectorAll('.offer_status_control .b-activate').forEach(function(btn){
+                let reserved = parseFloat(btn.dataset.reserved);
+                btn.disabled = reserved > nau;
+            });
+        }
     </script>
 @endpush
 

@@ -15,6 +15,8 @@ use Prettus\Validator\Contracts\ValidatorInterface;
  * NS: App\Repositories
  *
  * @property User $model
+ *
+ * @method User setApproved(bool $approve)
  */
 class UserRepositoryEloquent extends BaseRepository implements UserRepository
 {
@@ -25,7 +27,8 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
     protected $fieldSearchable = [
         'phone' => 'like',
         'email' => 'like',
-        'roles.name'
+        'roles.name',
+        'updated_at',
     ];
 
     /**
