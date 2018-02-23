@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\ConvertPlacePicturesToPng;
 use App\Console\Commands\FixZeroReservedOffers;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
