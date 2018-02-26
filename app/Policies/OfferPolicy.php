@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\NauModels\Offer;
+use App\Models\Operator;
 use App\Models\Role;
 use App\Models\User;
 
@@ -26,7 +27,7 @@ class OfferPolicy extends Policy
      */
     public function show(User $user): bool
     {
-        return $user->hasAnyRole();
+        return $user->hasAnyRole() || $user instanceof Operator;
     }
 
     /**

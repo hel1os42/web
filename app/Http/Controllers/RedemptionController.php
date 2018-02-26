@@ -160,6 +160,23 @@ class RedemptionController extends Controller
     }
 
     /**
+     * @param RedemptionRequest $request
+     * @param OffersService     $offersService
+     *
+     * @return Response
+     */
+    public function showOfferByCode(RedemptionRequest $request, OffersService $offersService): Response
+    {
+        $code           = $request->code;
+        $activationCode = $offersService->getActivationCodeByCode($code);
+        $offer          = $activationCode->offer;
+
+        $this->authorize('offers.show', $offer);
+
+        return \response()->render('', $offer->toArray());
+    }
+
+    /**
      * @param string $offerId
      */
     private function validateOffer(string $offerId): void
