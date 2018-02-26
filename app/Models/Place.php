@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
  * @property string                       description
  * @property string                       about
  * @property string                       address
+ * @property string                       alias
  * @property float                        latitude
  * @property float                        longitude
  * @property int                          radius
@@ -67,6 +68,7 @@ class Place extends Model
             'description'       => 'string',
             'about'             => 'string',
             'address'           => 'string',
+            'alias'             => 'string',
             'latitude'          => 'double',
             'longitude'         => 'double',
             'radius'            => 'integer',
@@ -84,6 +86,7 @@ class Place extends Model
             'description',
             'about',
             'address',
+            'alias',
             'latitude',
             'longitude',
             'radius'
@@ -94,6 +97,7 @@ class Place extends Model
             'description' => null,
             'about'       => null,
             'address'     => null,
+            'alias'       => null,
             'latitude'    => 0,
             'longitude'   => 0,
             'radius'      => 1
@@ -145,6 +149,14 @@ class Place extends Model
     public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAlias(): ?string
+    {
+        return $this->alias;
     }
 
     /** @return float */
@@ -308,6 +320,18 @@ class Place extends Model
     public function setAddress(string $address): Place
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @param string $alias
+     *
+     * @return Place
+     */
+    public function setAlias(string $alias): Place
+    {
+        $this->alias = $alias;
 
         return $this;
     }

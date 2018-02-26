@@ -23,6 +23,10 @@
         <div class="col-xs-9"><p>{{ $address ?: '-' }}</p></div>
     </div>
     <div class="row">
+        <div class="col-xs-3"><p><strong>Alias:</strong></p></div>
+        <div class="col-xs-9"><p>{{ $alias ?: '-' }}</p></div>
+    </div>
+    <div class="row">
         <div class="col-xs-3"><p><strong>Place category:</strong></div>
         <div class="col-xs-9"><p id="placeInfoCategory"></p></div>
     </div>
