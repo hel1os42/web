@@ -45,9 +45,9 @@ abstract class BaseOtpAuth
     /**
      * @param string $phoneNumber
      */
-    public final function generateCode(string $phoneNumber): void
+    final public function generateCode(string $phoneNumber)
     {
-        if($this->specialNumberCheck($phoneNumber)) {
+        if ($this->specialNumberCheck($phoneNumber)) {
             return;
         }
         $this->codeGenerate($phoneNumber);
@@ -56,7 +56,7 @@ abstract class BaseOtpAuth
     /**
      * @param string $phoneNumber
      */
-    abstract protected function codeGenerate(string $phoneNumber): void;
+    abstract protected function codeGenerate(string $phoneNumber);
 
     /**
      * @param string     $method
@@ -190,8 +190,10 @@ abstract class BaseOtpAuth
     {
         if ($phoneNumber === config('otp.special_number')) {
             $this->cacheOtpCode($phoneNumber, substr($phoneNumber, -6));
+
             return true;
         }
+
         return false;
     }
 }
