@@ -17,7 +17,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Name *</span>
-                                    <input name="name" value="" class="formData">
+                                    <input name="name" value="" class="formData" data-max-length="30">
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place name.</p>
@@ -27,7 +27,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Description</span>
-                                    <textarea name="description" class="formData"></textarea>
+                                    <textarea name="description" class="formData" data-max-length="120"></textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place description.</p>
@@ -37,7 +37,7 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">About</span>
-                                    <textarea name="about" class="formData"></textarea>
+                                    <textarea name="about" class="formData" data-max-length="1024"></textarea>
                                 </label>
                             </p>
                             <p class="hint">Please, enter the information About Place.</p>
@@ -93,13 +93,29 @@
                         </div>
 
                         <div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">GPS</span>
-                                    <input name="gps_crd" value="">
-                                </label>
+                            <div class="row gps-crd-box">
+                                <div class="col-xs-10">
+                                    <p class="control-text">
+                                        <label>
+                                            <span class="input-label">Address or GPS</span>
+                                            <input name="gps_crd" value="">
+                                        </label>
+                                    </p>
+                                </div>
+                                <div class="col-xs-2">
+                                    &nbsp;<br>
+                                    <span class="btn" id="btn_gps_crd">Go</span>
+                                </div>
+                            </div>
+                            <p class="hint">Invalid address or GPS coordinates: object not found.</p>
+                            <p class="address-examples">
+                                Examples of address:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>6931 Atlantic LA CA</em><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Australia, Melbourne, Peate Ave, 16</em><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Львів, Кобиляньської 16</em><br><br>
+                                Example of GPS coordinates:<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>49.4213687,26.9971402</em>
                             </p>
-                            <p class="hint">Invalid GPS-format. Example: 49.4274121,27.0085986</p>
                         </div>
 
                         <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Place"></p>
@@ -115,12 +131,19 @@
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
+    <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
+
+        let redirectUrl;
 
         /* offer category and sub-categories */
 
@@ -147,8 +170,60 @@
             formSelectCategory.innerHTML = response;
             formSelectCategory.dispatchEvent(new Event('change'));
         });
-        
-		function createRetailType(request) {
+
+        /* you can not input more than N characters in this fields */
+        setFieldLimit('[data-max-length]');
+
+        /* specialities accordion */
+        $('#place_specialties').on('click', '.sgroup-title', function(){
+           $(this).toggleClass('active').next().slideToggle();
+        }).on('change', 'input', function(){
+            let uuid = $(this).parents('.specialities-group').attr('data-id');
+            if ($(this).is('[type="checkbox"]')) {
+                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
+                else delete spetialitiesCache[uuid][$(this).val()];
+            } else {
+                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
+                    delete spetialitiesCache[uuid][$(this).val()];
+                }).end().filter(':checked').each(function(){
+                    spetialitiesCache[uuid][$(this).val()] = true;
+                });
+            }
+        });
+
+        /* picture and cover */
+        imageUploader('#logo_image_box .image-box');
+        imageUploader('#cover_image_box .image-box');
+        let $logo_image_box = $('#logo_image_box');
+        let $cover_image_box = $('#cover_image_box');
+        $logo_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Logo changed');
+        });
+        $logo_image_box.find('.image').on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+        });
+        $cover_image_box.find('[type="file"]').on('change', function(){
+            $(this).attr('data-changed', 'true');
+            console.log('Cover changed');
+            $cover_image_box.find('.image').attr('data-cropratio', '3');
+        });
+        $cover_image_box.find('.image').on('load', function(){
+            $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
+        });
+
+        /* map */
+        mapInit({
+            id: 'mapid',
+            done: mapDone,
+            move: mapMove
+        });
+
+        function createRetailType(request) {
             let html = '';
             request.retail_types.forEach(function(e){
                 html += '<p><label><input type="checkbox" name="retail_types[]" value="' + e.id + '"> ' + e.name + '</label></p>';
@@ -161,7 +236,7 @@
                 });
             });
         }
-        
+
         function createSpecialties(request) {
             let html = '';
             formBoxRetailType.querySelectorAll('input').forEach(function(checkbox){
@@ -192,68 +267,22 @@
             formBoxTags.innerHTML = html ? '<p>Please, select tags:</p><p>' + html + '</p>' : '<p>There is no one tag.</p>';
         }
 
-
-
-        /* specialities accordion */
-        $('#place_specialties').on('click', '.sgroup-title', function(){
-           $(this).toggleClass('active').next().slideToggle();
-        }).on('change', 'input', function(){
-            let uuid = $(this).parents('.specialities-group').attr('data-id');
-            if ($(this).is('[type="checkbox"]')) {
-                if ($(this).prop('checked')) spetialitiesCache[uuid][$(this).val()] = true;
-                else delete spetialitiesCache[uuid][$(this).val()];
-            } else {
-                $(`[name="${$(this).attr('name')}"]`).not(':checked').each(function(){
-                    delete spetialitiesCache[uuid][$(this).val()];
-                }).end().filter(':checked').each(function(){
-                    spetialitiesCache[uuid][$(this).val()] = true;
-                });
-            }
-        });;
-
-        
-        
-        /* map */
-
-        mapInit({
-            id: 'mapid',
-            done: mapDone,
-            move: mapMove
-        });
-
         function mapDone(map){
             mapMove(map);
-            gpsField(map, document.querySelector('[name="gps_crd"]'), mapMove);
+            /* set map position by GPS or Address */
+            setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
             let values = mapValues(map);
             $('#mapradius').children('span').text(values.radius / 1000);
-            $latitude = $('[name="latitude"]');
-            $longitude = $('[name="longitude"]');
+            let $latitude = $('[name="latitude"]');
+            let $longitude = $('[name="longitude"]');
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
             $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
         }
-
-
-
-        /* picture and cover */
-
-        let $place_picture_box = $('#place_picture_box');
-        let $place_cover_box = $('#place_cover_box');
-        $place_picture_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Picture changed');
-        });
-        $place_cover_box.find('[type="file"]').on('change', function(){
-            $(this).attr('data-changed', 'true');
-            console.log('Cover changed');
-        });
-
-
-
 
         /* form submit */
 
@@ -298,6 +327,8 @@
 
             console.dir(formData);
 
+            waitPopup(false);
+
             $.ajax({
                 type: "POST",
                 url: $('#createPlaceForm').attr('action'),
@@ -305,14 +336,17 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (201 === xhr.status){
+                        redirectUrl = xhr.getResponseHeader('Location');
                         sendImages();
                     } else {
-                        alert("Something went wrong. Try again, please.");
+                        $('#waitError').text('Status: ' + xhr.status);
+                        console.log("Something went wrong. Try again, please.");
                         console.log(xhr.status);
                     }
                 },
                 error: function (resp) {
-                    alert("Something went wrong. Try again, please.");
+                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                    console.log("Something went wrong. Try again, please.");
                     console.log(resp.status);
                 }
             });
@@ -335,25 +369,32 @@
 
         function sendImages(){
             let n = { count: 0 };
-            let isNewPicture = $place_picture_box.find('[type="file"]').attr('data-changed');
-            let isNewCover = $place_cover_box.find('[type="file"]').attr('data-changed');
-            if (isNewPicture) n.count++;
+            let $logo = $logo_image_box.find('[type="file"]');
+            let $cover = $cover_image_box.find('[type="file"]');
+            let isNewLogo = $logo.attr('data-changed') && $logo.val();
+            let isNewCover = $cover.attr('data-changed') && $cover.val();
+            if (isNewLogo) n.count++;
             if (isNewCover) n.count++;
             redirectPage(n);
-            if (isNewPicture) sendImage(n, $place_picture_box, "{{ route('place.picture.store') }}", redirectPage);
-            if (isNewCover) sendImage(n, $place_cover_box, "{{ route('place.cover.store') }}", redirectPage);
+            if (isNewLogo) sendImage(n, $logo_image_box, "{{ route('place.picture.store') }}", redirectPage);
+            if (isNewCover) sendImage(n, $cover_image_box, "{{ route('place.cover.store') }}", redirectPage);
         }
 
         function redirectPage(n){
             if (n.count === 0) {
-                window.location.replace("{{ route('profile') }}");
+                window.location.replace(redirectUrl);
             }
         }
 
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
             formData.append('_token', $box.find('[name="_token"]').val());
-            formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
+            if ($box.attr('id') === 'logo_image_box') {
+                formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
+            } else {
+                let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+                formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'cover.jpg');
+            }
             for(let i of formData) { console.log(i); }
             $.ajax({
                 url: URI,
@@ -366,10 +407,52 @@
                     n.count -= 1;
                     callback(n);
                 },
-                error: function () {
+                error: function (resp) {
+                    $('#waitError').text(resp.status);
                     console.log('Error:', URI);
                 }
             });
+        }
+
+        function setMapPositionByGpsOrAddress(map){
+            /* TODO: need refactoring, this code in 4-th pages */
+            let $country = $('[name="country"]');
+            let $city = $('[name="city"]');
+            let $gps_crd = $('[name="gps_crd"]');
+            setCountryCity();
+            $country.add($city).on('blur', function(){ setCountryCity(); });
+            $('#btn_gps_crd').on('click', function(){
+                let address = $gps_crd.val().trim();
+                if (address.length < 5) return false;
+                address = tryConvertToGPS(address);
+                if (address.lat) {
+                    map.panTo(address);
+                    mapMove(map);
+                } else {
+                    getGpsByAddress(address, function(response){
+                        if (response.results.length) {
+                            map.panTo(response.results[0].geometry.location);
+                            mapMove(map);
+                        } else {
+                            $gps_crd.parents('.gps-crd-box').addClass('invalid');
+                        }
+                    });
+                }
+            });
+            function setCountryCity(){
+                let country = $country.val();
+                let city = $city.val();
+                let str = (country ? country + ', ' : '') + (city ? city + ', ' : '');
+                $gps_crd.val(str);
+            }
+            function tryConvertToGPS(str){
+                let arr = str.split(/,\s*/);
+                if (arr.length !== 2) return str;
+                let lat = parseFloat(arr[0]);
+                let lng = parseFloat(arr[1]);
+                if (isNaN(lat) || isNaN(lng)) return str;
+                return {lat, lng};
+            }
         }
 
     </script>

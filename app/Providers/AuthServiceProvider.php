@@ -26,8 +26,16 @@ class AuthServiceProvider extends ServiceProvider
     private $abilities = [
         'activation_codes.show' => 'ActivationCodePolicy@show',
 
-        'categories.list' => 'CategoryPolicy@index',
-        'categories.show' => 'CategoryPolicy@show',
+        'categories.list'          => 'CategoryPolicy@index',
+        'categories.show'          => 'CategoryPolicy@show',
+        'categories.create'        => 'CategoryPolicy@create',
+        'categories.update'        => 'CategoryPolicy@update',
+        'categories.picture.store' => 'CategoryPolicy@pictureStore',
+
+        'tags.list'   => 'TagPolicy@index',
+        'tags.show'   => 'TagPolicy@show',
+        'tags.create' => 'TagPolicy@create',
+        'tags.update' => 'TagPolicy@update',
 
         'offers.list' => 'OfferPolicy@index',
         'offers.show' => 'OfferPolicy@show',

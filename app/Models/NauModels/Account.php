@@ -25,6 +25,7 @@ use Illuminate\Support\Collection;
  *
  * @method static static|Builder byAddress(string $address)
  * @method static static|Builder byOwner(User $owner)
+ * @method static static|Builder byOwners(array $ownerIds)
  */
 class Account extends AbstractNauModel
 {
@@ -134,5 +135,17 @@ class Account extends AbstractNauModel
     public function scopeByOwner(Builder $builder, User $owner): Builder
     {
         return $builder->where('owner_id', $owner->id);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param array   $ownerIds
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOwners(Builder $builder, array $ownerIds): Builder
+    {
+        return $builder->whereIn('owner_id', $ownerIds);
     }
 }

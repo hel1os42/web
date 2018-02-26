@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @package App\Models
  *
  * @property Category category
+ * @property int      id
  */
 class Tag extends Model
 {
@@ -29,13 +30,15 @@ class Tag extends Model
         $this->primaryKey = 'id';
 
         $this->casts = [
-            'name'        => 'string',
-            'slug'        => 'string',
+            'id'   => 'integer',
+            'name' => 'string',
+            'slug' => 'string',
         ];
 
-        $this->hidden = [
-            'id',
-            'category_id',
+        $this->fillable = [
+            'name',
+            'slug',
+            'category_id'
         ];
 
         $this->timestamps = false;
@@ -49,5 +52,13 @@ class Tag extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 }

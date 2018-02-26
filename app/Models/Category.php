@@ -21,9 +21,11 @@ use Illuminate\Support\Collection;
  * @property Carbon      updated_at
  * @property Category    parent
  * @property RetailTypes retailTypes
+ * @property string      picture_url
  *
  * @method static Category[]|Collection|Builder withParent(Category $parent)
  * @method static Category[]|Collection|Builder withNoParent()
+ * @method static Category[]|Collection|Builder ordered()
  */
 class Category extends Model
 {
@@ -58,6 +60,12 @@ class Category extends Model
 
         $this->appends = [
             'children_count',
+            'picture_url',
+        ];
+
+        $this->fillable = [
+            'name',
+            'parent_id'
         ];
 
         parent::__construct($attributes);
@@ -103,9 +111,22 @@ class Category extends Model
         return $this->children()->count();
     }
 
+    /**
+     * @return string
+     */
+    public function getPictureUrlAttribute(): string
+    {
+        return route('categories.picture.show', $this->getId());
+    }
+
     public function scopeWithNoParent(Builder $builder)
     {
         return $builder->whereNull('parent_id');
+    }
+
+    public function scopeOrdered(Builder $query)
+    {
+        return $query->orderBy('name', 'asc');
     }
 
     /**
