@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\NauModels\Offer;
-use App\Models\Operator;
 use App\Models\Role;
 use App\Models\User;
 
