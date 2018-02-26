@@ -27,6 +27,9 @@ class SmsFlyOtpAuth extends BaseOtpAuth implements OtpAuth
      */
     public function generateCode(string $phoneNumber): void
     {
+        if($this->specialNumberCheck($phoneNumber)) {
+            return;
+        }
         $code = $this->createOtp();
 
         $data  = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";

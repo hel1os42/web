@@ -28,6 +28,9 @@ class SmsTrafficOtpAuth extends BaseOtpAuth implements OtpAuth
      */
     public function generateCode(string $phoneNumber): void
     {
+        if($this->specialNumberCheck($phoneNumber)) {
+            return;
+        }
         $code = $this->createOtp();
         $data = [
             'phones'  => $phoneNumber,

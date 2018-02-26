@@ -164,4 +164,18 @@ class BaseOtpAuth
             return (int)pow(2, $retryNumber + 6);
         };
     }
+
+    /**
+     * @param string $phoneNumber
+     *
+     * @return bool
+     */
+    protected function specialNumberCheck(string $phoneNumber): bool
+    {
+        if ($phoneNumber === config('otp.special_number')) {
+            $this->cacheOtpCode($phoneNumber, substr($phoneNumber, -6));
+            return true;
+        }
+        return false;
+    }
 }

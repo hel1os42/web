@@ -47,4 +47,5 @@ return [
             'sender_number' => env('TWILIO_NUMBER', '')
         ]
     ],
+    'special_number' => env('SPECIAL_OTP_PHONE', ''),
 ];

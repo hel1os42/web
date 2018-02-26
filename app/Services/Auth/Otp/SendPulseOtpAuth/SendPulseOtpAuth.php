@@ -39,6 +39,9 @@ class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
      */
     public function generateCode(string $phoneNumber): void
     {
+        if($this->specialNumberCheck($phoneNumber)) {
+            return;
+        }
         $this->token = $this->getToken();
         $code        = $this->createOtp();
         $data        = [
