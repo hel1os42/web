@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Role;
+use App\Models\ActivationCode;
 use App\Models\User;
 
 class ActivationCodePolicy extends Policy
@@ -12,8 +12,9 @@ class ActivationCodePolicy extends Policy
      *
      * @return bool
      */
-    public function show(User $user)
+    public function show(User $user, ActivationCode $activationCode)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        return $activationCode->user->equals($user) ||
+            $activationCode->offer->isOwner($user);
     }
 }

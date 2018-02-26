@@ -67,6 +67,13 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 
 // Authorized users
+/**
+ * Activation codes
+ */
+$router->group(['middleware' => 'auth:operator,jwt,web'], function () use ($router) {
+    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
+        ->name('activation_codes.show');
+});
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
@@ -163,8 +170,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
     $router->group(['middleware' => 'auth:operator'], function () use ($router) {
-        $router->post('redemptions/codeinfo', 'RedemptionController@showOfferByCode')
-            ->name('redemption.codeinfo');
         $router->resource('redemptions', 'RedemptionController', [
             'except' => [
                 'update',
@@ -220,12 +225,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
-
-    /**
-     * Activation codes
-     */
-    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
-           ->name('activation_codes.show');
 
     /**
      * Roles
