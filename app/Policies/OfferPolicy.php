@@ -21,13 +21,13 @@ class OfferPolicy extends Policy
     }
 
     /**
-     * @param User $user
+     * @param User $user| Operator $user
      *
      * @return bool
      */
-    public function show(User $user): bool
+    public function show($user): bool
     {
-        return $user->hasAnyRole() || $user instanceof Operator;
+        return $user instanceof Operator || $user->hasAnyRole();
     }
 
     /**

@@ -163,10 +163,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
     $router->group(['middleware' => 'auth:operator'], function () use ($router) {
+        $router->post('redemptions/codeinfo', 'RedemptionController@showOfferByCode')
+            ->name('redemption.codeinfo');
         $router->resource('redemptions', 'RedemptionController', [
             'except' => [
                 'update',
-                'destroy'
+                'destroy',
             ]
         ]);
     });
