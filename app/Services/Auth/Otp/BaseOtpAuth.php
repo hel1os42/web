@@ -11,7 +11,7 @@ use GuzzleHttp\Psr7\Request as Psr7Request;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use GuzzleHttp\Exception\RequestException;
 
-class BaseOtpAuth
+abstract class BaseOtpAuth
 {
     use OtpAuthTrait;
     /**
@@ -41,6 +41,22 @@ class BaseOtpAuth
             ]);
         }
     }
+
+    /**
+     * @param string $phoneNumber
+     */
+    public final function generateCode(string $phoneNumber): void
+    {
+        if($this->specialNumberCheck($phoneNumber)) {
+            return;
+        }
+        $this->codeGenerate($phoneNumber);
+    }
+
+    /**
+     * @param string $phoneNumber
+     */
+    abstract protected function codeGenerate(string $phoneNumber): void;
 
     /**
      * @param string     $method

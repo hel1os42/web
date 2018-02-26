@@ -37,11 +37,8 @@ class SendPulseOtpAuth extends BaseOtpAuth implements OtpAuth
      * @throws \RuntimeException
      * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
      */
-    public function generateCode(string $phoneNumber): void
+    public function codeGenerate(string $phoneNumber): void
     {
-        if($this->specialNumberCheck($phoneNumber)) {
-            return;
-        }
         $this->token = $this->getToken();
         $code        = $this->createOtp();
         $data        = [
