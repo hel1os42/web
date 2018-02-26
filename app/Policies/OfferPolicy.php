@@ -27,7 +27,7 @@ class OfferPolicy extends Policy
      */
     public function show(User $user): bool
     {
-        $user->hasAnyRole();
+        return $user->hasAnyRole();
     }
 
     /**
