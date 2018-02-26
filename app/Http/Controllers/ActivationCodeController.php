@@ -25,10 +25,8 @@ class ActivationCodeController extends Controller
 
     public function show($code)
     {
-        $user = Auth::user() instanceof Operator ? Auth::user()->place->user : Auth::user();
-
         $activationCode = $this->activationCodeRepository
-            ->findByCodeAndUser($code, $user);
+            ->findByCodeAndNotRedeemed($code);
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());
