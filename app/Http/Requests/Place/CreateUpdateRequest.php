@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string description
  * @property string about
  * @property string address
+ * @property string alias
  * @property float  latitude
  * @property float  longitude
  * @property int    radius
@@ -49,9 +50,11 @@ class CreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $required = '';
+        $required    = '';
+        $uniqueAlias = sprintf('|unique:places,alias,%s', $this->segment(2));
         if ($this->isMethod('POST') || $this->isMethod('PUT')) {
-            $required = 'required|';
+            $required    = 'required|';
+            $uniqueAlias = '|unique:places,alias';
         }
 
         return [
@@ -59,6 +62,7 @@ class CreateUpdateRequest extends FormRequest
             'description'                => 'nullable|string',
             'about'                      => 'nullable|string',
             'address'                    => 'nullable|string|max:255',
+            'alias'                      => 'nullable|min:3|max:60' . $uniqueAlias,
             'category'                   => sprintf(
                 $required . 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
