@@ -74,6 +74,6 @@ trait OtpAuthTrait
 
     protected function getOtpMessage($code)
     {
-        return 'NAU verification code: ' . $code;
+        return 'NAU code: ' . $code;
     }
 }
