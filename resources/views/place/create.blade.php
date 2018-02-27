@@ -54,6 +54,16 @@
                         </div>
 
                         <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Alias</span>
+                                    <input name="alias" value="" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place Alias.</p>
+                        </div>
+
+                        <div class="control-box">
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
@@ -199,9 +209,14 @@
         $logo_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Logo changed');
+            $logo_image_box.find('.image').attr('data-cropratio', '1');
         });
         $logo_image_box.find('.image').on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
         });
         $cover_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');

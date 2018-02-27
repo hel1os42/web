@@ -29,6 +29,7 @@ class SendNauTest extends TestCase
         $feeTransaction->amount                 = $faker->randomFloat();
         $feeTransaction->status                 = 'PAID';
         $feeTransaction->created_at             = Carbon::parse($faker->time())->format('Y-m-d\TH:i:sO');
+        $feeTransaction->updated_at             = Carbon::parse($faker->time())->format('Y-m-d\TH:i:sO');
         $feeTransaction->type                   = 'INCOMING';
         $feeTransaction->feeTransactions        = [];
 
@@ -39,6 +40,7 @@ class SendNauTest extends TestCase
             'amount'               => $faker->randomFloat(),
             'status'               => 'PAID',
             'createdAt'            => Carbon::parse($faker->time()),
+            'updatedAt'            => Carbon::parse($faker->time()),
             'type'                 => 'P2P',
             'feeTransactions'      => [
                 $feeTransaction
@@ -63,6 +65,7 @@ class SendNauTest extends TestCase
             'amount'                 => $sendNau['amount'],
             'status'                 => $sendNau['status'],
             'created_at'             => $sendNau['createdAt']->format('Y-m-d\TH:i:sO'),
+            'updated_at'             => $sendNau['updatedAt']->format('Y-m-d\TH:i:sO'),
             'type'                   => $sendNau['type'],
             'feeTransactions'        => $sendNau['feeTransactions']
         ]));
@@ -78,6 +81,7 @@ class SendNauTest extends TestCase
             $this->assertEquals($sendNau['amount'], $response->getAmount(), 'SendNau: amount');
             $this->assertEquals($sendNau['status'], $response->getStatus(), 'SendNau: status');
             $this->assertEquals($sendNau['createdAt'], $response->getCreatedAt(), 'SendNau: created_at');
+            $this->assertEquals($sendNau['updatedAt'], $response->getUpdatedAt(), 'SendNau: updated_at');
             $this->assertEquals($sendNau['type'], $response->getType(), 'SendNau: type');
             $this->assertEquals($sendNau['feeTransactions'], $response->getFeeTransactions(), 'SendNau: fee_transactions');
             $eventCalled++;

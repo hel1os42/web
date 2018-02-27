@@ -2,12 +2,17 @@
 
 namespace App\Providers;
 
+use App\Repositories\OperatorRepository;
+use App\Repositories\PlaceRepository;
 use App\Services\Auth\Guards\JwtGuard;
+use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
+use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -91,7 +96,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate)
+    public function boot(Gate $gate, PlaceRepository $placeRepository, OperatorRepository $operatorRepository, Hasher $hasher)
     {
         $this->registerPolicies();
 
@@ -102,6 +107,7 @@ class AuthServiceProvider extends ServiceProvider
         /** @var AuthManager $authManager */
         $authManager = $this->app->make('auth');
 
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->provider('otp-eloquent', function ($app, array $config) {
             return new OtpEloquentUserProvider($app['hash'], $config['model']);
         });
@@ -114,6 +120,16 @@ class AuthServiceProvider extends ServiceProvider
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->extend('otp', function ($app, $name, array $config) use ($authManager) {
             return new OtpGuard($authManager->createUserProvider($config['provider']));
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository, $hasher) {
+            return new OperatorUserProvider($placeRepository, $operatorRepository, $hasher);
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->extend('operator', function ($app, $name, array $config) use ($authManager, $operatorRepository) {
+            return new OperatorGuard($authManager->createUserProvider($config['provider']), $operatorRepository);
         });
     }
 }
