@@ -63,6 +63,9 @@
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
 
+        /* offer description ??? */
+        descriptionMore();
+
         /* picture */
         imageUploader('#offer_image_box .image-box');
         let $offer_image_box = $('#offer_image_box');
@@ -472,6 +475,47 @@
                 let lng = parseFloat(arr[1]);
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
+            }
+        }
+
+        function descriptionMore(){
+            let descr = document.querySelector('textarea[name="description"]');
+            let btnAdd = document.getElementById('btn_add_more');
+            let btnRemove = document.getElementById('btn_remove_more');
+            let btnEdit = document.getElementById('btn_edit_more');
+
+            descr.addEventListener('keyup', descrChange);
+            descr.addEventListener('paste', descrChange);
+            btnAdd.addEventListener('click', function(){
+                let a = descr.selectionStart;
+                let b = descr.selectionEnd;
+                if (checkMore(descr)) return false;
+                let v = descr.value;
+                descr.value = v.substring(0, a) + '{more}' + v.substring(a, b) + '{/more}' + v.substring(b);
+                descr.focus();
+                a += 6;
+                descr.setSelectionRange(a, a);
+                descrChange();
+            });
+            btnRemove.addEventListener('click', function(){
+
+            });
+
+            function checkMore(textarea){
+                let start = textarea.value.indexOf('{more}');
+                let end = textarea.value.indexOf('{/more}');
+                return (start > -1) && (end > -1) && (start < end);
+            }
+            function descrChange(){
+                if (checkMore(descr)){
+                    btnAdd.classList.remove('able');
+                    btnRemove.classList.add('able');
+                    btnEdit.classList.add('able');
+                } else {
+                    btnAdd.classList.add('able');
+                    btnRemove.classList.remove('able');
+                    btnEdit.classList.remove('able');
+                }
             }
         }
 

@@ -140,7 +140,7 @@ function setFieldLimit(selector){
         let val = getValue(this);
         let len = parseInt(this.dataset.maxLength);
         if (val.length > len) this.value = val.substr(0, len);
-        this.parentElement.querySelector('.character-counter').innerText = val.length + ' / ' + len;
+        this.parentElement.querySelector('.character-counter').innerText = this.value.length + ' / ' + len;
     }
     function createSpan(input){
         let span = document.createElement('span');

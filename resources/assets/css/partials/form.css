@@ -328,10 +328,6 @@
 	font-weight: normal;
 }
 
-
-
-
-
 .map-wrap {
     position: relative;
 }
@@ -487,4 +483,14 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: normal;
+}
+
+.more-buttons {
+    min-height: 26px;
+}
+.more-buttons .btn {
+    display: none;
+}
+.more-buttons .btn.able {
+    display: inline-block;
 }
