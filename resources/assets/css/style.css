@@ -296,6 +296,23 @@ footer p {
 	display: block;
 }
 
+.offer-edit-button-wrapper {
+    display: inline-block;
+}
+.offer-edit-button-wrapper .offer-edit-no-button {
+    width: 192px;
+}
+.offer-edit-button-wrapper .offer-edit-button,
+.offer-edit-button-wrapper .offer-edit-no-button{
+    display: none;
+}
+.offer-edit-button-wrapper.oeb-deactive .offer-edit-button {
+    display: inline-block;
+}
+.offer-edit-button-wrapper.oeb-active .offer-edit-no-button {
+    display: inline-block;
+}
+
 .user-approve-controls form {
     display: inline-block;
 }
@@ -338,9 +355,4 @@ footer p {
 .table-users tr:hover {
     background: #f6f6f6;
 }
-
-
-
-
-
 
