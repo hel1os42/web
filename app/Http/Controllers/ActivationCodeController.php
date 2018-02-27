@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Operator;
 use App\Repositories\ActivationCodeRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class ActivationCodeController
