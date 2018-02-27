@@ -43,28 +43,11 @@
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-rose btn-wd btn-md">Delete</button></form>
                                 </td>
-                                <td>
-                                    <form method="get" action="{{ route('advert.operators.edit', $operator['id']) }}">
-                                        <button type="submit" class="btn btn-rose btn-wd btn-md">Edit</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    @if($operator['is_active'] === false)
-                                        <form action="{{route('advert.operators.changeActive', $operator['id'])}}" method="post" style="">
-                                            <input type="hidden" name="_method" value="PUT">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="is_active" value="1">
-                                            <button type="submit" class="btn btn-wd btn-md">activate</button>
+                                    <td>
+                                        <form method="get" action="{{ route('advert.operators.edit', $operator['id']) }}">
+                                            <button type="submit" class="btn btn-rose btn-wd btn-md">Edit</button>
                                         </form>
-                                    @else
-                                        <form action="{{route('advert.operators.changeActive', $operator['id'])}}" method="post" style="">
-                                            <input type="hidden" name="_method" value="PUT">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="is_active" value="0">
-                                            <button type="submit" class="btn btn-wd btn-md">deactivate</button>
-                                        </form>
-                                    @endif
-                                </td>
+                                    </td>
                             </tr>
                             @endforeach
                         </tbody>
