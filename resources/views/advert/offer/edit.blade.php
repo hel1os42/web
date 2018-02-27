@@ -430,6 +430,14 @@
                 }
             }
 
+            /* Offer description */
+            $control = $('[name="description"]');
+            val = $control.val().length;
+            if (val < 2) {
+                $control.focus().parents('.control-text').addClass('invalid');
+                res = false;
+            }
+
             /* Offer name */
             $control = $('[name="label"]');
             val = $control.val().length;

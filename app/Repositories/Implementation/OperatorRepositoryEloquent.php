@@ -105,4 +105,25 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
     {
         return $this->model->where(['place_uuid' => $place->getId()])->get();
     }
+
+
+    /**
+     * @param Place $place
+     * @param string $login
+     *
+     * @return Operator|null
+     */
+    public function findByPlaceAndLogin(Place $place, string $login): ?Operator
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->where(['place_uuid' => $place->getId()])
+            ->where(['login' => $login])
+            ->first();
+
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
 }
