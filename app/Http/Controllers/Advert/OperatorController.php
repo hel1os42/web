@@ -10,6 +10,7 @@ use App\Repositories\PlaceRepository;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Http\Requests\OperatorChangeActiveRequest;
 
 /**
  * Class OperatorController
@@ -185,5 +186,29 @@ class OperatorController extends Controller
 
         return \response()->render('advert.operator.show', $operator, Response::HTTP_CREATED,
             route('advert.operators.show', $operator));
+    }
+
+    /**
+     * @param OperatorChangeActiveRequest $request
+     * @param string                      $operatorUuid
+     *
+     * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function changeActive(OperatorChangeActiveRequest $request, string $operatorUuid): Response
+    {
+        $operator = $this->operatorRepository->find($operatorUuid);
+        $place    = $this->placeRepository->findByUser($this->user());
+
+        $this->authorize('operators.update', $operator);
+
+        $attributes = $request->all();
+
+        $this->operatorRepository->update($attributes, $operator->getId());
+
+        $operators      = $this->operatorRepository->findByPlace($place);
+        $result['data'] = $operators->fresh()->toArray();
+
+        return \response()->render('advert.operator.index', $result);
     }
 }
