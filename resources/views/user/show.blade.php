@@ -106,6 +106,7 @@
                                             <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
                                         <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                        
                                     </form>
                                 </div>
                             </div>
