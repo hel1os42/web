@@ -24,7 +24,7 @@ class ActivationCodeController extends Controller
     public function show($code)
     {
         $activationCode = $this->activationCodeRepository
-            ->findByCodeAndNotRedeemed($code);
+            ->findByCode($code);
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());
