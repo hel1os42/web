@@ -12,12 +12,12 @@ use Illuminate\Http\Request;
  * @property string name
  * @property string email
  * @property string phone
- * @property float latitude
- * @property float longitude
- * @property array role_ids
- * @property array parent_ids
- * @property array child_ids
- * @property bool  approve
+ * @property float  latitude
+ * @property float  longitude
+ * @property array  role_ids
+ * @property array  parent_ids
+ * @property array  child_ids
+ * @property bool   approve
  *
  */
 class UserUpdateRequest extends FormRequest
@@ -40,29 +40,39 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'         => 'string|min:2',
-            'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
+            'name'                 => 'string|min:2',
+            'email'                => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 request()->id),
-            'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+            'phone'                => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 request()->id),
-            'latitude'     => 'nullable|numeric|between:-90,90',
-            'longitude'    => 'nullable|numeric|between:-180,180',
-            'role_ids'     => 'array',
-            'role_ids.*'   => 'string|exists:roles,id',
-            'parent_ids'   => 'array',
-            'parent_ids.*' => sprintf(
+            'latitude'             => 'nullable|numeric|between:-90,90',
+            'longitude'            => 'nullable|numeric|between:-180,180',
+            'role_ids'             => 'array',
+            'role_ids.*'           => 'string|exists:roles,id',
+            'parent_ids'           => 'array',
+            'parent_ids.*'         => sprintf(
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'child_ids'    => 'array',
-            'child_ids.*'  => sprintf(
+            'child_ids'            => 'array',
+            'child_ids.*'          => sprintf(
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'approve'      => 'boolean',
+            'approve'              => 'boolean',
+            'favorite_place_ids'   => 'array',
+            'favorite_place_ids.*' => sprintf(
+                'string|regex:%s|exists:places,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
+            'favorite_offer_ids'   => 'array',
+            'favorite_offer_ids.*' => sprintf(
+                'string|regex:%s|exists:pgsql_nau.offers,id',
+                \App\Helpers\Constants::UUID_REGEX
+            ),
         ];
 
-        if($this->isMethod(Request::METHOD_PATCH)){
+        if ($this->isMethod(Request::METHOD_PATCH)) {
             $rules['email'] = sprintf('nullable|email|max:255|unique:users,email,%s', request()->id);
             $rules['phone'] = sprintf('nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s', request()->id);
         }

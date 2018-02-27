@@ -118,4 +118,20 @@ trait RelationsTrait
     {
         return $this->belongsToMany(User::class, 'users_parents', 'parent_id', 'user_id');
     }
+
+    /**
+     * @return Relations\BelongsToMany
+     */
+    public function favoritePlaces(): Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Place::class, 'users_favorite_places');
+    }
+
+    /**
+     * @return Relations\BelongsToMany
+     */
+    public function favoriteOffers(): Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Offer::class, 'users_favorite_offers');
+    }
 }
