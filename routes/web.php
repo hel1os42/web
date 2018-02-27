@@ -139,8 +139,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'update'  => 'advert.operators.update',
         ]
     ]);
-    $router->put('advert/operators/{opratorId}/isActive', 'Advert\OperatorController@changeActive')
-        ->name('advert.operators.changeActive');
 
     $router->put('advert/offers/{offerId}/status', 'Advert\OfferController@updateStatus')
            ->name('advert.offer.updateStatus');
