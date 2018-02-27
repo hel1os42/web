@@ -404,12 +404,15 @@
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
             formData.append('_token', $box.find('[name="_token"]').val());
-            if ($box.attr('id') === 'logo_image_box') {
+            /*if ($box.attr('id') === 'logo_image_box') {
                 formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
             } else {
                 let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'cover.jpg');
-            }
+            }*/
+            let imgName = $box.attr('id') === 'logo_image_box' ? 'logo' : 'cover';
+            let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+            formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), imgName + '.jpg');
             for(let i of formData) { console.log(i); }
             $.ajax({
                 url: URI,
