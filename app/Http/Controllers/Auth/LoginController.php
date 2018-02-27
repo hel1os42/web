@@ -8,23 +8,22 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class LoginController extends AuthController
 {
-    use ThrottlesLogins;
-
     /**
      * @return Response
      */
     public function getLogin()
     {
-        return \response()->render('auth.login', [
-            'email'    => null,
-            'password' => null
-        ]);
+        return $this->auth->user()
+            ? \response()->redirectTo(route('home'))
+            : \response()->render('auth.login', [
+                'email'    => null,
+                'password' => null
+            ]);
     }
 
     /**
@@ -41,8 +40,14 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
+        if ($this->hasTooManyLoginAttempts(\request())) {
+            return $this->sendLockoutResponse(\request());
+        }
+
         /** @var OtpAuth $otpAuth */
         $otpAuth->generateCode($user->phone);
+
+        $this->incrementLoginAttempts(\request());
 
         return \response()->render('auth.sms.success', ['phone_number' => $user->phone, 'code' => null],
             Response::HTTP_ACCEPTED, route('register'));
@@ -62,7 +67,7 @@ class LoginController extends AuthController
 
         return \request()->wantsJson()
             ? \response()->render('', '', Response::HTTP_NO_CONTENT)
-            : \redirect()->route('home');
+            : \redirect()->route('login');
     }
 
     /**
@@ -113,7 +118,7 @@ class LoginController extends AuthController
         }
 
         if (null === $user) {
-            return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
+            return $this->sendFailedLoginResponse($request);
         }
 
         $session->migrate(true);
@@ -146,7 +151,7 @@ class LoginController extends AuthController
     {
         $this->auth->guard('web')->login($user);
 
-        return \response()->redirectTo(\request()->get('redirect_to', route('profile')));
+        return \response()->redirectTo(route('home'));
     }
 
     /**

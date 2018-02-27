@@ -34,8 +34,31 @@ class CategoryRepositoryEloquent extends BaseRepository implements CategoryRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
+    /**
+     * @return Builder
+     */
     public function getWithNoParent(): Builder
     {
-        return $this->model->withNoParent();
+        $this->applyCriteria();
+
+        return $this->model->withNoParent()->ordered();
+    }
+
+    /**
+     * @param string $parentId
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function getSubcategory(string $parentId): Builder
+    {
+        $this->applyCriteria();
+
+        return $this->model->where('parent_id', $parentId);
+    }
+
+    public function ordered(): Builder
+    {
+        return $this->model->ordered();
     }
 }

@@ -21,9 +21,11 @@ use Illuminate\Support\Collection;
  * @property Carbon      updated_at
  * @property Category    parent
  * @property RetailTypes retailTypes
+ * @property string      picture_url
  *
  * @method static Category[]|Collection|Builder withParent(Category $parent)
  * @method static Category[]|Collection|Builder withNoParent()
+ * @method static Category[]|Collection|Builder ordered()
  */
 class Category extends Model
 {
@@ -58,7 +60,12 @@ class Category extends Model
 
         $this->appends = [
             'children_count',
-            'retail_types_count',
+            'picture_url',
+        ];
+
+        $this->fillable = [
+            'name',
+            'parent_id'
         ];
 
         parent::__construct($attributes);
@@ -105,16 +112,11 @@ class Category extends Model
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getRetailTypesCountAttribute(): int
+    public function getPictureUrlAttribute(): string
     {
-        return $this->retailTypes()->count();
-    }
-
-    public function scopeWithParent(Builder $builder, Category $parent)
-    {
-        return $builder->where('parent_id', $parent->getId());
+        return route('categories.picture.show', $this->getId());
     }
 
     public function scopeWithNoParent(Builder $builder)
@@ -122,11 +124,32 @@ class Category extends Model
         return $builder->whereNull('parent_id');
     }
 
+    public function scopeOrdered(Builder $query)
+    {
+        return $query->orderBy('name', 'asc');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function tags(): HasMany
+    {
+        return $this->hasMany(Tag::class, 'category_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function specialities(): HasMany
+    {
+        return $this->hasMany(Speciality::class, 'retail_type_id', 'id');
+    }
+
     /**
      * @return HasMany
      */
     public function retailTypes(): HasMany
     {
-        return $this->hasMany(RetailTypes::class, 'category_id', 'id');
+        return $this->children();
     }
 }

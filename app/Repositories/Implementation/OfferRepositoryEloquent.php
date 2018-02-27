@@ -6,7 +6,7 @@ use App\Models\Category;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Repositories\CategoryRepository;
-use App\Repositories\Criteria\MappableRequestCriteria;
+use App\Services\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
@@ -37,6 +37,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         'status'      => '=',
         'start_date'  => '<=',
         'finish_date' => '>=',
+        'updated_at',
     ];
 
     public function __construct(
@@ -84,6 +85,10 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         if (!$model->save()) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot save your offer.");
         }
+
+        $model->offerData->fill($attributes)
+                         ->setOwnerId($account->getOwner()->getId())
+                         ->save();
 
         $this->timeframeRepository->createManyForOffer($attributes['timeframes'], $model);
 
@@ -167,9 +172,11 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     /**
      * @param string $offerId
-     * @param int $accountId
+     * @param int    $accountId
      *
      * @return Offer|null
+     * @throws \InvalidArgumentException
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function findByIdAndAccountId(string $offerId, int $accountId): ?Offer
     {
@@ -218,6 +225,7 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, "Cannot update your offer.");
         }
 
+        $model->offerData->fill($attributes)->save();
         if (array_key_exists('timeframes', $attributes)) {
             $this->timeframeRepository->replaceManyForOffer($attributes['timeframes'], $model);
         }

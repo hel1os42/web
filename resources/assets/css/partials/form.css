@@ -173,6 +173,38 @@
 .nau-form .control-datetime input {
     cursor: pointer;
 }
+.nau-form .control-datetime {
+    position: relative;
+}
+.nau-form .control-datetime .cleartime-btn {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    width: 21px;
+    height: 21px;
+    border: 1px solid #3f4c5d;
+    border-radius: 50%;
+    opacity: 0.2;
+    cursor: pointer;
+}
+.nau-form .control-datetime .cleartime-btn:hover {
+    opacity: 1;
+}
+.nau-form .control-datetime .cleartime-btn:before,
+.nau-form .control-datetime .cleartime-btn:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -6px 0 0 -1px;
+    width: 1px;
+    height: 12px;
+    background: #3f4c5d;
+    transform: rotate(45deg);
+}
+.nau-form .control-datetime .cleartime-btn:after {
+    transform: rotate(-45deg);
+}
 .nau-form .tabs-controls {
     margin-top: 40px;
 }
@@ -246,9 +278,9 @@
     padding: 8px;
     max-width: 100%;
 }
-.nau-form .hint {
+.nau-form .hint, .nau-form label.error {
     display: none;
-    margin: -6px 0 0;
+    margin: -6px 0 16px;
     padding: 0;
     font-size: 85%;
     line-height: 1.4em;
@@ -264,39 +296,6 @@
 .nau-form .invalid select {
     border-color: #ff8a0e;
 }
-
-.nau-form select option:first-child {
-    font-style: italic;
-    color: #e0e0e0;
-}
-
-#formOverlay {
-    display: none;
-    position: fixed;
-    z-index: 9700;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(63, 76, 93, 0.4);
-}
-#formInformationModal {
-    position: fixed;
-    padding: 8px 30px 20px;
-    z-index: 9705;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background: #fff;
-    border: 4px solid #3f4c5d;
-    border-radius: 6px;
-}
-#formInformationModal img.loading {
-    width: 32px;
-    height: 32px;
-}
-
 
 .tokens-total {
     position: relative;
@@ -333,98 +332,6 @@
 
 
 
-/* tabs-step */
-.step-footer {
-    padding: 16px 0;
-}
-.tab-step-control:after,
-.step-footer:after {
-    content: "";
-    display: block;
-    clear: both;
-}
-.tab-step-control {
-    padding: 24px 0;
-    list-style: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-.tab-step-control li {
-    position: relative;
-    float: left;
-    width: 25%;
-    text-align: center;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 20px;
-}
-.tab-step-control li a {
-    text-decoration: none;
-    color: #3f4c5d;
-}
-.tab-step-control li em {
-    position: relative;
-    display: block;
-    margin: 0 auto 8px;
-    padding-top: 8px;
-    width: 40px;
-    height: 40px;
-    font-weight: bold;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1em;
-    background: #e0e0e0;
-    border-radius: 50%;
-}
-.tab-step-control li em:before {
-    content: "";
-    position: absolute;
-    left: -4px;
-    top: -4px;
-    right: -4px;
-    bottom: -4px;
-    border: 4px solid transparent;
-    border-radius: 50%;
-}
-.tab-step-control li.valid em:before {
-    border-color: rgba(65, 219, 0, 0.4);
-}
-.tab-step-control li.invalid em:before {
-    border-color: rgba(255, 95, 0, 0.4);
-}
-.tab-step-control li.active em {
-    color: #fff;
-    background: #ff5a00 linear-gradient(to right, #ff5a00, #ff8b10);
-}
-.tab-step-control li:not(:last-child):before {
-    content: "";
-    position: absolute;
-    left: 80%;
-    top: 18px;
-    width: 30%;
-    border-top: 1px solid #e0e0e0;
-}
-.tab-step-control li:not(:last-child):after {
-    content: "";
-    position: absolute;
-    left: 110%;
-    top: 15px;
-    width: 6px;
-    height: 6px;
-    border-top: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
-    transform: rotate(45deg);
-}
-.tab-step-content {
-    padding-left: 0;
-    padding-right: 0;
-    border: none;
-}
-
-
-
 .map-wrap {
     position: relative;
 }
@@ -434,8 +341,8 @@
 }
 #marker {
     position: absolute;
-    z-index: 111;
-    background: rgba(255, 139, 16, 0.2) url(/img/leaflet/pin.png) no-repeat 50% 50%;
+    z-index: 500;
+    background: rgba(255, 139, 16, 0.2);
     background-size: auto 35px;
     width: 190px;
     height: 190px;
@@ -444,4 +351,142 @@
     transform: translate(-50%, -50%);
     border-radius: 50%;
     pointer-events: none;
+}
+#marker:before {
+    content: "";
+    position: absolute;
+    z-index: 14;
+    left: 50%;
+    top: 50%;
+    margin: -36px 0 0 -15px;
+    width: 31px;
+    height: 39px;
+    background: url(/img/leaflet/pin.png) no-repeat center center;
+}
+#marker.without-radius {
+	background: transparent;
+}
+
+#place_retailtype label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+#place_specialties label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+#place_specialties .sgroup-title {
+    padding: 0 8px;
+    background: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#place_specialties .sgroup-title:before {
+    content: "";
+    position: relative;
+    display: inline-block;
+    top: -1px;
+    margin-right: 6px;
+    width: 1px;
+    height: 1px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #999;
+}
+#place_specialties .sgroup-title.active:before {
+    border-top: none;
+    border-bottom: 8px solid #999;
+}
+#place_specialties .sgroup-content {
+    display: none;
+}
+
+#place_tags {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#place_tags label {
+    display: inline-block;
+    margin-right: 8px;
+    font-weight: normal;
+    cursor: pointer;
+}
+#place_tags label input {
+    display: none;
+}
+#place_tags label span {
+    display: inline-block;
+    padding: 0 4px;
+    color: #bbb;
+    border-radius: 4px;
+}
+#place_tags label:hover span,
+#place_tags label input:checked + span {
+    color: #3f4c5d;
+}
+#place_tags label input:checked + span {
+    background: #ddd;
+}
+
+
+
+.days-info {
+    position: relative;
+}
+.days-info .select-working-days-wrap {
+    position: absolute;
+    left: 14px;
+    top: 140px;
+    border: 2px solid red;
+}
+.days-info .select-weekends-wrap {
+    position: absolute;
+    left: 14px;
+    top: 312px;
+    border: 2px solid red;
+}
+#selectWorkingDays,
+#selectWeekends {
+    position: absolute;
+    transform: translate(-50%, -50%) rotate(-90deg);
+}
+#selectWorkingDays {
+    width: 220px;
+}
+#selectWeekends {
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 80px;
+}
+
+.nau-form label .offer-type-control {
+    width: 144px;
+    text-align: center;
+}
+
+.notice-account-deactivate strong {
+    color: red;
+}
+
+.nau-form .address-examples,
+.nau-form .image-example {
+    color: #999;
+    font-size: 80%;
+}
+.nau-form #btn_gps_crd {
+    margin-bottom: 10px;
+}
+
+.character-counter {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    color: #bdbdbd;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: normal;
 }

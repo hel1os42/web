@@ -5,20 +5,17 @@ $router = app('router');
 
 $router->group(['middleware' => 'investor', 'prefix' => 'service'], function () use ($router) {
     $router->get('nau/{user}', 'Service\NauController@getAccount');
+    $router->post('nau/getAccounts', 'Service\NauController@getAccounts');
     $router->post('crosschange', 'Service\NauController@exchangeNau');
     $router->post('user/create', 'Service\NauController@createUser');
 });
 /**
  * register
  */
-$router->post('users', 'UserController@register')->name('register');
+$router->post('users', 'UserController@store')->name('register');
 
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
-
-    $router->get('/', function () {
-        return response()->render('home', []);
-    })->name('home');
 
     $router->group(['prefix' => 'auth'], function () use ($router) {
 
@@ -34,14 +31,12 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
                    ->name('login');
 
             $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
-                   ->middleware(['throttle:1,1'])
                    ->where('phone_number', '\+[0-9]+')
                    ->name('get-login-otp-code');
         });
 
         $router->group(['prefix' => 'register'], function () use ($router) {
             $router->get('{invite}/{phone_number}/code', 'Auth\RegisterController@getOtpCode')
-                   ->middleware(['throttle:1,1'])
                    ->where(['invite', '[a-z0-9]+'], ['phone_number', '\+[0-9]+'])
                    ->name('get-register-otp-code');
 
@@ -75,6 +70,10 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
+    $router->get('/', function () {
+        return response()->render('home', []);
+    })->name('home');
+
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
@@ -92,8 +91,10 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'UserController@referrals')->name('referrals');
         $router->post('picture', 'User\PictureController@store')->name('profile.picture.store');
         $router->get('picture.jpg', 'User\PictureController@show')->name('profile.picture.show');
-        $router->get('place', 'PlaceController@showOwnerPlace')
+        $router->get('place', 'PlaceController@show')
             ->name('profile.place.show');
+        $router->get('place/edit', 'PlaceController@edit')
+               ->name('profile.place.edit');
         $router->put('place', 'PlaceController@update');
         $router->patch('place', 'PlaceController@update')
             ->name('profile.place.update');
@@ -110,7 +111,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->put('', 'UserController@update')->name('users.update');
         $router->patch('', 'UserController@update');
         $router->get('referrals', 'UserController@referrals');
-        $router->post('picture', 'User\PictureController@store');
+        $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
+        $router->get('place/create', 'PlaceController@create')->name('users.place.create');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -122,6 +124,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy' => 'advert.offers.destroy',
             'update'  => 'advert.offers.update',
             'edit'    => 'advert.offers.edit',
+        ]
+    ]);
+
+    // Advert page for create operator
+    $router->resource('advert/operators', 'Advert\OperatorController', [
+        'names'       => [
+            'index'   => 'advert.operators.index',
+            'show'    => 'advert.operators.show',
+            'create'  => 'advert.operators.create',
+            'store'   => 'advert.operators.store',
+            'destroy' => 'advert.operators.destroy',
+            'edit'    => 'advert.operators.edit',
+            'update'  => 'advert.operators.update',
         ]
     ]);
 
@@ -147,28 +162,45 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'destroy'
         ]
     ]);
-
-    $router->resource('redemptions', 'RedemptionController', [
-        'except' => [
-            'update',
-            'destroy'
-        ]
-    ]);
+    $router->group(['middleware' => 'auth:operator'], function () use ($router) {
+        $router->resource('redemptions', 'RedemptionController', [
+            'except' => [
+                'update',
+                'destroy'
+            ]
+        ]);
+    });
 
     $router->get('transactions/create', '\App\Http\Controllers\TransactionController@createTransaction')
-           ->name('transactionCreate');
+           ->name('transaction.create');
     $router->post('transactions', '\App\Http\Controllers\TransactionController@completeTransaction')
            ->name('transaction.complete');
     $router->get('transactions/{transactionId?}', '\App\Http\Controllers\TransactionController@listTransactions')
-           ->name('transactionList');
+           ->name('transaction.list');
 
     /**
      * Categories
      */
-    $router->get('categories', 'CategoryController@index')
+    $router->get('categories/index', 'CategoryController@index')
+           ->name('categories.index');
+    $router->get('categories', 'CategoryController@mainCategories')
            ->name('categories');
-    $router->get('categories/{uuid}', 'CategoryController@show')
-           ->name('categories.show');
+    $router->resource('categories', 'CategoryController', [
+        'except' => [
+            'index',
+            'destroy'
+        ]
+    ]);
+    $router->post('categories/{uuid}/picture', 'Category\PictureController@store')->name('categories.picture.store');
+
+    /**
+     * Tags
+     */
+    $router->resource('tags', 'TagController', [
+        'except' => [
+            'destroy'
+        ]
+    ]);
 
     /**
      * Places
@@ -177,6 +209,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->get('places/{uuid}/offers', 'PlaceController@showPlaceOffers')
            ->where('uuid', '[a-z0-9-]+')
            ->name('places.offers.show');
+    $router->post('places/{uuid}/picture', 'Place\PictureController@storePicture')->name('places.picture.store');
+    $router->post('places/{uuid}/cover', 'Place\PictureController@storeCover')->name('places.cover.store');
 
 
     $router->resource('places', 'PlaceController', [
@@ -213,3 +247,5 @@ $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where(
     'uuid',
     '[a-z0-9-]+'
 ])->name('places.picture.show');
+$router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
+    '[a-z0-9-]+')->name('categories.picture.show');

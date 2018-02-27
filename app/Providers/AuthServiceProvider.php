@@ -2,12 +2,17 @@
 
 namespace App\Providers;
 
+use App\Repositories\OperatorRepository;
+use App\Repositories\PlaceRepository;
 use App\Services\Auth\Guards\JwtGuard;
+use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
+use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,11 +31,25 @@ class AuthServiceProvider extends ServiceProvider
     private $abilities = [
         'activation_codes.show' => 'ActivationCodePolicy@show',
 
-        'categories.list' => 'CategoryPolicy@index',
-        'categories.show' => 'CategoryPolicy@show',
+        'categories.list'          => 'CategoryPolicy@index',
+        'categories.show'          => 'CategoryPolicy@show',
+        'categories.create'        => 'CategoryPolicy@create',
+        'categories.update'        => 'CategoryPolicy@update',
+        'categories.picture.store' => 'CategoryPolicy@pictureStore',
+
+        'tags.list'   => 'TagPolicy@index',
+        'tags.show'   => 'TagPolicy@show',
+        'tags.create' => 'TagPolicy@create',
+        'tags.update' => 'TagPolicy@update',
 
         'offers.list' => 'OfferPolicy@index',
         'offers.show' => 'OfferPolicy@show',
+
+        'operators.list'   => 'OperatorPolicy@index',
+        'operators.show'   => 'OperatorPolicy@show',
+        'operators.create' => 'OperatorPolicy@create',
+        'operators.delete' => 'OperatorPolicy@destroy',
+        'operators.update' => 'OperatorPolicy@update',
 
         'my.offers.list'       => 'OfferPolicy@indexMy',
         'my.offer.show'        => 'OfferPolicy@showMy',
@@ -39,11 +58,12 @@ class AuthServiceProvider extends ServiceProvider
         'offers.delete'        => 'OfferPolicy@destroy',
         'offers.picture.store' => 'OfferPolicy@pictureStore',
 
+        'offers.picture.store.byOfferData' => 'OfferPolicy@pictureStoreByOfferData',
+
         'places.list'          => 'PlacePolicy@index',
         'places.show'          => 'PlacePolicy@show',
-        'my.place.show'        => 'PlacePolicy@showMy',
         'places.offers.list'   => 'PlacePolicy@showOffers',
-        'my.place.create'      => 'PlacePolicy@createMy',
+        'places.create'        => 'PlacePolicy@create',
         'places.update'        => 'PlacePolicy@update',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
@@ -59,18 +79,17 @@ class AuthServiceProvider extends ServiceProvider
         'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
         'transaction.show'           => 'TransactPolicy@show',
 
-        'users.create'          => 'UserPolicy@create',
-        'users.list'            => 'UserPolicy@index',
-        'users.show'            => 'UserPolicy@show',
-        'users.update'          => 'UserPolicy@update',
-        'users.referrals.list'  => 'UserPolicy@referrals',
-        'users.picture.store'   => 'UserPolicy@pictureStore',
-        'users.update.children' => 'UserPolicy@updateChildren',
-        'users.update.parents'  => 'UserPolicy@updateParents',
-        'users.update.roles'    => 'UserPolicy@updateRoles',
-        'users.update.approve'  => 'UserPolicy@approve',
-        'impersonate'           => 'UserPolicy@impersonate',
-        'users.relink'          => 'UserPolicy@relink',
+        'users.create'         => 'UserPolicy@create',
+        'users.list'           => 'UserPolicy@index',
+        'users.show'           => 'UserPolicy@show',
+        'users.update'         => 'UserPolicy@update',
+        'users.referrals.list' => 'UserPolicy@referrals',
+        'users.picture.store'  => 'UserPolicy@pictureStore',
+        'user.update.children' => 'UserPolicy@updateChildren',
+        'user.update.parents'  => 'UserPolicy@updateParents',
+        'user.update.roles'    => 'UserPolicy@updateRoles',
+        'impersonate'          => 'UserPolicy@impersonate',
+        'users.relink'         => 'UserPolicy@relink',
     ];
 
     /**
@@ -78,7 +97,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate)
+    public function boot(Gate $gate, PlaceRepository $placeRepository, OperatorRepository $operatorRepository, Hasher $hasher)
     {
         $this->registerPolicies();
 
@@ -89,6 +108,7 @@ class AuthServiceProvider extends ServiceProvider
         /** @var AuthManager $authManager */
         $authManager = $this->app->make('auth');
 
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->provider('otp-eloquent', function ($app, array $config) {
             return new OtpEloquentUserProvider($app['hash'], $config['model']);
         });
@@ -101,6 +121,16 @@ class AuthServiceProvider extends ServiceProvider
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->extend('otp', function ($app, $name, array $config) use ($authManager) {
             return new OtpGuard($authManager->createUserProvider($config['provider']));
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository, $hasher) {
+            return new OperatorUserProvider($placeRepository, $operatorRepository, $hasher);
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->extend('operator', function ($app, $name, array $config) use ($authManager, $operatorRepository) {
+            return new OperatorGuard($authManager->createUserProvider($config['provider']), $operatorRepository);
         });
     }
 }

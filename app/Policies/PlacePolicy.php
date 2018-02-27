@@ -11,19 +11,9 @@ class PlacePolicy extends Policy
     /**
      * @param User $user
      *
-     * @return mixed
+     * @return bool
      */
-    public function index(User $user)
-    {
-        return $user->hasAnyRole();
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return mixed
-     */
-    public function show(User $user)
+    public function index(User $user): bool
     {
         return $user->hasAnyRole();
     }
@@ -33,17 +23,7 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function showMy(User $user)
-    {
-        return $user->isAdvertiser();
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return mixed
-     */
-    public function showOffers(User $user)
+    public function show(User $user): bool
     {
         return $user->hasAnyRole();
     }
@@ -53,9 +33,21 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function createMy(User $user)
+    public function showOffers(User $user): bool
     {
-        return $user->isAdvertiser();
+        return $user->hasAnyRole();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function create(User $user, User $forUser): bool
+    {
+        return $user->isAdmin()
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($forUser))
+               || ($user->isAdvertiser() && $user->equals($forUser));
     }
 
     /**
@@ -64,9 +56,10 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function pictureStore(User $user, Place $place)
+    public function pictureStore(User $user, Place $place): bool
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
 
@@ -76,9 +69,10 @@ class PlacePolicy extends Policy
      *
      * @return bool
      */
-    public function update(User $user, Place $place)
+    public function update(User $user, Place $place): bool
     {
-        return $user->hasRoles([Role::ROLE_ADMIN])
+        return $user->isAdmin()
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
 }

@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Offer;
 
 use App\Http\Controllers\AbstractPictureController;
 use App\Http\Requests\Profile\PictureRequest;
+use App\Models\OfferData;
 use App\Repositories\OfferRepository;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -17,57 +15,55 @@ use Symfony\Component\HttpFoundation\Response;
 class PictureController extends AbstractPictureController
 {
     const OFFER_PICTURES_PATH = 'images/offer/pictures';
-    private $offerRepository;
 
-    public function __construct(
-        ImageManager $imageManager,
-        Filesystem $filesystem,
-        AuthManager $authManager,
-        OfferRepository $offerRepository
-    ) {
-        parent::__construct($imageManager, $filesystem, $authManager);
-
-        $this->offerRepository = $offerRepository;
-    }
+    protected $pictureObjectType = 'offer';
 
     /**
-     * @param PictureRequest $request
-     * @param string         $offerId
+     * @param PictureRequest  $request
+     * @param string          $offerId
+     * @param OfferRepository $offerRepository
      *
      * @return \Illuminate\Http\Response|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function store(PictureRequest $request, string $offerId)
+    public function store(PictureRequest $request, string $offerId, OfferRepository $offerRepository)
     {
-        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
+        try {
 
-        $this->authorize('offers.picture.store', $offer);
+            $offer = $offerRepository->findWithoutGlobalScopes($offerId);
+            $this->authorize('offers.picture.store', $offer);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $modelNotFoundException) {
+
+            $offerData = OfferData::findOrFail($offerId);
+            $this->authorize('offers.picture.store.byOfferData', $offerData->owner);
+
+        }
 
         $redirect = (request()->wantsJson())
-            ? route('offer.picture.show', ['offerId' => $offer->id])
+            ? route('offer.picture.show', ['offerId' => $offerId])
             : route('advert.offers.index');
 
-        return $this->storeImageFor($request, $offer->id, $redirect);
+        return $this->storeImageFor($request, $offerId, $redirect);
     }
 
     /**
-     * Retrieves and responds with offer image
-     *
-     * @param string $offerId
+     * @param string          $offerId
+     * @param OfferRepository $offerRepository
      *
      * @return Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function show(string $offerId): Response
+    public function show(\Illuminate\Http\Request $request, string $offerId, OfferRepository $offerRepository): Response
     {
-        $offer = $this->offerRepository->findWithoutGlobalScopes($offerId);
+        $offer = $offerRepository->findWithoutGlobalScopes($offerId);
 
-        return $this->respondWithImageFor($offer->id);
+        return $this->respondWithImageFor($offer->id, $request->get('size', 'original'));
     }
 
     /**

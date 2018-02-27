@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\Auth\Otp\OtpAuth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,13 +59,19 @@ class RegisterController extends AuthController
         }
 
         $validator = $this->getValidationFactory()
-                          ->make(['phone' => $phone], ['phone' => 'required|unique:users,phone']);
+                          ->make(['phone' => $phone], ['phone' => 'required|regex:/\+[0-9]{10,15}/|unique:users,phone']);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
 
+        if ($this->hasTooManyLoginAttempts(\request())) {
+            return $this->sendLockoutResponse(\request());
+        }
+
         $otpAuth->generateCode($phone);
+
+        $this->incrementLoginAttempts(\request());
 
         $data = FormRequest::preFilledFormRequest(RegisterRequest::class, [
             'referrer_id' => $referrerUser->id,

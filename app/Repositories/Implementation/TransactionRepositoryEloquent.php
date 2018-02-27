@@ -18,6 +18,18 @@ use Prettus\Repository\Eloquent\BaseRepository;
  */
 class TransactionRepositoryEloquent extends BaseRepository implements TransactionRepository
 {
+
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [
+        'source_account_id',
+        'destination_account_id',
+        'created_at' => 'like',
+        'type',
+        'status'
+    ];
+
     /**
      * Specify Model class name
      *

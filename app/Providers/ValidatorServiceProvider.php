@@ -93,7 +93,9 @@ class ValidatorServiceProvider extends ServiceProvider
             $attribute,
             $value
         ) use ($accountRepository, $auth): bool {
-            return $accountRepository->existsByAddressAndOwner($value ?? null, $auth->user());
+            return $auth->user()->isAdmin()
+                ? $accountRepository->existsByAddress($value ?? null)
+                : $accountRepository->existsByAddressAndOwner($value ?? null, $auth->user());
         };
     }
 

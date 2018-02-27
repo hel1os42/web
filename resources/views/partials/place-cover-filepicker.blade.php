@@ -1,21 +1,13 @@
-<form method="POST" action="{{route('place.cover.store')}}" enctype="multipart/form-data">
-    <label>Set cover:</label>
-    <div class="form-group">
-        {{ csrf_field() }}
-        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
-            <div class="fileinput fileinput-new text-center" data-provides="fileinput">
-                <div class="fileinput-new thumbnail">
-                    <img src="{{asset('img/image_placeholder.jpg')}}" alt="...">
-                </div>
-                <div class="fileinput-preview fileinput-exists thumbnail" style=""></div>
-                <div class="btn btn-default btn-fill btn-file">
-                    <span class="fileinput-new">Pick cover</span>
-                    <span class="fileinput-exists">Change cover</span>
-                    <input type="hidden">
-                    <input type="file" name="picture">
-                </div>
-            </div>
-        </div>
-    <input class="btn btn-rose btn-wd btn-md" type="submit">
-    </div>
-</form>
+<p><strong>Place cover:</strong></p>
+<div class="form-group" id="cover_image_box">
+    {{ csrf_field() }}
+    <div class="image-box" data-maxsize="2097152"></div>
+</div>
+<p class="image-example">
+    Image requirements:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>format: jpg/jpeg, png</em><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>maximum size: 2 Mb</em><br>
+    Recommended image:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>fine cover for offers page</em><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>up to 1500 x 500 px</em>
+</p>

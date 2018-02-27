@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -22,4 +23,11 @@ interface UserRepository extends RepositoryInterface
 
     public function findByPhone(string $phone): ?User;
     public function findByInvite(string $inviteCode): ?User;
+
+    /**
+     * @param User $user
+     *
+     * @return Builder
+     */
+    public function getChildrenByUser(User $user): Builder;
 }

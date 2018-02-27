@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use App\Helpers\Attributes;
-use App\Models\Contracts\Currency;
 use App\Models\NauModels\Offer;
+use App\Models\Place\RelationsTrait;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,11 +20,13 @@ use Illuminate\Support\Collection;
  * @property string                       description
  * @property string                       about
  * @property string                       address
+ * @property string                       alias
  * @property float                        latitude
  * @property float                        longitude
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
+ * @property string                       alias
  * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
@@ -43,15 +42,18 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
  * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|Builder byAlias(String $alias)
  */
 class Place extends Model
 {
-    use Uuids;
+    use Uuids, RelationsTrait;
 
     /**
      * Place constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -68,11 +70,13 @@ class Place extends Model
             'description'       => 'string',
             'about'             => 'string',
             'address'           => 'string',
+            'alias'             => 'string',
             'latitude'          => 'double',
             'longitude'         => 'double',
             'radius'            => 'integer',
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
+            'alias'             => 'string',
             'has_active_offers' => 'boolean',
         ];
 
@@ -85,9 +89,11 @@ class Place extends Model
             'description',
             'about',
             'address',
+            'alias',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'alias',
         ];
 
         $this->attributes = [
@@ -95,6 +101,7 @@ class Place extends Model
             'description' => null,
             'about'       => null,
             'address'     => null,
+            'alias'       => null,
             'latitude'    => 0,
             'longitude'   => 0,
             'radius'      => 1
@@ -124,22 +131,36 @@ class Place extends Model
         return $this->name;
     }
 
-    /** @return string */
-    public function getDescription(): string
+    /**
+     * @return null|string
+     */
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /** @return string */
-    public function getAbout(): string
+    /**
+     * @return null|string
+     */
+    public function getAbout(): ?string
     {
         return $this->about;
     }
 
-    /** @return string */
-    public function getAddress(): string
+    /**
+     * @return null|string
+     */
+    public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAlias(): ?string
+    {
+        return $this->alias;
     }
 
     /** @return float */
@@ -218,6 +239,34 @@ class Place extends Model
     }
 
     /**
+     * @return string
+     */
+    public function getOwnOrDefaultCoverUrl(): string
+    {
+        if (file_exists($this->getCoverPath())) {
+            return route('places.picture.show', ['uuid' => $this->getId(), 'type' => 'cover']);
+        }
+
+        return self::getDefaultCoverUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoverPath(): string
+    {
+        return storage_path(sprintf('app/images/place/covers/%1$s.jpg', $this->getKey()));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDefaultCoverUrl(): string
+    {
+        return asset('/img/default_place_cover.jpg');
+    }
+
+    /**
      * @return bool
      */
     public function hasActiveOffers(): bool
@@ -275,6 +324,18 @@ class Place extends Model
     public function setAddress(string $address): Place
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @param string $alias
+     *
+     * @return Place
+     */
+    public function setAlias(string $alias): Place
+    {
+        $this->alias = $alias;
 
         return $this;
     }
@@ -364,42 +425,6 @@ class Place extends Model
     }
 
     /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * ATTENTION! it just stub
-     */
-    public function testimonials(): HasMany
-    {
-        return $this->hasMany(Testimonial::class);
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class, 'places_categories', 'place_id', 'category_id');
-    }
-
-    /**
-     * @return HasMany
-     *
-     * @throws \App\Exceptions\TokenException
-     */
-    public function offers()
-    {
-        return $this->user->getAccountFor(Currency::NAU)->offers();
-    }
-
-    /**
      * @param Builder     $builder
      * @param string|null $lat
      * @param string|null $lng
@@ -463,7 +488,7 @@ class Place extends Model
     public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
     {
         return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
-            $builder->whereIn('id', $categoryIds)->orWhereIn('parent_id', $categoryIds);
+            $builder->whereIn('id', $categoryIds)->whereNull('parent_id');
         });
     }
 
@@ -478,12 +503,23 @@ class Place extends Model
         return $builder->where('has_active_offers', '=', true);
     }
 
-
     /**
      * @return array
      */
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $alias
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByAlias($builder, string $alias): Builder
+    {
+        return $builder->where('alias', $alias);
     }
 }

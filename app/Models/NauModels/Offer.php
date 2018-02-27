@@ -4,6 +4,7 @@ namespace App\Models\NauModels;
 
 use App\Exceptions\Offer\Redemption\BadActivationCodeException;
 use App\Exceptions\Offer\Redemption\CannotRedeemException;
+use App\Models\NauModels\Offer\HasOfferData;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
 use App\Models\Traits\HasNau;
@@ -40,10 +41,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|int    radius
  * @property Carbon      created_at
  * @property Carbon      updated_at
+ * @property boolean     delivery
+ * @property null|string type
+ * @property null|string gift_bonus_descr
+ * @property null|float  discount_percent
+ * @property null|float  discount_start_price
+ * @property null|float  discount_finish_price
+ * @property null|string currency
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -106,12 +114,10 @@ class Offer extends AbstractNauModel
         'reserved',
     ];
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     protected static function boot()
     {
         parent::boot();
+
         self::bootGlobalScopes();
     }
 
@@ -447,7 +453,8 @@ class Offer extends AbstractNauModel
             'categ',
             'min_level',
             'lat',
-            'lng'
+            'lng',
+            'offerData',
         ];
     }
 
@@ -463,7 +470,14 @@ class Offer extends AbstractNauModel
             'user_level_min',
             'latitude',
             'longitude',
-            'picture_url'
+            'picture_url',
+            'delivery',
+            'type',
+            'gift_bonus_descr',
+            'discount_percent',
+            'discount_start_price',
+            'discount_finish_price',
+            'currency',
         ];
     }
 
@@ -492,6 +506,12 @@ class Offer extends AbstractNauModel
             'radius'                 => 'integer',
             'reward'                 => 'integer',
             'reserved'               => 'integer',
+            'delivery'               => 'boolean',
+            'type'                   => 'string',
+            'gift_bonus_descr'       => 'string',
+            'discount_percent'       => 'float',
+            'discount_start_price'   => 'float',
+            'currency'               => 'string',
         ];
     }
 
