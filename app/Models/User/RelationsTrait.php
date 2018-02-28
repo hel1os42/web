@@ -130,8 +130,8 @@ trait RelationsTrait
     /**
      * @return Relations\BelongsToMany
      */
-    public function favoriteOffers(): Relations\BelongsToMany
+    public function favoriteOffers()
     {
-        return $this->belongsToMany(OfferData::class, 'users_favorite_offers', 'user_id', 'offer_id');
+        return $this->hasMany(FavoriteOffers::class);
     }
 }

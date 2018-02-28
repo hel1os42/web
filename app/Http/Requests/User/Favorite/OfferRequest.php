@@ -34,11 +34,11 @@ class OfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'offer_id' => sprintf(
-                'required|string|regex:%s|exists:offers_data,id|uniqueBy2Fields:users_favorite_offers,user_id,%s',
-                \App\Helpers\Constants::UUID_REGEX,
-                \request()->segment(2) !== 'favorite' ? \request()->segment(2) : auth()->user()->getId()
-            )
+            'offer_id' =>
+                sprintf('required|string|regex:%s|uniqueBy2Fields:users_favorite_offers,user_id,%s',
+                    \App\Helpers\Constants::UUID_REGEX,
+                    \request()->segment(2) !== 'favorite' ? \request()->segment(2) : auth()->user()->getId()
+                )
         ];
     }
 

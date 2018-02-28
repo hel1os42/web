@@ -77,9 +77,9 @@ class AuthServiceProvider extends ServiceProvider
         'user.update.roles'       => 'UserPolicy@updateRoles',
         'impersonate'             => 'UserPolicy@impersonate',
 
-        'users.favorites.list'    => 'User/FavoritePolicy@index',
-        'users.favorites.create'  => 'User/FavoritePolicy@create',
-        'users.favorites.destroy' => 'User/FavoritePolicy@destroy',
+        'users.favorites.list'    => 'User\FavoritePolicy@index',
+        'users.favorites.create'  => 'User\FavoritePolicy@create',
+        'users.favorites.destroy' => 'User\FavoritePolicy@destroy',
     ];
 
     /**

@@ -17,6 +17,7 @@ class CreateUsersFavoriteTables extends Migration
             $table->uuid('user_id');
             $table->uuid('place_id');
             $table->primary(['user_id', 'place_id'])->index();
+            $table->timestamps();
         });
 
         Schema::table('users_favorite_places', function(Blueprint $table)
@@ -29,6 +30,7 @@ class CreateUsersFavoriteTables extends Migration
             $table->uuid('user_id');
             $table->uuid('offer_id');
             $table->primary(['user_id', 'offer_id'])->index();
+            $table->timestamps();
         });
 
         Schema::table('users_favorite_offers', function(Blueprint $table)
