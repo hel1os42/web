@@ -60,16 +60,6 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'              => 'boolean',
-            'favorite_place_ids'   => 'array',
-            'favorite_place_ids.*' => sprintf(
-                'string|regex:%s|exists:places,id',
-                \App\Helpers\Constants::UUID_REGEX
-            ),
-            'favorite_offer_ids'   => 'array',
-            'favorite_offer_ids.*' => sprintf(
-                'string|regex:%s|exists:pgsql_nau.offers,id',
-                \App\Helpers\Constants::UUID_REGEX
-            ),
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {

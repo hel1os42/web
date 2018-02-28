@@ -6,31 +6,33 @@
  * Time: 20:51
  */
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\User\Favorite;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\User\Favorite\PlaceRequest;
+use App\Http\Requests\User\Favorite\OfferRequest;
+use App\Repositories\OfferRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class FavoritePlaceController extends Controller
+class OfferController extends FavoriteController
 {
-    private $userRepository;
+    private $offerRepository;
 
     /**
-     * FavoritePlaceController constructor.
+     * FavoriteOfferController constructor.
      *
      * @param AuthManager    $authManager
      * @param UserRepository $userRepository
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(AuthManager $authManager, UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-        parent::__construct($authManager);
+    public function __construct(
+        AuthManager $authManager,
+        UserRepository $userRepository,
+        OfferRepository $offerRepository
+    ) {
+        $this->offerRepository = $offerRepository;
+        parent::__construct($authManager, $userRepository);
     }
 
     /**
@@ -49,11 +51,12 @@ class FavoritePlaceController extends Controller
 
         $this->authorize('users.favorites.list', $user);
 
-        return \response()->render('user.favorite.place.index', $user->favoritePlaces()->paginate());
+        return \response()->render('user.favorite.offer.index',
+            $this->getOfferObjectsByIdsArray((array)$user->favoriteOffers()->paginate()));
     }
 
     /**
-     * @param PlaceRequest $request
+     * @param OfferRequest $request
      * @param string|null  $userId
      *
      * @return Response
@@ -61,7 +64,7 @@ class FavoritePlaceController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function store(PlaceRequest $request, string $userId = null): Response
+    public function store(OfferRequest $request, string $userId = null): Response
     {
         $userId = $this->confirmUuid($userId);
 
@@ -69,26 +72,26 @@ class FavoritePlaceController extends Controller
 
         $this->authorize('users.favorites.create', $user);
 
-        $user->favoritePlaces()->attach($request->get('place_id'));
+        $user->favoriteOffers()->attach($request->get('offer_id'));
 
-        return \response()->render('user.favorite.place.create', $user->favoritePlaces()->paginate(),
+        return \response()->render('user.favorite.offer.create', $user->favoriteOffers()->paginate(),
             Response::HTTP_CREATED, route('users.show', $userId));
     }
 
     /**
      * @param string|null $userId
-     * @param string|null $placeId
+     * @param string|null $offerId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function destroy(string $userId = null, string $placeId = null): Response
+    public function destroy(string $userId = null, string $offerId = null): Response
     {
-        if(!$placeId) {
-            $placeId = $userId;
-            $userId = null;
+        if (!$offerId) {
+            $offerId = $userId;
+            $userId  = null;
         }
 
         $userId = $this->confirmUuid($userId);
@@ -97,9 +100,16 @@ class FavoritePlaceController extends Controller
 
         $this->authorize('users.favorites.destroy', $user);
 
-        $user->favoritePlaces()->detach([$placeId]);
+        $user->favoriteOffers()->detach([$offerId]);
 
-        return \response()->render('user.favorite.place.index', [], Response::HTTP_NO_CONTENT);
+        return \response()->render('user.favorite.offer.index', [], Response::HTTP_NO_CONTENT);
+    }
 
+    private function getOfferObjectsByIdsArray(array $paginatedArray)
+    {
+        $paginatedArray['data'] = $this->offerRepository->findWhereIn('id',
+            array_column($paginatedArray['data'], 'id'))->toArray();
+
+        return $paginatedArray;
     }
 }

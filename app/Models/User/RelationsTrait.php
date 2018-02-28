@@ -8,11 +8,11 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\OfferData;
 use App\Models\Place;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations;
-use Illuminate\Support\Collection;
 
 /**
  * Trait RelationsTrait
@@ -132,6 +132,6 @@ trait RelationsTrait
      */
     public function favoriteOffers(): Relations\BelongsToMany
     {
-        return $this->belongsToMany(Offer::class, 'users_favorite_offers');
+        return $this->belongsToMany(OfferData::class, 'users_favorite_offers', 'user_id', 'offer_id');
     }
 }

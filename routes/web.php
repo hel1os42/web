@@ -103,14 +103,30 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             ->name('profile.place.offers');
         $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
-        $router->group(['prefix' => 'favorite'], function () use ($router) {
-            $router->get('offers', 'User\FavoriteOfferController@index')->name('favorite.offers.index');
-            $router->post('offers', 'User\FavoriteOfferController@store')->name('favorite.offers.store');
-            $router->delete('offers/{offerId}', 'User\FavoriteOfferController@destroy')->name('favorite.offers.delete');
-            $router->get('places', 'User\FavoritePlaceController@index')->name('favorite.places.index');
-            $router->post('places', 'User\FavoritePlaceController@store')->name('favorite.places.store');
-            $router->delete('places/{placeId}', 'User\FavoritePlaceController@destroy')->name('favorite.places.delete');
-        });
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.offers.index',
+                'store'   => 'profile.favorite.offers.store',
+                'destroy' => 'profile.favorite.offers.destroy',
+            ]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\OfferController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.places.index',
+                'store'   => 'profile.favorite.places.store',
+                'destroy' => 'profile.favorite.places.destroy',
+            ]
+        ]);
     });
 
     $router->get('users', 'UserController@index')->name('users.index');
@@ -122,14 +138,12 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
-        $router->group(['prefix' => 'favorite'], function () use ($router) {
-            $router->get('offers', 'User\FavoriteOfferController@index')->name('favorite.offers.index');
-            $router->post('offers', 'User\FavoriteOfferController@store')->name('favorite.offers.store');
-            $router->delete('offers/{offerId}', 'User\FavoriteOfferController@destroy')->name('favorite.offers.delete');
-            $router->get('places', 'User\FavoritePlaceController@index')->name('favorite.places.index');
-            $router->post('places', 'User\FavoritePlaceController@store')->name('favorite.places.store');
-            $router->delete('places/{placeId}', 'User\FavoritePlaceController@destroy')->name('favorite.places.delete');
-        });
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only' => ['index', 'store', 'destroy',]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\OfferController', [
+            'only' => ['index', 'store', 'destroy',]
+        ]);
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
