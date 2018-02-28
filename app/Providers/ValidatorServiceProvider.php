@@ -37,6 +37,21 @@ class ValidatorServiceProvider extends ServiceProvider
         $validator->extend('enoughFor', $this->validateEnoughMoneyOnAccountFor($accountRepository));
         $validator->extend('can_redeem',
             $this->validateCanRedeemActivationCode($activationCodeRepository, $authManager->guard()));
+        $validator->extend('uniqueBy2Fields', $this->validateUnique2Fields());
+    }
+
+    /**
+     * @return \Closure
+     */
+    private function validateUnique2Fields()
+    {
+        return function ($attribute, $value, $parameters) {
+            $count = \DB::table($parameters[0])->where($attribute, $value)
+                        ->where($parameters[1], $parameters[2])
+                        ->count();
+
+            return $count === 0;
+        };
     }
 
     /**

@@ -227,16 +227,6 @@ class UserController extends Controller
     {
         $with = [];
 
-        if (isset($newUserData['favorite_place_ids'])) {
-            $user->favoritePlaces()->sync($newUserData['favorite_place_ids'], true);
-            array_push($with, 'favoritePlaces');
-        }
-
-        if (isset($newUserData['favorite_offer_ids'])) {
-            $user->favoriteOffers()->sync($newUserData['favorite_offer_ids'], true);
-            array_push($with, 'favoriteOffers');
-        }
-
         if (isset($newUserData['role_ids'])) {
             $this->updateRoles($user, $newUserData['role_ids']);
             array_push($with, 'roles');

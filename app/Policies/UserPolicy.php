@@ -185,4 +185,40 @@ class UserPolicy extends Policy
         return ($user->isAdmin() || $user->hasChild($anotherUser))
                && $user->isImpersonated() === false;
     }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function favoriteIndex(User $user, User $anotherUser)
+    {
+        return $user->isAdmin()
+               || $anotherUser->equals($user);
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function favoriteCreate(User $user, User $anotherUser)
+    {
+        return $user->isAdmin()
+               || $anotherUser->equals($user);
+    }
+
+    /**
+     * @param User $user
+     * @param User $anotherUser
+     *
+     * @return bool
+     */
+    public function favoriteDestroy(User $user, User $anotherUser)
+    {
+        return $user->isAdmin()
+               || $anotherUser->equals($user);
+    }
 }
