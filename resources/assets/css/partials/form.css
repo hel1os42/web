@@ -469,7 +469,8 @@
 }
 
 .nau-form .address-examples,
-.nau-form .image-example {
+.nau-form .image-example,
+.nau-form .input-example {
     color: #999;
     font-size: 80%;
 }
@@ -485,14 +486,4 @@
     font-size: 14px;
     line-height: 16px;
     font-weight: normal;
-}
-
-.more-buttons {
-    min-height: 26px;
-}
-.more-buttons .btn {
-    display: none;
-}
-.more-buttons .btn.able {
-    display: inline-block;
 }
