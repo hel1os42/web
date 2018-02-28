@@ -9,10 +9,12 @@
 namespace App\Http\Controllers\User\Favorite;
 
 use App\Http\Requests\User\Favorite\OfferRequest;
+use App\Models\User\FavoriteOffers;
 use App\Repositories\OfferRepository;
 use App\Repositories\User\FavoriteOfferRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\Response;
 
 class OfferController extends FavoriteController
@@ -55,8 +57,19 @@ class OfferController extends FavoriteController
 
         $this->authorize('users.favorites.list', $user);
 
-        return \response()->render('user.favorite.offer.index',
-            $this->favoriteOfferRepository->getByUser($user)->paginate());
+        $offers          = $this->favoriteOfferRepository->getByUser($user);
+        $offersPaginated = $offers->paginate();
+
+        $favorites = $this->offerRepository->findWhereIn('id', $offers->pluck('offer_id')->toArray())->toArray();
+
+        $pagination = new LengthAwarePaginator(
+            $favorites,
+            $offersPaginated->total(),
+            $offersPaginated->perPage(),
+            $offersPaginated->currentPage()
+        );
+
+        return \response()->render('user.favorite.offer.index', $pagination);
     }
 
     /**
