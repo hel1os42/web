@@ -16,7 +16,7 @@
     <p class="control-text">
         <label>
             <span class="input-label">Offer description</span>
-            <textarea name="description" class="nullableFormData" data-max-length="200"></textarea>
+            <textarea name="description" class="formData" data-max-length="200"></textarea>
         </label>
     </p>
     <p class="pull-right text-right more-buttons">
