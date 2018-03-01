@@ -9,7 +9,7 @@
             <input name="label" value="" class="formData" data-max-length="40">
         </label>
     </p>
-    <p class="hint">Please, enter the Offer name.</p>
+    <p class="hint">Please, enter the Offer name (3..128 characters).</p>
 </div>
 
 <div class="control-box">
@@ -21,5 +21,3 @@
     </p>
     <p class="hint">Please, enter the Offer description.</p>
 </div>
-
-<div id="more_wrap" class="clearfix"></div>
