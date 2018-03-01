@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|float  discount_start_price
  * @property null|float  discount_finish_price
  * @property null|string currency
+ * @property bool        is_favorite
  */
 class Offer extends AbstractNauModel
 {
@@ -342,6 +343,14 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * @return bool
+     */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -361,6 +370,11 @@ class Offer extends AbstractNauModel
         $this->status = $status;
 
         return $this;
+    }
+
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
     }
 
     /**

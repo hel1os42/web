@@ -10,7 +10,6 @@ use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Prettus\Repository\Contracts\PresenterInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,8 +35,10 @@ class PlaceController extends Controller
         $this->authorize('places.list');
         $places = $placeRepository->getActiveByCategoriesAndPosition($request->category_ids, $request->latitude,
             $request->longitude, $request->radius);
+
         $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth));
-        $places = $places->paginate();
+
+        $places         = $places->paginate();
         $places['data'] = $placeRepository->parsePaginatedResult($places)['data'];
 
         return response()->render('place.index', $places);
@@ -46,14 +47,14 @@ class PlaceController extends Controller
     /**
      * @param Request         $request
      * @param PlaceRepository $placesRepository
-     * @param UserRepository  $userRepository
      * @param string|null     $uuid
      *
      * @return Response
      * @throws AuthorizationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, PlaceRepository $placesRepository, UserRepository $userRepository, string $uuid = null): Response
+    public function show(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
     {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
