@@ -27,21 +27,17 @@
 
 
 @push('styles')
-    <link rel="stylesheet" type="text/css" href="{{ asset('js/summernote/summernote.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/offer-more.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
-    <script src="{{ asset('js/summernote/summernote.min.js') }}"></script>
     <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
-    <script src="{{ asset('js/partials/offer-more.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
@@ -68,18 +64,6 @@
 
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
-
-        /* offer description More */
-        offerMoreInit('more_wrap');
-        /*
-            let moreTextForTranslate = {
-                hashButtons: 'You can use next tags for create links to additional information',
-                title: 'More information',
-                addButton: 'Add item',
-                ...
-            };
-            offerMoreInit('more_wrap', moreTextForTranslate);
-        */
 
         /* picture */
         imageUploader('#offer_image_box .image-box');
