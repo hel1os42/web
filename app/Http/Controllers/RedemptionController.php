@@ -72,7 +72,6 @@ class RedemptionController extends Controller
      */
     public function create(): Response
     {
-        dd('test');
         $this->authorize('offers.redemption');
 
         return \response()->render('redemption.create', ['code' => null]);

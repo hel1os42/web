@@ -124,9 +124,9 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->applyCriteria();
         $this->applyScope();
         $model = $this->model
-            //->filterByActiveOffersAvailability()
-            //->filterByCategories($categoryIds)
-            //->filterByPosition($latitude, $longitude, $radius)
+            ->filterByActiveOffersAvailability()
+            ->filterByCategories($categoryIds)
+            ->filterByPosition($latitude, $longitude, $radius)
             ->orderByPosition($latitude, $longitude);
         $this->resetModel();
 
