@@ -52,7 +52,7 @@ class JwtGuard implements Guard
             $this->user = $this->jwtAuth->authenticate();
         }
 
-        return $this->user;
+        return false === $this->user ? null : $this->user;
     }
 
     /**

@@ -32,6 +32,10 @@ class ActivationCodeController extends Controller
 
         $this->authorize('activation_codes.show', $activationCode);
 
-        return response()->render('activation_code.show', $activationCode->toArray());
+        $relationOffer         = $activationCode->offer->toArray();
+        $searchResult          = $activationCode->toArray();
+        $searchResult['offer'] = $relationOffer;
+
+        return response()->render('activation_code.show', $searchResult);
     }
 }

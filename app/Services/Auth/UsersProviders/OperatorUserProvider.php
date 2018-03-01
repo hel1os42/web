@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth\UsersProviders;
 
+use App\Exceptions\Exception;
 use App\Http\Exceptions\NotImplementedException;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
@@ -30,7 +31,11 @@ class OperatorUserProvider implements UserProvider
      */
     public function retrieveById($identifier)
     {
-        return $this->operatorRepository->find($identifier);
+        try {
+            return $this->operatorRepository->find($identifier);
+        } catch (Exception $exception) {
+            return null;
+        }
     }
 
     /**
