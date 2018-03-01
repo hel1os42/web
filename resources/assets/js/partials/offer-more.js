@@ -70,15 +70,23 @@ function offerMoreInit(id, text, json){
         newItem.querySelector('.btn-edit-item').addEventListener('click', function(){ editItem(this.parentElement); });
         newItem.querySelector('.btn-remove-item').addEventListener('click', function(){ removeItem(this.parentElement); });
         moreItems.appendChild(newItem);
-        box.classList.add('has-items');
+        $(newItem).slideDown(); /* jQuery */
+        //box.classList.add('has-items');
+        $(box).find('.label-items').add('.input-example').slideDown(); /* jquery */
         box.dispatchEvent(new Event('newMoreItem'));
     }
 
     function removeItem(item){
         if (confirm(text.confirmRemove)) {
-            item.parentElement.removeChild(item);
-            if (moreItems.children.length === 0) box.classList.remove('has-items');
-            box.dispatchEvent(new Event('removeMoreItem'));
+            $(item).slideUp(function(){
+                item.parentElement.removeChild(item);
+                if (moreItems.children.length === 0) {
+                    $(box).find('.label-items').add('.input-example').slideUp(function(){
+                        //box.classList.remove('has-items');
+                    });
+                }
+                box.dispatchEvent(new Event('removeMoreItem'));
+            });
         }
     }
 
@@ -95,7 +103,8 @@ function offerMoreInit(id, text, json){
         let buttonsWrap = box.querySelector('.tag-buttons');
         let buttonsBox = buttonsWrap.querySelector('.buttons');
         buttonsBox.innerHTML = html;
-        buttonsWrap.style.display = html ? 'block' : '';
+        $(buttonsWrap)['slide' + (html ? 'Down' : 'Up')]();
+        //buttonsWrap.style.display = html ? 'block' : '';
         let buttons = buttonsBox.querySelectorAll('.btn');
         buttons.forEach(function(tagButton){
             tagButton.addEventListener('click', function(){
@@ -118,41 +127,43 @@ function offerMoreInit(id, text, json){
         if (editorModal) editorModal.parentElement.removeChild(editorModal);
         editorModal = document.createElement('div');
         editorModal.setAttribute('id', 'editorMoreModal');
-        editorModal.setAttribute('class', 'modal fade');
-        editorModal.setAttribute('tabindex', '-1');
+        editorModal.setAttribute('class', 'nobs-modal');
         editorModal.setAttribute('role', 'dialog');
         let tagName = item.querySelector('.tag input').value;
         let title = item.querySelector('.title input').value;
         let content = item.querySelector('.content').value;
-        let html = '<div class="modal-dialog modal-lg" role="document"><div class="modal-content"><div class="modal-header">';
-        html += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        html += '<h4 class="modal-title">#' + (tagName ? tagName : '&lt;not assigned&gt;') + ', &nbsp;&nbsp; ' + (title ? title : '&lt;not assigned&gt;');
-        html += '</h4></div><div class="modal-body">';
-        html += '<div class="summernote">' + content + '</div>';
-        html += '</div><div class="modal-footer">';
-        html += '<button type="button" class="btn btn-nau btn-save-more">Save changes</button>';
-        html += '</div></div></div>';
+        let html = '<div class="nobs-modal-content">';
+        html += '<span class="close-modal">&times;</span>';
+        html += '<h4>#' + (tagName ? tagName : '&lt;not assigned&gt;') + ', &nbsp;&nbsp; ' + (title ? title : '&lt;not assigned&gt;');
+        html += '</h4><div class="summernote">' + content + '</div>';
+        html += '<p class="text-right"><button type="button" class="btn btn-nau btn-save-more">Save changes</button></p></div>';
         editorModal.innerHTML = html;
-        /* jQuery, bootstrap :( */
-        $(editorModal).find('.btn-save-more').on('click', function(){
-            let content = $(editorModal).find('.note-editable').html();
+        document.body.appendChild(editorModal);
+        editorModal.classList.add('shown');
+        $(editorModal).find('.summernote').summernote({
+            height: 200,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline']],
+                ['para', ['ul', 'ol']],
+                ['link', ['link']],
+                ['edit', ['undo', 'redo']]
+            ]
+        }); /* jQuery */
+
+        editorModal.addEventListener('click', function(e){
+            if (e.target.getAttribute('id') === 'editorMoreModal') destroyEditorModal();
+        });
+        editorModal.querySelector('.btn-save-more').addEventListener('click', function(){
+            let content = editorModal.querySelector('.note-editable').innerHTML;
             item.querySelector('.content').value = content;
             item.querySelector('.content-length').innerText = text.contentSize + ': ' + content.length;
-            $(editorModal).modal('hide');
+            destroyEditorModal();
         });
-        $(editorModal).on('shown.bs.modal', function(){
-            $(editorModal).find('.summernote').summernote({
-                height: 200,
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline']],
-                    ['para', ['ul', 'ol']],
-                    ['link', ['link']],
-                    ['edit', ['undo', 'redo']]
-                ]
-            });
-        }).on('hidden.bs.modal', function(){
-            $(editorModal).find('.summernote').summernote('destroy');
+        editorModal.querySelector('.close-modal').addEventListener('click', destroyEditorModal);
+
+        function destroyEditorModal(){
+            $(editorModal).find('.summernote').summernote('destroy'); /* jQuery */
             editorModal.parentElement.removeChild(editorModal);
-        }).modal();
+        }
     }
 }

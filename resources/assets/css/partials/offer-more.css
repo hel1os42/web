@@ -90,6 +90,23 @@
     line-height: 1.2em;
     font-style: italic;
 }
-#editorMoreModal {
+#editorMoreModal,
+#editorMoreModal .link-dialog {
     background: rgba(0, 0, 0, 0.8);
+}
+
+#editorMoreModal .link-dialog .checkbox {
+    display: none;
+}
+#editorMoreModal .link-dialog .modal-header {
+    padding-bottom: 0;
+}
+#editorMoreModal .link-dialog .modal-footer {
+    padding: 0 15px 12px;
+}
+#editorMoreModal .link-dialog label {
+    font-weight: normal;
+}
+#editorMoreModal .link-dialog .modal-dialog {
+    padding-top: 0;
 }
