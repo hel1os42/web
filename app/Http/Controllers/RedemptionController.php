@@ -162,10 +162,9 @@ class RedemptionController extends Controller
 
     private function reviewStubShow()
     {
-        $offer      = app(OfferRepository::class)->skipCriteria()->findWithoutGlobalScopes(config('app.review_stub.offer_id'));
         $redemption = (new Redemption())->forceFill([
             'id'    => config('app.review_stub.redemption_id'),
-            'offer' => $offer,
+            'offer' => (new Offer)->forceFill(config('app.review_stub.offer')),
         ]);
 
         return \response()->render('redemption.show', $redemption->toArray());

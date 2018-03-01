@@ -247,9 +247,13 @@ return [
     ],
 
     'review_stub' => [
-        'code' => 'AppleReview2018',
-        'user_id' => '0175ebaf-2d16-3beb-87bd-338040b36aad',
-        'offer_id' => 'ee069781-c6cc-4166-93c7-4dd03deed8d6',
-        'redemption_id' => '5f68e5b5-1239-33bb-8cc8-019f29ec11b6',
+        'code'          => 'AppleReview2018',
+        'user_id'       => '20160127-1111-3beb-87bd-338040b36aad',
+        'offer'            => [
+            'id'          => '20160127-1111-392a-a1c6-e1925f85dfd2',
+            'label'       => 'iPhone Discount',
+            'description' => 'Get new iPhone X with discount.',
+        ],
+        'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
     ]
 ];
