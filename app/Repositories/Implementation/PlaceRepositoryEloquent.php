@@ -6,6 +6,7 @@ use App\Http\Exceptions\InternalServerErrorException;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\PlaceRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -123,13 +124,23 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         $this->applyCriteria();
         $this->applyScope();
         $model = $this->model
-            ->filterByActiveOffersAvailability()
-            ->filterByCategories($categoryIds)
-            ->filterByPosition($latitude, $longitude, $radius)
+            //->filterByActiveOffersAvailability()
+            //->filterByCategories($categoryIds)
+            //->filterByPosition($latitude, $longitude, $radius)
             ->orderByPosition($latitude, $longitude);
         $this->resetModel();
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * @param LengthAwarePaginator $paginatedPlaces
+     *
+     * @return array
+     */
+    public function parsePaginatedResult(LengthAwarePaginator $paginatedPlaces): array
+    {
+        return $this->parserResult($paginatedPlaces);
     }
 
     public function countByUser(User $user): int

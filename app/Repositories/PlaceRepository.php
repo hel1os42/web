@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Place;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Contracts\RepositoryInterface;
@@ -48,6 +49,8 @@ interface PlaceRepository extends RepositoryInterface
     public function countByUser(User $user): int;
 
     public function existsByUser(User $user): bool;
+
+    public function parsePaginatedResult(LengthAwarePaginator $places): array;
 
     /**
      * @param array $attributes

@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\User\Favorite;
 
 use App\Http\Requests\User\Favorite\OfferRequest;
-use App\Models\User\FavoriteOffers;
 use App\Repositories\OfferRepository;
 use App\Repositories\User\FavoriteOfferRepository;
 use App\Repositories\UserRepository;

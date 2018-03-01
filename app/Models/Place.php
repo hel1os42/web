@@ -30,7 +30,7 @@ use Illuminate\Support\Collection;
  * @property string                       cover_url
  * @property int                          offers_count
  * @property int                          active_offers_count
- *
+ * @property bool                         is_favorite
  * @property User                         user
  * @property Collection                   testimonials
  * @property NauModels\Offer[]|Collection offers
@@ -253,6 +253,14 @@ class Place extends Model
     /**
      * @return bool
      */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
+     * @return bool
+     */
     public function hasActiveOffers(): bool
     {
         return $this->has_active_offers;
@@ -382,6 +390,11 @@ class Place extends Model
         $this->has_active_offers = $hasActiveOffers;
 
         return $this;
+    }
+
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
     }
 
     /**
