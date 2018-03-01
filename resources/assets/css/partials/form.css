@@ -328,6 +328,10 @@
 	font-weight: normal;
 }
 
+
+
+
+
 .map-wrap {
     position: relative;
 }
@@ -469,8 +473,7 @@
 }
 
 .nau-form .address-examples,
-.nau-form .image-example,
-.nau-form .input-example {
+.nau-form .image-example {
     color: #999;
     font-size: 80%;
 }
