@@ -1,0 +1,112 @@
+#more_wrap {
+    padding-bottom: 24px;
+}
+#more_wrap .tag-buttons {
+    display: none;
+    padding-bottom: 24px;
+}
+#more_wrap .tag-buttons em {
+    font-size: 80%;
+}
+#more_wrap .tag-buttons .buttons .btn {
+    margin-top: 6px;
+    margin-right: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-width: 1px;
+}
+#more_wrap .label-items {
+    position: relative;
+    display: none;
+    padding: 0 80px 0 160px;
+    color: #999;
+    font-style: italic;
+    font-size: 80%;
+}
+#more_wrap .input-example {
+    display: none;
+}
+#more_wrap.has-items .label-items,
+#more_wrap.has-items .input-example {
+    display: block;
+}
+#more_wrap .label-items .tag-label,
+#more_wrap .label-items .buttons-label {
+    position: absolute;
+    top: 0;
+}
+#more_wrap .label-items .tag-label {
+    left: 0;
+}
+#more_wrap .label-items .buttons-label {
+    right: 0;
+}
+#more_wrap .more-item {
+    position: relative;
+    padding: 0 80px 0 160px;
+}
+#more_wrap .more-item label {
+    font-weight: normal;
+}
+#more_wrap .more-item .tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 152px;
+}
+#more_wrap .more-item .tag:before {
+    content: "#";
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    bottom: 1px;
+    padding-top: 3px;
+    width: 20px;
+    text-align: center;
+    background: #eee;
+    border-radius: 5px 0 0 5px;
+}
+#more_wrap .more-item .tag input {
+    padding-left: 24px;
+}
+#more_wrap .more-item .btn {
+    position: absolute;
+    top: 0;
+    width: 26px;
+}
+#more_wrap .more-item .btn.btn-edit-item {
+    right: 40px;
+}
+#more_wrap .more-item .btn.btn-remove-item {
+    right: 0;
+}
+#more_wrap .more-item .content-length {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    width: 68px;
+    color: #999;
+    font-size: 60%;
+    line-height: 1.2em;
+    font-style: italic;
+}
+#editorMoreModal,
+#editorMoreModal .link-dialog {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+#editorMoreModal .link-dialog .checkbox {
+    display: none;
+}
+#editorMoreModal .link-dialog .modal-header {
+    padding-bottom: 0;
+}
+#editorMoreModal .link-dialog .modal-footer {
+    padding: 0 15px 12px;
+}
+#editorMoreModal .link-dialog label {
+    font-weight: normal;
+}
+#editorMoreModal .link-dialog .modal-dialog {
+    padding-top: 0;
+}
