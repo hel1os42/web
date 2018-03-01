@@ -48,6 +48,8 @@
     <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
 
+        const RESERVATION_MULTIPLIER = 10;
+
         /* dateTime picker init */
         dateTimePickerInit();
 
@@ -140,7 +142,7 @@
             maxRedemptionInfinity('.max-redemption input');
             $('[name="reward"]').on('change', function(){
                 let $reserv = $('[name="reserved"]');
-                let reservMin = $(this).val() * 10;
+                let reservMin = $(this).val() * RESERVATION_MULTIPLIER;
                 $reserv.attr('data-min', reservMin);
                 if ($reserv.val() < reservMin) {
                     $reserv.attr('data-default', reservMin).val(reservMin);

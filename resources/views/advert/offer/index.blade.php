@@ -182,14 +182,15 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
-
                                                     <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="display: inline-block; margin-right: 16px;">
                                                         <input name="_method" type="hidden" value="DELETE">
                                                         <input name="_token" type="hidden" value={{ csrf_token() }}>
                                                         <input class="btn btn-danger" type="submit" value="Delete offer">
                                                     </form>
-
-                                                    <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
+                                                    <span class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
+                                                        <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
+                                                        <span class="offer-edit-no-button">You must deactivate the offer to edit it.</span>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -256,7 +257,6 @@
                     "bAutoWidth": false,
                     "searching": false
                 });
-                /* отключаем родную пагинацию, поиск и т.п. - до лучших времён */
 
                 /* show/hide details */
                 $table.on('click', 'td.details-control', function(){
@@ -339,7 +339,6 @@
                 console.dir(formData);
 
                 disableButtonActivate();
-                /* делаем красиво изменение баланса */
                 balanceFineChanging();
 
                 $.ajax({
@@ -351,8 +350,15 @@
                         if (202 === xhr.status){
                             $box.parent().children('.offer-status').find('.offer-status-text').text($offer_status.val());
                             $box.removeClass('osc_wait').addClass('osc_' + $offer_status.val());
+
+                            let $details = $box.prev('.details-code');
+                            let $next = $box.parent().next().children(':first');
+                            if ($next.attr('colspan')) $details = $details.add($next);
+                            let $btnWrap = $details.find('.offer-edit-button-wrapper');
+                            if ($offer_status.val() === 'active') $btnWrap.addClass('oeb-active').removeClass('oeb-deactive');
+                            else $btnWrap.addClass('oeb-deactive').removeClass('oeb-active');
+
                             $offer_status.val($offer_status.val() === 'active' ? 'deactive' : 'active');
-                            /* проверяем доступность кнопок "activate" */
                             disableButtonActivate();
                         } else {
                             setNauBalance($nau_balance, -deltaNau);
