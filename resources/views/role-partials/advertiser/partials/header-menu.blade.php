@@ -16,3 +16,6 @@
     </ul>
 </li>
 @endif
+<li>
+    <a href="{{route('redemptions.create')}}">Redeem offer</a>
+</li>
