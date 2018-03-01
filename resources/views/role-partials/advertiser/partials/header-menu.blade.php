@@ -14,3 +14,6 @@
         <li><a href="{{ route('advert.operators.create') }}">Create operator</a></li>
     </ul>
 </li>
+<li>
+    <a href="{{route('redemptions.create')}}">Redeem offer</a>
+</li>

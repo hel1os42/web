@@ -16,7 +16,7 @@ class RedemptionPolicy extends Policy
      */
     public function index(User $user)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
     }
 
     /**
