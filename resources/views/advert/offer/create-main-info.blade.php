@@ -21,3 +21,5 @@
     </p>
     <p class="hint">Please, enter the Offer description.</p>
 </div>
+
+<div id="more_wrap" class="clearfix"></div>
