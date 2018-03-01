@@ -15,7 +15,6 @@ function offerMoreInit(id, text, json){
     let moreItems = box.querySelector('#more_items');
     let addButton = box.querySelector('.btn-add-item');
     addButton.addEventListener('click', function(){ addItem(); });
-
     box.addEventListener('changeMoreTag', function(){ tagButtons(); });
     box.addEventListener('removeMoreItem', function(){ tagButtons(); });
 
