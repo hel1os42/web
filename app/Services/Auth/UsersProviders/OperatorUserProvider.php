@@ -2,13 +2,13 @@
 
 namespace App\Services\Auth\UsersProviders;
 
-use App\Exceptions\Exception;
 use App\Http\Exceptions\NotImplementedException;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OperatorUserProvider implements UserProvider
 {
@@ -33,7 +33,7 @@ class OperatorUserProvider implements UserProvider
     {
         try {
             return $this->operatorRepository->find($identifier);
-        } catch (Exception $exception) {
+        } catch (ModelNotFoundException $exception) {
             return null;
         }
     }

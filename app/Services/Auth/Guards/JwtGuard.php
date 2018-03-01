@@ -49,10 +49,10 @@ class JwtGuard implements Guard
     public function user()
     {
         if (is_null($this->user) && $this->jwtAuth->getToken() !== false) {
-            $this->user = $this->jwtAuth->authenticate();
+            $this->user = $this->jwtAuth->authenticate() ?: null;
         }
 
-        return false === $this->user ? null : $this->user;
+        return $this->user;
     }
 
     /**
