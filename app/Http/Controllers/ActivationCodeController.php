@@ -41,19 +41,20 @@ class ActivationCodeController extends Controller
         return response()->render('activation_code.show', $activationCode->toArray());
     }
 
-    private function reviewStub() {
-        $offer = app(OfferRepository::class)->skipCriteria()->findWithoutGlobalScopes(config('app.review_stub.offer_id'));
+    private function reviewStub()
+    {
+        $offer          = app(OfferRepository::class)->skipCriteria()->findWithoutGlobalScopes(config('app.review_stub.offer_id'));
         $activationCode = (new ActivationCode())->forceFill([
-            'id' => 115,
-            'user_id' => config('app.review_stub.user_id'),
-            'offer_id' => config('app.review_stub.offer_id'),
+            'id'            => 115,
+            'user_id'       => config('app.review_stub.user_id'),
+            'offer_id'      => config('app.review_stub.offer_id'),
             'redemption_id' => null,
-            'created_at' => '2018-02-25 12:33:58',
-            'updated_at' => '2018-02-25 12:33:58',
-            'offer' => $offer,
+            'created_at'    => '2018-02-25 12:33:58',
+            'updated_at'    => '2018-02-25 12:33:58',
+            'offer'         => $offer,
         ]);
 
-        $activationCodeArray = $activationCode->toArray();
+        $activationCodeArray         = $activationCode->toArray();
         $activationCodeArray['code'] = config('app.review_stub.code');
 
         return response()->render('activation_code.show', $activationCodeArray);
