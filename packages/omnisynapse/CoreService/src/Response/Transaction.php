@@ -32,6 +32,9 @@ class Transaction implements \JsonSerializable
     public $created_at;
 
     /** @var string */
+    public $updated_at;
+
+    /** @var string */
     public $type;
 
     /** @var Transaction[] */
@@ -49,6 +52,7 @@ class Transaction implements \JsonSerializable
             'amount'                 => $this->getAmount(),
             'status'                 => $this->getStatus(),
             'created_at'             => $this->getCreatedAt()->format('Y-m-d\TH:i:sO'),
+            'updated_at'             => $this->getUpdatedAt()->format('Y-m-d\TH:i:sO'),
             'type'                   => $this->getType(),
             'feeTransactions'        => $this->getFeeTransactions(),
         ];
@@ -100,6 +104,14 @@ class Transaction implements \JsonSerializable
     public function getCreatedAt(): Carbon
     {
         return Carbon::parse($this->created_at);
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getUpdatedAt(): Carbon
+    {
+        return Carbon::parse($this->updated_at);
     }
 
     /**

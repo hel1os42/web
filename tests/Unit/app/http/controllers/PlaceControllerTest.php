@@ -558,6 +558,7 @@ class PlaceControllerTest extends TestCase
             'description' => $this->faker->text,
             'about'       => $this->faker->text,
             'address'     => $this->faker->address,
+            'alias'       => $this->faker->uuid,
             'latitude'    => $this->faker->latitude,
             'longitude'   => $this->faker->longitude,
             'radius'      => $this->faker->randomNumber()
@@ -610,6 +611,7 @@ class PlaceControllerTest extends TestCase
                     'description'                => null,
                     'about'                      => null,
                     'address'                    => null,
+                    'alias'                      => null,
                     'category'                   => null,
                     'retail_types'               => null,
                     'retail_types.*'             => null,

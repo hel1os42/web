@@ -9,15 +9,17 @@
             <input name="label" value="" class="formData" data-max-length="40">
         </label>
     </p>
-    <p class="hint">Please, enter the Offer name (3..128 characters).</p>
+    <p class="hint">Please, enter the Offer name.</p>
 </div>
 
 <div class="control-box">
     <p class="control-text">
         <label>
             <span class="input-label">Offer description</span>
-            <textarea name="description" class="nullableFormData" data-max-length="200"></textarea>
+            <textarea name="description" class="formData" data-max-length="200"></textarea>
         </label>
     </p>
     <p class="hint">Please, enter the Offer description.</p>
 </div>
+
+<div id="more_wrap" class="clearfix"></div>

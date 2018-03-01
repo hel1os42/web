@@ -328,10 +328,6 @@
 	font-weight: normal;
 }
 
-
-
-
-
 .map-wrap {
     position: relative;
 }
@@ -472,7 +468,10 @@
     color: red;
 }
 
-.nau-form .address-examples {
+.nau-form .address-examples,
+.nau-form .image-example,
+.nau-form .input-example {
+    color: #999;
     font-size: 80%;
 }
 .nau-form #btn_gps_crd {

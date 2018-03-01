@@ -20,11 +20,13 @@ use Illuminate\Support\Collection;
  * @property string                       description
  * @property string                       about
  * @property string                       address
+ * @property string                       alias
  * @property float                        latitude
  * @property float                        longitude
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
+ * @property string                       alias
  * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
@@ -40,6 +42,7 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
  * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|Builder byAlias(String $alias)
  */
 class Place extends Model
 {
@@ -67,11 +70,13 @@ class Place extends Model
             'description'       => 'string',
             'about'             => 'string',
             'address'           => 'string',
+            'alias'             => 'string',
             'latitude'          => 'double',
             'longitude'         => 'double',
             'radius'            => 'integer',
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
+            'alias'             => 'string',
             'has_active_offers' => 'boolean',
         ];
 
@@ -84,9 +89,11 @@ class Place extends Model
             'description',
             'about',
             'address',
+            'alias',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'alias',
         ];
 
         $this->attributes = [
@@ -94,6 +101,7 @@ class Place extends Model
             'description' => null,
             'about'       => null,
             'address'     => null,
+            'alias'       => null,
             'latitude'    => 0,
             'longitude'   => 0,
             'radius'      => 1
@@ -145,6 +153,14 @@ class Place extends Model
     public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAlias(): ?string
+    {
+        return $this->alias;
     }
 
     /** @return float */
@@ -308,6 +324,18 @@ class Place extends Model
     public function setAddress(string $address): Place
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @param string $alias
+     *
+     * @return Place
+     */
+    public function setAlias(string $alias): Place
+    {
+        $this->alias = $alias;
 
         return $this;
     }
@@ -481,5 +509,17 @@ class Place extends Model
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $alias
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByAlias($builder, string $alias): Builder
+    {
+        return $builder->where('alias', $alias);
     }
 }

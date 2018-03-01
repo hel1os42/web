@@ -54,6 +54,16 @@
                         </div>
 
                         <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Alias</span>
+                                    <input name="alias" value="" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place Alias.</p>
+                        </div>
+
+                        <div class="control-box">
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
@@ -199,9 +209,14 @@
         $logo_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Logo changed');
+            $logo_image_box.find('.image').attr('data-cropratio', '1');
         });
         $logo_image_box.find('.image').on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
+            if (this.dataset.cropratio) {
+                imageCropperRemove(this);
+                imageCropperInit(this);
+            }
         });
         $cover_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
@@ -389,12 +404,15 @@
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
             formData.append('_token', $box.find('[name="_token"]').val());
-            if ($box.attr('id') === 'logo_image_box') {
+            /*if ($box.attr('id') === 'logo_image_box') {
                 formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
             } else {
                 let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'cover.jpg');
-            }
+            }*/
+            let imgName = $box.attr('id') === 'logo_image_box' ? 'logo' : 'cover';
+            let base64Data = imageCropperCrop($box.find('.image').get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+            formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), imgName + '.jpg');
             for(let i of formData) { console.log(i); }
             $.ajax({
                 url: URI,

@@ -44,6 +44,8 @@
     <script src="{{ asset('js/cropper/cropper.js') }}"></script>
     <script>
 
+        const RESERVATION_MULTIPLIER = 10;
+
         /* dateTime picker init */
         dateTimePickerInit();
 
@@ -122,9 +124,18 @@
             $('.js-numeric').parents('label').before(btn('more', '+')).after(btn('less', '-'));
             controlRange(selector);
             maxRedemptionInfinity('.max-redemption input');
+            /* if reservation_token < 10 ==> reservation_token = 10 */
+            let reservInput = document.getElementsByName('reserved')[0];
+            let reservMin = parseInt(document.getElementsByName('reward')[0].value) * RESERVATION_MULTIPLIER;
+            let reserv = parseInt(reservInput.value);
+            reservInput.dataset.min = reservMin.toString();
+            if (reserv < reservMin) {
+                reservInput.value = reservMin;
+                reservInput.dataset.default = reservMin.toString();
+            }
             $('[name="reward"]').on('change', function(){
                 let $reserv = $('[name="reserved"]');
-                let reservMin = $(this).val() * 10;
+                let reservMin = $(this).val() * RESERVATION_MULTIPLIER;
                 $reserv.attr('data-min', reservMin);
                 if ($reserv.val() < reservMin) {
                     $reserv.attr('data-default', reservMin).val(reservMin);
@@ -417,6 +428,14 @@
                     $hint.show();
                     res = false;
                 }
+            }
+
+            /* Offer description */
+            $control = $('[name="description"]');
+            val = $control.val().length;
+            if (val < 2) {
+                $control.focus().parents('.control-text').addClass('invalid');
+                res = false;
             }
 
             /* Offer name */

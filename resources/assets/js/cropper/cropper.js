@@ -53,14 +53,18 @@ function imageCropperSetPosition(img){
 	if (!coords)	{
 		let imgWidth = img.clientWidth;
 		let imgHeight = img.clientHeight;
-		let cropWidth = Math.round(imgWidth * 0.8);
-		let cropHeight = Math.round(imgHeight * 0.8);
+		/*let cropWidth = Math.round(imgWidth * 0.8);
+		let cropHeight = Math.round(imgHeight * 0.8);*/
+		let cropWidth = Math.round(imgWidth);
+		let cropHeight = Math.round(imgHeight);
 		if (cropRatio){
 			let w = Math.round(cropHeight * cropRatio);
 			let h = Math.round(cropWidth / cropRatio);
 			let vertical = cropWidth / cropHeight > cropRatio;
-			left = Math.round(vertical ? (imgWidth - w) / 2 : imgWidth / 10);
-			top = Math.round(vertical ? imgHeight / 10 : (imgHeight - h) / 2);
+			/*left = Math.round(vertical ? (imgWidth - w) / 2 : imgWidth / 10);
+			top = Math.round(vertical ? imgHeight / 10 : (imgHeight - h) / 2);*/
+			left = Math.round(vertical ? (imgWidth - w) / 2 : 0);
+			top = Math.round(vertical ? 0 : (imgHeight - h) / 2);
 			width = (vertical ? w : cropWidth);
 			height = (vertical ? cropHeight : h);
 		} else {

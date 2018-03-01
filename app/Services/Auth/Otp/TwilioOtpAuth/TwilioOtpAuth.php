@@ -24,7 +24,7 @@ class TwilioOtpAuth extends BaseOtpAuth implements OtpAuth
     /**
      * @param string $phoneNumber
      */
-    public function generateCode(string $phoneNumber): void
+    public function codeGenerate(string $phoneNumber): void
     {
         $code         = $this->createOtp();
         $data         = $this->configData['auth_data'];

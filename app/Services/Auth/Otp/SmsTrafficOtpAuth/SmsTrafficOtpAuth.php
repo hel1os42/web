@@ -26,7 +26,7 @@ class SmsTrafficOtpAuth extends BaseOtpAuth implements OtpAuth
      * @throws \RuntimeException
      * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
      */
-    public function generateCode(string $phoneNumber): void
+    public function codeGenerate(string $phoneNumber): void
     {
         $code = $this->createOtp();
         $data = [
