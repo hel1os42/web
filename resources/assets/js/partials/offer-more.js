@@ -148,7 +148,6 @@ function offerMoreInit(id, text, json){
                 ['edit', ['undo', 'redo']]
             ]
         }); /* jQuery */
-
         editorModal.addEventListener('click', function(e){
             if (e.target.getAttribute('id') === 'editorMoreModal') destroyEditorModal();
         });
