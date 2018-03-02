@@ -30,7 +30,7 @@ class ActivationCodeController extends Controller
         }
 
         $activationCode = $this->activationCodeRepository
-            ->findByCodeAndUser($code, $this->user());
+            ->findByCode($code);
 
         if (null === $activationCode) {
             throw (new ModelNotFoundException)->setModel($this->activationCodeRepository->model());

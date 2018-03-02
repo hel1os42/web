@@ -2,18 +2,26 @@
 
 namespace App\Policies;
 
-use App\Models\Role;
+use App\Models\ActivationCode;
+use App\Models\Operator;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class ActivationCodePolicy extends Policy
 {
     /**
-     * @param User $user
+     * @param Authenticatable $user
      *
      * @return bool
      */
-    public function show(User $user)
+    public function show(Authenticatable $user, ActivationCode $activationCode)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        if ($user instanceof Operator) {
+            $user = $user->place->user;
+        }
+
+        return $user instanceof User &&
+            $activationCode->user->equals($user) ||
+            $activationCode->offer->isOwner($user);
     }
 }
