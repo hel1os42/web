@@ -32,7 +32,7 @@ class OperatorUserProvider implements UserProvider
     public function retrieveById($identifier)
     {
         try {
-            return $this->operatorRepository->find($identifier);
+            return $this->operatorRepository->skipCriteria()->find($identifier);
         } catch (ModelNotFoundException $exception) {
             return null;
         }
