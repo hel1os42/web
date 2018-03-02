@@ -36,11 +36,22 @@ class OperatorRequest extends FormRequest
     {
         if ($this->method() === 'POST')
         {
-            $loginRule = $this->getLoginRule();
+            $loginRule = implode('|', [
+                Rule::unique('operators', 'login')
+                    ->where('place_uuid', request()->get('place_uuid')),
+                'required',
+                'min:3',
+            ]);
         }
         else
         {
-            $loginRule = 'required|min:3|exists:operators,login';
+            $loginRule = implode('|', [
+                Rule::unique('operators', 'login')
+                    ->where('place_uuid', request()->get('place_uuid'))
+                        ->ignore(request()->get('id'), 'id'),
+                'required',
+                'min:3',
+            ]);
         }
         return [
             'is_active'  => 'required',
@@ -49,17 +60,5 @@ class OperatorRequest extends FormRequest
             'password'   => 'required',
             'confirm'    => 'required|same:password',
         ];
-    }
-
-    private function getLoginRule()
-    {
-        $rules = [
-            Rule::unique("operators", "login")
-                ->where("place_uuid", request()->get("place_uuid")),
-            'required',
-            'min:3',
-        ];
-
-        return implode('|', $rules);
     }
 }
