@@ -1,19 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skido
- * Date: 13.09.17
- * Time: 4:45
- */
 
 namespace App\Services\Auth\Guards;
 
 use Illuminate\Auth\GuardHelpers;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Tymon\JWTAuth\JWTAuth;
 
-class JwtGuard implements Guard
+class OperatorGuard extends JwtGuard
 {
     use GuardHelpers;
 
@@ -48,11 +41,25 @@ class JwtGuard implements Guard
      */
     public function user()
     {
-        if (is_null($this->user) && $this->jwtAuth->getToken() !== false) {
-            $this->user = $this->jwtAuth->authenticate() ?: null;
+        if (is_null($this->user) && false !== $this->jwtAuth->getToken()) {
+            $user       = $this->provider->retrieveById($this->id());
+            $this->user = $user;
         }
 
         return $this->user;
+    }
+
+    /**
+     * Get the id currently authenticated user.
+     * @SuppressWarnings(PHPMD.ShortMethodName)
+     * @return string
+     */
+    public function id()
+    {
+        $token  = $this->jwtAuth->getToken();
+        $authId = $this->jwtAuth->getPayload($token)->get('sub');
+
+        return $authId;
     }
 
     /**
@@ -65,7 +72,6 @@ class JwtGuard implements Guard
     public function validate(array $credentials = [])
     {
         $user = $this->provider->retrieveByCredentials($credentials);
-
         return $this->hasValidCredentials($user, $credentials);
     }
 

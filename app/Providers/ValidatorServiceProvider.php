@@ -165,6 +165,10 @@ class ValidatorServiceProvider extends ServiceProvider
                 return false;
             }
 
+            if (config('app.review_stub.code') === $value){
+                return true;
+            }
+
             $activationCode = $activationCodeRepository->findByCodeAndNotRedeemed($value);
 
             return null !== $activationCode
