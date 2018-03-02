@@ -10,12 +10,14 @@ class BadActivationCodeException extends RedemptionException
 {
     /**
      * BadActivationCodeException constructor.
-     * @param Offer $offer
+     *
+     * @param Offer  $offer
      * @param string $activationCode
      */
     public function __construct(?Offer $offer, string $activationCode)
     {
-        $message = 'Wrong activation code. Code: ' . $activationCode . ' Offer id: ' . isset($offer) ? $offer->getId() : 'no offer';
+        $offer   = isset($offer) ? $offer : (new Offer());
+        $message = 'Wrong activation code. Code: ' . $activationCode . ' Offer id: ' . $offer->getId();
 
         parent::__construct($offer, $activationCode, $message, Response::HTTP_BAD_REQUEST);
     }
