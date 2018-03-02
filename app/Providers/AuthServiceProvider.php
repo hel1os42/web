@@ -129,7 +129,7 @@ class AuthServiceProvider extends ServiceProvider
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->extend('operator', function ($app, $name, array $config) use ($authManager, $operatorRepository) {
-            return new OperatorGuard($authManager->createUserProvider($config['provider']), $operatorRepository);
+            return new OperatorGuard($name,$authManager->createUserProvider($config['provider']), $app['session.store']);
         });
     }
 }

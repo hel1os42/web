@@ -79,13 +79,16 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
             'destroy',
         ]
     ]);
+    $router->get('/', function () {
+        $view = 'home';
+        if(auth()->user() instanceof \App\Models\Operator) {
+            $view = 'operator';
+        }
+        return response()->render($view, []);
+    })->name('home');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
-
-    $router->get('/', function () {
-        return response()->render('home', []);
-    })->name('home');
 
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');

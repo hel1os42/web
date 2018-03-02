@@ -3,10 +3,14 @@
 namespace App\Services\Auth\Guards;
 
 use Illuminate\Auth\GuardHelpers;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWTAuth;
 
-class OperatorGuard extends JwtGuard
+class OperatorGuard implements Guard
 {
     use GuardHelpers;
 
@@ -14,6 +18,12 @@ class OperatorGuard extends JwtGuard
      * @var JWTAuth
      */
     private $jwtAuth;
+
+    protected $session;
+
+    protected $name;
+
+    protected $request;
 
     public function logout()
     {
@@ -25,10 +35,12 @@ class OperatorGuard extends JwtGuard
      *
      * @param  \Illuminate\Contracts\Auth\UserProvider $provider
      */
-    public function __construct(UserProvider $provider)
+    public function __construct($name, UserProvider $provider, Session $session)
     {
+        $this->name     = $name;
         $this->provider = $provider;
         $this->jwtAuth  = app('tymon.jwt.auth');
+        $this->session  = $session;
     }
 
     /**
@@ -41,8 +53,8 @@ class OperatorGuard extends JwtGuard
      */
     public function user()
     {
-        if (is_null($this->user) && false !== $this->jwtAuth->getToken()) {
-            $user       = $this->provider->retrieveById($this->id());
+        if (is_null($this->user)) {
+            $user = $this->provider->retrieveById($this->id());
             $this->user = $user;
         }
 
@@ -56,10 +68,27 @@ class OperatorGuard extends JwtGuard
      */
     public function id()
     {
-        $token  = $this->jwtAuth->getToken();
-        $authId = $this->jwtAuth->getPayload($token)->get('sub');
+        $authId = $this->session->get($this->getName());
+        if(is_null($authId)) {
+            $token  = $this->jwtAuth->getToken();
+            $authId = false !== $token ? $this->jwtAuth->getPayload($token)->get('sub') : null;
+        }
 
         return $authId;
+    }
+
+    public function login(Authenticatable $user, $remember = false)
+    {
+        $this->updateSession($user->getAuthIdentifier());
+
+        $this->setUser($user);
+    }
+
+    protected function updateSession($id)
+    {
+        $this->session->put($this->getName(), $id);
+
+        $this->session->migrate(true);
     }
 
     /**
@@ -72,6 +101,7 @@ class OperatorGuard extends JwtGuard
     public function validate(array $credentials = [])
     {
         $user = $this->provider->retrieveByCredentials($credentials);
+
         return $this->hasValidCredentials($user, $credentials);
     }
 
@@ -86,5 +116,10 @@ class OperatorGuard extends JwtGuard
     protected function hasValidCredentials($user, $credentials)
     {
         return !is_null($user) && $this->provider->validateCredentials($user, $credentials);
+    }
+
+    public function getName()
+    {
+        return 'login_' . $this->name . '_' . sha1(static::class);
     }
 }
