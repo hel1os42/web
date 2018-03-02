@@ -165,4 +165,9 @@ class ActivationCode extends Model
     {
         $this->redemption()->associate($redemption)->update();
     }
+
+    public function getOfferAttribute()
+    {
+        return $this->getRelationValue('offer');
+    }
 }
