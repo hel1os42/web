@@ -64,4 +64,14 @@ class ActivationCodeRepositoryEloquent extends BaseRepository implements Activat
 
         return $this->parserResult($model);
     }
+
+    public function findByCode(string $code): ?ActivationCode
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->byCode($code)->first();
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
 }
