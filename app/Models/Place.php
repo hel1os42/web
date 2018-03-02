@@ -9,6 +9,7 @@ use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Prettus\Repository\Traits\PresentableTrait;
 
 /**
  * Class Place
@@ -43,7 +44,7 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use Uuids, RelationsTrait;
+    use Uuids, RelationsTrait, PresentableTrait;
 
     /**
      * Place constructor.

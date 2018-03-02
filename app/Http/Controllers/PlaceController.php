@@ -38,10 +38,7 @@ class PlaceController extends Controller
 
         $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth));
 
-        $places         = $places->paginate();
-        $places['data'] = $placeRepository->parsePaginatedResult($places)['data'];
-
-        return response()->render('place.index', $places);
+        return response()->render('place.index', $placeRepository->parsePaginatedResult($places->paginate()));
     }
 
     /**
