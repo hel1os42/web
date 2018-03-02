@@ -168,6 +168,6 @@ class ActivationCode extends Model
 
     public function getOfferAttribute()
     {
-        return $this->offer()->get();
+        return $this->getRelationValue('offer');
     }
 }
