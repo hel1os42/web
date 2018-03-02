@@ -106,6 +106,14 @@
                                             <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
                                         <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                        <p class="image-example" style="padding-top:20px; color: #999; font-size: 80%;">
+                                            Image requirements:<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<em>format: jpg/jpeg, png</em><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<em>maximum size: 2 Mb</em><br>
+                                            Recommended image:<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<em>your face</em><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<em>up to 1024 x 1024 px</em>
+                                        </p>
                                     </form>
                                 </div>
                             </div>
