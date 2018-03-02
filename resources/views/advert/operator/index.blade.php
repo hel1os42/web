@@ -18,35 +18,34 @@
             </thead>
             <tbody>
                 @foreach ($data as $operator)
-                <tr class="clickable-table-row" data-uuid="">
-                    @foreach($operator as $key => $field)
+                    <tr class="clickable-table-row" data-uuid="">
+                        @foreach($operator as $key => $field)
+                            <td>
+                                @if('is_active' === $key)
+                                    {{ true === $field ? 'Active' : 'Deactive' }}
+                                @else
+                                    {{ empty($field) ? '-' : $field }}
+                                @endif
+                            </td>
+                        @endforeach
                         <td>
-                        @if('is_active' === $key)
-                            {{ true === $field ? 'Active' : 'Deactive' }}
-                        @else
-                            {{ empty($field) ? '-' : $field }}
-                        @endif
-                    @endforeach
-                    <td>
-                        <form method="POST" action="{{ route('advert.operators.destroy', $operator['id']) }}" class="form-operator-delete">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-default btn-sm">Delete</button>
-                        </form>
-                    </td>
-                    <td>
-                        <a href="{{ route('advert.operators.edit', $operator['id']) }}" class="btn btn-default btn-sm">Edit</a>
-                    </td>
-                </tr>
+                            <form method="POST" action="{{ route('advert.operators.destroy', $operator['id']) }}" class="form-operator-delete">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-default btn-sm">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="{{ route('advert.operators.edit', $operator['id']) }}" class="btn btn-default btn-sm">Edit</a>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
         @else
             <p style="padding: 40px 0;">No operators</p>
         @endif
-        <form method="get" action="{{ route('advert.operators.create') }}">
-            <button type="submit" class="btn btn-nau">Create operator</button>
-        </form>
+        <p><a href="{{ route('advert.operators.create') }}" class="btn btn-nau">Create operator</a></p>
     </div>
 </div>
 
