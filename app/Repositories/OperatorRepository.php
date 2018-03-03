@@ -41,4 +41,12 @@ interface OperatorRepository extends RepositoryInterface
      * @return Collection
      */
     public function findByPlace(Place $place): Collection;
+
+    /**
+     * @param Place $place
+     * @param string $login
+     *
+     * @return Operator|null
+     */
+    public function findByPlaceAndLogin(Place $place, string $login): ?Operator;
 }

@@ -22,4 +22,6 @@ interface ActivationCodeRepository extends RepositoryInterface
     public function findByCodeAndOfferAndNotRedeemed(string $code, Offer $offer): ?ActivationCode;
 
     public function findByCodeAndNotRedeemed(string $code): ?ActivationCode;
+
+    public function findByCode(string $code): ?ActivationCode;
 }
