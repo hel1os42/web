@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
         ViewFacade::composer(
             ['*'], function (View $view) {
                 $authUser = auth()->user();
-                if (null != $authUser) {
+                if (null != $authUser && null == array_get($view->getData(), 'authUser')) {
                     $authUser->load('accounts');
                     $view->with('authUser', $authUser->toArray());
 
