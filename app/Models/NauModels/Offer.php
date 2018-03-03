@@ -7,53 +7,55 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\NauModels\Offer\HasOfferData;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
+use App\Models\OfferLink;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\HtmlString;
 
 /**
  * Class Offer
  * @package App\Models\NauModels
  *
- * @property string      id
- * @property int         account_id
+ * @property string id
+ * @property int account_id
  * @property null|string label
  * @property null|string description
- * @property float       reward
- * @property string      status
- * @property Carbon      start_date
+ * @property float reward
+ * @property string status
+ * @property Carbon start_date
  * @property null|Carbon finish_date
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
- * @property null|int    max_count
- * @property null|int    max_for_user
- * @property null|int    max_per_day
- * @property null|int    max_for_user_per_day
- * @property null|int    max_for_user_per_week
- * @property null|int    max_for_user_per_month
- * @property int         user_level_min
- * @property null|float  latitude
- * @property null|float  longitude
- * @property null|int    radius
- * @property Carbon      created_at
- * @property Carbon      updated_at
- * @property boolean     delivery
+ * @property null|int max_count
+ * @property null|int max_for_user
+ * @property null|int max_per_day
+ * @property null|int max_for_user_per_day
+ * @property null|int max_for_user_per_week
+ * @property null|int max_for_user_per_month
+ * @property int user_level_min
+ * @property null|float latitude
+ * @property null|float longitude
+ * @property null|int radius
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property boolean delivery
  * @property null|string type
  * @property null|string gift_bonus_descr
- * @property null|float  discount_percent
- * @property null|float  discount_start_price
- * @property null|float  discount_finish_price
+ * @property null|float discount_percent
+ * @property null|float discount_start_price
+ * @property null|float discount_finish_price
  * @property null|string currency
  */
 class Offer extends AbstractNauModel
 {
     use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData;
 
-    const STATUS_ACTIVE   = 'active';
+    const STATUS_ACTIVE = 'active';
     const STATUS_DEACTIVE = 'deactive';
 
     /**
@@ -340,6 +342,31 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * Get the description with offer links
+     *
+     * @return string
+     */
+    public function getRichDescriptionAttribute(): string
+    {
+        $regex = '|\B#(\w*)|';
+        $description = (string)$this->description;
+
+        preg_match_all($regex, $description, $matches);
+
+        $tags = array_get($matches, 1);
+
+        foreach ($tags as $tag) {
+            $link = $this->getHtmlOfferLink($tag);
+
+            if ($link instanceof HtmlString) {
+                $description = str_replace('#' . $tag, $link, $description);
+            }
+        }
+
+        return $description;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -385,9 +412,38 @@ class Offer extends AbstractNauModel
         return $redemption;
     }
 
+    /**
+     * @param string $tag
+     * @return HtmlString|null
+     */
+    private function getHtmlOfferLink(string $tag): ?HtmlString
+    {
+        $owner = $this->getOwner();
+
+        if (null === $this->getOwner()) {
+            return null;
+        }
+
+        $offerLink = OfferLink::query()
+            ->where('user_id', $this->getOwner()->getId())
+            ->where('tag', $tag)
+            ->first();
+
+        if (null === $offerLink) {
+            return null;
+        }
+
+        $html = sprintf('<a href="%1$s">%2$s</a>',
+            route('advert.offer_links.show', $offerLink),
+            $offerLink->getTitle()
+        );
+
+        return new HtmlString($html);
+    }
+
     private function initAttributes(): void
     {
-        $defaultReward         = $this->convertFloatToInt(1);
+        $defaultReward = $this->convertFloatToInt(1);
         $reservationMultiplier = (int)config('nau.reservation_multiplier');
 
         $this->attributes = [
@@ -463,6 +519,7 @@ class Offer extends AbstractNauModel
         $this->appends = [
             'account_id',
             'label',
+            'rich_description',
             'description',
             'start_date',
             'finish_date',

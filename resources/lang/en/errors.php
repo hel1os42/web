@@ -15,4 +15,5 @@ return [
     'transaction_not_found'                               => 'You don\'t have permission to access this transaction.',
     'offer_unprocessable_entity'                          => 'Forbidden to delete offer with status \'active\'.',
     'operator_not_found'                                  => 'The operator you are looking for, does not exist',
+    'offer_link_is_used'                                  => 'Sorry! You can\'t delete link because it already used is some offers',
 ];

@@ -11,8 +11,8 @@ use App\Models\NauModels\User as CoreUser;
 use App\Models\Place;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\OfferLink;
 use Illuminate\Database\Eloquent\Relations;
-use Illuminate\Support\Collection;
 
 /**
  * Trait RelationsTrait
@@ -69,6 +69,14 @@ trait RelationsTrait
                         'created_at',
                         'points',
                     ]);
+    }
+
+    /**
+     * @return Relations\HasMany
+     */
+    public function offerLinks(): Relations\HasMany
+    {
+        return $this->hasMany(OfferLink::class);
     }
 
     /**
