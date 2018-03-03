@@ -89,7 +89,6 @@ class LoginController extends AuthController
      * @param Session      $session
      *
      * @return Response
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function login(LoginRequest $request, Session $session)
@@ -149,12 +148,9 @@ class LoginController extends AuthController
      */
     private function postLoginSession(Authenticatable $user)
     {
-        $guard = 'web';
-        if($user instanceof \App\Models\Operator) {
-            $guard = 'operator';
-        }
-
-        $this->auth->guard($guard)->login($user);
+        $this->auth
+            ->guard($user instanceof \App\Models\Operator ? 'operator' : 'web')
+            ->login($user);
 
         return \response()->redirectTo(route('home'));
     }
@@ -165,7 +161,6 @@ class LoginController extends AuthController
      *
      * @return \Illuminate\Http\RedirectResponse|Response
      * @throws \LogicException
-     * @throws \RuntimeException
      */
     public function impersonate(string $uuid, UrlGenerator $urlGenerator)
     {
@@ -192,7 +187,6 @@ class LoginController extends AuthController
     /**
      * @return \Illuminate\Http\RedirectResponse|Response
      * @throws \LogicException
-     * @throws \RuntimeException
      */
     public function stopImpersonate()
     {

@@ -25,9 +25,15 @@ class OperatorGuard implements Guard
 
     protected $request;
 
+    /**
+     * @throws \Tymon\JWTAuth\Exceptions\JWTException
+     * @throws \Tymon\JWTAuth\Exceptions\TokenBlacklistedException
+     */
     public function logout()
     {
+        $this->user = null;
         $this->jwtAuth->invalidate();
+        $this->session->remove($this->getName());
     }
 
     /**
@@ -77,16 +83,21 @@ class OperatorGuard implements Guard
         return $authId;
     }
 
-    public function login(Authenticatable $user, $remember = false)
+    /**
+     * @param Authenticatable $user
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    public function login(Authenticatable $user)
     {
         $this->updateSession($user->getAuthIdentifier());
 
         $this->setUser($user);
     }
 
-    protected function updateSession($id)
+    protected function updateSession($authId)
     {
-        $this->session->put($this->getName(), $id);
+        $this->session->put($this->getName(), $authId);
 
         $this->session->migrate(true);
     }
