@@ -77,7 +77,8 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
         'except' => [
             'update',
             'destroy',
-        ]
+        ],
+        'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
     $router->get('/', function () {
         $view = 'home';
