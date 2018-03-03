@@ -29,7 +29,7 @@ class OperatorGuard extends SessionGuard implements StatefulGuard
      */
     public function logout()
     {
-        if(false !== $this->jwtAuth->getToken()) {
+        if (false !== $this->jwtAuth->getToken()) {
             $this->jwtAuth->invalidate();
         }
 
