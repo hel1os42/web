@@ -32,7 +32,8 @@
 <script>
 
 (function($){
-    $('.form-send-code').on('submit', function(){
+    $('.form-send-code').on('submit', function(e){
+        e.preventDefault();
         let $form = $(this);
         let formData = $form.serializeArray();
         $.ajax({
