@@ -54,7 +54,7 @@ class OperatorGuard implements Guard
     public function user()
     {
         if (is_null($this->user)) {
-            $user = $this->provider->retrieveById($this->id());
+            $user       = $this->provider->retrieveById($this->id());
             $this->user = $user;
         }
 
@@ -69,7 +69,7 @@ class OperatorGuard implements Guard
     public function id()
     {
         $authId = $this->session->get($this->getName());
-        if(is_null($authId)) {
+        if (is_null($authId)) {
             $token  = $this->jwtAuth->getToken();
             $authId = false !== $token ? $this->jwtAuth->getPayload($token)->get('sub') : null;
         }
