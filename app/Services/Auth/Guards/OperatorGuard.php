@@ -2,9 +2,7 @@
 
 namespace App\Services\Auth\Guards;
 
-use App\Repositories\OperatorRepository;
 use Illuminate\Auth\GuardHelpers;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Tymon\JWTAuth\JWTAuth;
 
@@ -75,8 +73,6 @@ class OperatorGuard extends JwtGuard
     {
         $user = $this->provider->retrieveByCredentials($credentials);
         return $this->hasValidCredentials($user, $credentials);
-
-        return false;
     }
 
     /**
