@@ -3,17 +3,16 @@
 namespace App\Services\Auth\Guards;
 
 use Illuminate\Auth\GuardHelpers;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\JWTAuth;
 
-class OperatorGuard implements Guard
+class OperatorGuard extends SessionGuard implements StatefulGuard
 {
     use GuardHelpers;
-
     /**
      * @var JWTAuth
      */
@@ -23,30 +22,36 @@ class OperatorGuard implements Guard
 
     protected $name;
 
-    protected $request;
-
     /**
+     * @throws \RuntimeException
      * @throws \Tymon\JWTAuth\Exceptions\JWTException
      * @throws \Tymon\JWTAuth\Exceptions\TokenBlacklistedException
      */
     public function logout()
     {
-        $this->user = null;
-        $this->jwtAuth->invalidate();
-        $this->session->remove($this->getName());
+        if(false !== $this->jwtAuth->getToken()) {
+            $this->jwtAuth->invalidate();
+        }
+
+        parent::logout();
     }
 
     /**
-     * Create a new authentication guard.
+     * OperatorGuard constructor.
      *
-     * @param  \Illuminate\Contracts\Auth\UserProvider $provider
+     * @param              $name
+     * @param UserProvider $provider
+     * @param Session      $session
+     * @param Request|null $request
      */
-    public function __construct($name, UserProvider $provider, Session $session)
+    public function __construct($name, UserProvider $provider, Session $session, Request $request = null)
     {
         $this->name     = $name;
         $this->provider = $provider;
         $this->jwtAuth  = app('tymon.jwt.auth');
         $this->session  = $session;
+
+        parent::__construct($name, $provider, $session, $request);
     }
 
     /**
@@ -64,7 +69,7 @@ class OperatorGuard implements Guard
             $this->user = $user;
         }
 
-        return $this->user;
+        return parent::user();
     }
 
     /**
@@ -74,6 +79,10 @@ class OperatorGuard implements Guard
      */
     public function id()
     {
+        if ($this->loggedOut) {
+            return;
+        }
+
         $authId = $this->session->get($this->getName());
         if (is_null($authId)) {
             $token  = $this->jwtAuth->getToken();
@@ -83,54 +92,4 @@ class OperatorGuard implements Guard
         return $authId;
     }
 
-    /**
-     * @param Authenticatable $user
-     *
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
-    public function login(Authenticatable $user)
-    {
-        $this->updateSession($user->getAuthIdentifier());
-
-        $this->setUser($user);
-    }
-
-    protected function updateSession($authId)
-    {
-        $this->session->put($this->getName(), $authId);
-
-        $this->session->migrate(true);
-    }
-
-    /**
-     * Validate a user's credentials.
-     *
-     * @param  array $credentials
-     *
-     * @return bool
-     */
-    public function validate(array $credentials = [])
-    {
-        $user = $this->provider->retrieveByCredentials($credentials);
-
-        return $this->hasValidCredentials($user, $credentials);
-    }
-
-    /**
-     * Determine if the user matches the credentials.
-     *
-     * @param  mixed $user
-     * @param  array $credentials
-     *
-     * @return bool
-     */
-    protected function hasValidCredentials($user, $credentials)
-    {
-        return !is_null($user) && $this->provider->validateCredentials($user, $credentials);
-    }
-
-    public function getName()
-    {
-        return 'login_' . $this->name . '_' . sha1(static::class);
-    }
 }

@@ -58,7 +58,7 @@
                         @include(
                             "form.input",
                             [
-                                "type" => "text",
+                                "type" => "password",
                                 "name" => "pin",
                                 "params" => ["placeholder" => "pin", "class" => "form-control input-no-border"],
                             ],
