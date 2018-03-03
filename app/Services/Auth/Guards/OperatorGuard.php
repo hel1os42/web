@@ -91,5 +91,4 @@ class OperatorGuard extends SessionGuard implements StatefulGuard
 
         return $authId;
     }
-
 }
