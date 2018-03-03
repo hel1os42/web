@@ -39,12 +39,12 @@ class OperatorGuard extends SessionGuard implements StatefulGuard
     /**
      * OperatorGuard constructor.
      *
-     * @param              $name
+     * @param string       $name
      * @param UserProvider $provider
      * @param Session      $session
      * @param Request|null $request
      */
-    public function __construct($name, UserProvider $provider, Session $session, Request $request = null)
+    public function __construct(string $name, UserProvider $provider, Session $session, Request $request = null)
     {
         $this->name     = $name;
         $this->provider = $provider;
