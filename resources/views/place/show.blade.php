@@ -6,6 +6,9 @@
 
 <div class="container">
     <h1>Place information</h1>
+    <div class="text-right">
+        <a class="btn-nau" href="{{ route('profile.place.edit') }}">Edit</a>
+    </div>
     <div class="row">
         <div class="col-xs-3"><p><strong>Name:</strong></p></div>
         <div class="col-xs-9"><p>{{ $name }}</p></div>

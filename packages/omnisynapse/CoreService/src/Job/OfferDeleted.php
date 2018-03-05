@@ -85,4 +85,15 @@ class OfferDeleted extends AbstractJob
     {
         return new FailedJob\OfferDeleted($exception, $this->offerId);
     }
+
+    /**
+     * @param \OmniSynapse\CoreService\Response\OfferDeleted $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        event('eloquent.deleted: ' . get_class($offer), $offer);
+    }
 }
