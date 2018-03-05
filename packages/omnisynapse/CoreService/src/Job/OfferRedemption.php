@@ -86,4 +86,15 @@ class OfferRedemption extends AbstractJob
     {
         return new FailedJob\OfferRedemption($exception, $this->redemption);
     }
+
+    /**
+     * @param OfferForRedemptionResponse $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $redemption = Redemption::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        event('eloquent.created: ' . get_class($redemption), $redemption);
+    }
 }
