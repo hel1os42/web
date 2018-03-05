@@ -26,7 +26,7 @@ class RedemptionPolicy extends Policy
     }
 
     /**
-     * @param $user
+     * @param       $user
      * @param Offer $offer
      *
      * @return bool
