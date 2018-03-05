@@ -19,7 +19,7 @@ class RedemptionPolicy extends Policy
     public function index(Authenticatable $user)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user ?? null;
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
         }
 
         return $user instanceof User && $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
@@ -34,22 +34,22 @@ class RedemptionPolicy extends Policy
     public function confirm(Authenticatable $user, Offer $offer)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user ?? null;
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
         }
 
         return $user instanceof User && $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
     }
 
     /**
-     * @param            $user
-     * @param Redemption $redemption
+     * @param Authenticatable $user
+     * @param Redemption      $redemption
      *
      * @return bool
      */
     public function show(Authenticatable $user, Redemption $redemption)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user ?? null;
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
         }
 
         return $user instanceof User && $redemption->offer->isOwner($user);
