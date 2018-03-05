@@ -18,6 +18,10 @@ class RedemptionPolicy extends Policy
      */
     public function index(User $user)
     {
+        if ($user instanceof Operator) {
+            $user = $user->place->user ?? null;
+        }
+
         return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
     }
 
@@ -44,6 +48,10 @@ class RedemptionPolicy extends Policy
      */
     public function show(User $user, Redemption $redemption)
     {
+        if ($user instanceof Operator) {
+            $user = $user->place->user ?? null;
+        }
+
         return $redemption->offer->isOwner($user);
     }
 }
