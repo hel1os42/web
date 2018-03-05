@@ -25,7 +25,37 @@ class OfferObserver
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
-    public function saved(Offer $offer)
+    public function created(Offer $offer)
+    {
+        $this->syncPlaceActiveOffersCount($offer);
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    public function updated(Offer $offer)
+    {
+        $this->syncPlaceActiveOffersCount($offer);
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    public function deleted(Offer $offer)
+    {
+        $this->syncPlaceActiveOffersCount($offer);
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    protected function syncPlaceActiveOffersCount(Offer $offer)
     {
         $place = $offer->account->owner->place;
 
