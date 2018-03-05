@@ -90,8 +90,8 @@ class OfferController extends FavoriteController
 
         $this->favoriteOfferRepository->create(['user_id' => $user->getId(), 'offer_id' => $offer->getId()]);
 
-        return \response()->render('user.favorite.offer.create', $user->favoriteOffers()->paginate(),
-            Response::HTTP_CREATED, route('users.show', $userId));
+        return \response()->render('user.favorite.offer.index', $user->favoriteOffers()->paginate(),
+            Response::HTTP_CREATED, route('users.favorite.offers.index', $userId));
     }
 
     /**
@@ -119,6 +119,6 @@ class OfferController extends FavoriteController
         $favorite = $this->favoriteOfferRepository->findByUserIdAndOfferId($user->getId(), $offerId);
         $favorite->delete();
 
-        return \response()->render('user.favorite.offer.index', [], Response::HTTP_NO_CONTENT);
+        return \response()->render(null, [], Response::HTTP_NO_CONTENT);
     }
 }

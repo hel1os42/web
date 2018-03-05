@@ -139,10 +139,20 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
         $router->resource('favorite/offers', 'User\Favorite\OfferController', [
-            'only' => ['index', 'store', 'destroy',]
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.offers.index',
+                'store'   => 'users.favorite.offers.store',
+                'destroy' => 'users.favorite.offers.destroy',
+            ]
         ]);
         $router->resource('favorite/places', 'User\Favorite\OfferController', [
-            'only' => ['index', 'store', 'destroy',]
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.places.index',
+                'store'   => 'users.favorite.places.store',
+                'destroy' => 'users.favorite.places.destroy',
+            ]
         ]);
     });
 

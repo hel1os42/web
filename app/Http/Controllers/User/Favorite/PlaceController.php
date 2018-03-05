@@ -51,8 +51,8 @@ class PlaceController extends FavoriteController
 
         $user->favoritePlaces()->attach($request->get('place_id'));
 
-        return \response()->render('user.favorite.place.create', $user->favoritePlaces()->paginate(),
-            Response::HTTP_CREATED, route('users.show', $userId));
+        return \response()->render('user.favorite.place.index', $user->favoritePlaces()->paginate(),
+            Response::HTTP_CREATED, route('users.favorite.places.index', $userId));
     }
 
     /**
@@ -79,7 +79,7 @@ class PlaceController extends FavoriteController
 
         $user->favoritePlaces()->detach([$placeId]);
 
-        return \response()->render('user.favorite.place.index', [], Response::HTTP_NO_CONTENT);
+        return \response()->render(null, [], Response::HTTP_NO_CONTENT);
 
     }
 }
