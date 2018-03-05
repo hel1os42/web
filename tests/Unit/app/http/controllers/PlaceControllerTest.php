@@ -6,8 +6,10 @@ use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Models\Place;
 use App\Models\User;
+use App\Repositories\Implementation\OfferRepositoryEloquent;
 use App\Repositories\Implementation\PlaceRepositoryEloquent;
 use App\Repositories\Implementation\UserRepositoryEloquent;
+use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use App\Repositories\UserRepository;
 use App\Services\Implementation\PlaceService;
@@ -36,6 +38,11 @@ class PlaceControllerTest extends TestCase
      * @var PlaceRepository|PHPUnit_Framework_MockObject_MockObject
      */
     private $placeRepository;
+
+    /**
+     * @var OfferRepository|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $offerRepository;
 
     /**
      * @var UserRepository|PHPUnit_Framework_MockObject_MockObject
@@ -79,6 +86,7 @@ class PlaceControllerTest extends TestCase
     public function before()
     {
         $this->placeRepository = $this->getMockBuilder(PlaceRepositoryEloquent::class)->disableOriginalConstructor()->getMock();
+        $this->offerRepository = $this->getMockBuilder(OfferRepositoryEloquent::class)->disableOriginalConstructor()->getMock();
         $this->authManager     = $this->getMockBuilder(AuthManager::class)->disableOriginalConstructor()->getMock();
         $this->guard           = $this->getMockBuilder(Guard::class)->disableOriginalConstructor()->getMock();
         $this->user            = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -205,6 +213,7 @@ class PlaceControllerTest extends TestCase
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
         $placesArray = [$uuid, $withOffers];
+        $placesArrayData = ['data' => $placesArray];
 
         $this->placeRepository
             ->expects(self::once())
@@ -234,9 +243,9 @@ class PlaceControllerTest extends TestCase
 
         $place
             ->expects(self::once())
-            ->method('toArray')
+            ->method('presenter')
             ->with()
-            ->willReturn($placesArray);
+            ->willReturn($placesArrayData);
 
         $responseFactory
             ->expects(self::once())
@@ -245,7 +254,7 @@ class PlaceControllerTest extends TestCase
             ->willReturn($response);
 
         // test
-        $returnValue = $this->controller->show($request, $this->placeRepository, $uuid);
+        $returnValue = $this->controller->show($request, $this->placeRepository, $this->offerRepository, $uuid);
 
         self::assertSame($response, $returnValue);
     }
@@ -301,7 +310,7 @@ class PlaceControllerTest extends TestCase
             ->with('render', ['user.offer.index', $pagination])
             ->willReturn($response);
 
-        $returnValue = $this->controller->showPlaceOffers($uuid, $this->placeRepository);
+        $returnValue = $this->controller->showPlaceOffers($uuid, $this->placeRepository, $this->offerRepository);
         self::assertSame($response, $returnValue);
     }
 
