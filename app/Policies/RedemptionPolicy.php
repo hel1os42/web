@@ -41,8 +41,8 @@ class RedemptionPolicy extends Policy
     }
 
     /**
-     * @param            $user
-     * @param Redemption $redemption
+     * @param Authenticatable $user
+     * @param Redemption      $redemption
      *
      * @return bool
      */
