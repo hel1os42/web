@@ -27,32 +27,31 @@
         <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
         <script src="{{ asset('js/login.js') }}"></script>
         <script>
-            (function( $ ) {
-                $( '.form-send-code' ).on( 'submit', function( e ) {
+
+            (function($){
+                $('.form-send-code').on('submit', function(e) {
                     e.preventDefault();
-                    let code = this.querySelector( '[name="code"]' );
-                    code.value = code.value.toUpperCase();
-                    let $form = $( this );
+                    let code = this.querySelector('[name="code"]');
+                    code.value = code.value.trim().toUpperCase();
+                    let $form = $(this);
                     let formData = $form.serializeArray();
-                    $.ajax( {
-                        method:  'POST',
-                        url:     $form.attr( 'action' ),
-                        data:    formData,
-                        headers: {
-                            Accept: "application/json"
-                        },
-                        success: function( data, textStatus, xhr ) {
-                            if ( xhr.status >= 200 && xhr.status < 300 ) {
-                                alert( 'Success.' );
-                            } else {
-                                alert( 'This code is wrong.' );
+                    $.ajax({
+                        method: 'POST',
+                        url: $form.attr('action'),
+                        data: formData,
+                        headers: { Accept: "application/json" },
+                        success: function(data, textStatus, xhr) {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                                alert('Success.');
+                                code.value = '';
                             }
+                            else alert('This code is wrong.');
                         },
-                        error:   function( resp ) {
-                            alert( 'This code is wrong.' );
-                            console.log( resp );
+                        error: function(resp){
+                            alert('This code is wrong.');
+                            console.log(resp);
                         }
-                    } );
+                    });
                 } );
             })( jQuery );
 
