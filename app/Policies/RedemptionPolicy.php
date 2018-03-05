@@ -22,7 +22,7 @@ class RedemptionPolicy extends Policy
             $user = $user->isActive() && $user->place->user ? $user->place->user : null;
         }
 
-        return $user->hasRoles([Role::ROLE_USER]);
+        return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
     }
 
     /**
