@@ -17,7 +17,7 @@ class ActivationCodePolicy extends Policy
     public function show(Authenticatable $user, ActivationCode $activationCode)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user;
+            $user = ! $user->isActive() ? null : $user->place->user ?? null;
         }
 
         return $user instanceof User &&

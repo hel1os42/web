@@ -30,7 +30,7 @@ class RedemptionPolicy extends Policy
     public function confirm(Authenticatable $user, Offer $offer)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user ?? null;
+            $user = ! $user->isActive() ? null : $user->place->user ?? null;
         }
 
         return $user instanceof User && $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
