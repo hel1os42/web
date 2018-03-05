@@ -1,98 +1,61 @@
-{!! session()->has('message') ? '<p>'.session()->get('message').'</p>' : '' !!}
+@extends('layouts.master')
 
-        <!DOCTYPE html>
-<html>
-<head>
-    <title>Create offer</title>
+@section('title', 'Create redemption')
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+@section('content')
 
-    <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            color: #38bdff;
-            display: table;
-            font-weight: 100;
-            font-family: 'Lato';
-        }
-
-        .container {
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .content {
-            text-align: center;
-            display: inline-block;
-        }
-
-        .title {
-            font-size: 72px;
-            margin-bottom: 40px;
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            height: 40px;
-            border-bottom: 1px solid #38bdff;
-            width: 96%;
-            left: 0;
-            padding: 2%;
-        }
-
-        .header-right {
-            float: right;
-            margin-right: 20px;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .offer {
-            color: black;
-            font-size: 25px;
-            text-align: left;
-            font-weight: bold;
-            margin-bottom: 100px;
-            margin-top: 100px;
-        }
-    </style>
-</head>
-<body>
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 <div class="container">
-    <div class="content">
-        <div class="header">
-            <div class="header-right"><a href="{{route('logout')}}">Logout</a></div>
-        </div>
-        <div class="offer">
-            <form action="{{route('redemption.store', $offer_id)}}" method="post" target="_top">
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+            <h1>Redeem offer</h1>
+            <form action="{{ route('redemptions.store') }}" method="POST" class="nau-form form-send-code" target="_top">
                 {{ csrf_field() }}
-                <input name="code" placeholder="code" value=""><br>
-
-                <input type="submit">
+                <div class="control-box">
+                    <p class="control-text">
+                        <label>
+                            <span class="input-label">Code:</span>
+                            <input name="code" value="">
+                        </label>
+                    </p>
+                </div>
+                <p><input type="submit" class="btn btn-nau" value="Send"></p>
             </form>
         </div>
-        <div class="title">NAU</div>
     </div>
 </div>
 
+@push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
+@endpush
 
-</body>
-</html>
+@push('scripts')
+<script>
+
+(function($){
+    $('.form-send-code').on('submit', function(e){
+        e.preventDefault();
+        let $form = $(this);
+        let formData = $form.serializeArray();
+        $.ajax({
+            method: 'POST',
+            url: $form.attr('action'),
+            data: formData,
+            success: function(data, textStatus, xhr){
+                if (xhr.status >= 200 && xhr.status < 300){
+                    location.replace(xhr.getResponseHeader('Location'));
+                } else {
+                    alert('This code is wrong.');
+                }
+            },
+            error: function(resp){
+                alert('This code is wrong.');
+                console.log(resp);
+            }
+        });
+    });
+})(jQuery);
+
+</script>
+@endpush
+
+@stop
