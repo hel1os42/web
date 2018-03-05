@@ -22,7 +22,7 @@ class RedemptionPolicy extends Policy
             $user = $user->place->user ?? null;
         }
 
-        return $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
+        return $user instanceof User && $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
     }
 
     /**
@@ -52,6 +52,6 @@ class RedemptionPolicy extends Policy
             $user = $user->place->user ?? null;
         }
 
-        return $redemption->offer->isOwner($user);
+        return $user instanceof User && $redemption->offer->isOwner($user);
     }
 }
