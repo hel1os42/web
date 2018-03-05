@@ -12,11 +12,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class RedemptionPolicy extends Policy
 {
     /**
-     * @param User $user
+     * @param $user
      *
      * @return bool
      */
-    public function index(User $user)
+    public function index(Authenticatable $user)
     {
         if ($user instanceof Operator) {
             $user = $user->place->user ?? null;
@@ -41,12 +41,12 @@ class RedemptionPolicy extends Policy
     }
 
     /**
-     * @param User       $user
+     * @param            $user
      * @param Redemption $redemption
      *
      * @return bool
      */
-    public function show(User $user, Redemption $redemption)
+    public function show(Authenticatable $user, Redemption $redemption)
     {
         if ($user instanceof Operator) {
             $user = $user->place->user ?? null;
