@@ -9,7 +9,7 @@ function offerMoreInit(id, text, json){
     html += '<p class="label-items"><span class="tag-label">' + text.tagPlaceholder + ':</span> ';
     html += text.titlePlaceholder + '<span class="buttons-label">' + text.buttonsPlaceholder + '</span></p>';
     html += '<div id="more_items"></div>';
-    html += '<p class="input-example pull-left">' + text.tagMinLength + ' ' + MIN_LENGTH_OF_TAG + '<br>'
+    html += '<p class="input-example pull-left">' + text.tagMinLength + ': ' + MIN_LENGTH_OF_TAG + '<br>';
     html += text.tagExample + ':<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#promo</em>';
     html += '<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#hot_offer</em><br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#blackFriday</em></p>';
     html += '<p class="text-right"><span class="btn btn-xs btn-nau btn-add-item">' + text.addButton + '</span></p>';
@@ -28,7 +28,7 @@ function offerMoreInit(id, text, json){
             tagPlaceholder: 'Tag',
             titlePlaceholder: 'Text for link',
             buttonsPlaceholder: 'edit / remove',
-            tagMinLength: 'Min. length of tag:',
+            tagMinLength: 'Min. length of tag',
             tagExample: 'Examples for tags',
             btnEditTitle: 'Edit additional information',
             btnRemoveTitle: 'Remove additional information',
