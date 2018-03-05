@@ -13,8 +13,7 @@
                         <thead class="text-primary">
                             <tr>
                                 @foreach (array_keys($data[0]) as $field)
-                                    {{ $field = $field == 'place' ? 'alias' : $field }}
-                                    <th> {{ $field }} </th>
+                                    <th>{{ $field = $field == 'place' ? 'alias' : $field }}</th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -23,7 +22,7 @@
                             <tr class="clickable-table-row" data-uuid="">
                                 @foreach($operator as $key => $field)
                                     @if($key == 'place')
-                                        {{ $field = $field['alias'] }}
+                                        <?php $field = $key == 'place' ? $field['alias'] : $field?>
                                     @endif
                                     <td>
                                     @if('is_active' === $key)

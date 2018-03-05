@@ -36,11 +36,6 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
         $this->pushCriteria(app(RequestCriteria::class));
     }
 
-    protected function applyCriteria()
-    {
-        parent::applyCriteria();
-    }
-
     /**
      * @param array $attributes
      * @param Place $place
