@@ -11,6 +11,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use OmniSynapse\CoreService\Exception\RequestException;
 
+/**
+ * Class AbstractJob
+ * @package OmniSynapse\CoreService
+ */
 abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -89,7 +93,7 @@ abstract class AbstractJob implements ShouldQueue
 
         $decodedContent = \json_decode($responseContent);
         if (null === $decodedContent) {
-            event($responseObject);
+            $this->eventsDispatch($responseObject);
 
             return;
         }
@@ -102,7 +106,7 @@ abstract class AbstractJob implements ShouldQueue
             return;
         }
 
-        event($responseObject);
+        $this->eventsDispatch($responseObject);
     }
 
     /** @return string */
@@ -163,5 +167,32 @@ abstract class AbstractJob implements ShouldQueue
         }
 
         return $result;
+    }
+
+    /**
+     * @param $responseObject
+     */
+    private function eventsDispatch($responseObject)
+    {
+        event($responseObject);
+        try {
+            $this->fireModelEvents($responseObject);
+        } catch (\Exception $exception) {
+            logger()->warning(
+                'Failed model event firing at ' . get_class($this),
+                [
+                    'response' => $responseObject,
+                    'error'    => $exception->getMessage()
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param $responseObject
+     * @SuppressWarnings("unused")
+     */
+    protected function fireModelEvents($responseObject): void
+    {
     }
 }

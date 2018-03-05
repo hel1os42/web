@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationCode;
+use App\Models\NauModels\Offer;
 use App\Repositories\ActivationCodeRepository;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -24,6 +26,10 @@ class ActivationCodeController extends Controller
 
     public function show(Request $request, $code)
     {
+        if (config('app.review_stub.code') === $code) {
+            return $this->reviewStub();
+        }
+
         $activationCode = $this->activationCodeRepository
             ->findByCode($code);
 
@@ -38,5 +44,23 @@ class ActivationCodeController extends Controller
         }
 
         return response()->render('activation_code.show', $activationCode->toArray());
+    }
+
+    private function reviewStub()
+    {
+        $activationCode = (new ActivationCode())->forceFill([
+            'id'            => 115,
+            'user_id'       => config('app.review_stub.user_id'),
+            'offer_id'      => config('app.review_stub.offer.id'),
+            'redemption_id' => null,
+            'created_at'    => '2018-02-25 12:33:58',
+            'updated_at'    => '2018-02-25 12:33:58',
+            'offer'         => (new Offer)->forceFill(config('app.review_stub.offer')),
+        ]);
+
+        $activationCodeArray         = $activationCode->toArray();
+        $activationCodeArray['code'] = config('app.review_stub.code');
+
+        return response()->render('activation_code.show', $activationCodeArray);
     }
 }
