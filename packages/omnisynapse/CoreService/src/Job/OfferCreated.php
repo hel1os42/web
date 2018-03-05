@@ -86,4 +86,15 @@ class OfferCreated extends AbstractJob
     {
         return new FailedJob\OfferCreated($exception, $this->offer);
     }
+
+    /**
+     * @param \OmniSynapse\CoreService\Response\Offer $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        event('eloquent.created: ' . get_class($offer), $offer);
+    }
 }
