@@ -3,7 +3,6 @@
     <div class="card card-login card-hidden">
         <div class="content">
             <div class="social-line text-center">
-                <a href="{{route('logout')}}">logout</a><br><br>
                 {!! Form::open(array('route' => 'redemptions.store', 'method' => 'POST', 'class' => 'form-send-code')) !!}
                 {{ csrf_field() }}
                 @include(
@@ -17,6 +16,7 @@
                 )
                 <input class="btn btn-nau" type="submit">
                 {!! Form::close() !!}
+                <p><a style="color: #bbb;" href="{{ route('logout') }}">logout</a></p>
             </div>
         </div>
     </div>
