@@ -212,7 +212,7 @@ class PlaceControllerTest extends TestCase
 
         app()->instance(\Illuminate\Contracts\Routing\ResponseFactory::class, $responseFactory);
 
-        $placesArray = [$uuid, $withOffers];
+        $placesArray     = [$uuid, $withOffers];
         $placesArrayData = ['data' => $placesArray];
 
         $this->placeRepository
