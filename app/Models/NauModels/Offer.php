@@ -55,7 +55,7 @@ class Offer extends AbstractNauModel
 {
     use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData;
 
-    const STATUS_ACTIVE = 'active';
+    const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
 
     /**
@@ -348,7 +348,7 @@ class Offer extends AbstractNauModel
      */
     public function getRichDescriptionAttribute(): string
     {
-        $regex = '|\B#(\w*)|';
+        $regex       = '|\B' . OfferLink::SPECIAL_SYMBOL . '(\w*)|';
         $description = (string)$this->description;
 
         preg_match_all($regex, $description, $matches);
@@ -359,7 +359,7 @@ class Offer extends AbstractNauModel
             $link = $this->getHtmlOfferLink($tag);
 
             if ($link instanceof HtmlString) {
-                $description = str_replace('#' . $tag, $link, $description);
+                $description = str_replace(OfferLink::SPECIAL_SYMBOL . $tag, $link, $description);
             }
         }
 
@@ -418,8 +418,6 @@ class Offer extends AbstractNauModel
      */
     private function getHtmlOfferLink(string $tag): ?HtmlString
     {
-        $owner = $this->getOwner();
-
         if (null === $this->getOwner()) {
             return null;
         }
@@ -443,7 +441,7 @@ class Offer extends AbstractNauModel
 
     private function initAttributes(): void
     {
-        $defaultReward = $this->convertFloatToInt(1);
+        $defaultReward         = $this->convertFloatToInt(1);
         $reservationMultiplier = (int)config('nau.reservation_multiplier');
 
         $this->attributes = [

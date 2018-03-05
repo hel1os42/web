@@ -6,9 +6,7 @@ use App\Models\NauModels\Account;
 use App\Models\OfferLink;
 use App\Models\User;
 use App\Repositories\OfferLinkRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Eloquent\BaseRepository;
-
 
 /**
  * Class OfferRepositoryEloquent
@@ -44,5 +42,4 @@ class OfferLinkRepositoryEloquent extends BaseRepository implements OfferLinkRep
             }
         );
     }
-
 }

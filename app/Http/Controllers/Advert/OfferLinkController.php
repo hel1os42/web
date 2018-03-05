@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Advert;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\OfferLink\WriteRequest;
 use App\Repositories\OfferLinkRepository;
-use App\Repositories\OfferRepository;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -18,19 +15,10 @@ class OfferLinkController extends Controller
      */
     private $offerLinkRepository;
 
-    /**
-     * @var OfferRepository
-     */
-    private $offerRepository;
 
-    public function __construct(
-        OfferLinkRepository $offerLinkRepository,
-        OfferRepository $offerRepository,
-        AuthManager $authManager
-    )
+    public function __construct(OfferLinkRepository $offerLinkRepository, AuthManager $authManager)
     {
         $this->offerLinkRepository = $offerLinkRepository;
-        $this->offerRepository = $offerRepository;
 
         parent::__construct($authManager);
     }
@@ -61,7 +49,7 @@ class OfferLinkController extends Controller
     {
         $this->authorize('offer_links.create');
 
-        $data = $request->only(['tag', 'title', 'description']);
+        $data            = $request->only(['tag', 'title', 'description']);
         $data['user_id'] = auth()->user()->getKey();
 
         $offerLink = $this->offerLinkRepository->create($data);
@@ -72,12 +60,12 @@ class OfferLinkController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  int $identifier
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($identifier)
     {
-        $offerLink = $this->offerLinkRepository->find($id);
+        $offerLink = $this->offerLinkRepository->find($identifier);
 
         $this->authorize('offer_links.view', $offerLink);
 
@@ -88,19 +76,19 @@ class OfferLinkController extends Controller
      * Update the specified resource in storage.
      *
      * @param  WriteRequest $request
-     * @param  int $id
+     * @param  int $identifier
      * @return \Illuminate\Http\Response
      */
-    public function update(WriteRequest $request, $id)
+    public function update(WriteRequest $request, $identifier)
     {
-        $offerLink = $this->offerLinkRepository->find($id);
+        $offerLink = $this->offerLinkRepository->find($identifier);
 
         $this->authorize('offer_links.update', $offerLink);
 
-        $data = $request->only(['tag', 'title', 'description']);
+        $data            = $request->only(['tag', 'title', 'description']);
         $data['user_id'] = auth()->user()->getKey();
 
-        $offerLink = $this->offerLinkRepository->update($data, $id);
+        $offerLink = $this->offerLinkRepository->update($data, $identifier);
 
         return \response()->render('advert.offer_links.update', $offerLink->toArray());
     }
@@ -108,16 +96,20 @@ class OfferLinkController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  int $identifier
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($identifier)
     {
-        $offerLink = $this->offerLinkRepository->find($id);
+        $offerLink = $this->offerLinkRepository->find($identifier);
 
         $this->authorize('offer_links.delete', $offerLink);
 
-        $this->offerLinkRepository->delete($id);
+        if ($offerLink->getUsages() > 0) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, trans('errors.offer_link_is_used'));
+        }
+
+        $this->offerLinkRepository->delete($identifier);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }

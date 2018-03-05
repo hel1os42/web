@@ -44,5 +44,7 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\OperatorRepositoryEloquent::class);
         $this->app->bind(Repositories\OfferLinkRepository::class,
             Implementation\OfferLinkRepositoryEloquent::class);
+
+        $this->app->alias(Repositories\OfferRepository::class, 'offerRepository');
     }
 }

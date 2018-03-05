@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OfferLink extends Model
 {
+
+    public const SPECIAL_SYMBOL = '#';
+
     protected $fillable = [
         'user_id',
         'tag',
@@ -47,4 +50,26 @@ class OfferLink extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return int
+     */
+    public function getUsages(): int
+    {
+        $account = $this->user->getAccountForNau();
+
+        $offers = app('offerRepository')
+            ->scopeAccount($account)
+            ->withoutGlobalScopes()
+            ->all();
+
+        $offerDescriptions = $offers->pluck('description');
+
+        $searchedText = self::SPECIAL_SYMBOL . $this->getTag();
+
+        $usages = $offerDescriptions->filter(function ($text) use ($searchedText) {
+            return mb_strpos($text, $searchedText) !== false;
+        });
+
+        return $usages->count();
+    }
 }
