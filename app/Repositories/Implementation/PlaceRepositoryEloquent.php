@@ -34,7 +34,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         return Place::class;
     }
 
-
     /**
      * Boot up the repository, pushing criteria
      */
@@ -93,7 +92,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      * @param User $user
      *
      * @return Place
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function findByUser(User $user): Place
@@ -133,16 +131,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
         return $this->parserResult($model);
     }
 
-    /**
-     * @param LengthAwarePaginator $paginatedPlaces
-     *
-     * @return array
-     */
-    public function parsePaginatedResult(LengthAwarePaginator $paginatedPlaces): array
-    {
-        return $this->parserResult($paginatedPlaces);
-    }
-
     public function countByUser(User $user): int
     {
         $this->applyCriteria();
@@ -171,7 +159,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      *
      * @return Place
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */

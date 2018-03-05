@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
+use App\Models\User\FavoritePlaces;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -253,6 +254,8 @@ class Place extends Model
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getIsFavoriteAttribute(): bool
     {
@@ -396,6 +399,8 @@ class Place extends Model
     public function setIsFavoriteAttribute($isFavorite)
     {
         $this->attributes['is_favorite'] = $isFavorite;
+
+        return $this;
     }
 
     /**

@@ -8,6 +8,7 @@
 
 namespace App\Models\User;
 
+use App\Models\NauModels\Offer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -53,5 +54,17 @@ class FavoriteOffers extends Model
     public function scopeByUser(Builder $builder, User $user): Builder
     {
         return $builder->where('user_id', $user->getId());
+    }
+
+    /**
+     * @param User  $user
+     * @param Offer $offer
+     *
+     * @return bool
+     * @throws \InvalidArgumentException
+     */
+    public static function checkByUserAndOffer(User $user, Offer $offer): bool
+    {
+        return self::query()->where([['user_id', $user->getId()], ['offer_id', $offer->getId()]])->get()->count() === 1;
     }
 }

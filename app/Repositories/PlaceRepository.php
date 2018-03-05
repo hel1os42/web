@@ -50,7 +50,7 @@ interface PlaceRepository extends RepositoryInterface
 
     public function existsByUser(User $user): bool;
 
-    public function parsePaginatedResult(LengthAwarePaginator $places): array;
+    public function parserResult($places);
 
     /**
      * @param array $attributes

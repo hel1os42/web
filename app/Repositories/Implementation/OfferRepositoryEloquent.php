@@ -10,6 +10,7 @@ use App\Repositories\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Eloquent\BaseRepository;
