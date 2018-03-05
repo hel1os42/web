@@ -18,7 +18,7 @@
                         </label>
                     </p>
                 </div>
-                <p><input type="submit" class="btn btn-nau" value="Send"></p>
+                <p class="text-center"><input type="submit" class="btn btn-nau" value="Confirm"></p>
             </form>
         </div>
     </div>
