@@ -14,11 +14,11 @@
                     <p class="control-text">
                         <label>
                             <span class="input-label">Code:</span>
-                            <input name="code" value="">
+                            <input name="code" value="" style="text-transform: uppercase;">
                         </label>
                     </p>
                 </div>
-                <p><input type="submit" class="btn btn-nau" value="Send"></p>
+                <p class="text-center"><input type="submit" class="btn btn-nau" value="Confirm"></p>
             </form>
         </div>
     </div>
@@ -34,6 +34,8 @@
 (function($){
     $('.form-send-code').on('submit', function(e){
         e.preventDefault();
+        let code = this.querySelector('[name="code"]');
+        code.value = code.value.trim().toUpperCase();
         let $form = $(this);
         let formData = $form.serializeArray();
         $.ajax({
@@ -42,7 +44,8 @@
             data: formData,
             success: function(data, textStatus, xhr){
                 if (xhr.status >= 200 && xhr.status < 300){
-                    location.replace(xhr.getResponseHeader('Location'));
+                    alert('Success.');
+                    code.value = '';
                 } else {
                     alert('This code is wrong.');
                 }
