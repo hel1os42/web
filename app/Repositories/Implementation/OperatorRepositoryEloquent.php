@@ -39,7 +39,6 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
     protected function applyCriteria()
     {
         parent::applyCriteria();
-        $this->model->without('place');
     }
 
     /**
@@ -103,6 +102,9 @@ class OperatorRepositoryEloquent extends BaseRepository implements OperatorRepos
      */
     public function findByPlace(Place $place): Collection
     {
+        $this->applyCriteria();
+        $this->applyScope();
+
         return $this->model->where(['place_uuid' => $place->getId()])->get();
     }
 

@@ -41,10 +41,9 @@ class OperatorController extends Controller
     public function index(): Response
     {
         $this->authorize('operators.list');
-        $place           = $this->placeRepository->findByUser($this->user());
+        $place           = $this->placeRepository->skipCriteria()->findByUser($this->user());
         $operators       = $this->operatorRepository->findByPlace($place);
         $result['data']  = $operators->toArray();
-        $result['place'] = $place;
 
         return \response()->render('advert.operator.index', $result);
     }

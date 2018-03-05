@@ -13,21 +13,17 @@
                         <thead class="text-primary">
                             <tr>
                                 @foreach (array_keys($data[0]) as $field)
-                                    @if($field === 'place_uuid')
-                                        @continue
-                                    @endif
+                                    {{ $field = $field == 'place' ? 'alias' : $field }}
                                     <th> {{ $field }} </th>
                                 @endforeach
                             </tr>
-
                         </thead>
                         <tbody>
-                        <H5>Place alias for operators: "{{ $place['alias'] }}"</H5>
                             @foreach ($data as $operator)
                             <tr class="clickable-table-row" data-uuid="">
                                 @foreach($operator as $key => $field)
-                                    @if($key === 'place_uuid')
-                                        @continue
+                                    @if($key == 'place')
+                                        {{ $field = $field['alias'] }}
                                     @endif
                                     <td>
                                     @if('is_active' === $key)
