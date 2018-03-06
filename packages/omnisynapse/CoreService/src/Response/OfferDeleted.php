@@ -11,10 +11,17 @@ namespace OmniSynapse\CoreService\Response;
 /**
  * Class OfferDeleted
  * @package OmniSynapse\CoreService\Response
+ *
+ * @method static bool hasEmptyBody()
  */
-class OfferDeleted
+class OfferDeleted extends BaseResponse
 {
     private $offerId;
+
+    /**
+     * @static bool
+     */
+    protected static $hasEmptyBody = true;
 
     public function __construct($offerId)
     {
