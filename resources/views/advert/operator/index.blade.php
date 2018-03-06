@@ -12,6 +12,10 @@
             <thead class="text-primary">
                 <tr>
                     @foreach (array_keys($data[0]) as $field)
+                        @if($field == 'place')
+                            <th>alias</th>
+                            @continue
+                        @endif
                         <th>{{ $field }}</th>
                     @endforeach
                 </tr>
