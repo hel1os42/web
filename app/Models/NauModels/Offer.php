@@ -52,6 +52,8 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property null|float discount_finish_price
  * @property null|string currency
  * @property bool        is_favorite
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Offer extends AbstractNauModel
 {
