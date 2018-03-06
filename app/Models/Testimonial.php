@@ -11,23 +11,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class Testimonial
  * @package App\Models
  *
- * @property string id
- * @property string text
- * @property string user_id
- * @property string offer_id
+ * @property string  id
+ * @property string  text
+ * @property string  user_id
+ * @property string  offer_id
  * @property integer stars
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string  status
+ * @property Carbon  created_at
+ * @property Carbon  updated_at
  *
  */
 class Testimonial extends Model
 {
     use Uuids;
 
+    const STATUS_APPROVED = 'approved';
+    const STATUS_DECLINED = 'declined';
+    const STATUS_INBOX    = 'inbox';
+
     /**
      * Testimonial constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -43,7 +50,8 @@ class Testimonial extends Model
             'user_id'  => 'string',
             'offer_id' => 'string',
             'text'     => 'string',
-            'stars'    => 'integer'
+            'stars'    => 'integer',
+            'status'   => 'string',
         ];
 
         parent::__construct($attributes);
@@ -65,6 +73,12 @@ class Testimonial extends Model
     public function getStars(): int
     {
         return $this->stars;
+    }
+
+    /** @return string */
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     /**
