@@ -31,14 +31,14 @@ class PlaceController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request, PlaceRepository $placeRepository): Response
+    public function index(PlaceFilterRequest $request, PlaceRepository $placeRepository, OfferRepository $offerRepository): Response
     {
         $this->authorize('places.list');
         $places = $placeRepository->getActiveByCategoriesAndPosition($request->category_ids, $request->latitude,
             $request->longitude, $request->radius);
 
         $places = $places->paginate();
-        $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth));
+        $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth, $offerRepository));
         $places->data = $placeRepository->parserResult($places);
         return response()->render('place.index', $places);
     }
