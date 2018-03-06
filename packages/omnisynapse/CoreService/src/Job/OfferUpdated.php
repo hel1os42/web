@@ -72,7 +72,7 @@ class OfferUpdated extends AbstractJob
     }
 
     /** @return BaseResponse */
-    public function getResponseObject():BaseResponse
+    public function getResponseObject(): BaseResponse
     {
         return new OfferResponse;
     }
