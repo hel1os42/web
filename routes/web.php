@@ -115,7 +115,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
                 'destroy' => 'profile.favorite.offers.destroy',
             ]
         ]);
-        $router->resource('favorite/places', 'User\Favorite\OfferController', [
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
             'only'  => [
                 'index',
                 'store',
@@ -146,7 +146,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
                 'destroy' => 'users.favorite.offers.destroy',
             ]
         ]);
-        $router->resource('favorite/places', 'User\Favorite\OfferController', [
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
             'only' => ['index', 'store', 'destroy',],
             'names' => [
                 'index'   => 'users.favorite.places.index',
