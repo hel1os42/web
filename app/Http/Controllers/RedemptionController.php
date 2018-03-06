@@ -11,7 +11,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
-use App\Models\User;
+use App\Models\NauModels\Redemption;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
@@ -87,7 +87,15 @@ class RedemptionController extends Controller
     {
         $code = $request->code;
 
+        if ($request->wantsJson() && config('app.review_stub.code') === $code) {
+            return $this->reviewStubStore();
+        }
+
         $activationCode = $offersService->getActivationCodeByCode($code);
+
+        if($activationCode->offer === null) {
+            throw new ModelNotFoundException();
+        }
 
         $this->authorize('offers.redemption.confirm', $activationCode->offer);
 
@@ -98,6 +106,16 @@ class RedemptionController extends Controller
             $redemption->toArray(),
             Response::HTTP_CREATED,
             route('redemptions.show', ['id' => $redemption->getId()])
+        );
+    }
+
+    private function reviewStubStore()
+    {
+        return \response()->render(
+            'redemption.redeem',
+            [],
+            Response::HTTP_CREATED,
+            route('redemptions.show', ['id' => config('app.review_stub.redemption_id')])
         );
     }
 
@@ -134,9 +152,23 @@ class RedemptionController extends Controller
      */
     public function show(string $redemptionId, RedemptionRepository $repository): Response
     {
+        if (request()->wantsJson() && config('app.review_stub.redemption_id') === $redemptionId) {
+            return $this->reviewStubShow();
+        }
+
         $redemption = $repository->find($redemptionId);
 
         $this->authorize('offers.redemption.show', $redemption);
+
+        return \response()->render('redemption.show', $redemption->toArray());
+    }
+
+    private function reviewStubShow()
+    {
+        $redemption = (new Redemption())->forceFill([
+            'id'    => config('app.review_stub.redemption_id'),
+            'offer' => (new Offer)->forceFill(config('app.review_stub.offer')),
+        ]);
 
         return \response()->render('redemption.show', $redemption->toArray());
     }

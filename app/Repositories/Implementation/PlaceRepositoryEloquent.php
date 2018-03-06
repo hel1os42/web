@@ -206,4 +206,19 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
 
         return $this->parserResult($model);
     }
+
+    /**
+     * @param string $alias
+     * @return Place
+     */
+    public function findByAlias(string $alias): Place
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->byAlias($alias)->firstOrFail();
+        $this->resetModel();
+
+        return $model;
+    }
 }

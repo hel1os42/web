@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
  * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|Builder byAlias(String $alias)
  */
 class Place extends Model
 {
@@ -89,7 +90,7 @@ class Place extends Model
             'alias',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
         ];
 
         $this->attributes = [
@@ -505,5 +506,17 @@ class Place extends Model
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $alias
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByAlias($builder, string $alias): Builder
+    {
+        return $builder->where('alias', $alias);
     }
 }

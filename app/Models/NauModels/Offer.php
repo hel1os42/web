@@ -20,13 +20,13 @@ use Illuminate\Support\HtmlString;
  * Class Offer
  * @package App\Models\NauModels
  *
- * @property string id
- * @property int account_id
- * @property null|string label
- * @property null|string description
- * @property float reward
- * @property string status
- * @property Carbon start_date
+ * @property string      id
+ * @property int         account_id
+ * @property string      label
+ * @property string      description
+ * @property float       reward
+ * @property string      status
+ * @property Carbon      start_date
  * @property null|Carbon finish_date
  * @property null|string country
  * @property null|string city
@@ -144,13 +144,13 @@ class Offer extends AbstractNauModel
     }
 
     /** @return string */
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
 
     /** @return string */
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -448,8 +448,8 @@ class Offer extends AbstractNauModel
 
         $this->attributes = [
             'acc_id'                 => null,
-            'name'                   => null,
-            'descr'                  => null,
+            'name'                   => '',
+            'descr'                  => '',
             'reward'                 => $defaultReward,
             'status'                 => null,
             'dt_start'               => null,
