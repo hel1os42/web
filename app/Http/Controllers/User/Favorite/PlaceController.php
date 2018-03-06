@@ -66,7 +66,7 @@ class PlaceController extends FavoriteController
      */
     public function destroy(string $userId = null, string $placeId = null): Response
     {
-        if (!$placeId) {
+        if (is_null($placeId)) {
             $placeId = $userId;
             $userId  = null;
         }
@@ -79,7 +79,7 @@ class PlaceController extends FavoriteController
 
         $user->favoritePlaces()->detach([$placeId]);
 
-        return \response()->render(null, [], Response::HTTP_NO_CONTENT);
+        return \response()->render('', [], Response::HTTP_NO_CONTENT);
 
     }
 }

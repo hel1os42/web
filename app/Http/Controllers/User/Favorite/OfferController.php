@@ -119,6 +119,6 @@ class OfferController extends FavoriteController
         $favorite = $this->favoriteOfferRepository->findByUserIdAndOfferId($user->getId(), $offerId);
         $favorite->delete();
 
-        return \response()->render(null, [], Response::HTTP_NO_CONTENT);
+        return \response()->render('', [], Response::HTTP_NO_CONTENT);
     }
 }
