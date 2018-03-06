@@ -97,7 +97,7 @@ class Operator extends Model implements
      *
      * @return bool
      */
-    public function isActive(): boolean
+    public function isActive(): bool
     {
         return $this->is_active;
     }

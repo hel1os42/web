@@ -8,6 +8,7 @@ use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OperatorUserProvider implements UserProvider
 {
@@ -30,7 +31,11 @@ class OperatorUserProvider implements UserProvider
      */
     public function retrieveById($identifier)
     {
-        return $this->operatorRepository->find($identifier);
+        try {
+            return $this->operatorRepository->skipCriteria()->find($identifier);
+        } catch (ModelNotFoundException $exception) {
+            return null;
+        }
     }
 
     /**
