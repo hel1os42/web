@@ -20,6 +20,7 @@
     "laravel/tinker": "~1.0",
     "laravelcollective/html": "^5.4.0",
     "league/fractal": "^0.17.0",
+    "mews/purifier": "^2.0",
     "michaelachrisco/readonly": "^0.20.1",
     "netresearch/jsonmapper": "^1.2",
     "pda/pheanstalk": "^3.1",

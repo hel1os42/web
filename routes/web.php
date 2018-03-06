@@ -268,6 +268,20 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
+    $router->resource('places/{placeUuid}/offer_links', 'OfferLinkController', [
+        'except' => [
+            'create',
+            'edit',
+        ],
+        'names'       => [
+            'index'   => 'places.offer_links.index',
+            'show'    => 'places.offer_links.show',
+            'store'   => 'places.offer_links.store',
+            'destroy' => 'places.offer_links.destroy',
+            'update'  => 'places.offer_links.update',
+        ]
+    ]);
+
     /**
      * Roles
      */

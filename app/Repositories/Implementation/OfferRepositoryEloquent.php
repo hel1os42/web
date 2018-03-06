@@ -287,4 +287,17 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     {
         return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);
     }
+
+    /**
+     * @return OfferRepository
+     */
+    public function withoutGlobalScopes(): OfferRepository
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $this->builderWithoutGlobalScopes();
+
+        return $this;
+    }
 }

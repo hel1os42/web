@@ -64,5 +64,10 @@ interface OfferRepository extends RepositoryInterface
      */
     public function findWithoutGlobalScopes(string $offerId, array $columns = ['*']): Offer;
 
+    /**
+     * @return OfferRepository
+     */
+    public function withoutGlobalScopes(): OfferRepository;
+
     public function parserResult($result);
 }

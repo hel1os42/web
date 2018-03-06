@@ -7,12 +7,14 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\NauModels\Offer\HasOfferData;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
+use App\Models\OfferLink;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\HtmlString;
 use Prettus\Repository\Traits\PresentableTrait;
 
 /**
@@ -30,26 +32,28 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
- * @property null|int    max_count
- * @property null|int    max_for_user
- * @property null|int    max_per_day
- * @property null|int    max_for_user_per_day
- * @property null|int    max_for_user_per_week
- * @property null|int    max_for_user_per_month
- * @property int         user_level_min
- * @property null|float  latitude
- * @property null|float  longitude
- * @property null|int    radius
- * @property Carbon      created_at
- * @property Carbon      updated_at
- * @property boolean     delivery
+ * @property null|int max_count
+ * @property null|int max_for_user
+ * @property null|int max_per_day
+ * @property null|int max_for_user_per_day
+ * @property null|int max_for_user_per_week
+ * @property null|int max_for_user_per_month
+ * @property int user_level_min
+ * @property null|float latitude
+ * @property null|float longitude
+ * @property null|int radius
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property boolean delivery
  * @property null|string type
  * @property null|string gift_bonus_descr
- * @property null|float  discount_percent
- * @property null|float  discount_start_price
- * @property null|float  discount_finish_price
+ * @property null|float discount_percent
+ * @property null|float discount_start_price
+ * @property null|float discount_finish_price
  * @property null|string currency
  * @property bool        is_favorite
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Offer extends AbstractNauModel
 {
@@ -342,6 +346,31 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * Get the description with offer links
+     *
+     * @return string
+     */
+    public function getRichDescriptionAttribute(): string
+    {
+        $regex       = '|\B' . OfferLink::SPECIAL_SYMBOL . '(\w*)|';
+        $description = (string)$this->description;
+
+        preg_match_all($regex, $description, $matches);
+
+        $tags = array_get($matches, 1);
+
+        foreach ($tags as $tag) {
+            $link = $this->getHtmlOfferLink($tag);
+
+            if ($link instanceof HtmlString) {
+                $description = str_replace(OfferLink::SPECIAL_SYMBOL . $tag, $link, $description);
+            }
+        }
+
+        return $description;
+    }
+
+    /**
      * @return bool
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
@@ -402,6 +431,35 @@ class Offer extends AbstractNauModel
         $activationCode->activated($redemption);
 
         return $redemption;
+    }
+
+    /**
+     * @param string $tag
+     * @return HtmlString|null
+     */
+    private function getHtmlOfferLink(string $tag): ?HtmlString
+    {
+        if (null === $this->getOwner()) {
+            return null;
+        }
+
+        $place = $this->getOwner()->place;
+
+        $offerLink = app('offerLinkRepository')
+            ->scopePlace($place)
+            ->findByField('tag', $tag)
+            ->first();
+
+        if (null === $offerLink) {
+            return null;
+        }
+
+        $html = sprintf('<a href="%1$s">%2$s</a>',
+            route('places.offer_links.show', [$place, $offerLink]),
+            $offerLink->getTitle()
+        );
+
+        return new HtmlString($html);
     }
 
     private function initAttributes(): void
@@ -482,6 +540,7 @@ class Offer extends AbstractNauModel
         $this->appends = [
             'account_id',
             'label',
+            'rich_description',
             'description',
             'start_date',
             'finish_date',
