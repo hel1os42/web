@@ -18,12 +18,12 @@ class CreateOfferLinksTable extends Migration
             $table->string('tag');
             $table->string('title');
             $table->text('description');
-            $table->uuid('user_id');
+            $table->uuid('place_id');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('place_id')->references('id')->on('places');
 
-            $table->unique(['user_id', 'tag']);
+            $table->unique(['place_id', 'tag']);
         });
     }
 

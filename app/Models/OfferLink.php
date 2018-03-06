@@ -2,24 +2,29 @@
 
 namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class OfferLink
+ * @package App\Models
+ *
+ * @property Place place
+ */
 class OfferLink extends Model
 {
 
     public const SPECIAL_SYMBOL = '#';
 
     protected $fillable = [
-        'user_id',
+        'place_id',
         'tag',
         'title',
         'description',
     ];
 
     protected $casts = [
-        'user_id'     => 'string',
+        'place_id'    => 'string',
         'tag'         => 'string',
         'title'       => 'string',
         'description' => 'string',
@@ -45,9 +50,9 @@ class OfferLink extends Model
     /**
      * @return BelongsTo
      */
-    public function user(): BelongsTo
+    public function place(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Place::class);
     }
 
     /**
@@ -55,7 +60,7 @@ class OfferLink extends Model
      */
     public function getUsages(): int
     {
-        $account = $this->user->getAccountForNau();
+        $account = $this->place->user->getAccountForNau();
 
         $offers = app('offerRepository')
             ->scopeAccount($account)

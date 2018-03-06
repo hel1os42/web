@@ -51,7 +51,7 @@ class WriteRequest extends FormRequest
     private function getUniqueTagRule()
     {
         $rule = Rule::unique('offer_links', 'tag')
-            ->where('user_id', auth()->user()->getKey());
+            ->where('place_id', request()->route('placeUuid'));
 
         if (Request::METHOD_PUT === request()->getMethod()) {
             $rule->ignore(array_last(request()->segments()));

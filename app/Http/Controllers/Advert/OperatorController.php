@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Advert;
 
+use App\Http\Controllers\Controller;
 use App\Helpers\FormRequest;
 use App\Http\Requests\OperatorRequest;
 use App\Repositories\OperatorRepository;

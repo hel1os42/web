@@ -115,20 +115,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
     });
 
-    $router->resource('advert/offer_links', 'Advert\OfferLinkController', [
-        'except' => [
-            'create',
-            'edit',
-        ],
-        'names'       => [
-            'index'   => 'advert.offer_links.index',
-            'show'    => 'advert.offer_links.show',
-            'store'   => 'advert.offer_links.store',
-            'destroy' => 'advert.offer_links.destroy',
-            'update'  => 'advert.offer_links.update',
-        ]
-    ]);
-
     $router->resource('advert/offers', 'Advert\OfferController', [
         'names'       => [
             'index'   => 'advert.offers.index',
@@ -229,6 +215,20 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->resource('places', 'PlaceController', [
         'except' => [
             'destroy'
+        ]
+    ]);
+
+    $router->resource('places/{placeUuid}/offer_links', 'OfferLinkController', [
+        'except' => [
+            'create',
+            'edit',
+        ],
+        'names'       => [
+            'index'   => 'places.offer_links.index',
+            'show'    => 'places.offer_links.show',
+            'store'   => 'places.offer_links.store',
+            'destroy' => 'places.offer_links.destroy',
+            'update'  => 'places.offer_links.update',
         ]
     ]);
 

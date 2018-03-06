@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
+use App\Models\Place;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
@@ -13,9 +13,9 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 interface OfferLinkRepository extends RepositoryInterface
 {
     /**
-     * @param User $user
+     * @param Place $place
      *
      * @return OfferLinkRepository
      */
-    public function scopeUser(User $user): OfferLinkRepository;
+    public function scopePlace(Place $place): OfferLinkRepository;
 }

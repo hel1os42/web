@@ -2,9 +2,8 @@
 
 namespace App\Repositories\Implementation;
 
-use App\Models\NauModels\Account;
 use App\Models\OfferLink;
-use App\Models\User;
+use App\Models\Place;
 use App\Repositories\OfferLinkRepository;
 use Prettus\Repository\Eloquent\BaseRepository;
 
@@ -30,15 +29,15 @@ class OfferLinkRepositoryEloquent extends BaseRepository implements OfferLinkRep
     }
 
     /**
-     * @param User $user
+     * @param Place $place
      *
      * @return OfferLinkRepository
      */
-    public function scopeUser(User $user): OfferLinkRepository
+    public function scopePlace(Place $place): OfferLinkRepository
     {
         return $this->scopeQuery(
-            function ($builder) use ($user) {
-                return $builder->where('user_id', $user->getId());
+            function ($builder) use ($place) {
+                return $builder->where('place_id', $place->getKey());
             }
         );
     }

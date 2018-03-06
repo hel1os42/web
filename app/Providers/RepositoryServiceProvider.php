@@ -46,5 +46,6 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\OfferLinkRepositoryEloquent::class);
 
         $this->app->alias(Repositories\OfferRepository::class, 'offerRepository');
+        $this->app->alias(Repositories\OfferLinkRepository::class, 'offerLinkRepository');
     }
 }

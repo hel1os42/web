@@ -47,7 +47,7 @@ class AuthServiceProvider extends ServiceProvider
         'operators.update' => 'OperatorPolicy@update',
 
         'offer_links.index'  => 'OfferLinkPolicy@index',
-        'offer_links.view'   => 'OfferLinkPolicy@view',
+        'offer_links.show'   => 'OfferLinkPolicy@show',
         'offer_links.create' => 'OfferLinkPolicy@create',
         'offer_links.update' => 'OfferLinkPolicy@update',
         'offer_links.delete' => 'OfferLinkPolicy@delete',

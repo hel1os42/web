@@ -422,9 +422,11 @@ class Offer extends AbstractNauModel
             return null;
         }
 
-        $offerLink = OfferLink::query()
-            ->where('user_id', $this->getOwner()->getId())
-            ->where('tag', $tag)
+        $place = $this->getOwner()->place;
+
+        $offerLink = app('offerLinkRepository')
+            ->scopePlace($place)
+            ->findByField('tag', $tag)
             ->first();
 
         if (null === $offerLink) {
@@ -432,7 +434,7 @@ class Offer extends AbstractNauModel
         }
 
         $html = sprintf('<a href="%1$s">%2$s</a>',
-            route('advert.offer_links.show', $offerLink),
+            route('places.offer_links.show', [$place, $offerLink]),
             $offerLink->getTitle()
         );
 
