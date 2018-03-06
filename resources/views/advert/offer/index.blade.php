@@ -73,8 +73,9 @@
         <div class="tab-content">
 
             <div id="tab_your_offers" class="tab-pane fade in active">
+                <img class="data-loading" src="{{ asset('img/loading.gif') }}" alt="wait..." style="display:block; margin: 0 auto;">
 
-                <table id="table_your_offers" class="display">
+                <table id="table_your_offers" class="display" style="opacity:0;">
                     <thead>
                     <tr>
                         <th width="40">#</th>
@@ -249,13 +250,17 @@
             let $table = $(selector);
             if ($table.length) {
                 /* create table */
-                let dt_table = $table.DataTable({
-                    "bPaginate": false,
-                    "bLengthChange": false,
-                    "bFilter": true,
-                    "bInfo": false,
-                    "bAutoWidth": false,
-                    "searching": false
+                let dt_table = $table.on('init.dt', function(){
+                        $('.data-loading').hide();
+                        $(this).animate({'opacity': "1"}, 400);
+                    })
+                    .DataTable({
+                        "bPaginate": false,
+                        "bLengthChange": false,
+                        "bFilter": true,
+                        "bInfo": false,
+                        "bAutoWidth": false,
+                        "searching": false
                 });
 
                 /* show/hide details */
