@@ -6,6 +6,7 @@ use App\Http\Exceptions\InternalServerErrorException;
 use App\Models\Place;
 use App\Models\User;
 use App\Repositories\PlaceRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -38,7 +39,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
     {
         return Place::class;
     }
-
 
     /**
      * Boot up the repository, pushing criteria
@@ -98,7 +98,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      * @param User $user
      *
      * @return Place
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function findByUser(User $user): Place
@@ -166,7 +165,6 @@ class PlaceRepositoryEloquent extends BaseRepository implements PlaceRepository
      *
      * @return Place
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */

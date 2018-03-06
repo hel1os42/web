@@ -42,5 +42,7 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\TagRepositoryEloquent::class);
         $this->app->bind(Repositories\OperatorRepository::class,
             Implementation\OperatorRepositoryEloquent::class);
+        $this->app->bind(Repositories\User\FavoriteOfferRepository::class,
+            Implementation\User\FavoriteOfferRepositoryEloquent::class);
     }
 }

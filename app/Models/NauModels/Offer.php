@@ -13,6 +13,7 @@ use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Prettus\Repository\Traits\PresentableTrait;
 
 /**
  * Class Offer
@@ -48,10 +49,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|float  discount_start_price
  * @property null|float  discount_finish_price
  * @property null|string currency
+ * @property bool        is_favorite
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData, PresentableTrait;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -340,6 +342,16 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -357,6 +369,13 @@ class Offer extends AbstractNauModel
     public function setStatus(string $status): Offer
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
 
         return $this;
     }
