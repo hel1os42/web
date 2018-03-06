@@ -182,15 +182,15 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
-                                                    <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="display: inline-block; margin-right: 16px;">
-                                                        <input name="_method" type="hidden" value="DELETE">
-                                                        <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                        <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                    </form>
-                                                    <span class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
+                                                    <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
+                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" class="offer-delete-button">
+                                                            <input name="_method" type="hidden" value="DELETE">
+                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
+                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
+                                                        </form>
                                                         <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
-                                                        <span class="offer-edit-no-button">You must deactivate the offer to edit it.</span>
-                                                    </span>
+                                                        <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
