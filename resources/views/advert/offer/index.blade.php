@@ -184,11 +184,7 @@
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
                                                     <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
-                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" class="offer-delete-button">
-                                                            <input name="_method" type="hidden" value="DELETE">
-                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                        </form>
+                                                        <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
                                                         <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
                                                         <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
                                                     </div>
@@ -245,6 +241,8 @@
 
         /* disabling button "activate" when not enough NAU */
         disableButtonActivate();
+
+        btnDeleteOffer();
 
         function dataTableCreate(selector){
             let $table = $(selector);
@@ -427,6 +425,35 @@
                 btn.disabled = reserved > nau;
             });
         }
+
+        function btnDeleteOffer(){
+            document.querySelector('#table_your_offers').addEventListener('click', function(e){
+               if (e.target.classList.contains('offer-delete-button')) {
+                   let formData = new FormData();
+                   formData.append('_token', '{{ csrf_token() }}');
+                   let xhr = new XMLHttpRequest();
+                   xhr.responseType = 'json';
+                   xhr.onreadystatechange = function() {
+                       if (xhr.readyState === XMLHttpRequest.DONE) {
+                           if (xhr.status === 204) {
+                               console.log('Offer was deleted.');
+                               location.reload();
+                           } else if (xhr.status === 404) {
+                               alert('Offer not found.');
+                           } else if (xhr.status === 422) {
+                               alert(xhr.responseText);
+                           } else {
+                               alert('Something wrong, error ' + xhr.status + ' (see console).');
+                           }
+                       }
+                   };
+                   xhr.open('DELETE', e.target.dataset.action, true);
+                   xhr.setRequestHeader('Accept', 'application/json');
+                   xhr.send(formData);
+               }
+            });
+        }
+
     </script>
 @endpush
 
