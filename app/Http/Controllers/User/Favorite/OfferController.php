@@ -116,7 +116,7 @@ class OfferController extends FavoriteController
 
         $this->authorize('users.favorites.destroy', $user);
 
-        $this->favoriteOfferRepository->findByUserIdAndOfferId($user->getId(), $offerId)->newQuery()->delete();
+        $user->favoriteOffers()->detach([$offerId]);
 
         return \response()->render('', [], Response::HTTP_NO_CONTENT);
     }
