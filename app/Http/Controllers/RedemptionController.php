@@ -12,7 +12,6 @@ use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\User;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
@@ -93,6 +92,10 @@ class RedemptionController extends Controller
         }
 
         $activationCode = $offersService->getActivationCodeByCode($code);
+
+        if($activationCode->offer === null) {
+            throw new ModelNotFoundException();
+        }
 
         $this->authorize('offers.redemption.confirm', $activationCode->offer);
 

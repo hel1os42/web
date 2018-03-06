@@ -119,6 +119,30 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             ->name('profile.place.offers');
         $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.offers.index',
+                'store'   => 'profile.favorite.offers.store',
+                'destroy' => 'profile.favorite.offers.destroy',
+            ]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.places.index',
+                'store'   => 'profile.favorite.places.store',
+                'destroy' => 'profile.favorite.places.destroy',
+            ]
+        ]);
     });
 
     $router->get('users', 'UserController@index')->name('users.index');
@@ -130,6 +154,22 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.offers.index',
+                'store'   => 'users.favorite.offers.store',
+                'destroy' => 'users.favorite.offers.destroy',
+            ]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.places.index',
+                'store'   => 'users.favorite.places.store',
+                'destroy' => 'users.favorite.places.destroy',
+            ]
+        ]);
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -225,6 +265,20 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
     $router->resource('places', 'PlaceController', [
         'except' => [
             'destroy'
+        ]
+    ]);
+
+    $router->resource('places/{placeUuid}/offer_links', 'OfferLinkController', [
+        'except' => [
+            'create',
+            'edit',
+        ],
+        'names'       => [
+            'index'   => 'places.offer_links.index',
+            'show'    => 'places.offer_links.show',
+            'store'   => 'places.offer_links.store',
+            'destroy' => 'places.offer_links.destroy',
+            'update'  => 'places.offer_links.update',
         ]
     ]);
 

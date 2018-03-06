@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\NauModels\Offer;
+use App\Models\OfferLink;
 use App\Models\User;
+use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
@@ -48,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
 
         Offer::observe(OfferObserver::class);
         User::observe(UserObserver::class);
+        OfferLink::observe(OfferLinkObserver::class);
 
         ViewFacade::composer(
             ['*'], function (View $view) {

@@ -1,4 +1,5 @@
 function offerMoreInit(id, text, json){
+    const MIN_LENGTH_OF_TAG = 3;
     if (!text) text = {};
     textDefault(text);
 
@@ -8,7 +9,8 @@ function offerMoreInit(id, text, json){
     html += '<p class="label-items"><span class="tag-label">' + text.tagPlaceholder + ':</span> ';
     html += text.titlePlaceholder + '<span class="buttons-label">' + text.buttonsPlaceholder + '</span></p>';
     html += '<div id="more_items"></div>';
-    html += '<p class="input-example pull-left">' + text.tagExample + ':<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#promo</em>';
+    html += '<p class="input-example pull-left">' + text.tagMinLength + ': ' + MIN_LENGTH_OF_TAG + '<br>';
+    html += text.tagExample + ':<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#promo</em>';
     html += '<br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#hot_offer</em><br>&nbsp;&nbsp;&nbsp;&nbsp;<em>#blackFriday</em></p>';
     html += '<p class="text-right"><span class="btn btn-xs btn-nau btn-add-item">' + text.addButton + '</span></p>';
     box.innerHTML = html;
@@ -26,6 +28,7 @@ function offerMoreInit(id, text, json){
             tagPlaceholder: 'Tag',
             titlePlaceholder: 'Text for link',
             buttonsPlaceholder: 'edit / remove',
+            tagMinLength: 'Min. length of tag',
             tagExample: 'Examples for tags',
             btnEditTitle: 'Edit additional information',
             btnRemoveTitle: 'Remove additional information',
@@ -56,6 +59,7 @@ function offerMoreInit(id, text, json){
         newItem.querySelector('.tag input').addEventListener('change', function(){
             let val = this.value.trim().replace(/\s/g, '_').replace(/[^A-Za-z0-9_]/g, '');
             while (val.length > 0 && !isNaN(+val[0])) val = val.substr(1);
+            while (val.length < MIN_LENGTH_OF_TAG) val += '_';
             this.value = val;
             for (let i = 1; i < moreItems.children.length; i++) {
                 let currentInput = moreItems.children[i].querySelector('.tag input');
