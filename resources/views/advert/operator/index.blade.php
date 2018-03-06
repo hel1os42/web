@@ -20,7 +20,9 @@
                 @foreach ($data as $operator)
                     <tr class="clickable-table-row" data-uuid="">
                         @foreach($operator as $key => $field)
-                            <td>
+                            <td>@if($key == 'place')
+                                    <?php $field = $key == 'place' ? $field['alias'] : $field?>
+                                @endif
                                 @if('is_active' === $key)
                                     {{ true === $field ? 'Active' : 'Deactive' }}
                                 @else
