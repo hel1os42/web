@@ -117,7 +117,7 @@ class LoginController extends AuthController
             break;
         }
 
-        if ($user instanceof Operator && ! $user->isActive() || null === $user) {
+        if (null === $user) {
             return $this->sendFailedLoginResponse($request);
         }
 
