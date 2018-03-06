@@ -3,6 +3,7 @@
 namespace App\Services\Auth\UsersProviders;
 
 use App\Http\Exceptions\NotImplementedException;
+use App\Models\Operator;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -80,7 +81,7 @@ class OperatorUserProvider implements UserProvider
 
         $place = $this->placeRepository->findByAlias($credentials['alias']);
 
-        return $this->operatorRepository
+        return null === $place ? null : $this->operatorRepository
             ->findByPlaceAndLogin($place, $credentials['login']);
     }
 
@@ -93,6 +94,8 @@ class OperatorUserProvider implements UserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        return $this->hasher->check($credentials['password'], $user->getAuthPassword());
+        return $user instanceof Operator &&
+            $user->isActive() &&
+            $this->hasher->check($credentials['password'], $user->getAuthPassword());
     }
 }
