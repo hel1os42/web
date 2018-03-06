@@ -93,7 +93,7 @@ class OfferDeleted extends AbstractJob
      */
     protected function fireModelEvents($responseObject): void
     {
-        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getOfferId());
         event('eloquent.deleted: ' . get_class($offer), $offer);
     }
 }
