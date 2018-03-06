@@ -26,7 +26,6 @@ use Illuminate\Support\Collection;
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
- * @property string                       alias
  * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
@@ -76,7 +75,6 @@ class Place extends Model
             'radius'            => 'integer',
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
-            'alias'             => 'string',
             'has_active_offers' => 'boolean',
         ];
 
@@ -93,7 +91,6 @@ class Place extends Model
             'latitude',
             'longitude',
             'radius',
-            'alias',
         ];
 
         $this->attributes = [

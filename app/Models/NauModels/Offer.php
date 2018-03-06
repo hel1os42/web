@@ -20,8 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property string      id
  * @property int         account_id
- * @property null|string label
- * @property null|string description
+ * @property string      label
+ * @property string      description
  * @property float       reward
  * @property string      status
  * @property Carbon      start_date
@@ -142,13 +142,13 @@ class Offer extends AbstractNauModel
     }
 
     /** @return string */
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
 
     /** @return string */
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -392,8 +392,8 @@ class Offer extends AbstractNauModel
 
         $this->attributes = [
             'acc_id'                 => null,
-            'name'                   => null,
-            'descr'                  => null,
+            'name'                   => '',
+            'descr'                  => '',
             'reward'                 => $defaultReward,
             'status'                 => null,
             'dt_start'               => null,

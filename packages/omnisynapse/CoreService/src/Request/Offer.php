@@ -151,11 +151,11 @@ class Offer implements \JsonSerializable
     }
 
     /**
-     * @param null|string $description
+     * @param string $description
      *
      * @return Offer
      */
-    public function setDescription(?string $description): Offer
+    public function setDescription(string $description): Offer
     {
         $this->description = $description;
         return $this;
