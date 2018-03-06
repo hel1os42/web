@@ -80,7 +80,7 @@ class OperatorUserProvider implements UserProvider
 
         $place = $this->placeRepository->findByAlias($credentials['alias']);
 
-        return $this->operatorRepository
+        return null === $place ? null : $this->operatorRepository
             ->findByPlaceAndLogin($place, $credentials['login']);
     }
 

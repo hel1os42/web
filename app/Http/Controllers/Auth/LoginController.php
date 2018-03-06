@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Operator;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -116,7 +117,7 @@ class LoginController extends AuthController
             break;
         }
 
-        if (null === $user) {
+        if ($user instanceof Operator && ! $user->isActive() || null === $user) {
             return $this->sendFailedLoginResponse($request);
         }
 
