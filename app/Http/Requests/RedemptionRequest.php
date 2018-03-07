@@ -37,7 +37,7 @@ class RedemptionRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|can_redeem'
+            'code' => 'required|can_redeem|min:3'
         ];
     }
 } 
