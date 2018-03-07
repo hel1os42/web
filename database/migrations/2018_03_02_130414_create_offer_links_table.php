@@ -21,7 +21,7 @@ class CreateOfferLinksTable extends Migration
         try {
             Schema::create('offer_links', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('tag');
+                $table->string('tag', 191);
                 $table->string('title');
                 $table->text('description');
                 $table->uuid('place_id');
