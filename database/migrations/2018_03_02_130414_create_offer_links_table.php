@@ -34,7 +34,7 @@ class CreateOfferLinksTable extends Migration
         } catch (PDOException $exc) {
             DB::rollBack();
 
-            Schema::dropIfExists('redemption_requests');
+            Schema::dropIfExists('offer_links');
 
             throw $exc;
         }
