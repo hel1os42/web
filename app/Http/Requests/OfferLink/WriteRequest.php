@@ -28,7 +28,7 @@ class WriteRequest extends FormRequest
     public function rules()
     {
         return [
-            'tag'         => 'required|string|min:3|max:255|' . $this->getUniqueTagRule(),
+            'tag'         => 'required|string|min:3|max:191|' . $this->getUniqueTagRule(),
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
         ];
