@@ -1,9 +1,10 @@
 function offerMoreInit(id, text, json){
+    let box = document.getElementById(id);
+    if (!box) return false;
     const MIN_LENGTH_OF_TAG = 3;
     if (!text) text = {};
     textDefault(text);
 
-    let box = document.getElementById(id);
     let html = '<p class="tag-buttons"><em>' + text.hashButtons + ':</em><br><span class="buttons"></span></p>';
     html += '<p><strong>' + text.title + '</strong></p>';
     html += '<p class="label-items"><span class="tag-label">' + text.tagPlaceholder + ':</span> ';
