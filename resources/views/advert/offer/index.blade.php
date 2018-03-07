@@ -185,7 +185,7 @@
                                                 <div class="pull-right">
                                                     <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
                                                         @if(false)
-																												    <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
+                                                            <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
                                                         @endif
                                                         <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="margin: 0 16px 8px 0;" class="offer-delete-button">
                                                             <input name="_method" type="hidden" value="DELETE">
@@ -199,6 +199,26 @@
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+
+
+                                        <br><br><br><br><br>
+                                        <p>
+                                            <span class="btn btn-danger btn-xs test-offer-del" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer no-json</span>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<small>Err: 405</small>
+                                        </p>
+                                        <p>
+                                            <span class="btn btn-danger btn-xs test-offer-del with-json" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer with json</span>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<small>Err: 500</small>
+                                        </p>
+                                        <br><br><br>
+
+
+
+
+
                                     </div>
                                 </td>
                                 <td class="offer_status_control osc_{{ $offer['status'] }}">
@@ -458,6 +478,44 @@
                    //xhr.setRequestHeader('Accept', 'application/json');
                    xhr.send(JSON.stringify({'_token': '{{ csrf_token() }}'}));
                }
+            });
+        }
+
+        bthDeleteOfferTest();
+        function bthDeleteOfferTest(){
+            document.querySelector('#table_your_offers').addEventListener('click', function(e){
+                if (e.target.classList.contains('test-offer-del')) {
+                    let url = e.target.dataset.action;
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 204) {
+                                console.log('Offer was deleted.');
+                            } else if (xhr.status === 404) {
+                                alert('Offer not found.');
+                            } else if (xhr.status === 422) {
+                                alert(xhr.responseText);
+                            } else {
+                                alert('Something wrong, error ' + xhr.status + ' (see console).');
+                            }
+                        }
+                    };
+                    xhr.open('POST', url, true);
+                    if (e.target.classList.contains('with-json')) xhr.setRequestHeader('Accept', 'application/json');
+
+                    //let data = '_token={{ csrf_token() }}';
+                    //let data = '_token={{ csrf_token() }}&_method=DELETE';
+
+                    //let data = JSON.stringify({'_token': '{{ csrf_token() }}'});
+                    //let data = JSON.stringify({'_token': '{{ csrf_token() }}', '_method': 'DELETE'});
+
+                    let data = new FormData();
+                    data.append('_token', '{{ csrf_token() }}');
+                    data.append('_method', 'DELETE');
+
+                    console.dir(data);
+                    xhr.send(data);
+                }
             });
         }
 
