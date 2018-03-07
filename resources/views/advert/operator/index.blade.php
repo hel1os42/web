@@ -4,36 +4,44 @@
 
 @section('content')
 
+<style>
+    table {
+        margin-bottom: 20px;
+    }
+</style>
+
 <div class="container">
     <h1>Operators</h1>
-    <div class="table-responsive">
+    <div>
         @if(0 !== count($data))
-        <table class="table table-hover">
-            <thead class="text-primary">
+        <table class="table-striped-nau">
+            <thead>
                 <tr>
-                    @foreach (array_keys($data[0]) as $field)
-                        @if($field == 'place')
-                            <th>alias</th>
-                            @continue
-                        @endif
-                        <th>{{ $field }}</th>
-                    @endforeach
+                    <th>Id</th>
+                    <th>Place uuid</th>
+                    <th>Alias</th>
+                    <th>Login</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $operator)
-                    <tr class="clickable-table-row" data-uuid="">
-                        @foreach($operator as $key => $field)
-                            <td>@if($key == 'place')
-                                    <?php $field = $key == 'place' ? $field['alias'] : $field?>
-                                @endif
-                                @if('is_active' === $key)
-                                    {{ true === $field ? 'Active' : 'Deactive' }}
-                                @else
-                                    {{ empty($field) ? '-' : $field }}
-                                @endif
-                            </td>
-                        @endforeach
+                    <tr data-uuid="">
+                        <td>{{ $operator['id'] }}</td>
+                        <td>{{ $operator['place_uuid'] }}</td>
+                        <td>
+                            {{ empty($operator['place']['alias']) ? '-' : $operator['place']['alias'] }}
+                        </td>
+                        <td>{{ $operator['login'] }}</td>
+                        <td>
+                            {{ true === $operator['is_active'] ? 'Active' : 'Deactive' }}
+                        </td>
+                        <td>{{ $operator['created_at'] }}</td>
+                        <td>{{ $operator['updated_at'] }}</td>
                         <td>
                             <form method="POST" action="{{ route('advert.operators.destroy', $operator['id']) }}" class="form-operator-delete">
                                 <input type="hidden" name="_method" value="DELETE">
