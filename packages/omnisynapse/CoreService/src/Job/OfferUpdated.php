@@ -7,6 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\OfferForUpdate;
+use OmniSynapse\CoreService\Response\BaseResponse;
 use OmniSynapse\CoreService\Response\Offer as OfferResponse;
 
 /**
@@ -70,10 +71,8 @@ class OfferUpdated extends AbstractJob
         return $this->requestObject;
     }
 
-    /**
-     * @return object
-     */
-    public function getResponseObject()
+    /** @return BaseResponse */
+    public function getResponseObject(): BaseResponse
     {
         return new OfferResponse;
     }
@@ -85,5 +84,16 @@ class OfferUpdated extends AbstractJob
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
         return new FailedJob\OfferUpdated($exception, $this->offer);
+    }
+
+    /**
+     * @param \OmniSynapse\CoreService\Response\Offer $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        event('eloquent.updated: ' . get_class($offer), $offer);
     }
 }

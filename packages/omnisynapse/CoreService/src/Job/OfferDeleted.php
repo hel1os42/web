@@ -12,6 +12,7 @@ use App\Models\NauModels\Offer;
 use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
+use OmniSynapse\CoreService\Response\BaseResponse;
 use OmniSynapse\CoreService\Response\OfferDeleted as OfferDeletedResponse;
 
 /**
@@ -70,9 +71,9 @@ class OfferDeleted extends AbstractJob
     }
 
     /**
-     * @return object
+     * @return BaseResponse
      */
-    public function getResponseObject()
+    public function getResponseObject(): BaseResponse
     {
         return new OfferDeletedResponse($this->offerId);
     }
@@ -84,5 +85,16 @@ class OfferDeleted extends AbstractJob
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
         return new FailedJob\OfferDeleted($exception, $this->offerId);
+    }
+
+    /**
+     * @param \OmniSynapse\CoreService\Response\OfferDeleted $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getOfferId());
+        event('eloquent.deleted: ' . get_class($offer), $offer);
     }
 }

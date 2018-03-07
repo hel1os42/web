@@ -171,6 +171,7 @@ return [
         Vinkla\Hashids\HashidsServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
+        Mews\Purifier\PurifierServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -246,4 +247,14 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
     ],
 
+    'review_stub' => [
+        'code'          => env('REVIEW_STUB_CODE', ''),
+        'user_id'       => '20160127-1111-3beb-87bd-338040b36aad',
+        'offer'            => [
+            'id'          => '20160127-1111-392a-a1c6-e1925f85dfd2',
+            'label'       => 'iPhone Discount',
+            'description' => 'Get new iPhone X with discount.',
+        ],
+        'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
+    ]
 ];
