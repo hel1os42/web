@@ -52,11 +52,11 @@ class OfferController extends FavoriteController
     {
         $userId = $this->confirmUuid($userId);
 
-        $user = $this->userRepository->find($userId);
+        $user = $this->userRepository->skipCriteria()->find($userId);
 
         $this->authorize('users.favorites.list', $user);
 
-        $offers          = $this->favoriteOfferRepository->getByUser($user);
+        $offers          = $this->favoriteOfferRepository->skipCriteria()->getByUser($user);
         $offersPaginated = $offers->paginate();
 
         $favorites = $this->offerRepository->findWhereIn('id', $offers->pluck('offer_id')->toArray())->toArray();
