@@ -67,12 +67,29 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
 
 
 // Authorized users
+/**
+ * redemption operator & activation codes
+ */
+$router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($router) {
+    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
+        ->name('activation_codes.show');
+    $router->resource('redemptions', 'RedemptionController', [
+        'except' => [
+            'update',
+            'destroy',
+        ],
+        'parameters' => [ 'redemptions' => 'uuid_id' ]
+    ]);
+    $router->get('/', function () {
+        $view = 'home';
+        if(auth()->user() instanceof \App\Models\Operator) {
+            $view = 'operator';
+        }
+        return response()->render($view, []);
+    })->name('home');
+});
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
-
-    $router->get('/', function () {
-        return response()->render('home', []);
-    })->name('home');
 
     $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
@@ -102,6 +119,30 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             ->name('profile.place.offers');
         $router->post('place/picture', 'Place\PictureController@storePicture')->name('place.picture.store');
         $router->post('place/cover', 'Place\PictureController@storeCover')->name('place.cover.store');
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.offers.index',
+                'store'   => 'profile.favorite.offers.store',
+                'destroy' => 'profile.favorite.offers.destroy',
+            ]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
+            'only'  => [
+                'index',
+                'store',
+                'destroy',
+            ],
+            'names' => [
+                'index'   => 'profile.favorite.places.index',
+                'store'   => 'profile.favorite.places.store',
+                'destroy' => 'profile.favorite.places.destroy',
+            ]
+        ]);
     });
 
     $router->get('users', 'UserController@index')->name('users.index');
@@ -113,6 +154,22 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         $router->get('referrals', 'UserController@referrals');
         $router->post('picture', 'User\PictureController@store')->name('users.picture.store');
         $router->get('place/create', 'PlaceController@create')->name('users.place.create');
+        $router->resource('favorite/offers', 'User\Favorite\OfferController', [
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.offers.index',
+                'store'   => 'users.favorite.offers.store',
+                'destroy' => 'users.favorite.offers.destroy',
+            ]
+        ]);
+        $router->resource('favorite/places', 'User\Favorite\PlaceController', [
+            'only' => ['index', 'store', 'destroy',],
+            'names' => [
+                'index'   => 'users.favorite.places.index',
+                'store'   => 'users.favorite.places.store',
+                'destroy' => 'users.favorite.places.destroy',
+            ]
+        ]);
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -158,13 +215,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         'except' => [
             'create',
             'store',
-            'update',
-            'destroy'
-        ]
-    ]);
-
-    $router->resource('redemptions', 'RedemptionController', [
-        'except' => [
             'update',
             'destroy'
         ]
@@ -218,11 +268,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
-    /**
-     * Activation codes
-     */
-    $router->get('activation_codes/{code}', 'ActivationCodeController@show')
-           ->name('activation_codes.show');
+    $router->resource('places/{placeUuid}/offer_links', 'OfferLinkController', [
+        'except' => [
+            'create',
+            'edit',
+        ],
+        'names'       => [
+            'index'   => 'places.offer_links.index',
+            'show'    => 'places.offer_links.show',
+            'store'   => 'places.offer_links.store',
+            'destroy' => 'places.offer_links.destroy',
+            'update'  => 'places.offer_links.update',
+        ]
+    ]);
 
     /**
      * Roles

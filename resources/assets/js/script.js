@@ -137,19 +137,16 @@ function setFieldLimit(selector){
         });
     });
     function trimValue(){
-        let val = getValue(this);
+        let val = this.value;
         let len = parseInt(this.dataset.maxLength);
         if (val.length > len) this.value = val.substr(0, len);
-        this.parentElement.querySelector('.character-counter').innerText = val.length + ' / ' + len;
+        this.parentElement.querySelector('.character-counter').innerText = this.value.length + ' / ' + len;
     }
     function createSpan(input){
         let span = document.createElement('span');
         span.classList.add('character-counter');
-        span.innerText = getValue(input).length + ' / ' + input.dataset.maxLength;
+        span.innerText = input.value.length + ' / ' + input.dataset.maxLength;
         input.parentElement.appendChild(span);
-    }
-    function getValue(e){
-        return e.value.replace(/\{.+?\}/g, '');
     }
 }
 

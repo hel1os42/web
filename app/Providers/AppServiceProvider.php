@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\NauModels\Offer;
+use App\Models\OfferLink;
 use App\Models\User;
+use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
@@ -48,11 +50,12 @@ class AppServiceProvider extends ServiceProvider
 
         Offer::observe(OfferObserver::class);
         User::observe(UserObserver::class);
+        OfferLink::observe(OfferLinkObserver::class);
 
         ViewFacade::composer(
             ['*'], function (View $view) {
                 $authUser = auth()->user();
-                if (null != $authUser) {
+                if (null != $authUser && ($authUser instanceof User) && null == array_get($view->getData(), 'authUser')) {
                     $authUser->load('accounts');
                     $view->with('authUser', $authUser->toArray());
 

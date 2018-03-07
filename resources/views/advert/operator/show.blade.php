@@ -4,38 +4,52 @@
 
 @section('content')
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="row">
-                <div class="content">
-                    <div class="col-sm-10 p-5">
-                            @foreach(get_defined_vars()['__data'] as $field => $value)
-
-                            @if (!in_array($field, ['app', 'errors', '__env', 'authUser']))
-                                <p><strong> {{ $field }} </strong></p>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+            <h1>Operator</h1>
+            <table>
+                @foreach(get_defined_vars()['__data'] as $field => $value)
+                    @if (!in_array($field, ['app', 'errors', '__env', 'authUser']))
+                        <tr>
+                            <th>{{ $field }}:</th>
+                            <td>
                                 @if('is_active' === $field)
-                                    @if(true === $value)
-                                        <p>Active</p>
-                                    @else
-                                        <p>Deactive</p>
-                                    @endif
+                                    {{ true === $value ? 'Active' : 'Deactive' }}
                                 @else
-                                    <p>{{ $value }}</p>
+                                    {{ $value }}
                                 @endif
-                            @endif
-
-                            @endforeach
-                    </div>
-                </div>
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </table>
+            <div>
+                <form method="POST" action="{{ route('advert.operators.destroy', $id) }}" class="form-operator-delete">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-default">Delete operator</button>
+                </form>
+                <a href="{{ route('advert.operators.edit', $id) }}" class="btn btn-default">Edit operator</a>
             </div>
-            <form method="post" action="{{ route('advert.operators.destroy', $id) }}">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-rose btn-wd btn-md">Delete operator</button>
-            </form>
-            <form method="get" action="{{ route('advert.operators.edit', $id) }}">
-                <button type="submit" class="btn btn-rose btn-wd btn-md">Edit operator</button>
-            </form>
         </div>
     </div>
+</div>
+
+@push('styles')
+<style>
+    table { margin: 24px 0; }
+    table th, table td { padding: 4px 8px; }
+    .form-operator-delete { display: inline-block; }
+</style>
+@endpush
+
+@push('scripts')
+    <script>
+        document.querySelector('.form-operator-delete [type="submit"]').addEventListener('click', function(){
+            setTimeout(function(){ location.replace('{{ route("advert.operators.index") }}'); }, 100);
+        });
+    </script>
+@endpush
+
 @stop

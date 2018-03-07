@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
+use App\Models\User\FavoritePlaces;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Prettus\Repository\Traits\PresentableTrait;
 
 /**
  * Class Place
@@ -31,7 +33,7 @@ use Illuminate\Support\Collection;
  * @property string                       cover_url
  * @property int                          offers_count
  * @property int                          active_offers_count
- *
+ * @property bool                         is_favorite
  * @property User                         user
  * @property Collection                   testimonials
  * @property NauModels\Offer[]|Collection offers
@@ -41,10 +43,11 @@ use Illuminate\Support\Collection;
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder filterByActiveOffersAvailability()
  * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|Builder byAlias(String $alias)
  */
 class Place extends Model
 {
-    use Uuids, RelationsTrait;
+    use Uuids, RelationsTrait, PresentableTrait;
 
     /**
      * Place constructor.
@@ -89,7 +92,7 @@ class Place extends Model
             'alias',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
         ];
 
         $this->attributes = [
@@ -264,6 +267,16 @@ class Place extends Model
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
+     * @return bool
      */
     public function hasActiveOffers(): bool
     {
@@ -408,6 +421,13 @@ class Place extends Model
         return $this;
     }
 
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
+
+        return $this;
+    }
+
     /**
      * @param Builder $builder
      * @param User    $user
@@ -505,5 +525,17 @@ class Place extends Model
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param string  $alias
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByAlias($builder, string $alias): Builder
+    {
+        return $builder->where('alias', $alias);
     }
 }

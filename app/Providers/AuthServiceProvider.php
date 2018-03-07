@@ -2,12 +2,17 @@
 
 namespace App\Providers;
 
+use App\Repositories\OperatorRepository;
+use App\Repositories\PlaceRepository;
 use App\Services\Auth\Guards\JwtGuard;
+use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
+use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -46,6 +51,12 @@ class AuthServiceProvider extends ServiceProvider
         'operators.delete' => 'OperatorPolicy@destroy',
         'operators.update' => 'OperatorPolicy@update',
 
+        'offer_links.index'  => 'OfferLinkPolicy@index',
+        'offer_links.show'   => 'OfferLinkPolicy@show',
+        'offer_links.create' => 'OfferLinkPolicy@create',
+        'offer_links.update' => 'OfferLinkPolicy@update',
+        'offer_links.delete' => 'OfferLinkPolicy@delete',
+
         'my.offers.list'       => 'OfferPolicy@indexMy',
         'my.offer.show'        => 'OfferPolicy@showMy',
         'offers.create'        => 'OfferPolicy@create',
@@ -74,16 +85,20 @@ class AuthServiceProvider extends ServiceProvider
         'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
         'transaction.show'           => 'TransactPolicy@show',
 
-        'users.create'         => 'UserPolicy@create',
-        'users.list'           => 'UserPolicy@index',
-        'users.show'           => 'UserPolicy@show',
-        'users.update'         => 'UserPolicy@update',
-        'users.referrals.list' => 'UserPolicy@referrals',
-        'users.picture.store'  => 'UserPolicy@pictureStore',
-        'user.update.children' => 'UserPolicy@updateChildren',
-        'user.update.parents'  => 'UserPolicy@updateParents',
-        'user.update.roles'    => 'UserPolicy@updateRoles',
-        'impersonate'          => 'UserPolicy@impersonate',
+        'users.create'            => 'UserPolicy@create',
+        'users.list'              => 'UserPolicy@index',
+        'users.show'              => 'UserPolicy@show',
+        'users.update'            => 'UserPolicy@update',
+        'users.referrals.list'    => 'UserPolicy@referrals',
+        'users.picture.store'     => 'UserPolicy@pictureStore',
+        'user.update.children'    => 'UserPolicy@updateChildren',
+        'user.update.parents'     => 'UserPolicy@updateParents',
+        'user.update.roles'       => 'UserPolicy@updateRoles',
+        'impersonate'             => 'UserPolicy@impersonate',
+
+        'users.favorites.list'    => 'User\FavoritePolicy@index',
+        'users.favorites.create'  => 'User\FavoritePolicy@create',
+        'users.favorites.destroy' => 'User\FavoritePolicy@destroy',
     ];
 
     /**
@@ -91,8 +106,12 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @param Gate $gate
      */
-    public function boot(Gate $gate)
-    {
+    public function boot(
+        Gate $gate,
+        PlaceRepository $placeRepository,
+        OperatorRepository $operatorRepository,
+        Hasher $hasher
+    ) {
         $this->registerPolicies();
 
         foreach ($this->abilities as $ability => $callback) {
@@ -102,6 +121,7 @@ class AuthServiceProvider extends ServiceProvider
         /** @var AuthManager $authManager */
         $authManager = $this->app->make('auth');
 
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->provider('otp-eloquent', function ($app, array $config) {
             return new OtpEloquentUserProvider($app['hash'], $config['model']);
         });
@@ -114,6 +134,17 @@ class AuthServiceProvider extends ServiceProvider
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->extend('otp', function ($app, $name, array $config) use ($authManager) {
             return new OtpGuard($authManager->createUserProvider($config['provider']));
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->provider('operator', function () use ($placeRepository, $operatorRepository, $hasher) {
+            return new OperatorUserProvider($placeRepository, $operatorRepository, $hasher);
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->extend('operator', function ($app, string $name, array $config) use ($authManager, $operatorRepository) {
+            return new OperatorGuard($name, $authManager->createUserProvider($config['provider']),
+                $app['session.store']);
         });
     }
 }

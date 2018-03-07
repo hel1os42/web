@@ -10,6 +10,7 @@ use App\Services\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Prettus\Repository\Eloquent\BaseRepository;
@@ -285,5 +286,18 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
     protected function builderWithoutGlobalScopes(): Builder
     {
         return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);
+    }
+
+    /**
+     * @return OfferRepository
+     */
+    public function withoutGlobalScopes(): OfferRepository
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $this->builderWithoutGlobalScopes();
+
+        return $this;
     }
 }

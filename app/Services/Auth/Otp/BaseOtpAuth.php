@@ -66,7 +66,7 @@ abstract class BaseOtpAuth
     protected function specialNumberCheck(string $phoneNumber): bool
     {
         if ($phoneNumber === config('otp.special_number')) {
-            $this->cacheOtpCode($phoneNumber, substr($phoneNumber, -6));
+            $this->cacheOtpCode($phoneNumber, substr($phoneNumber, -4));
 
             return true;
         }
