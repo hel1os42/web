@@ -248,7 +248,7 @@ return [
     ],
 
     'review_stub' => [
-        'code'          => 'AppleReview2018',
+        'code'          => env('REVIEW_STUB_CODE', ''),
         'user_id'       => '20160127-1111-3beb-87bd-338040b36aad',
         'offer'            => [
             'id'          => '20160127-1111-392a-a1c6-e1925f85dfd2',
