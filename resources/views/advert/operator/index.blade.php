@@ -4,17 +4,11 @@
 
 @section('content')
 
-<style>
-    table {
-        margin-bottom: 20px;
-    }
-</style>
-
 <div class="container">
     <h1>Operators</h1>
     <div>
         @if(0 !== count($data))
-        <table class="table-striped-nau">
+        <table class="table-striped-nau" style="margin-bottom: 20px;">
             <thead>
                 <tr>
                     <th>Id</th>
