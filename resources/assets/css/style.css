@@ -342,23 +342,26 @@ footer p {
     display: inline-block;
 }
 
-.table-users {
+.table-striped-nau {
     margin-top: 24px;
     width: 100%;
 }
-.table-users th {
+.table-striped-nau th {
     border-bottom: 1px solid #999;
     padding-top: 10px;
     padding-bottom: 10px;
 }
-.table-users tr:not(:last-child) td {
+.table-striped-nau tr:not(:last-child) td {
     border-bottom: 1px solid #ddd;
 }
-.table-users tr:nth-child(even) {
+.table-striped-nau tr:nth-child(even) {
     background: #f9f9f9;
 }
-.table-users tr:hover {
+.table-striped-nau tr:hover {
     background: #f6f6f6;
+}
+.table-striped-nau td {
+    padding: 10px;
 }
 
 .nobs-modal {
