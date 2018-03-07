@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateOfferLinksTable extends Migration
 {
@@ -13,18 +14,32 @@ class CreateOfferLinksTable extends Migration
      */
     public function up()
     {
-        Schema::create('offer_links', function (Blueprint $table) {
-            $table->increments('id', 10)->unique()->unsigned();
-            $table->string('tag');
-            $table->string('title');
-            $table->text('description');
-            $table->uuid('place_id');
-            $table->timestamps();
+        Schema::dropIfExists('offer_links');
 
-            $table->foreign('place_id')->references('id')->on('places');
+        DB::beginTransaction();
 
-            $table->unique(['place_id', 'tag']);
-        });
+        try {
+            Schema::create('offer_links', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('tag');
+                $table->string('title');
+                $table->text('description');
+                $table->uuid('place_id');
+                $table->timestamps();
+
+                $table->foreign('place_id')->references('id')->on('places');
+
+                $table->unique(['place_id', 'tag']);
+            });
+        } catch (PDOException $exc) {
+            DB::rollBack();
+
+            Schema::dropIfExists('redemption_requests');
+
+            throw $exc;
+        }
+
+        DB::commit();
     }
 
     /**
