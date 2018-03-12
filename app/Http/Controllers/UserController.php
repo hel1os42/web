@@ -106,37 +106,16 @@ class UserController extends Controller
             : array_merge($editableUser->getFillableWithDefaults(['password', 'approved']), $request->all());
 
         $this->authorize('users.update', [$editableUser, $userData]);
-//        $userData = $request->except(['approve']);
-//
-//        if (!$this->user()->hasRoles([Role::ROLE_ADMIN]))
-//        {
-//            unset($userData['invite_code']);
-//        }
-//
-//        if ($request->isMethod('put')) {
-//            $userData = \array_merge(\App\Helpers\Attributes::getFillableWithDefaults($editableUser,
-//                ['password']), $userData);
+
         if (isset($userData['approved']) && $userData['approved'] === false) {
             $placeService->disapprove($editableUser->place);
         }
-//eof
+
         $user = $this->userRepository;
-//        if ($request->has('approve')) {
-//            $this->authorize('users.update.approve', $user);
-//
-//            $user->setApproved($request->approve);
-//        }
-//
-//        $user   = $user->update($userData, $uuid);
-//        $result = $user->fresh();
-//        $result = $request->has('parent_ids') ? $this->setParents($request->parent_ids, $user) : $result;
-//        $result = $request->has('child_ids') ? $this->setChildren($request->child_ids, $user) : $result;
-//        $result = $request->has('role_ids') ? $this->updateRoles($request->role_ids, $user) : $result;
         $user = $user->update($userData, $uuid);
         $user = $this->updateRelationData($user, $userData);
 
         $with = ['place'];
-// eof
 
         if ($this->user()->isAdmin() || $this->user()->isAgent()) {
             $with = array_merge($with, ['roles', 'parents', 'children']);

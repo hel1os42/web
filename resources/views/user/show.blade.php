@@ -62,18 +62,18 @@
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
-                                        @can('users.relink', $user)
-                                            <p><strong>Invite</strong></p>
-                                        @endcan
-                                    </div>
-                                    @can('users.relink', $user)
-                                        <p><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
-                                                  value="{{$invite_code}}"></p>
+                                    @can('user.relink', \Illuminate\Support\Facades\Auth::user())
+                                        <p><strong>Invite</strong></p>
                                     @endcan
+                                    </div>
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
+                                    @can('user.relink', \Illuminate\Support\Facades\Auth::user())
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
+                                                         value="{{ $invite_code }}"></label></p>
+                                    @endcan
                                     </div>
 
                                 </div>
