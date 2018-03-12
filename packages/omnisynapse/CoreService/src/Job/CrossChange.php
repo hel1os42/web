@@ -8,6 +8,7 @@ use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\FailedJob\CrossChange as FailedCrossChange;
 use OmniSynapse\CoreService\Request\CrossChange as CrossChangeRequest;
+use OmniSynapse\CoreService\Response\BaseResponse;
 use OmniSynapse\CoreService\Response\CrossChange as CrossChangeResponse;
 
 /**
@@ -59,8 +60,8 @@ class CrossChange extends AbstractJob
         return new CrossChangeRequest($this->account->address, $this->ethAddress, $this->amount, $this->isIncoming ? 'in' : 'out');
     }
 
-    /** @return object */
-    public function getResponseObject()
+    /** @return BaseResponse */
+    public function getResponseObject(): BaseResponse
     {
         return new CrossChangeResponse();
     }

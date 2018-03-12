@@ -6,6 +6,7 @@ use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Transact;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use OmniSynapse\CoreService\Observers\OfferObserver;
 use OmniSynapse\CoreService\Observers\RedemptionObserver;

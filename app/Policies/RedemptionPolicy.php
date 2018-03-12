@@ -12,17 +12,21 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class RedemptionPolicy extends Policy
 {
     /**
-     * @param User $user
+     * @param $user
      *
      * @return bool
      */
-    public function index(User $user)
+    public function index(Authenticatable $user)
     {
-        return $user->hasRoles([Role::ROLE_USER]);
+        if ($user instanceof Operator) {
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
+        }
+
+        return $user instanceof User && $user->hasRoles([Role::ROLE_USER, Role::ROLE_ADVERTISER, Role::ROLE_ADMIN]);
     }
 
     /**
-     * @param $user
+     * @param       $user
      * @param Offer $offer
      *
      * @return bool
@@ -30,20 +34,24 @@ class RedemptionPolicy extends Policy
     public function confirm(Authenticatable $user, Offer $offer)
     {
         if ($user instanceof Operator) {
-            $user = $user->place->user ?? null;
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
         }
 
         return $user instanceof User && $user->hasRoles([Role::ROLE_ADVERTISER]) && $offer->isOwner($user);
     }
 
     /**
-     * @param User       $user
-     * @param Redemption $redemption
+     * @param Authenticatable $user
+     * @param Redemption      $redemption
      *
      * @return bool
      */
-    public function show(User $user, Redemption $redemption)
+    public function show(Authenticatable $user, Redemption $redemption)
     {
-        return $redemption->offer->isOwner($user);
+        if ($user instanceof Operator) {
+            $user = $user->isActive() && $user->place->user ? $user->place->user : null;
+        }
+
+        return $user instanceof User && $redemption->offer->isOwner($user);
     }
 }

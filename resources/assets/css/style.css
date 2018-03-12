@@ -296,6 +296,28 @@ footer p {
 	display: block;
 }
 
+.offer-edit-button-wrapper {
+    display: inline-block;
+}
+.offer-edit-button-wrapper .offer-edit-no-button {
+    width: 192px;
+}
+.offer-edit-button-wrapper .offer-delete-button,
+.offer-edit-button-wrapper .offer-edit-button,
+.offer-edit-button-wrapper .offer-edit-no-button{
+    display: none;
+}
+.offer-edit-button-wrapper.oeb-deactive .offer-delete-button,
+.offer-edit-button-wrapper.oeb-deactive .offer-edit-button {
+    display: inline-block;
+}
+.offer-edit-button-wrapper.oeb-active .offer-edit-no-button {
+    display: inline-block;
+}
+.offer-edit-button-wrapper .offer-edit-button {
+    margin-left: 24px;
+}
+
 .user-approve-controls form {
     display: inline-block;
 }
@@ -339,8 +361,46 @@ footer p {
     background: #f6f6f6;
 }
 
-
-
-
-
-
+.nobs-modal {
+    position: fixed;
+    z-index: 9790;
+    display: none;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+}
+.nobs-modal.shown {
+    display: block;
+    opacity: 1;
+    transition: opacity 400ms ease;
+}
+.nobs-modal .nobs-modal-content {
+    position: absolute;
+    left: 50%;
+    top: 80px;
+    transform: translate(-50%, 0);
+    padding: 12px 15px;
+    width: 80%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.nobs-modal h4 {
+    margin-top: 0;
+    padding-right: 40px;
+}
+.nobs-modal .close-modal {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 200%;
+    line-height: 1em;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.nobs-modal .close-modal:hover {
+    opacity: 1;
+}

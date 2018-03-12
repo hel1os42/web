@@ -37,6 +37,8 @@ class RouteServiceProvider extends ServiceProvider
         /** @var \Illuminate\Routing\Router $router */
         $router = app('router');
 
+        $router->pattern('uuid_id', \App\Helpers\Constants::UUID_REGEX);
+
         return $router->middleware('web')
                       ->namespace($this->namespace)
                       ->group(base_path('routes/web.php'));
