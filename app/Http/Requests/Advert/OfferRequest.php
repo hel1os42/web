@@ -54,8 +54,8 @@ class OfferRequest extends FormRequest
         $weekDaysService  = app(WeekDaysService::class);
         $offerReservation = app(OfferReservation::class);
         return [
-            'label'                  => 'required|string|min:3|max:128',
-            'description'            => 'nullable|string',
+            'label'                  => 'required|string|min:3|max:40',
+            'description'            => 'required|string|max:200',
             'reward'                 => 'required|numeric|min:1',
             'start_date'             => 'required|date|date_format:' . Constants::DATE_FORMAT,
             'finish_date'            => 'nullable|date|date_format:' . Constants::DATE_FORMAT,

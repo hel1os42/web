@@ -8,10 +8,12 @@ use Carbon\Carbon;
  * Class SendNau
  * @package OmniSynapse\CoreService\Response
  *
+ * @method static bool hasEmptyBody()
+ *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Transaction implements \JsonSerializable
+class Transaction extends BaseResponse implements \JsonSerializable
 {
     /** @var string */
     public $transaction_id;

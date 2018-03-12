@@ -51,7 +51,7 @@ class RegisterRequest extends FormRequest
         ];
 
         if ($this->getRegistrator() === null) {
-            $rules['code']        = 'required_with:phone|nullable|digits:6|otp';
+            $rules['code']        = 'required_with:phone|nullable|digits:4|otp';
             $rules['referrer_id'] = 'required|string|exists:users,id';
         }
 

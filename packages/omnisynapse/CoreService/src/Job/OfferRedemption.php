@@ -7,6 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\OfferForRedemption as OfferForRedemptionRequest;
+use OmniSynapse\CoreService\Response\BaseResponse;
 use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionResponse;
 
 /**
@@ -70,10 +71,8 @@ class OfferRedemption extends AbstractJob
         return $this->requestObject;
     }
 
-    /**
-     * @return object
-     */
-    public function getResponseObject()
+    /** @return BaseResponse */
+    public function getResponseObject(): BaseResponse
     {
         return new OfferForRedemptionResponse;
     }
@@ -85,5 +84,16 @@ class OfferRedemption extends AbstractJob
     protected function getFailedResponseObject(\Exception $exception): FailedJob
     {
         return new FailedJob\OfferRedemption($exception, $this->redemption);
+    }
+
+    /**
+     * @param OfferForRedemptionResponse $responseObject
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function fireModelEvents($responseObject): void
+    {
+        $redemption = Redemption::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        event('eloquent.created: ' . get_class($redemption), $redemption);
     }
 }

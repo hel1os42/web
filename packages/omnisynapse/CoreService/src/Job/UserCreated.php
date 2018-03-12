@@ -7,6 +7,7 @@ use OmniSynapse\CoreService\AbstractJob;
 use OmniSynapse\CoreService\CoreService;
 use OmniSynapse\CoreService\FailedJob;
 use OmniSynapse\CoreService\Request\User as UserRequest;
+use OmniSynapse\CoreService\Response\BaseResponse;
 use OmniSynapse\CoreService\Response\User as UserResponse;
 
 /**
@@ -70,10 +71,8 @@ class UserCreated extends AbstractJob
         return $this->requestObject;
     }
 
-    /**
-     * @return object
-     */
-    public function getResponseObject()
+    /** @return BaseResponse */
+    public function getResponseObject(): BaseResponse
     {
         return new UserResponse;
     }

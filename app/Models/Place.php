@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
+use App\Models\User\FavoritePlaces;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Prettus\Repository\Traits\PresentableTrait;
 
 /**
  * Class Place
@@ -26,13 +28,12 @@ use Illuminate\Support\Collection;
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
- * @property string                       alias
  * @property bool                         has_active_offers
  * @property string                       picture_url
  * @property string                       cover_url
  * @property int                          offers_count
  * @property int                          active_offers_count
- *
+ * @property bool                         is_favorite
  * @property User                         user
  * @property Collection                   testimonials
  * @property NauModels\Offer[]|Collection offers
@@ -46,7 +47,7 @@ use Illuminate\Support\Collection;
  */
 class Place extends Model
 {
-    use Uuids, RelationsTrait;
+    use Uuids, RelationsTrait, PresentableTrait;
 
     /**
      * Place constructor.
@@ -76,7 +77,6 @@ class Place extends Model
             'radius'            => 'integer',
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
-            'alias'             => 'string',
             'has_active_offers' => 'boolean',
         ];
 
@@ -93,7 +93,6 @@ class Place extends Model
             'latitude',
             'longitude',
             'radius',
-            'alias',
         ];
 
         $this->attributes = [
@@ -268,6 +267,16 @@ class Place extends Model
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
+     * @return bool
      */
     public function hasActiveOffers(): bool
     {
@@ -408,6 +417,13 @@ class Place extends Model
     public function setHasActiveOffers(bool $hasActiveOffers): Place
     {
         $this->has_active_offers = $hasActiveOffers;
+
+        return $this;
+    }
+
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
 
         return $this;
     }
