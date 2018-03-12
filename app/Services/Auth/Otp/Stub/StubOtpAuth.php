@@ -23,6 +23,6 @@ class StubOtpAuth implements OtpAuth
 
     public function validateCode(string $phoneNumber, string $code): bool
     {
-        return $code === substr($phoneNumber, -6);
+        return $code === substr($phoneNumber, -4);
     }
 }

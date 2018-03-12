@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Advert;
 
-use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
+use App\Helpers\FormRequest;
 use App\Http\Requests\Advert;
 use App\Http\Requests\Offer\UpdateStatusRequest;
 use App\Models\Contracts\Currency;

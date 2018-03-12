@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Advert;
 
-use App\Helpers\FormRequest;
 use App\Http\Controllers\Controller;
+use App\Helpers\FormRequest;
 use App\Http\Requests\OperatorRequest;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
@@ -41,7 +41,7 @@ class OperatorController extends Controller
     public function index(): Response
     {
         $this->authorize('operators.list');
-        $place          = $this->placeRepository->findByUser($this->user());
+        $place          = $this->placeRepository->skipCriteria()->findByUser($this->user());
         $operators      = $this->operatorRepository->findByPlace($place);
         $result['data'] = $operators->toArray();
 

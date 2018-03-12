@@ -8,11 +8,13 @@ use Carbon\Carbon;
  * Class OfferCreatedResponse
  * @package OmniSynapse\CoreService\Response
  *
+ * @method static bool hasEmptyBody()
+ *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
-class Offer
+class Offer extends BaseResponse
 {
     /** @var string */
     public $id;

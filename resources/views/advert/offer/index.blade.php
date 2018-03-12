@@ -73,8 +73,9 @@
         <div class="tab-content">
 
             <div id="tab_your_offers" class="tab-pane fade in active">
+                <img class="data-loading" src="{{ asset('img/loading.gif') }}" alt="wait..." style="display:block; margin: 0 auto;">
 
-                <table id="table_your_offers" class="display">
+                <table id="table_your_offers" class="display" style="opacity:0;">
                     <thead>
                     <tr>
                         <th width="40">#</th>
@@ -182,14 +183,19 @@
                                             </div>
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
+                                                    <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
+                                                        @if(false)
+																												    <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
+                                                        @endif
+                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="margin: 0 16px 8px 0;" class="offer-delete-button">
+                                                            <input name="_method" type="hidden" value="DELETE">
+                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
+                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
+                                                        </form>
 
-                                                    <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="display: inline-block; margin-right: 16px;">
-                                                        <input name="_method" type="hidden" value="DELETE">
-                                                        <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                        <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                    </form>
-
-                                                    <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau">Edit information</a>
+                                                        <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
+                                                        <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -244,19 +250,25 @@
         /* disabling button "activate" when not enough NAU */
         disableButtonActivate();
 
+        /* delete offer with ajax */
+        /*btnDeleteOffer();*/
+
         function dataTableCreate(selector){
             let $table = $(selector);
             if ($table.length) {
                 /* create table */
-                let dt_table = $table.DataTable({
-                    "bPaginate": false,
-                    "bLengthChange": false,
-                    "bFilter": true,
-                    "bInfo": false,
-                    "bAutoWidth": false,
-                    "searching": false
+                let dt_table = $table.on('init.dt', function(){
+                        $('.data-loading').hide();
+                        $(this).animate({'opacity': "1"}, 400);
+                    })
+                    .DataTable({
+                        "bPaginate": false,
+                        "bLengthChange": false,
+                        "bFilter": true,
+                        "bInfo": false,
+                        "bAutoWidth": false,
+                        "searching": false
                 });
-                /* отключаем родную пагинацию, поиск и т.п. - до лучших времён */
 
                 /* show/hide details */
                 $table.on('click', 'td.details-control', function(){
@@ -339,7 +351,6 @@
                 console.dir(formData);
 
                 disableButtonActivate();
-                /* делаем красиво изменение баланса */
                 balanceFineChanging();
 
                 $.ajax({
@@ -351,8 +362,15 @@
                         if (202 === xhr.status){
                             $box.parent().children('.offer-status').find('.offer-status-text').text($offer_status.val());
                             $box.removeClass('osc_wait').addClass('osc_' + $offer_status.val());
+
+                            let $details = $box.prev('.details-code');
+                            let $next = $box.parent().next().children(':first');
+                            if ($next.attr('colspan')) $details = $details.add($next);
+                            let $btnWrap = $details.find('.offer-edit-button-wrapper');
+                            if ($offer_status.val() === 'active') $btnWrap.addClass('oeb-active').removeClass('oeb-deactive');
+                            else $btnWrap.addClass('oeb-deactive').removeClass('oeb-active');
+
                             $offer_status.val($offer_status.val() === 'active' ? 'deactive' : 'active');
-                            /* проверяем доступность кнопок "activate" */
                             disableButtonActivate();
                         } else {
                             setNauBalance($nau_balance, -deltaNau);
@@ -416,6 +434,33 @@
                 btn.disabled = reserved > nau;
             });
         }
+
+        function btnDeleteOffer(){
+            document.querySelector('#table_your_offers').addEventListener('click', function(e){
+               if (e.target.classList.contains('offer-delete-button')) {
+                   let xhr = new XMLHttpRequest();
+                   xhr.responseType = 'json';
+                   xhr.onreadystatechange = function() {
+                       if (xhr.readyState === XMLHttpRequest.DONE) {
+                           if (xhr.status === 204) {
+                               console.log('Offer was deleted.');
+                               location.reload();
+                           } else if (xhr.status === 404) {
+                               alert('Offer not found.');
+                           } else if (xhr.status === 422) {
+                               alert(xhr.responseText);
+                           } else {
+                               alert('Something wrong, error ' + xhr.status + ' (see console).');
+                           }
+                       }
+                   };
+                   xhr.open('DELETE', e.target.dataset.action, true);
+                   //xhr.setRequestHeader('Accept', 'application/json');
+                   xhr.send(JSON.stringify({'_token': '{{ csrf_token() }}'}));
+               }
+            });
+        }
+
     </script>
 @endpush
 
