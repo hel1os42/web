@@ -435,7 +435,7 @@
                    xhr.onreadystatechange = function() {
                        if (xhr.readyState === XMLHttpRequest.DONE) {
                            if (xhr.status === 204) {
-                               console.log('Offer was deleted.');
+                               alert('Offer was deleted.');
                                location.reload();
                            } else if (xhr.status === 404) {
                                alert('Offer not found.');

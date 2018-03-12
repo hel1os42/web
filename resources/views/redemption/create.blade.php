@@ -46,13 +46,16 @@
                 if (xhr.status >= 200 && xhr.status < 300){
                     alert('Success.');
                     code.value = '';
+                    code.focus();
                 } else {
                     alert('This code is wrong.');
+                    code.focus();
                 }
             },
             error: function(resp){
                 alert('This code is wrong.');
                 console.log(resp);
+                code.focus();
             }
         });
     });
