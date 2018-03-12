@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,12 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  id
  * @property string  text
  * @property string  user_id
- * @property string  offer_id
+ * @property string  place_id
  * @property integer stars
  * @property string  status
  * @property Carbon  created_at
  * @property Carbon  updated_at
- *
+ * @property User    user
+ * @method Builder byPlace(Place $place)
  */
 class Testimonial extends Model
 {
@@ -48,10 +50,22 @@ class Testimonial extends Model
         $this->casts = [
             'id'       => 'string',
             'user_id'  => 'string',
-            'offer_id' => 'string',
+            'place_id' => 'string',
             'text'     => 'string',
             'stars'    => 'integer',
             'status'   => 'string',
+        ];
+
+        $this->fillable = [
+            'user_id',
+            'place_id',
+            'text',
+            'stars',
+            'status',
+        ];
+
+        $this->appends = [
+            'user'
         ];
 
         parent::__construct($attributes);
@@ -81,6 +95,18 @@ class Testimonial extends Model
         return $this->status;
     }
 
+    public function getUserAttribute()
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->user()->first();
+        return [
+            'name'        => $user->name,
+            'picture_url' => $user->picture_url,
+        ];
+    }
+
     /**
      * @return BelongsTo
      */
@@ -95,5 +121,29 @@ class Testimonial extends Model
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Place   $place
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByPlace(Builder $builder, Place $place)
+    {
+        return $builder->where('place_id', $place->getId());
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllStatuses()
+    {
+        return [
+            self::STATUS_APPROVED,
+            self::STATUS_DECLINED,
+            self::STATUS_INBOX,
+        ];
     }
 }

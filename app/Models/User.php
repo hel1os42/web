@@ -43,6 +43,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        accounts_count
  * @property int        activation_codes_count
  * @property Place      place
+ * @property string     picture_url
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
