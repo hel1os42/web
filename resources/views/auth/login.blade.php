@@ -6,9 +6,9 @@
         <div class="social-line text-center">
 
             <ul class="tabs-titles">
-                <li class="active"><a href="#tab1">LogIn</a></li>
+                <li class="active"><a href="#">LogIn</a></li>
             </ul>
-            <div id="tab1" class="tab">
+            <div>
                 {!! Form::open(array('route' => 'login', 'method' => 'POST')) !!}
                     @include(
                         "form.input",
