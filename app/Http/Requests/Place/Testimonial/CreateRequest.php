@@ -4,6 +4,7 @@ namespace App\Http\Requests\Place\Testimonial;
 
 use App\Models\Testimonial;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class CreateRequest extends FormRequest
 {
@@ -14,7 +15,6 @@ class CreateRequest extends FormRequest
 
     /**
      * @return array
-     * @throws \InvalidArgumentException
      */
     public function rules(): array
     {
@@ -27,12 +27,12 @@ class CreateRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * @param  Validator  $validator
      * @return void
      */
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             if (!$this->uniqueForUser()) {
                 $validator->errors()->add('testimonial', trans('validation.unique_user_testimonial'));
             }
