@@ -62,18 +62,11 @@
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
-                                    @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
-                                        <p><strong>Invite</strong></p>
-                                    @endcan
                                     </div>
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
-                                    @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
-                                                         value="{{ $invite_code }}"></label></p>
-                                    @endcan
                                     </div>
 
                                 </div>
