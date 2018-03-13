@@ -60,6 +60,7 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'              => 'boolean',
+            'invite_code'          => 'nullable|alpha_dash'
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {
