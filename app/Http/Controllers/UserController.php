@@ -101,7 +101,12 @@ class UserController extends Controller
         $uuid = $this->confirmUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
-        $userData     = $request->isMethod('put')
+
+        if ($request->input('invite_code')) {
+            $this->authorize('user.relink', $editableUser);
+        }
+
+        $userData = $request->isMethod('put')
             ? $request->all()
             : array_merge($editableUser->getFillableWithDefaults(['password', 'approved']), $request->all());
 
