@@ -15,7 +15,10 @@ class AddStatusColToTestimonialsTable extends Migration
     {
         Schema::table('testimonials', function (Blueprint $table) {
             $table->string('status')->default('inbox');
+            $table->string('text', 120)->nullable()->change();
         });
+
+
     }
 
     /**
@@ -27,6 +30,7 @@ class AddStatusColToTestimonialsTable extends Migration
     {
         Schema::table('testimonials', function (Blueprint $table) {
             $table->dropColumn('status');
+            $table->text('text')->change();
         });
     }
 }

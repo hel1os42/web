@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  status
  * @property Carbon  created_at
  * @property Carbon  updated_at
- * @property User    user
+ * @property array   user
  * @method Builder byPlace(Place $place)
  */
 class Testimonial extends Model
@@ -62,6 +62,10 @@ class Testimonial extends Model
             'text',
             'stars',
             'status',
+        ];
+
+        $this->hidden = [
+            'user_id'
         ];
 
         $this->appends = [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Place;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Place\Testimonial\CreateRequest;
 use App\Http\Requests\Place\Testimonial\UpdateRequest;
+use App\Models\Testimonial;
 use App\Repositories\PlaceRepository;
 use App\Repositories\TestimonialRepository;
 use Illuminate\Auth\AuthManager;
@@ -81,6 +82,9 @@ class TestimonialController extends Controller
             'user_id'  => $this->user()->getId(),
             'place_id' => $place->getId(),
             'stars'    => (int)$data['stars'],
+            'status'   => is_null($data['text'])
+                ? Testimonial::STATUS_APPROVED
+                : Testimonial::STATUS_INBOX
         ];
 
         $testimonial = $this->testimonialRepository->create($data);
