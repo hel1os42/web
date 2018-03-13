@@ -37,12 +37,20 @@ class UserPolicy extends Policy
      */
     public function update(User $user, User $editableUser, array $userData = [])
     {
-        if (isset($userData['invite_code'])) {
-            return $user->isAdmin();
-        }
+        return ($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']) ||
+            $this->editChild($user, $editableUser)) && !isset($userData['invite_code']) ||
+            $user->isAdmin();
+    }
 
-        return $user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']) ||
-            ($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser);
+    /**
+     * @param User $user
+     * @param User $editableUser
+     *
+     * @return bool
+     */
+    private function editChild(User $user, User $editableUser)
+    {
+        return ($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser);
     }
 
     /**
