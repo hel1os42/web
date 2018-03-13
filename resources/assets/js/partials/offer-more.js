@@ -1,10 +1,11 @@
-function offerMoreInit(id, text, json){
+function offerMoreInit(id, text){
     let box = document.getElementById(id);
     if (!box) return false;
     const MIN_LENGTH_OF_TAG = 3;
     if (!text) text = {};
     textDefault(text);
 
+    /* creating box */
     let html = '<p class="tag-buttons"><em>' + text.hashButtons + ':</em><br><span class="buttons"></span></p>';
     html += '<p><strong>' + text.title + '</strong></p>';
     html += '<p class="label-items"><span class="tag-label">' + text.tagPlaceholder + ':</span> ';
@@ -20,6 +21,7 @@ function offerMoreInit(id, text, json){
     addButton.addEventListener('click', function(){ addItem(); });
     box.addEventListener('changeMoreTag', function(){ tagButtons(); });
     box.addEventListener('removeMoreItem', function(){ tagButtons(); });
+    getPlaceLinks();
 
     function textDefault(text){
         let def = {
@@ -28,40 +30,41 @@ function offerMoreInit(id, text, json){
             addButton: 'Add item',
             tagPlaceholder: 'Tag',
             titlePlaceholder: 'Text for link',
-            buttonsPlaceholder: 'edit / remove',
-            tagMinLength: 'Min. length of tag',
+            buttonsPlaceholder: 'save / edit',
             tagExample: 'Examples for tags',
+            btnSave: 'Save',
+            btnSaveTitle: 'Save additional information',
+            btnEdit: 'Edit',
             btnEditTitle: 'Edit additional information',
+            btnRemove: '',
             btnRemoveTitle: 'Remove additional information',
             confirmRemove: 'Are you sure to remove this item?',
-            contentSize: 'Size'
+            descriptionSize: 'Size'
         };
         for (let key in def) if (!text[key]) text[key] = def[key];
     }
 
     function addItem(json){
+        if (!json) json = {};
         let newItem = document.createElement('div');
         newItem.setAttribute('class', 'more-item form-group');
+        newItem.dataset.id = json.id ? json.id : '';
 
-        let tagValue = ' value="' + (json && json.tag ? json.tag : '') + '"';
-        let titleValue = ' value="' + (json && json.title ? json.title : '') + '"';
-        let contentValue = ' value="' + (json && json.content ? json.content : '') + '"';
-        let iconEdit = '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>';
-        let iconRemove = '<i class="fa fa-times-circle" aria-hidden="true"></i>';
+        let tagValue = ' value="' + (json.tag ? json.tag : '') + '"';
+        let titleValue = ' value="' + (json.title ? json.title : '') + '"';
+        let descrValue = ' value="' + (json.description ? json.description : '') + '"';
+        let descrSize = json.description ? json.description.length : 0;
 
         let html = '<label class="tag control-text"><input type="text"' + tagValue + '></span></label>';
         html += '<label class="title control-text"><input type="text"' + titleValue + '></label>';
-        html += '<input class="content" type="hidden"' + contentValue + '>';
-        html += '<span class="btn btn-xs btn-edit-item" title="' + text.btnEditTitle + '">' + iconEdit + '</span>';
-        html += '<span class="btn btn-xs btn-remove-item" title="' + text.btnRemoveTitle + '">' + iconRemove + '</span>';
-        html += '<span class="content-length">' + text.contentSize + ': 0</span>';
+        html += '<input class="content" type="hidden"' + descrValue + '>';
+        html += '<span class="btn btn-xs btn-save-item" title="' + text.btnSaveTitle + '">' + text.btnSave + '</span>';
+        html += '<span class="btn btn-xs btn-edit-item" title="' + text.btnEditTitle + '">' + text.btnEdit + '</span>';
+        html += '<span class="content-length">' + text.descriptionSize + ': ' + descrSize + '</span>';
         newItem.innerHTML = html;
 
         newItem.querySelector('.tag input').addEventListener('change', function(){
-            let val = this.value.trim().replace(/\s/g, '_').replace(/[^A-Za-z0-9_]/g, '');
-            while (val.length > 0 && !isNaN(+val[0])) val = val.substr(1);
-            while (val.length < MIN_LENGTH_OF_TAG) val += '_';
-            this.value = val;
+            onTagChange(this);
             for (let i = 1; i < moreItems.children.length; i++) {
                 let currentInput = moreItems.children[i].querySelector('.tag input');
                 let double = false;
@@ -69,15 +72,19 @@ function offerMoreInit(id, text, json){
                 currentInput.style.color = double ? 'red' : '';
                 currentInput.style.fontWeight = double ? 'bold' : '';
             }
-            box.dispatchEvent(new Event('changeMoreTag'));
+            //box.dispatchEvent(new Event('changeMoreTag'));
         });
+        newItem.querySelector('.btn-save-item').addEventListener('click', function(){ saveItem(this.parentElement); });
         newItem.querySelector('.btn-edit-item').addEventListener('click', function(){ editItem(this.parentElement); });
-        newItem.querySelector('.btn-remove-item').addEventListener('click', function(){ removeItem(this.parentElement); });
         moreItems.appendChild(newItem);
         $(newItem).slideDown(); /* jQuery */
-        //box.classList.add('has-items');
         $(box).find('.label-items').add('.input-example').slideDown(); /* jquery */
         box.dispatchEvent(new Event('newMoreItem'));
+        function onTagChange(input){
+            let val = this.value.trim().replace(/\s/g, '_').replace(/[^A-Za-z0-9_]/g, '');
+            while (val.length > 0 && !isNaN(+val[0])) val = val.substr(1);
+            this.value = val;
+        }
     }
 
     function removeItem(item){
@@ -126,6 +133,7 @@ function offerMoreInit(id, text, json){
             });
         });
     }
+
     function createEditorModal(item){
         let editorModal = document.getElementById('editorMoreModal');
         if (editorModal) editorModal.parentElement.removeChild(editorModal);
@@ -168,5 +176,23 @@ function offerMoreInit(id, text, json){
             $(editorModal).find('.summernote').summernote('destroy'); /* jQuery */
             editorModal.parentElement.removeChild(editorModal);
         }
+    }
+
+    function getPlaceLinks(){
+        let token = box.dataset.token;
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.dir(xhr.response.data);
+                    xhr.response.data.forEach(function(json){ addItem(json); });
+                }
+            }
+        };
+        xhr.open('GET', box.dataset.url, true);
+        xhr.setRequestHeader('X-CSRF-TOKEN', token);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.send(JSON.stringify({ _token: token }));
     }
 }

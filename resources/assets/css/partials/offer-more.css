@@ -72,12 +72,11 @@
 #more_wrap .more-item .btn {
     position: absolute;
     top: 0;
-    width: 26px;
+}
+#more_wrap .more-item .btn.btn-save-item {
+    right: 0;
 }
 #more_wrap .more-item .btn.btn-edit-item {
-    right: 40px;
-}
-#more_wrap .more-item .btn.btn-remove-item {
     right: 0;
 }
 #more_wrap .more-item .content-length {
