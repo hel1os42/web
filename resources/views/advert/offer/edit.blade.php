@@ -15,8 +15,8 @@
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.edit-category')
-                @include('advert.offer.edit-working')
                 @include('advert.offer.edit-map')
+                @include('advert.offer.edit-working')
                 @include('advert.offer.edit-redemption')
 
             </form>
@@ -64,6 +64,8 @@
 
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
+
+        workingAreaWhenDelivery();
 
         /* picture */
         imageUploader('#offer_image_box .image-box');
@@ -517,6 +519,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>
