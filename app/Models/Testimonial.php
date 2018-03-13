@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon  created_at
  * @property Carbon  updated_at
  * @property User    user
+ * @property string  user_name
+ * @property string  user_picture_url
  * @method Builder byPlace(Place $place)
  */
 class Testimonial extends Model
