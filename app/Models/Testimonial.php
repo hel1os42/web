@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string  status
  * @property Carbon  created_at
  * @property Carbon  updated_at
- * @property array   user
+ * @property User    user
  * @method Builder byPlace(Place $place)
  */
 class Testimonial extends Model
@@ -65,11 +65,13 @@ class Testimonial extends Model
         ];
 
         $this->hidden = [
-            'user_id'
+            'user_id',
+            'user',
         ];
 
         $this->appends = [
-            'user'
+            'user_name',
+            'user_picture_url'
         ];
 
         parent::__construct($attributes);
@@ -99,16 +101,14 @@ class Testimonial extends Model
         return $this->status;
     }
 
-    public function getUserAttribute()
+    public function getUserNameAttribute()
     {
-        /**
-         * @var User $user
-         */
-        $user = $this->user()->first();
-        return [
-            'name'        => $user->name,
-            'picture_url' => $user->picture_url,
-        ];
+        return $this->user->name;
+    }
+
+    public function getUserPictureUrlAttribute()
+    {
+        return $this->user->picture_url;
     }
 
     /**
