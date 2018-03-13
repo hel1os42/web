@@ -94,7 +94,6 @@ class AuthServiceProvider extends ServiceProvider
         'user.update.children'    => 'UserPolicy@updateChildren',
         'user.update.parents'     => 'UserPolicy@updateParents',
         'user.update.roles'       => 'UserPolicy@updateRoles',
-        'user.relink'             => 'UserPolicy@relink',
         'impersonate'             => 'UserPolicy@impersonate',
 
         'users.favorites.list'    => 'User\FavoritePolicy@index',

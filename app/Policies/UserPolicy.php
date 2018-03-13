@@ -37,8 +37,8 @@ class UserPolicy extends Policy
      */
     public function update(User $user, User $editableUser, array $userData = [])
     {
-        return ($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']))
-               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser))
+        return (($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']))
+               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser))) && !isset($userData['invite_code'])
                || $user->isAdmin();
     }
 
@@ -184,15 +184,5 @@ class UserPolicy extends Policy
     {
         return ($user->isAdmin() || $user->hasChild($anotherUser))
                && $user->isImpersonated() === false;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function relink(User $user)
-    {
-        return $user->isAdmin();
     }
 }
