@@ -4,10 +4,6 @@
 <div class="card card-login card-hidden">
     <div class="content">
         <div class="social-line text-center">
-
-            <ul>
-                <li class="active"><a href="#">Operator</a></li>
-            </ul>
             <div>
                 {!! Form::open(array('route' => 'login', 'method' => 'POST', 'id'=>'formOperator')) !!}
                     @include(

@@ -5,9 +5,6 @@
     <div class="content">
         <div class="social-line text-center">
 
-            <ul class="tabs-titles">
-                <li class="active"><a href="#">LogIn</a></li>
-            </ul>
             <div>
                 {!! Form::open(array('route' => 'login', 'method' => 'POST')) !!}
                     @include(
@@ -57,25 +54,6 @@
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/login.js') }}"></script>
-<script>
-(function(){
-
-    /* tabs */
-    let tabsTitles = document.querySelectorAll('.tabs-titles a');
-    let tabs = document.querySelectorAll('.tabs .tab');
-    document.querySelector(document.querySelector('.tabs-titles .active a').getAttribute('href')).classList.add('active');
-    tabsTitles.forEach(function(link){
-        link.onclick = function(e){
-            e.preventDefault();
-            tabsTitles.forEach(function(link){ link.parentElement.classList.remove('active'); });
-            tabs.forEach(function(tab){ tab.classList.remove('active'); });
-            this.parentElement.classList.add('active');
-            document.querySelector(this.getAttribute('href')).classList.add('active');
-        };
-    });
-
-})();
-</script>
 @endpush
 
 @stop
