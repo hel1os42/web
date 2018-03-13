@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,23 +12,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class Testimonial
  * @package App\Models
  *
- * @property string id
- * @property string text
- * @property string user_id
- * @property string offer_id
+ * @property string  id
+ * @property string  text
+ * @property string  user_id
+ * @property string  place_id
  * @property integer stars
- * @property Carbon created_at
- * @property Carbon updated_at
- *
+ * @property string  status
+ * @property Carbon  created_at
+ * @property Carbon  updated_at
+ * @property User    user
+ * @method Builder byPlace(Place $place)
  */
 class Testimonial extends Model
 {
     use Uuids;
 
+    const STATUS_APPROVED = 'approved';
+    const STATUS_DECLINED = 'declined';
+    const STATUS_INBOX    = 'inbox';
+
     /**
      * Testimonial constructor.
      *
      * @param array $attributes
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function __construct(array $attributes = [])
     {
@@ -41,9 +50,28 @@ class Testimonial extends Model
         $this->casts = [
             'id'       => 'string',
             'user_id'  => 'string',
-            'offer_id' => 'string',
+            'place_id' => 'string',
             'text'     => 'string',
-            'stars'    => 'integer'
+            'stars'    => 'integer',
+            'status'   => 'string',
+        ];
+
+        $this->fillable = [
+            'user_id',
+            'place_id',
+            'text',
+            'stars',
+            'status',
+        ];
+
+        $this->hidden = [
+            'user_id',
+            'user',
+        ];
+
+        $this->appends = [
+            'user_name',
+            'user_picture_url'
         ];
 
         parent::__construct($attributes);
@@ -67,6 +95,22 @@ class Testimonial extends Model
         return $this->stars;
     }
 
+    /** @return string */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getUserNameAttribute()
+    {
+        return $this->user->name;
+    }
+
+    public function getUserPictureUrlAttribute()
+    {
+        return $this->user->picture_url;
+    }
+
     /**
      * @return BelongsTo
      */
@@ -81,5 +125,29 @@ class Testimonial extends Model
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Place   $place
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByPlace(Builder $builder, Place $place)
+    {
+        return $builder->where('place_id', $place->getId());
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllStatuses()
+    {
+        return [
+            self::STATUS_APPROVED,
+            self::STATUS_DECLINED,
+            self::STATUS_INBOX,
+        ];
     }
 }

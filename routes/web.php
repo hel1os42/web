@@ -285,6 +285,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
+    $router->resource('places/{placeUuid}/testimonials', 'Place\TestimonialController', [
+        'only' => [
+            'store',
+            'index',
+            'update',
+        ],
+        'names'       => [
+            'index'   => 'places.testimonials.index',
+            'store'   => 'places.testimonials.store',
+            'update'  => 'places.testimonials.update',
+        ]
+    ]);
+
     /**
      * Roles
      */
