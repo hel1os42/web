@@ -1,5 +1,5 @@
-<div id="working_area">
-    <p class="title" style="margin-top: 40px;">Working area</p>
+<div id="working_area" style="display: none">
+    <p class="title" style="padding-top: 20px;">Working area</p>
 
     <div class="control-box">
         <p class="control-text">
