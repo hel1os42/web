@@ -4,7 +4,6 @@ namespace App\Http\Requests\Place\Testimonial;
 
 use App\Models\Testimonial;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CreateRequest extends FormRequest
 {
@@ -20,7 +19,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text'  => 'string',
+            'text'  => 'string|min:3|max:120',
             'stars' => 'required|numeric|between:1,5',
         ];
     }
