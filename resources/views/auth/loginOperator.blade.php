@@ -4,31 +4,37 @@
 <div class="card card-login card-hidden">
     <div class="content">
         <div class="social-line text-center">
-
             <div>
-                {!! Form::open(array('route' => 'login', 'method' => 'POST')) !!}
+                {!! Form::open(array('route' => 'login', 'method' => 'POST', 'id'=>'formOperator')) !!}
                     @include(
                         "form.input",
                         [
-                            "type" => "email",
-                            "name" => "email",
-                            "params" => ["placeholder" => "email", "class" => "form-control input-no-border"],
+                            "type" => "text",
+                            "name" => "alias",
+                            "params" => ["placeholder" => "alias", "class" => "form-control input-no-border"],
                         ],
-                        ["label" => "Email"]
+                        ["label" => "Alias"]
+                    )
+                    @include(
+                        "form.input",
+                        [
+                            "type" => "text",
+                            "name" => "login",
+                            "params" => ["placeholder" => "login", "class" => "form-control input-no-border"],
+                        ],
+                        ["label" => "Login"]
                     )
                     @include(
                         "form.input",
                         [
                             "type" => "password",
-                            "name" => "password",
-                            "params" => ["placeholder" => "password", "class" => "form-control input-no-border"],
-
+                            "name" => "pin",
+                            "params" => ["placeholder" => "pin", "class" => "form-control input-no-border"],
                         ],
-                        ["label" => "Password"]
+                        ["label" => "Pin"]
                     )
                     <input class="btn btn-nau" type="submit" value="Login">
                 {!! Form::close() !!}
-                <div><a style="color: #bbb;" href="{{ route('password.request') }}">Reset password</a></div>
             </div>
         </div>
     </div>
