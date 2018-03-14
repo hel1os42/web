@@ -17,10 +17,9 @@ function offerMoreInit(id, text){
     html += '<p class="text-right"><span class="btn btn-xs btn-nau btn-add-item">' + text.addButton + '</span></p>';
     box.innerHTML = html;
     let moreItems = box.querySelector('#more_items');
-    let addButton = box.querySelector('.btn-add-item');
-    addButton.addEventListener('click', function(){ addItem(); });
-    box.addEventListener('changeMoreTag', function(){ tagButtons(); });
-    box.addEventListener('removeMoreItem', function(){ tagButtons(); });
+    box.querySelector('.btn-add-item').addEventListener('click', function(){ addItem(); });
+    box.addEventListener('om.changeLink', function(){ tagButtons(); });
+    box.addEventListener('om.removeLink', function(){ tagButtons(); });
     getPlaceLinks();
 
     function textDefault(text){
@@ -31,78 +30,192 @@ function offerMoreInit(id, text){
             tagPlaceholder: 'Tag',
             titlePlaceholder: 'Text for link',
             buttonsPlaceholder: 'save / edit',
+            tagMinLength: 'Min. length of tag',
             tagExample: 'Examples for tags',
             btnSave: 'Save',
             btnSaveTitle: 'Save additional information',
             btnEdit: 'Edit',
             btnEditTitle: 'Edit additional information',
-            btnRemove: '',
+            btnRemove: 'Remove',
             btnRemoveTitle: 'Remove additional information',
+            btnClose: 'Close',
+            btnCloseTitle: 'Close editor',
             confirmRemove: 'Are you sure to remove this item?',
-            descriptionSize: 'Size'
+            descriptionSize: 'Size',
+            removeConfirm: 'Are you sure to remove this link?'
         };
         for (let key in def) if (!text[key]) text[key] = def[key];
     }
 
     function addItem(json){
-        if (!json) json = {};
         let newItem = document.createElement('div');
         newItem.setAttribute('class', 'more-item form-group');
-        newItem.dataset.id = json.id ? json.id : '';
+        if (json) {
+            newItem.classList.add('can-edit');
+            newItem.dataset.id = json.id;
+            newItem.dataset.tag = json.tag;
+            newItem.dataset.title = json.title;
+        } else json = {};
 
         let tagValue = ' value="' + (json.tag ? json.tag : '') + '"';
         let titleValue = ' value="' + (json.title ? json.title : '') + '"';
         let descrValue = ' value="' + (json.description ? json.description : '') + '"';
         let descrSize = json.description ? json.description.length : 0;
 
-        let html = '<label class="tag control-text"><input type="text"' + tagValue + '></span></label>';
+        let html = '<label class="tag control-text"><input type="text"' + tagValue + '></label>';
         html += '<label class="title control-text"><input type="text"' + titleValue + '></label>';
+        html += '<div class="more-description clearfix"></div>';
         html += '<input class="content" type="hidden"' + descrValue + '>';
-        html += '<span class="btn btn-xs btn-save-item" title="' + text.btnSaveTitle + '">' + text.btnSave + '</span>';
+        html += '<span class="btn btn-xs btn-save-item btn-danger" title="' + text.btnSaveTitle + '">' + text.btnSave + '</span>';
         html += '<span class="btn btn-xs btn-edit-item" title="' + text.btnEditTitle + '">' + text.btnEdit + '</span>';
         html += '<span class="content-length">' + text.descriptionSize + ': ' + descrSize + '</span>';
         newItem.innerHTML = html;
 
-        newItem.querySelector('.tag input').addEventListener('change', function(){
+        let tagInput = newItem.querySelector('.tag input');
+        let titleInput = newItem.querySelector('.title input');
+        tagInput.addEventListener('input', function(){
             onTagChange(this);
             for (let i = 1; i < moreItems.children.length; i++) {
                 let currentInput = moreItems.children[i].querySelector('.tag input');
                 let double = false;
                 for (let j = 0; j < i; j++) if (currentInput.value === moreItems.children[j].querySelector('.tag input').value) double = true;
-                currentInput.style.color = double ? 'red' : '';
-                currentInput.style.fontWeight = double ? 'bold' : '';
+                moreItems.children[i].classList[double ? 'add' : 'remove']('tag-error');
             }
-            //box.dispatchEvent(new Event('changeMoreTag'));
         });
+        tagInput.addEventListener('input', checkEditInputs);
+        titleInput.addEventListener('input', checkEditInputs);
         newItem.querySelector('.btn-save-item').addEventListener('click', function(){ saveItem(this.parentElement); });
         newItem.querySelector('.btn-edit-item').addEventListener('click', function(){ editItem(this.parentElement); });
         moreItems.appendChild(newItem);
+        if (!newItem.dataset.id) createEditorBox(newItem);
         $(newItem).slideDown(); /* jQuery */
         $(box).find('.label-items').add('.input-example').slideDown(); /* jquery */
-        box.dispatchEvent(new Event('newMoreItem'));
+
         function onTagChange(input){
-            let val = this.value.trim().replace(/\s/g, '_').replace(/[^A-Za-z0-9_]/g, '');
+            let val = input.value.trim().replace(/\s/g, '_').replace(/[^A-Za-z0-9_]/g, '');
             while (val.length > 0 && !isNaN(+val[0])) val = val.substr(1);
-            this.value = val;
+            input.value = val;
         }
+        function checkEditInputs(){
+            if (tagInput.value !== newItem.dataset.tag || titleInput.value !== newItem.dataset.title) {
+                newItem.classList.remove('can-edit');
+                newItem.classList.add('not-saved');
+            } else {
+                newItem.classList.add('can-edit');
+                newItem.classList.remove('not-saved');
+            }
+        }
+
+    }
+
+    function saveItem(item){
+        let tagInput = item.querySelector('.tag input');
+        let titleInput = item.querySelector('.title input');
+        let descrInput = item.querySelector('input.content');
+        let editorInput = item.querySelector('.note-editable');
+
+        if (item.classList.contains('tag-error')) { tagInput.focus(); return false; }
+        if (tagInput.value.length < MIN_LENGTH_OF_TAG) { tagInput.focus(); return false; }
+        if (titleInput.value.length < 1) { titleInput.focus(); return false; }
+        if (editorInput) {
+            editorInput.innerHTML = editorInput.innerHTML.trim();
+            descrInput.value = editorInput.innerHTML;
+            if (editorInput.innerText.length < 2) {
+                item.querySelector('.note-editor.note-frame').classList.add('value-empty');
+                editorInput.focus();
+                return false;
+            }
+        }
+
+        item.classList.remove('not-saved');
+        item.classList.remove('can-edit');
+        item.classList.add('wait');
+        let url = box.dataset.url;
+        let token = box.dataset.token;
+        let formData = {
+            _token: token,
+            tag: tagInput.value,
+            title: titleInput.value,
+            description: descrInput.value
+        };
+        if (item.dataset.id) {
+            url += '/' + item.dataset.id;
+            formData._method = 'PUT';
+        }
+        console.dir(formData);
+
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                item.classList.remove('wait');
+                if (xhr.status === 200) {
+                    if (!editorInput) item.classList.add('can-edit');
+                    if (editorInput) item.querySelector('.btn-close-item').style.display = '';
+                    item.dataset.id = xhr.response.id;
+                    box.dispatchEvent(new Event('om.changeLink'));
+                } else {
+                    alert('Something wrong.');
+                    item.classList.add('not-saved');
+                }
+                console.log('Response:');
+                console.dir(xhr);
+            }
+        };
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('X-CSRF-TOKEN', token);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('Content-type', 'application/json');
+        xhr.send(JSON.stringify(formData));
+    }
+
+
+    function editItem(item){
+        createEditorBox(item);
     }
 
     function removeItem(item){
-        if (confirm(text.confirmRemove)) {
-            $(item).slideUp(function(){
-                item.parentElement.removeChild(item);
-                if (moreItems.children.length === 0) {
-                    $(box).find('.label-items').add('.input-example').slideUp(function(){
-                        //box.classList.remove('has-items');
-                    });
+        if (!confirm(text.removeConfirm)) return false;
+        if (!item.dataset.id) {
+            $(item).slideUp(function(){ item.parentElement.removeChild(item); });
+        } else {
+            let notSaved = item.classList.contains('not-saved');
+            item.classList.remove('not-saved');
+            item.classList.remove('can-edit');
+            item.classList.add('wait');
+            let url = box.dataset.url + '/' + item.dataset.id;
+            let token = box.dataset.token;
+            let formData = {
+                _token: token,
+                _method: 'DELETE'
+            };
+            let xhr = new XMLHttpRequest();
+            xhr.responseType = 'json';
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    item.classList.remove('wait');
+                    if (xhr.status === 204) {
+                        $(item).slideUp(function(){
+                            item.parentElement.removeChild(item);
+                            box.dispatchEvent(new Event('om.removeLink'));
+                        });
+                    } else if (xhr.status === 400) {
+                        alert(xhr.response.message);
+                        if (notSaved) item.classList.add('not-saved');
+                    } else {
+                        alert('Something wrong.');
+                        if (notSaved) item.classList.add('not-saved');
+                    }
+                    console.log('Response:');
+                    console.dir(xhr);
                 }
-                box.dispatchEvent(new Event('removeMoreItem'));
-            });
+            };
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('X-CSRF-TOKEN', token);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send(JSON.stringify(formData));
         }
-    }
-
-    function editItem(item){
-        createEditorModal(item);
     }
 
     function tagButtons(){
@@ -115,7 +228,6 @@ function offerMoreInit(id, text){
         let buttonsBox = buttonsWrap.querySelector('.buttons');
         buttonsBox.innerHTML = html;
         $(buttonsWrap)['slide' + (html ? 'Down' : 'Up')]();
-        //buttonsWrap.style.display = html ? 'block' : '';
         let buttons = buttonsBox.querySelectorAll('.btn');
         buttons.forEach(function(tagButton){
             tagButton.addEventListener('click', function(){
@@ -134,25 +246,16 @@ function offerMoreInit(id, text){
         });
     }
 
-    function createEditorModal(item){
-        let editorModal = document.getElementById('editorMoreModal');
-        if (editorModal) editorModal.parentElement.removeChild(editorModal);
-        editorModal = document.createElement('div');
-        editorModal.setAttribute('id', 'editorMoreModal');
-        editorModal.setAttribute('class', 'nobs-modal');
-        editorModal.setAttribute('role', 'dialog');
-        let tagName = item.querySelector('.tag input').value;
-        let title = item.querySelector('.title input').value;
+    function createEditorBox(item){
+        item.classList.remove('can-edit');
+        let editorBox = item.querySelector('.more-description');
+        editorBox.style.display = 'none';
         let content = item.querySelector('.content').value;
-        let html = '<div class="nobs-modal-content">';
-        html += '<span class="close-modal">&times;</span>';
-        html += '<h4>#' + (tagName ? tagName : '&lt;not assigned&gt;') + ', &nbsp;&nbsp; ' + (title ? title : '&lt;not assigned&gt;');
-        html += '</h4><div class="summernote">' + content + '</div>';
-        html += '<p class="text-right"><button type="button" class="btn btn-nau btn-save-more">Save changes</button></p></div>';
-        editorModal.innerHTML = html;
-        document.body.appendChild(editorModal);
-        editorModal.classList.add('shown');
-        $(editorModal).find('.summernote').summernote({
+        let html = '<button type="button" class="btn btn-xs btn-remove-item" title="' + text.btnRemoveTitle+ '">' + text.btnRemove + '</button>';
+        html += '<button type="button" class="btn btn-xs btn-close-item" title="' + text.btnCloseTitle + '">' + text.btnClose + '</button>';
+        html += '<div class="summernote">' + content + '</div>';
+        editorBox.innerHTML = html;
+        $(editorBox).find('.summernote').summernote({
             height: 200,
             toolbar: [
                 ['style', ['bold', 'italic', 'underline']],
@@ -161,21 +264,21 @@ function offerMoreInit(id, text){
                 ['edit', ['undo', 'redo']]
             ]
         }); /* jQuery */
-        editorModal.addEventListener('click', function(e){
-            if (e.target.getAttribute('id') === 'editorMoreModal') destroyEditorModal();
+        let btnClose = item.querySelector('.btn-close-item');
+        item.querySelector('.note-editable').addEventListener('input', function(){
+            btnClose.style.display = 'none';
+            item.classList.add('not-saved');
+            item.querySelector('.note-editor.note-frame').classList.remove('value-empty');
+            item.querySelector('.content-length').innerText = text.descriptionSize + ': ' + this.innerText.length;
         });
-        editorModal.querySelector('.btn-save-more').addEventListener('click', function(){
-            let content = editorModal.querySelector('.note-editable').innerHTML;
-            item.querySelector('.content').value = content;
-            item.querySelector('.content-length').innerText = text.contentSize + ': ' + content.length;
-            destroyEditorModal();
+        btnClose.addEventListener('click', function(){
+            $(editorBox).slideUp(function(){
+                item.classList.add('can-edit');
+                editorBox.innerHTML = '';
+            });
         });
-        editorModal.querySelector('.close-modal').addEventListener('click', destroyEditorModal);
-
-        function destroyEditorModal(){
-            $(editorModal).find('.summernote').summernote('destroy'); /* jQuery */
-            editorModal.parentElement.removeChild(editorModal);
-        }
+        item.querySelector('.btn-remove-item').addEventListener('click', function(){ removeItem(item); });
+        $(editorBox).slideDown();
     }
 
     function getPlaceLinks(){
@@ -187,6 +290,7 @@ function offerMoreInit(id, text){
                 if (xhr.status === 200) {
                     console.dir(xhr.response.data);
                     xhr.response.data.forEach(function(json){ addItem(json); });
+                    box.dispatchEvent(new Event('om.changeLink'));
                 }
             }
         };
