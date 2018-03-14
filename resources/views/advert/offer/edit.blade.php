@@ -65,6 +65,18 @@
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
 
+        /* offer description More */
+        offerMoreInit('more_wrap');
+        /*
+            let moreTextForTranslate = {
+                hashButtons: 'You can use next tags for create links to additional information',
+                title: 'More information',
+                addButton: 'Add item',
+                ...
+            };
+            offerMoreInit('more_wrap', moreTextForTranslate);
+        */
+
         workingAreaWhenDelivery();
 
         /* picture */
