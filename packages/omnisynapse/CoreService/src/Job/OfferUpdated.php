@@ -93,7 +93,19 @@ class OfferUpdated extends AbstractJob
      */
     protected function fireModelEvents($responseObject): void
     {
-        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getId());
+        $offer = $this->getModel($responseObject->getId());
         event('eloquent.updated: ' . get_class($offer), $offer);
+    }
+
+
+    /**
+     * @param $modelId
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function getConcreteModel($modelId)
+    {
+        return Offer::query()->withoutGlobalScopes()->findOrFail($modelId);
     }
 }

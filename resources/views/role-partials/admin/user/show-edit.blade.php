@@ -1,4 +1,8 @@
 <div class="row">
+    <div class="col-lg-10">
+        <p><strong>Invite </strong><label><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
+                         value="{{ $invite_code }}"></label></p>
+    </div>
     <div class="col-sm-6">
         @can('user.update.roles', [$editableUserModel, $roleIds])
             <p><strong>Roles <span style="color:red">(Warning! Changing role can damage user. Use it only when user just created, or in critical situations.)</span></strong></p>

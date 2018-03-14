@@ -15,8 +15,8 @@
                 @include('advert.offer.create-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.create-category')
-                @include('advert.offer.create-working')
                 @include('advert.offer.create-map')
+                @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
             </form>
@@ -80,6 +80,8 @@
             };
             offerMoreInit('more_wrap', moreTextForTranslate);
         */
+
+        workingAreaWhenDelivery();
 
         /* picture */
         imageUploader('#offer_image_box .image-box');
@@ -499,6 +501,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>
