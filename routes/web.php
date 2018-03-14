@@ -33,6 +33,9 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
                    ->where('phone_number', '\+[0-9]+')
                    ->name('get-login-otp-code');
+
+            $router->get('operator', 'Auth\LoginController@getLoginOperator')
+                ->name('loginFormOperator');
         });
 
         $router->group(['prefix' => 'register'], function () use ($router) {

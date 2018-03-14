@@ -28,6 +28,20 @@ class LoginController extends AuthController
     }
 
     /**
+     * @return Response
+     */
+    public function getLoginOperator()
+    {
+        return $this->auth->user()
+            ? \response()->redirectTo(route('home'))
+            : \response()->render('auth.loginOperator', [
+                'alias' => null,
+                'login' => null,
+                'pin'   => null,
+            ]);
+    }
+
+    /**
      * @param OtpAuth $otpAuth
      * @param string  $phone
      *
