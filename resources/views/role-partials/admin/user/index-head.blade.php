@@ -3,6 +3,8 @@
 <div id="admin-users-search">
     <label for="email">By email:</label>
     <input type="text" name="email" id="email" value="">
+    <label for="place">By place:</label>
+    <input type="text" name="place" id="place" value="">
     <label for="role">By role:</label>
     <select name="role" id="role">
         <option value="" selected>All</option>

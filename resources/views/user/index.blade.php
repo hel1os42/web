@@ -113,6 +113,8 @@
     searchForm();
 
     fillSearchForm();
+    
+    updateAdminUsersSearchForm();
 
     pagenavyCompact(document.getElementById('table_pager'));
 
@@ -122,6 +124,7 @@
         let searchBlock = document.getElementById('admin-users-search');
         let searchForm = searchBlock.querySelector('#search-form');
         let emailInput = searchBlock.querySelector('#email');
+        let placeInput = searchBlock.querySelector('#place');
         let roleSelect = searchBlock.querySelector('#role');
 
         let searchOptions = location.search.substr(1).split('&');
@@ -143,15 +146,27 @@
             searchForm.appendChild(sortedBy);
         }
 
-        function updateAdminUsersSearchForm() {
-            let result = '';
-            if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
-            if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
-            if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
-            searchBlock.querySelector('#search-field').value = result;
-        }
+        let makeParamStr = ( obj ) => {
+            let arr = [];
+            for (var key in obj) {
+                arr.push(key + ':' + obj[key]);
+            }
+            return arr.join(';');
+        };
 
-        emailInput.addEventListener( "input", updateAdminUsersSearchForm );
+        window.updateAdminUsersSearchForm = () => {
+            let result = {};
+            if ( emailInput.value !== '' ) result['email'] = emailInput.value;
+            if ( placeInput.value !== '' ) result['place.name'] = placeInput.value;
+            if ( roleSelect.value !== '' ) result['roles.name'] = roleSelect.value;
+
+            searchBlock.querySelector('#search-field').value = makeParamStr(result);
+        };
+
+        searchBlock.querySelectorAll('input[type="text"]').forEach( (e) => {
+            e.addEventListener( "input", updateAdminUsersSearchForm );
+        });
+        
         if ( roleSelect ) {
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
@@ -202,8 +217,11 @@
         if (search) {
             search = search[1].split(';');
             search = search.map(function(e){ return e.split(':'); });
+
             let searchByEmail = search.find(function(e){ return e[0] === 'email' });
             if (searchByEmail) document.getElementById('email').value = searchByEmail[1];
+            let searchByPlace = search.find(function(e){ return e[0] === 'place.name' });
+            if (searchByPlace) document.getElementById('place').value = searchByPlace[1];
             let searchByRole = search.find(function(e){ return e[0] === 'roles.name' });
             let roleSelect = document.getElementById('role');
             if (searchByRole && roleSelect) {
