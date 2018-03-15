@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/offer-more.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
@@ -38,6 +39,7 @@
     <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
+    <script src="{{ asset('js/partials/offer-more.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
