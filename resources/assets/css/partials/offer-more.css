@@ -129,3 +129,6 @@
 #more_wrap .note-editor.note-frame.value-empty {
     border-color: #ff5a00;
 }
+#more_wrap .link-dialog .checkbox {
+    display: none;
+}
