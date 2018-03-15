@@ -51,6 +51,12 @@ class AuthServiceProvider extends ServiceProvider
         'operators.delete' => 'OperatorPolicy@destroy',
         'operators.update' => 'OperatorPolicy@update',
 
+        'offer_links.index'  => 'OfferLinkPolicy@index',
+        'offer_links.show'   => 'OfferLinkPolicy@show',
+        'offer_links.create' => 'OfferLinkPolicy@create',
+        'offer_links.update' => 'OfferLinkPolicy@update',
+        'offer_links.delete' => 'OfferLinkPolicy@delete',
+
         'my.offers.list'       => 'OfferPolicy@indexMy',
         'my.offer.show'        => 'OfferPolicy@showMy',
         'offers.create'        => 'OfferPolicy@create',
@@ -79,16 +85,20 @@ class AuthServiceProvider extends ServiceProvider
         'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
         'transaction.show'           => 'TransactPolicy@show',
 
-        'users.create'         => 'UserPolicy@create',
-        'users.list'           => 'UserPolicy@index',
-        'users.show'           => 'UserPolicy@show',
-        'users.update'         => 'UserPolicy@update',
-        'users.referrals.list' => 'UserPolicy@referrals',
-        'users.picture.store'  => 'UserPolicy@pictureStore',
-        'user.update.children' => 'UserPolicy@updateChildren',
-        'user.update.parents'  => 'UserPolicy@updateParents',
-        'user.update.roles'    => 'UserPolicy@updateRoles',
-        'impersonate'          => 'UserPolicy@impersonate',
+        'users.create'            => 'UserPolicy@create',
+        'users.list'              => 'UserPolicy@index',
+        'users.show'              => 'UserPolicy@show',
+        'users.update'            => 'UserPolicy@update',
+        'users.referrals.list'    => 'UserPolicy@referrals',
+        'users.picture.store'     => 'UserPolicy@pictureStore',
+        'user.update.children'    => 'UserPolicy@updateChildren',
+        'user.update.parents'     => 'UserPolicy@updateParents',
+        'user.update.roles'       => 'UserPolicy@updateRoles',
+        'impersonate'             => 'UserPolicy@impersonate',
+
+        'users.favorites.list'    => 'User\FavoritePolicy@index',
+        'users.favorites.create'  => 'User\FavoritePolicy@create',
+        'users.favorites.destroy' => 'User\FavoritePolicy@destroy',
     ];
 
     /**

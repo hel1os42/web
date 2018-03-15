@@ -8,11 +8,13 @@ use Carbon\Carbon;
  * Class User
  * @package OmniSynapse\CoreService\Response
  *
+ * @method static bool hasEmptyBody()
+ *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
-class User
+class User extends BaseResponse
 {
     /** @var string */
     public $id;

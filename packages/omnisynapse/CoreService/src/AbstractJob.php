@@ -10,10 +10,13 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use OmniSynapse\CoreService\Exception\RequestException;
+use OmniSynapse\CoreService\Response\BaseResponse;
 
 /**
  * Class AbstractJob
  * @package OmniSynapse\CoreService
+ *
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 abstract class AbstractJob implements ShouldQueue
 {
@@ -84,17 +87,17 @@ abstract class AbstractJob implements ShouldQueue
             return;
         }
 
-        logger()->debug('Request and Response', [
-            'request'  => $this->getRequestObject()->jsonSerialize(),
-            'response' => $responseContent,
-        ]);
+        $this->logRequestResponse($responseContent);
 
         $responseObject = $this->getResponseObject();
-
         $decodedContent = \json_decode($responseContent);
-        if (null === $decodedContent) {
-            $this->eventsDispatch($responseObject);
 
+        if ('' === $responseContent && $responseObject::hasEmptyBody()) {
+            $this->eventsDispatch($responseObject);
+            return;
+        }
+
+        if (null === $decodedContent) {
             return;
         }
 
@@ -118,8 +121,8 @@ abstract class AbstractJob implements ShouldQueue
     /** @return null|\JsonSerializable */
     abstract public function getRequestObject(): ?\JsonSerializable;
 
-    /** @return object */
-    abstract public function getResponseObject();
+    /** @return BaseResponse */
+    abstract public function getResponseObject(): BaseResponse;
 
     /**
      * @param \Exception $exception
@@ -194,5 +197,16 @@ abstract class AbstractJob implements ShouldQueue
      */
     protected function fireModelEvents($responseObject): void
     {
+    }
+
+    /**
+     * @param null|string $responseContent
+     */
+    protected function logRequestResponse(?string $responseContent): void
+    {
+        logger()->debug('Request and Response', [
+            'request'  => (null !== $this->getRequestObject()) ? $this->getRequestObject()->jsonSerialize() : null,
+            'response' => $responseContent,
+        ]);
     }
 }

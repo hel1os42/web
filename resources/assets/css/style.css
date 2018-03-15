@@ -302,15 +302,20 @@ footer p {
 .offer-edit-button-wrapper .offer-edit-no-button {
     width: 192px;
 }
+.offer-edit-button-wrapper .offer-delete-button,
 .offer-edit-button-wrapper .offer-edit-button,
 .offer-edit-button-wrapper .offer-edit-no-button{
     display: none;
 }
+.offer-edit-button-wrapper.oeb-deactive .offer-delete-button,
 .offer-edit-button-wrapper.oeb-deactive .offer-edit-button {
     display: inline-block;
 }
 .offer-edit-button-wrapper.oeb-active .offer-edit-no-button {
     display: inline-block;
+}
+.offer-edit-button-wrapper .offer-edit-button {
+    margin-left: 24px;
 }
 
 .user-approve-controls form {

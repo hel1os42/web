@@ -8,11 +8,12 @@ use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\OfferData;
 use App\Models\Place;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\OfferLink;
 use Illuminate\Database\Eloquent\Relations;
-use Illuminate\Support\Collection;
 
 /**
  * Trait RelationsTrait
@@ -72,6 +73,14 @@ trait RelationsTrait
     }
 
     /**
+     * @return Relations\HasMany
+     */
+    public function offerLinks(): Relations\HasMany
+    {
+        return $this->hasMany(OfferLink::class);
+    }
+
+    /**
      * @return Relations\HasOne
      */
     public function coreUser(): Relations\HasOne
@@ -117,5 +126,21 @@ trait RelationsTrait
     public function children(): Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'users_parents', 'parent_id', 'user_id');
+    }
+
+    /**
+     * @return Relations\BelongsToMany
+     */
+    public function favoritePlaces(): Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Place::class, 'users_favorite_places');
+    }
+
+    /**
+     * @return Relations\BelongsToMany
+     */
+    public function favoriteOffers()
+    {
+        return $this->belongsToMany(OfferData::class, 'users_favorite_offers', 'user_id', 'offer_id');
     }
 }

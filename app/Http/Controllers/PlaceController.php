@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\FormRequest;
 use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
+use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
@@ -30,14 +31,16 @@ class PlaceController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function index(PlaceFilterRequest $request, PlaceRepository $placeRepository): Response
+    public function index(PlaceFilterRequest $request, PlaceRepository $placeRepository, OfferRepository $offerRepository): Response
     {
         $this->authorize('places.list');
-
         $places = $placeRepository->getActiveByCategoriesAndPosition($request->category_ids, $request->latitude,
             $request->longitude, $request->radius);
 
-        return response()->render('place.index', $places->paginate());
+        $places = $places->paginate();
+        $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth, $offerRepository));
+        $places->data = $placeRepository->parserResult($places);
+        return response()->render('place.index', $places);
     }
 
     /**
@@ -50,19 +53,19 @@ class PlaceController extends Controller
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \LogicException
      */
-    public function show(Request $request, PlaceRepository $placesRepository, string $uuid = null): Response
+    public function show(Request $request, PlaceRepository $placesRepository, OfferRepository $offerRepository, string $uuid = null): Response
     {
         $place = is_null($uuid)
             ? $placesRepository->findByUser($this->user())
             : $placesRepository->find($uuid);
-
+        $place->setPresenter(new \App\Presenters\PlacePresenter($this->auth, $offerRepository));
         if (in_array('offers', explode(',', $request->get('with', '')))) {
             $place->append('offers');
         }
 
         $this->authorize('places.show', $place);
 
-        return \response()->render('place.show', $place->toArray());
+        return \response()->render('place.show', $place->presenter()['data']);
     }
 
     /**
@@ -100,15 +103,19 @@ class PlaceController extends Controller
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
-    public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository): Response
+    public function showPlaceOffers(string $uuid, PlaceRepository $placesRepository, OfferRepository $offerRepository): Response
     {
         $place = $placesRepository->find($uuid);
 
         $this->authorize('places.offers.list', $place);
 
-        $offers = $place->offers();
+        $offers = $place->offers()->paginate();
 
-        return \response()->render('user.offer.index', $offers->paginate());
+        $offerRepository->setPresenter(\App\Presenters\OfferPresenter::class);
+
+        $offers->data = $offerRepository->parserResult($offers);
+
+        return \response()->render('user.offer.index', $offers);
     }
 
     /**

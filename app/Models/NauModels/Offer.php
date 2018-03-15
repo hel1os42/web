@@ -7,12 +7,15 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\NauModels\Offer\HasOfferData;
 use App\Models\NauModels\Offer\RelationsTrait;
 use App\Models\NauModels\Offer\ScopesTrait;
+use App\Models\OfferLink;
 use App\Models\Traits\HasNau;
 use App\Models\User;
 use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\HtmlString;
+use Prettus\Repository\Traits\PresentableTrait;
 
 /**
  * Class Offer
@@ -20,8 +23,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property string      id
  * @property int         account_id
- * @property null|string label
- * @property null|string description
+ * @property string      label
+ * @property string      description
  * @property float       reward
  * @property string      status
  * @property Carbon      start_date
@@ -29,29 +32,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
- * @property null|int    max_count
- * @property null|int    max_for_user
- * @property null|int    max_per_day
- * @property null|int    max_for_user_per_day
- * @property null|int    max_for_user_per_week
- * @property null|int    max_for_user_per_month
- * @property int         user_level_min
- * @property null|float  latitude
- * @property null|float  longitude
- * @property null|int    radius
- * @property Carbon      created_at
- * @property Carbon      updated_at
- * @property boolean     delivery
+ * @property null|int max_count
+ * @property null|int max_for_user
+ * @property null|int max_per_day
+ * @property null|int max_for_user_per_day
+ * @property null|int max_for_user_per_week
+ * @property null|int max_for_user_per_month
+ * @property int user_level_min
+ * @property null|float latitude
+ * @property null|float longitude
+ * @property null|int radius
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property boolean delivery
  * @property null|string type
  * @property null|string gift_bonus_descr
- * @property null|float  discount_percent
- * @property null|float  discount_start_price
- * @property null|float  discount_finish_price
+ * @property null|float discount_percent
+ * @property null|float discount_start_price
+ * @property null|float discount_finish_price
  * @property null|string currency
+ * @property bool        is_favorite
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Offer extends AbstractNauModel
 {
-    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData;
+    use RelationsTrait, ScopesTrait, HasNau, Uuids, SoftDeletes, HasOfferData, PresentableTrait;
 
     const STATUS_ACTIVE   = 'active';
     const STATUS_DEACTIVE = 'deactive';
@@ -142,13 +148,13 @@ class Offer extends AbstractNauModel
     }
 
     /** @return string */
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
 
     /** @return string */
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -340,6 +346,41 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * Get the description with offer links
+     *
+     * @return string
+     */
+    public function getRichDescriptionAttribute(): string
+    {
+        $regex       = '|\B' . OfferLink::SPECIAL_SYMBOL . '(\w*)|';
+        $description = (string)$this->description;
+
+        preg_match_all($regex, $description, $matches);
+
+        $tags = array_get($matches, 1);
+
+        foreach ($tags as $tag) {
+            $link = $this->getHtmlOfferLink($tag);
+
+            if ($link instanceof HtmlString) {
+                $description = str_replace(OfferLink::SPECIAL_SYMBOL . $tag, $link, $description);
+            }
+        }
+
+        return $description;
+    }
+
+    /**
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsFavoriteAttribute(): bool
+    {
+        return $this->attributes['is_favorite'] ?? false;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -357,6 +398,13 @@ class Offer extends AbstractNauModel
     public function setStatus(string $status): Offer
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function setIsFavoriteAttribute($isFavorite)
+    {
+        $this->attributes['is_favorite'] = $isFavorite;
 
         return $this;
     }
@@ -385,6 +433,35 @@ class Offer extends AbstractNauModel
         return $redemption;
     }
 
+    /**
+     * @param string $tag
+     * @return HtmlString|null
+     */
+    private function getHtmlOfferLink(string $tag): ?HtmlString
+    {
+        if (null === $this->getOwner()) {
+            return null;
+        }
+
+        $place = $this->getOwner()->place;
+
+        $offerLink = app('offerLinkRepository')
+            ->scopePlace($place)
+            ->findByField('tag', $tag)
+            ->first();
+
+        if (null === $offerLink) {
+            return null;
+        }
+
+        $html = sprintf('<a href="%1$s">%2$s</a>',
+            route('places.offer_links.show', [$place, $offerLink]),
+            $offerLink->getTitle()
+        );
+
+        return new HtmlString($html);
+    }
+
     private function initAttributes(): void
     {
         $defaultReward         = $this->convertFloatToInt(1);
@@ -392,8 +469,8 @@ class Offer extends AbstractNauModel
 
         $this->attributes = [
             'acc_id'                 => null,
-            'name'                   => null,
-            'descr'                  => null,
+            'name'                   => '',
+            'descr'                  => '',
             'reward'                 => $defaultReward,
             'status'                 => null,
             'dt_start'               => null,
@@ -463,6 +540,7 @@ class Offer extends AbstractNauModel
         $this->appends = [
             'account_id',
             'label',
+            'rich_description',
             'description',
             'start_date',
             'finish_date',
