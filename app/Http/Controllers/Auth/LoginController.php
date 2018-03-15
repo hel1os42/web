@@ -77,11 +77,12 @@ class LoginController extends AuthController
             $this->user()->leaveImpersonation();
         }
 
+        $route = $this->auth->guard()->user() instanceof Operator ? 'loginFormOperator' : 'login';
         $this->auth->guard()->logout();
 
         return \request()->wantsJson()
             ? \response()->render('', '', Response::HTTP_NO_CONTENT)
-            : \redirect()->route($this->auth->guard()->user() instanceof Operator ? 'loginFormOperator' : 'login');
+            : \redirect()->route($route);
     }
 
     /**
