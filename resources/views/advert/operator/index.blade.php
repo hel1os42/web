@@ -35,6 +35,16 @@
                             </td>
                         @endforeach
                         <td>
+                            <form method="POST" action="{{ route('advert.operators.update', $operator['id']) }}" class="form-operator-status">
+                                <input type="hidden" name="_method" value="PATCH">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="is_active" value="{{ $operator['is_active'] ? 0 : 1}}">
+                                <input type="hidden" name="place_uuid" value="{{ $operator['place_uuid'] }}">
+                                <input type="hidden" name="id" value="{{ $operator['id'] }}">
+                                <button type="submit" class="btn btn-default btn-sm">Status</button>
+                            </form>
+                        </td>
+                        <td>
                             <form method="POST" action="{{ route('advert.operators.destroy', $operator['id']) }}" class="form-operator-delete">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">

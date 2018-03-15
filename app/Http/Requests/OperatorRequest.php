@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
  * Class OperatorRequest
@@ -34,31 +35,37 @@ class OperatorRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->method() === 'POST')
-        {
-            $loginRule = implode('|', [
-                Rule::unique('operators', 'login')
-                    ->where('place_uuid', request()->get('place_uuid')),
-                'required',
-                'min:3',
-            ]);
-        }
-        else
-        {
-            $loginRule = implode('|', [
-                Rule::unique('operators', 'login')
-                    ->where('place_uuid', request()->get('place_uuid'))
-                        ->ignore(request()->get('id'), 'id'),
-                'required',
-                'min:3',
-            ]);
-        }
+        $loginRule = $this->method() === 'POST' ?
+            Rule::unique('operators', 'login')
+                ->where('place_uuid', $this->request->get('place_uuid')):
+            Rule::unique('operators', 'login')
+                ->where('place_uuid', $this->request->get('place_uuid'))
+                ->ignore($this->request->get('id'), 'id');
+
+        $patchMeth = $this->method() === 'PATCH' ? 'nullable' : 'required';
+
         return [
-            'is_active'  => 'required',
-            'place_uuid' => 'required',
-            'login'      => $loginRule,
-            'password'   => 'required',
-            'confirm'    => 'required|same:password',
+            'is_active'  => [$patchMeth, 'boolean'],
+            'place_uuid' => [$patchMeth, sprintf('regex:%s',\App\Helpers\Constants::UUID_REGEX)],
+            'login'      => [$patchMeth, 'min:3', 'max:255', $loginRule],
+            'password'   => [$patchMeth],
+            'confirm'    => [$patchMeth,'same:password'],
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function (Validator $validator) {
+            if (!$this->request->get('place_uuid') ||
+                $this->method() === 'PATCH' && !$this->request->get('id')) {
+                $validator->errors()->add('error', trans('validation.operator_requst_update'));
+            }
+        });
     }
 }

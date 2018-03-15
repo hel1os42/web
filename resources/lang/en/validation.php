@@ -118,13 +118,14 @@ return [
     */
 
     'attributes' => [
-        'email' => 'Email',
-        'name' => 'Name',
-        'password' => 'Password',
+        'email'            => 'Email',
+        'name'             => 'Name',
+        'password'         => 'Password',
         'password_confirm' => 'Password confirmation'
     ],
 
-    'otp' => 'Wrong OTP code.',
-    'enough_for' => 'Not enough money',
-    'can_redeem' => 'Incorrect activation code'
+    'otp'                    => 'Wrong OTP code.',
+    'enough_for'             => 'Not enough money',
+    'can_redeem'             => 'Incorrect activation code',
+    'operator_requst_update' => 'Wrong request update operator status',
 ];
