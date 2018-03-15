@@ -119,7 +119,7 @@ function offerMoreInit(id, text){
         if (titleInput.value.length < 1) { titleInput.focus(); return false; }
         if (editorInput) {
             editorInput.innerHTML = editorInput.innerHTML.trim();
-            descrInput.value = editorInput.innerHTML;
+            descrInput.value = encodeURIComponent(editorInput.innerHTML);
             if (editorInput.innerText.length < 2) {
                 item.querySelector('.note-editor.note-frame').classList.add('value-empty');
                 editorInput.focus();
@@ -253,7 +253,7 @@ function offerMoreInit(id, text){
         let content = item.querySelector('.content').value;
         let html = '<button type="button" class="btn btn-xs btn-remove-item" title="' + text.btnRemoveTitle+ '">' + text.btnRemove + '</button>';
         html += '<button type="button" class="btn btn-xs btn-close-item" title="' + text.btnCloseTitle + '">' + text.btnClose + '</button>';
-        html += '<div class="summernote">' + content + '</div>';
+        html += '<div class="summernote">' + decodeURIComponent(content) + '</div>';
         editorBox.innerHTML = html;
         $(editorBox).find('.summernote').summernote({
             height: 200,
