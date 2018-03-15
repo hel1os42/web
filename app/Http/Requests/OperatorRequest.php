@@ -46,7 +46,7 @@ class OperatorRequest extends FormRequest
 
         return [
             'is_active'  => [$patchMeth, 'boolean'],
-            'place_uuid' => [$patchMeth, sprintf('regex:%s',\App\Helpers\Constants::UUID_REGEX)],
+            'place_uuid' => [$patchMeth, sprintf('regex:%s', \App\Helpers\Constants::UUID_REGEX)],
             'login'      => [$patchMeth, 'min:3', 'max:255', $loginRule],
             'password'   => [$patchMeth],
             'confirm'    => [$patchMeth,'same:password'],
