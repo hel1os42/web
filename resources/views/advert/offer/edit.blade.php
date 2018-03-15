@@ -27,6 +27,7 @@
 
 
 @push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/summernote/summernote.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
