@@ -226,7 +226,7 @@ class UserController extends Controller
     {
         $with = [];
 
-        if (isset($newUserData['role_ids'])) {
+        if (isset($newUserData['role_ids']) && count($newUserData['role_ids'])) {
             $this->updateRoles($user, $newUserData['role_ids']);
             array_push($with, 'roles');
         }

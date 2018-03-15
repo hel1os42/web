@@ -66,11 +66,12 @@ class UserPolicy extends Policy
      */
     public function updateRoles(User $user, User $editableUser, array $roleIds): bool
     {
-        if (count($roleIds) > 1
+        if ((count($roleIds) > 1
             && count(array_diff([
                 Role::findByName(Role::ROLE_ADVERTISER)->getId(),
                 Role::findByName(Role::ROLE_USER)->getId()
-            ], $roleIds)) > 0) {
+            ], $roleIds)) > 0)
+            || count($roleIds) === 0) {
             return false;
         }
 
