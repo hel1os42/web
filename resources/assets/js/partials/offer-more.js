@@ -265,12 +265,9 @@ function offerMoreInit(id, text){
             ]
         }); /* jQuery */
         let btnClose = item.querySelector('.btn-close-item');
-        item.querySelector('.note-editable').addEventListener('input', function(){
-            btnClose.style.display = 'none';
-            item.classList.add('not-saved');
-            item.querySelector('.note-editor.note-frame').classList.remove('value-empty');
-            item.querySelector('.content-length').innerText = text.descriptionSize + ': ' + this.innerText.length;
-        });
+        let noteEditable = item.querySelector('.note-editable');
+        noteEditable.addEventListener('input', editorChanged);
+        noteEditable.addEventListener('keyup', editorChanged);
         btnClose.addEventListener('click', function(){
             $(editorBox).slideUp(function(){
                 item.classList.add('can-edit');
@@ -279,6 +276,13 @@ function offerMoreInit(id, text){
         });
         item.querySelector('.btn-remove-item').addEventListener('click', function(){ removeItem(item); });
         $(editorBox).slideDown();
+
+        function editorChanged(){
+            btnClose.style.display = 'none';
+            item.classList.add('not-saved');
+            item.querySelector('.note-editor.note-frame').classList.remove('value-empty');
+            item.querySelector('.content-length').innerText = text.descriptionSize + ': ' + this.innerText.length;
+        }
     }
 
     function getPlaceLinks(){
