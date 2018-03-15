@@ -43,6 +43,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        accounts_count
  * @property int        activation_codes_count
  * @property Place      place
+ * @property string     picture_url
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -75,12 +76,13 @@ class User extends Authenticatable implements PhoneAuthenticable
         ];
 
         $this->casts = [
-            'name'      => 'string',
-            'email'     => 'string',
-            'phone'     => 'string',
-            'latitude'  => 'double',
-            'longitude' => 'double',
-            'approved'  => 'boolean',
+            'name'        => 'string',
+            'email'       => 'string',
+            'phone'       => 'string',
+            'latitude'    => 'double',
+            'longitude'   => 'double',
+            'approved'    => 'boolean',
+            'invite_code' => 'string',
         ];
 
         $this->fillable = [
@@ -91,6 +93,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'latitude',
             'longitude',
             'approved',
+            'invite_code',
         ];
 
         $this->hidden = [

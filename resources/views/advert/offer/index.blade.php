@@ -184,15 +184,7 @@
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
                                                     <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
-                                                        @if(false)
-																												    <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
-                                                        @endif
-                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="margin: 0 16px 8px 0;" class="offer-delete-button">
-                                                            <input name="_method" type="hidden" value="DELETE">
-                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                        </form>
-
+                                                        <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
                                                         <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
                                                         <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
                                                     </div>
@@ -251,7 +243,7 @@
         disableButtonActivate();
 
         /* delete offer with ajax */
-        /*btnDeleteOffer();*/
+        btnDeleteOffer();
 
         function dataTableCreate(selector){
             let $table = $(selector);
@@ -438,12 +430,12 @@
         function btnDeleteOffer(){
             document.querySelector('#table_your_offers').addEventListener('click', function(e){
                if (e.target.classList.contains('offer-delete-button')) {
+                   let url = e.target.dataset.action;
                    let xhr = new XMLHttpRequest();
-                   xhr.responseType = 'json';
                    xhr.onreadystatechange = function() {
                        if (xhr.readyState === XMLHttpRequest.DONE) {
                            if (xhr.status === 204) {
-                               console.log('Offer was deleted.');
+                               alert('Offer was deleted.');
                                location.reload();
                            } else if (xhr.status === 404) {
                                alert('Offer not found.');
@@ -454,9 +446,11 @@
                            }
                        }
                    };
-                   xhr.open('DELETE', e.target.dataset.action, true);
-                   //xhr.setRequestHeader('Accept', 'application/json');
-                   xhr.send(JSON.stringify({'_token': '{{ csrf_token() }}'}));
+                   xhr.open('POST', url, true);
+                   let data = new FormData();
+                   data.append('_token', '{{ csrf_token() }}');
+                   data.append('_method', 'DELETE');
+                   xhr.send(data);
                }
             });
         }

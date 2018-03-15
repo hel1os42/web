@@ -63,7 +63,6 @@
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
                                     </div>
-
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>

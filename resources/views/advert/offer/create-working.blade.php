@@ -1,4 +1,4 @@
-<div class="control-box" style="margin-top: 32px;">
+<div class="control-box" style="padding-top: 24px;">
     <p class="title">Working dates</p>
     <p class="row control-datetime">
         <label class="col-xs-6"><span class="input-label">from *</span> <input name="start_date" readonly class="js-datepicker" placeholder="Select date" value=""></label>

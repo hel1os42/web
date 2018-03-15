@@ -37,9 +37,20 @@ class UserPolicy extends Policy
      */
     public function update(User $user, User $editableUser, array $userData = [])
     {
-        return ($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']))
-               || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser))
-               || $user->isAdmin();
+        return ($user->hasAnyRole() && $editableUser->equals($user) && !isset($userData['approved']) ||
+            $this->editChild($user, $editableUser)) && !isset($userData['invite_code']) ||
+            $user->isAdmin();
+    }
+
+    /**
+     * @param User $user
+     * @param User $editableUser
+     *
+     * @return bool
+     */
+    private function editChild(User $user, User $editableUser)
+    {
+        return ($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($editableUser);
     }
 
     /**
@@ -55,11 +66,12 @@ class UserPolicy extends Policy
      */
     public function updateRoles(User $user, User $editableUser, array $roleIds): bool
     {
-        if (count($roleIds) > 1
+        if ((count($roleIds) > 1
             && count(array_diff([
                 Role::findByName(Role::ROLE_ADVERTISER)->getId(),
                 Role::findByName(Role::ROLE_USER)->getId()
-            ], $roleIds)) > 0) {
+            ], $roleIds)) > 0)
+            || count($roleIds) === 0) {
             return false;
         }
 

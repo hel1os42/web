@@ -22,4 +22,4 @@
     <p class="hint">Please, enter the Offer description.</p>
 </div>
 
-<div id="more_wrap" class="clearfix"></div>
+<div id="more_wrap" class="clearfix" data-url="{{ route('places.offer_links.index', auth()->user()->place->id) }}" data-token="{{ csrf_token() }}"></div>

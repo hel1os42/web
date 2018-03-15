@@ -15,8 +15,8 @@
                 @include('advert.offer.create-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.create-category')
-                @include('advert.offer.create-working')
                 @include('advert.offer.create-map')
+                @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
             </form>
@@ -70,7 +70,7 @@
         setFieldLimit('[data-max-length]');
 
         /* offer description More */
-        /*offerMoreInit('more_wrap');*/
+        offerMoreInit('more_wrap');
         /*
             let moreTextForTranslate = {
                 hashButtons: 'You can use next tags for create links to additional information',
@@ -80,6 +80,8 @@
             };
             offerMoreInit('more_wrap', moreTextForTranslate);
         */
+
+        workingAreaWhenDelivery();
 
         /* picture */
         imageUploader('#offer_image_box .image-box');
@@ -499,6 +501,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>
