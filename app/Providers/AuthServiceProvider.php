@@ -73,6 +73,10 @@ class AuthServiceProvider extends ServiceProvider
         'places.update'        => 'PlacePolicy@update',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
+        'places.testimonials.list'   => 'TestimonialPolicy@index',
+        'places.testimonials.create' => 'TestimonialPolicy@create',
+        'places.testimonials.update' => 'TestimonialPolicy@update',
+
         'offers.redemption'         => 'RedemptionPolicy@index',
         'offers.redemption.confirm' => 'RedemptionPolicy@confirm',
         'offers.redemption.show'    => 'RedemptionPolicy@show',
