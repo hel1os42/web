@@ -7,7 +7,7 @@ return [
         'offer'         => [
             'mobile'   => [
                 'width'  => 360,
-                'height' => 620,
+                'height' => 360,
             ],
             'desktop'  => [
                 'width'  => 32,
@@ -20,8 +20,8 @@ return [
         ],
         'user'          => [
             'mobile'   => [
-                'width'  => 50,
-                'height' => 50,
+                'width'  => 120,
+                'height' => 120,
             ],
             'desktop'  => [
                 'width'  => 120,
@@ -34,8 +34,8 @@ return [
         ],
         'place_cover'   => [
             'mobile'   => [
-                'width'  => 360,
-                'height' => 120,
+                'width'  => 720,
+                'height' => 240,
             ],
             'desktop'  => [
                 'width'  => 1170,
@@ -48,8 +48,8 @@ return [
         ],
         'place_picture' => [
             'mobile'   => [
-                'width'  => 83,
-                'height' => 83,
+                'width'  => 360,
+                'height' => 360,
             ],
             'desktop'  => [
                 'width'  => 120,
