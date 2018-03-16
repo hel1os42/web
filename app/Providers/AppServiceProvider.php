@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\NauModels\Offer;
 use App\Models\OfferLink;
+use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
+use App\Observers\TestimonialObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
@@ -51,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         Offer::observe(OfferObserver::class);
         User::observe(UserObserver::class);
         OfferLink::observe(OfferLinkObserver::class);
+        Testimonial::observe(TestimonialObserver::class);
 
         ViewFacade::composer(
             ['*'], function (View $view) {
@@ -78,9 +81,10 @@ class AppServiceProvider extends ServiceProvider
 
         Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
             $count = \DB::table('tags')->where('id', '<>', $parameters[1])
-                       ->where('category_id', $value)
-                       ->where('slug', $parameters[0])
-                       ->count();
+                        ->where('category_id', $value)
+                        ->where('slug', $parameters[0])
+                        ->count();
+
             return $count === 0;
         });
     }
@@ -120,51 +124,51 @@ class AppServiceProvider extends ServiceProvider
     {
         ViewFacade::composer(
             ['user.show'], function (View $view) {
-                $editableUserArray = $view->getData();
-                /** @var User $editableUserModel */
-                $editableUserModel = User::query()->find($editableUserArray['id']);
-                $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
-                $children          = $editableUserModel->children->toArray();
+            $editableUserArray = $view->getData();
+            /** @var User $editableUserModel */
+            $editableUserModel = User::query()->find($editableUserArray['id']);
+            $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
+            $children          = $editableUserModel->children->toArray();
 
-                if (auth()->user()->isAdmin()) {
-                    $allChildren = \App\Models\User::query()->get();
-                } else {
-                    $allChildren = auth()->user()->children;
-                }
-
-                $allPossibleChildren = [];
-
-
-                if ($editableUserModel->isAgent()) {
-                    $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
-                } else {
-                    $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
-                }
-
-                foreach ($allChildren as $childValue) {
-                    if ($childValue->hasRoles($rolesForChildSet)) {
-                        $allPossibleChildren[] = $childValue->toArray();
-                    }
-                }
-
-                $view->with('roleIds', $roleIds);
-                $view->with('children', $children);
-                $view->with('allPossibleChildren', $allPossibleChildren);
-                $view->with('editableUserModel', $editableUserModel);
+            if (auth()->user()->isAdmin()) {
+                $allChildren = \App\Models\User::query()->get();
+            } else {
+                $allChildren = auth()->user()->children;
             }
+
+            $allPossibleChildren = [];
+
+
+            if ($editableUserModel->isAgent()) {
+                $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
+            } else {
+                $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
+            }
+
+            foreach ($allChildren as $childValue) {
+                if ($childValue->hasRoles($rolesForChildSet)) {
+                    $allPossibleChildren[] = $childValue->toArray();
+                }
+            }
+
+            $view->with('roleIds', $roleIds);
+            $view->with('children', $children);
+            $view->with('allPossibleChildren', $allPossibleChildren);
+            $view->with('editableUserModel', $editableUserModel);
+        }
         );
 
         ViewFacade::composer(
             ['user.index'], function (View $view) {
-                $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
-                $accountRepository = app(AccountRepository::class);
-                $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
-                foreach ($accounts as $accountKey => $account) {
-                    $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
-                }
-
-                $view->with('specialUserAccounts', $accounts);
+            $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
+            $accountRepository = app(AccountRepository::class);
+            $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
+            foreach ($accounts as $accountKey => $account) {
+                $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
             }
+
+            $view->with('specialUserAccounts', $accounts);
+        }
         );
     }
 }

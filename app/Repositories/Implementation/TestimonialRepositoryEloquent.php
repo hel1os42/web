@@ -4,10 +4,13 @@ namespace App\Repositories\Implementation;
 
 use App\Models\Place;
 use App\Models\Testimonial;
+use App\Models\User;
 use App\Repositories\TestimonialRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
+use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 /**
  * Class TestimonialRepositoryEloquent
@@ -44,16 +47,57 @@ class TestimonialRepositoryEloquent extends BaseRepository implements Testimonia
      * @throws \InvalidArgumentException
      * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
-    public function getApprovedByPlace(Place $place): Builder
+    public function getByPlace(Place $place): Builder
     {
         $this->skipCriteria();
 
         $result = $this->model
             ->byPlace($place)
-            ->where('status', Testimonial::STATUS_APPROVED)
+            ->whereNotNull('text')
             ->orderBy('created_at', 'desc');
         $this->resetModel();
 
         return $result;
+    }
+
+    /**
+     * @param Place $place
+     *
+     * @return int
+     */
+    public function countStarsForPlace(Place $place): int
+    {
+        $stars      = $place->getStars();
+        $starsArray = $this->model
+            ->byPlace($place)
+            ->get()
+            ->toArray();
+        if (count($starsArray)) {
+            $starsArray = array_column($starsArray, 'stars');
+            $stars      = round(array_sum($starsArray) / count($starsArray));
+        }
+ 
+        return $stars;
+    }
+
+    /**
+     * @param array $attributes
+     * @param Place $place
+     * @param User  $user
+     *
+     * @return mixed
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
+    public function createOrUpdateIfExist(array $attributes, Place $place, User $user)
+    {
+        $model = $this->model->byPlaceAndUser($place, $user)->first();
+
+        if ($model !== null) {
+            $attributes['text'] = $model->getText();
+
+            return $this->update($attributes, $model->getId());
+        }
+
+        return $this->create($attributes);
     }
 }
