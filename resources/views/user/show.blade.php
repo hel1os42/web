@@ -180,8 +180,11 @@
                         window.location.reload();
                     },
                     error: function (resp) {
-                        console.log('ERROR: image not sent.');
-                        console.dir(resp);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            console.log('ERROR: image not sent.');
+                            console.dir(resp);
+                        }
                     }
                 });
             }
@@ -232,9 +235,12 @@
                         }
                     },
                     error: function(resp){
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });

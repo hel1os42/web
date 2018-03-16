@@ -114,7 +114,7 @@
                                 </td>
                                 <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
+                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert finish-date">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status"><span class="offer-status-text">{{ $offer['status'] }}</span></td>
@@ -303,10 +303,14 @@
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                            if ($(this).is('.finish-date') && date.getTime() < Date.now()) {
+                                $(this).parents('tr').find('.offer_status_control .b-activate').addClass('expired');
+                            }
                         } else {
                             $(this).html('&#8734;');
                         }
                     });
+                    disableButtonActivate();
 
                     function getTime(time, tz){
                         let h = +time.substr(0, 2) + +tz.substr(0, 3);
@@ -373,12 +377,15 @@
                         }
                     },
                     error: function(resp){
-                        setNauBalance($nau_balance, -deltaNau);
-                        disableButtonActivate();
-                        balanceFineChanging();
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            setNauBalance($nau_balance, -deltaNau);
+                            disableButtonActivate();
+                            balanceFineChanging();
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });
@@ -423,7 +430,7 @@
             let nau = parseFloat(document.querySelector('#nau_balance').dataset.balance);
             document.querySelectorAll('.offer_status_control .b-activate').forEach(function(btn){
                 let reserved = parseFloat(btn.dataset.reserved);
-                btn.disabled = reserved > nau;
+                btn.disabled = btn.classList.contains('expired') || reserved > nau;
             });
         }
 
@@ -434,7 +441,8 @@
                    let xhr = new XMLHttpRequest();
                    xhr.onreadystatechange = function() {
                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                           if (xhr.status === 204) {
+                           if (xhr.status === 401) UnAuthorized();
+                           else if (xhr.status === 204) {
                                alert('Offer was deleted.');
                                location.reload();
                            } else if (xhr.status === 404) {

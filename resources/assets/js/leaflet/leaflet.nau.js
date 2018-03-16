@@ -117,6 +117,7 @@ function getTimeZone(map, callback){
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 let tz = convertRawOffset(response.rawOffset);
@@ -153,6 +154,7 @@ function getTimeZoneGPS(gps, callback){
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 let tz = convertRawOffset(response.rawOffset);
@@ -185,6 +187,7 @@ function getGpsByAddress(address, callback){
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 callback(response);
