@@ -6,11 +6,9 @@
 
 <div class="container">
     <h1>Place information</h1>
-    @if(auth()->user()->isAdvertiser())
         <div class="text-right">
             <a href="{{ route('places.edit', [$id]) }}" class="btn btn-nau"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit place</a>
         </div>
-    @endif
     <div class="row">
         <div class="col-xs-3"><p><strong>Name:</strong></p></div>
         <div class="col-xs-9"><p>{{ $name }}</p></div>
