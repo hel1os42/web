@@ -1,4 +1,4 @@
-<div id="working_area" style="display: none">
+<div id="working_area" style="position: absolute; opacity: 0; z-index: -1;">
     <p class="title" style="padding-top: 20px;">Working area</p>
 
     <div class="control-box">

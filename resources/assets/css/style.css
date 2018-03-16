@@ -55,6 +55,9 @@ iframe {
     font-size: 80%;
     font-weight: normal;
 }
+.btn-primary:disabled:hover {
+    color: #7a9e9f;
+}
 
 
 #mainwrapper {

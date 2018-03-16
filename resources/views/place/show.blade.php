@@ -22,6 +22,14 @@
         <div class="col-xs-9"><p>{{ $about ?: '-' }}</p></div>
     </div>
     <div class="row">
+        <div class="col-xs-3"><p><strong>Phone:</strong></p></div>
+        <div class="col-xs-9"><p>{{ '-' }}</p></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"><p><strong>Web-site:</strong></p></div>
+        <div class="col-xs-9"><p>{{ '-' }}</p></div>
+    </div>
+    <div class="row">
         <div class="col-xs-3"><p><strong>Address:</strong></p></div>
         <div class="col-xs-9"><p>{{ $address ?: '-' }}</p></div>
     </div>
