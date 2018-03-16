@@ -56,9 +56,11 @@ class AppServiceProvider extends ServiceProvider
         Testimonial::observe(TestimonialObserver::class);
 
         ViewFacade::composer(
-            ['*'], function (View $view) {
+            ['*'],
+            function (View $view) {
                 $authUser = auth()->user();
-                if (null != $authUser && ($authUser instanceof User) && null == array_get($view->getData(), 'authUser')) {
+                if (null != $authUser && ($authUser instanceof User) && null == array_get($view->getData(),
+                        'authUser')) {
                     $authUser->load('accounts');
                     $view->with('authUser', $authUser->toArray());
 
@@ -123,52 +125,54 @@ class AppServiceProvider extends ServiceProvider
     private function setUserViewsData()
     {
         ViewFacade::composer(
-            ['user.show'], function (View $view) {
-            $editableUserArray = $view->getData();
-            /** @var User $editableUserModel */
-            $editableUserModel = User::query()->find($editableUserArray['id']);
-            $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
-            $children          = $editableUserModel->children->toArray();
+            ['user.show'],
+            function (View $view) {
+                $editableUserArray = $view->getData();
+                /** @var User $editableUserModel */
+                $editableUserModel = User::query()->find($editableUserArray['id']);
+                $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
+                $children          = $editableUserModel->children->toArray();
 
-            if (auth()->user()->isAdmin()) {
-                $allChildren = \App\Models\User::query()->get();
-            } else {
-                $allChildren = auth()->user()->children;
-            }
-
-            $allPossibleChildren = [];
-
-
-            if ($editableUserModel->isAgent()) {
-                $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
-            } else {
-                $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
-            }
-
-            foreach ($allChildren as $childValue) {
-                if ($childValue->hasRoles($rolesForChildSet)) {
-                    $allPossibleChildren[] = $childValue->toArray();
+                if (auth()->user()->isAdmin()) {
+                    $allChildren = \App\Models\User::query()->get();
+                } else {
+                    $allChildren = auth()->user()->children;
                 }
-            }
 
-            $view->with('roleIds', $roleIds);
-            $view->with('children', $children);
-            $view->with('allPossibleChildren', $allPossibleChildren);
-            $view->with('editableUserModel', $editableUserModel);
-        }
+                $allPossibleChildren = [];
+
+
+                if ($editableUserModel->isAgent()) {
+                    $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
+                } else {
+                    $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
+                }
+
+                foreach ($allChildren as $childValue) {
+                    if ($childValue->hasRoles($rolesForChildSet)) {
+                        $allPossibleChildren[] = $childValue->toArray();
+                    }
+                }
+
+                $view->with('roleIds', $roleIds);
+                $view->with('children', $children);
+                $view->with('allPossibleChildren', $allPossibleChildren);
+                $view->with('editableUserModel', $editableUserModel);
+            }
         );
 
         ViewFacade::composer(
-            ['user.index'], function (View $view) {
-            $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
-            $accountRepository = app(AccountRepository::class);
-            $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
-            foreach ($accounts as $accountKey => $account) {
-                $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
-            }
+            ['user.index'],
+            function (View $view) {
+                $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
+                $accountRepository = app(AccountRepository::class);
+                $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();
+                foreach ($accounts as $accountKey => $account) {
+                    $accounts[$accountKey]['nau_owner_name'] = $specialUsersArray[$account['owner_id']];
+                }
 
-            $view->with('specialUserAccounts', $accounts);
-        }
+                $view->with('specialUserAccounts', $accounts);
+            }
         );
     }
 }
