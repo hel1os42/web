@@ -27,7 +27,8 @@ class CreateRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  Validator  $validator
+     * @param  Validator $validator
+     *
      * @return void
      */
     public function withValidator($validator)
@@ -48,6 +49,7 @@ class CreateRequest extends FormRequest
         return Testimonial::query()
                           ->where('user_id', auth()->user()->id)
                           ->where('place_id', request()->route('placeUuid'))
-                          ->first() === null;
+                          ->first() === null
+               || $this->request->get('text') === null;
     }
 }

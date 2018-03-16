@@ -57,7 +57,7 @@ class TestimonialController extends Controller
 
         $this->authorize('places.testimonials.list', $place);
 
-        $testimonials = $this->testimonialRepository->getApprovedByPlace($place);
+        $testimonials = $this->testimonialRepository->getByPlace($place);
 
         return \response()->render('place.testimonial.index', $testimonials->paginate());
     }
@@ -87,7 +87,7 @@ class TestimonialController extends Controller
                 : Testimonial::STATUS_INBOX
         ];
 
-        $testimonial = $this->testimonialRepository->create($data);
+        $testimonial = $this->testimonialRepository->createOrUpdateIfExist($data, $place, $this->user());
 
         return \response()->render('place.testimonial.show', $testimonial, Response::HTTP_CREATED,
             route('places.testimonials.index', $place->getId()));
