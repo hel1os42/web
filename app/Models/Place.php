@@ -92,8 +92,7 @@ class Place extends Model
             'alias',
             'latitude',
             'longitude',
-            'radius',
-            'stars',
+            'radius'
         ];
 
         $this->attributes = [
