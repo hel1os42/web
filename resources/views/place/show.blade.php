@@ -67,7 +67,6 @@
 <script>
 
     let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
-
     srvRequest(rqURL, 'GET', 'json', function(response){
         console.log('Place categories, types, specialities, tags:');
         console.dir(response);
