@@ -183,9 +183,12 @@
                     }
                 },
                 error: function(resp){
-                    $err.text('err-st: ' + resp.status);
-                    console.dir(resp);
-                    alert(`Error ${resp.status}: ${resp.responseText}`);
+                    if (401 === resp.status) UnAuthorized();
+                    else {
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
                 }
             });
         });

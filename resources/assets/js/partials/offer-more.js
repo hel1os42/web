@@ -149,7 +149,8 @@ function offerMoreInit(id, text){
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 item.classList.remove('wait');
-                if (xhr.status === 200) {
+                if (xhr.status === 401) UnAuthorized();
+                else if (xhr.status === 200) {
                     if (!editorInput) item.classList.add('can-edit');
                     if (editorInput) item.querySelector('.btn-close-item').style.display = '';
                     item.dataset.id = xhr.response.id;
@@ -194,7 +195,8 @@ function offerMoreInit(id, text){
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     item.classList.remove('wait');
-                    if (xhr.status === 204) {
+                    if (xhr.status === 401) UnAuthorized();
+                    else if (xhr.status === 204) {
                         $(item).slideUp(function(){
                             item.parentElement.removeChild(item);
                             box.dispatchEvent(new Event('om.removeLink'));
@@ -291,7 +293,8 @@ function offerMoreInit(id, text){
         xhr.responseType = 'json';
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
+                if (xhr.status === 401) UnAuthorized();
+                else if (xhr.status === 200) {
                     console.dir(xhr.response.data);
                     xhr.response.data.forEach(function(json){ addItem(json); });
                     box.dispatchEvent(new Event('om.changeLink'));
