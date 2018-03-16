@@ -12,18 +12,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class Testimonial
  * @package App\Models
  *
- * @property string  id
- * @property string  text
- * @property string  user_id
- * @property string  place_id
- * @property integer stars
- * @property string  status
- * @property Carbon  created_at
- * @property Carbon  updated_at
- * @property User    user
- * @property string  user_name
- * @property string  user_picture_url
- * @method Builder byPlace(Place $place)
+ * @property string      id
+ * @property string|null text
+ * @property string      user_id
+ * @property string      place_id
+ * @property integer     stars
+ * @property string      status
+ * @property Carbon      created_at
+ * @property Carbon      updated_at
+ * @property User        user
+ * @property Place       place
+ * @property string      user_name
+ * @property string      user_picture_url
+ * @method Builder|Testimonial byPlace(Place $place)
+ * @method Builder|Testimonial byPlaceAndUser(Place $place, User $user)
  */
 class Testimonial extends Model
 {
@@ -79,14 +81,28 @@ class Testimonial extends Model
         parent::__construct($attributes);
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('approved', function (Builder $builder) {
+            $builder->where('status', self::STATUS_APPROVED);
+        });
+    }
+
     /** @return string */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /** @return string */
-    public function getText(): string
+    /**
+     * @return null|string
+     */
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -139,6 +155,19 @@ class Testimonial extends Model
     public function scopeByPlace(Builder $builder, Place $place)
     {
         return $builder->where('place_id', $place->getId());
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Place   $place
+     * @param User    $user
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByPlaceAndUser(Builder $builder, Place $place, User $user)
+    {
+        return $this->scopeByPlace($builder, $place)->where('user_id', $user->getId());
     }
 
     /**
