@@ -81,8 +81,6 @@
             offerMoreInit('more_wrap', moreTextForTranslate);
         */
 
-        workingAreaWhenDelivery();
-
         /* picture */
         imageUploader('#offer_image_box .image-box');
         let $offer_image_box = $('#offer_image_box');
@@ -202,6 +200,8 @@
         }
 
         function mapDone(map){
+            $('#working_area').removeAttr('style').css('display', 'none');
+            workingAreaWhenDelivery();
             mapMove(map);
             $('#editOfferForm').on('submit', function (e) {
                 e.preventDefault();
@@ -356,8 +356,11 @@
                     }
                 },
                 error: function(resp){
-                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.dir(resp);
+                    if (401 === resp.status) UnAuthorized();
+                    else {
+                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                        console.dir(resp);
+                    }
                 }
             });
 
@@ -487,8 +490,11 @@
                         window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
                     error: function (resp) {
-                        $('#waitError').text(resp.status);
-                        console.log('ERROR: image not sent.');
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            $('#waitError').text(resp.status);
+                            console.log('ERROR: image not sent.');
+                        }
                     }
                 });
             } else {

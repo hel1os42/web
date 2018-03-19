@@ -28,11 +28,12 @@
     </div>
     <script type="text/javascript">
         function loadCategory(){
-            var xmlhttp = new XMLHttpRequest();
+            let xmlhttp = new XMLHttpRequest();
 
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === XMLHttpRequest.DONE) {
-                    if (xmlhttp.status === 200) {
+                    if (xmlhttp.status === 401) UnAuthorized();
+                    else if (xmlhttp.status === 200) {
                         let sel = document.getElementById("offer-category");
                         sel.innerHTML = xmlhttp.responseText;
                         for (let opt, j = 0; opt = sel.options[j]; j++) {

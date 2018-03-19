@@ -42,10 +42,13 @@ $( document ).ready( function() {
                 }, 6000 );
             },
             error:      function( data ) {
-                modalBody.hide();
-                resultBody.show();
-                console.log( data );
-                resultBody.text( 'There were problems creating the transaction. Please try again later.' );
+                if (401 === resp.status) UnAuthorized();
+                else {
+                    modalBody.hide();
+                    resultBody.show();
+                    console.log(data);
+                    resultBody.text('There were problems creating the transaction. Please try again later.');
+                }
             }
         } );
     }
@@ -66,7 +69,8 @@ function srvRequest(url, method, respType, callback){
     if (respType) xhr.responseType = respType;
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) { callback(xhr.response); }
+            if (xhr.status === 401) UnAuthorized();
+            else if (xhr.status === 200) { callback(xhr.response); }
             else if (xhr.status === 400) { console.log('Error 400'); }
             else { console.log('Something else other than 200 was returned'); }
         }
@@ -84,12 +88,18 @@ function waitPopup(withRqCounter){
     let waitPopup = document.querySelector('#waitPopupOverlay');
     if (waitPopup) waitPopup.parentNode.removeChild(waitPopup);
     let rqCounter = withRqCounter ? '<p>Requests: <span id="waitRequests">0</span></p>' : '';
-    let html = `<div class="waitPopup"><h3 class="text-center">Please wait...</h3><p class="text-center img">
-        <img src="/img/loading.gif"></p>${rqCounter}<p id="waitError"></p></div>`;
+    let html = '<div class="waitPopup"><h3 class="text-center">Please wait...</h3><p class="text-center img">';
+    html += '<img src="/img/loading.gif"></p>' + rqCounter + '<p id="waitError"></p></div>';
     waitPopup = document.createElement('div');
     waitPopup.setAttribute('id', 'waitPopupOverlay');
     waitPopup.innerHTML = html;
     document.body.appendChild(waitPopup);
+}
+
+function UnAuthorized(s){
+    if (!s) s = 'You are not authorized.';
+    alert(s);
+    location.reload();
 }
 
 function pagenavyCompact(pagenavy){

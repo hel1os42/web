@@ -25,7 +25,8 @@
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
+                        if (xhr.status === 401) UnAuthorized();
+                        else if (xhr.status === 200) {
                             console.dir(xhr.response);
                             let html = '', checked;
                             xhr.response.roles.forEach(function(e, i){

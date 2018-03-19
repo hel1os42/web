@@ -73,16 +73,16 @@ class LoginController extends AuthController
      */
     public function logout()
     {
-
-        if (false === $this->jwtAuth->getToken()) {
+        if (false === $this->jwtAuth->getToken() && !$this->auth->guard()->user() instanceof Operator) {
             $this->user()->leaveImpersonation();
         }
 
+        $route = $this->auth->guard()->user() instanceof Operator ? 'loginFormOperator' : 'login';
         $this->auth->guard()->logout();
 
         return \request()->wantsJson()
             ? \response()->render('', '', Response::HTTP_NO_CONTENT)
-            : \redirect()->route('login');
+            : \redirect()->route($route);
     }
 
     /**
