@@ -43,7 +43,7 @@
                             <p class="hint">Please, enter the information About Place.</p>
                         </div>
 
-                        <div class="control-box">
+                        <!--<div class="control-box">
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Phone</span>
@@ -61,7 +61,7 @@
                                 </label>
                             </p>
                             <p class="hint">Please, enter the web-site.</p>
-                        </div>
+                        </div>-->
 
                         <div class="control-box">
                             <p class="control-text">
