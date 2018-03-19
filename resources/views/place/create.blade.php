@@ -381,7 +381,11 @@
                 },
                 error: function (resp) {
                     if (401 === resp.status) UnAuthorized();
-                    else {
+                    else if (422 === resp.status) {
+                        alert('The alias has already been taken.');
+                        $('#waitPopupOverlay').remove();
+                        $('[name="alias"]').focus();
+                    } else {
                         $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
                         console.log("Something went wrong. Try again, please.");
                         console.log(resp.status);
