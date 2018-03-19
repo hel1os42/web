@@ -57,12 +57,20 @@ class OperatorUserProvider implements UserProvider
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  string  $token
+     *
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        throw new NotImplementedException();
+        $user->setRememberToken($token);
+
+        $timestamps = $user->timestamps;
+
+        $user->timestamps = false;
+
+        $user->save();
+
+        $user->timestamps = $timestamps;
     }
 
     /**
