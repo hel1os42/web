@@ -66,23 +66,24 @@ class UserPolicy extends Policy
      */
     public function updateRoles(User $user, User $editableUser, array $roleIds): bool
     {
-        if ((count($roleIds) > 1
+        if (count($roleIds) > 1
              && count(array_diff([
                     Role::findByName(Role::ROLE_ADVERTISER)->getId(),
                     Role::findByName(Role::ROLE_USER)->getId()
-                ], $roleIds)) > 0) ||
-            count($roleIds) == 0) {
+                ], $roleIds)) > 0) {
             return false;
         }
 
-        /**
-         * @var Role $role
-         */
-        $role = Role::find($roleIds[0]);
-        if ($user->isAgent()
-            && ($role->equalsByName(Role::ROLE_ADMIN)
-                || $role->equalsByName(Role::ROLE_AGENT))) {
-            return false;
+        if(isset($roleIds[0])) {
+            /**
+             * @var Role $role
+             */
+            $role = (new Role)->findOrFail($roleIds[0]);
+            if ($user->isAgent()
+                && ($role->equalsByName(Role::ROLE_ADMIN)
+                    || $role->equalsByName(Role::ROLE_AGENT))) {
+                return false;
+            }
         }
 
         return $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
