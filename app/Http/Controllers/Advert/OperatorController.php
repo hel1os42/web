@@ -183,7 +183,9 @@ class OperatorController extends Controller
         $this->operatorRepository->update($attributes, $operator->getId());
         $operator = $operator->fresh()->toArray();
 
-        return \response()->render('advert.operator.show', $operator, Response::HTTP_CREATED,
-            route('advert.operators.show', $operator));
+        return 'PATCH' === $request->method() ?
+            \redirect()->back() :
+            \response()->render('advert.operator.show', $operator, Response::HTTP_CREATED,
+                route('advert.operators.show', $operator));
     }
 }
