@@ -78,7 +78,7 @@ class UserPolicy extends Policy
         /**
          * @var Role $role
          */
-        $role = (new Role)->findOrFail($roleIds[0]);
+        $role = Role::find($roleIds[0]);
         if ($user->isAgent()
             && ($role->equalsByName(Role::ROLE_ADMIN)
                 || $role->equalsByName(Role::ROLE_AGENT))) {
