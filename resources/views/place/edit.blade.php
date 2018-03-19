@@ -447,7 +447,7 @@
                     if (401 === resp.status) UnAuthorized();
                     else if (422 === resp.status) {
                         alert('The alias has already been taken.');
-                        $('#waitError').remove();
+                        $('#waitPopupOverlay').remove();
                         $('[name="alias"]').focus();
                     } else {
                         $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
