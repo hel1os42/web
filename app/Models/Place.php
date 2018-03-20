@@ -37,6 +37,8 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property User                         user
  * @property Collection                   testimonials
  * @property NauModels\Offer[]|Collection offers
+ * @property string                       phone
+ * @property string                       site
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
@@ -78,6 +80,8 @@ class Place extends Model
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
             'has_active_offers' => 'boolean',
+            'phone'             => 'string',
+            'site'              => 'string',
         ];
 
         $this->hidden = [
@@ -92,7 +96,9 @@ class Place extends Model
             'alias',
             'latitude',
             'longitude',
-            'radius'
+            'radius',
+            'phone',
+            'site',
         ];
 
         $this->attributes = [
@@ -103,7 +109,9 @@ class Place extends Model
             'alias'       => null,
             'latitude'    => 0,
             'longitude'   => 0,
-            'radius'      => 1
+            'radius'      => 1,
+            'phone'       => null,
+            'site'        => null,
         ];
 
         $this->appends = [
@@ -184,6 +192,22 @@ class Place extends Model
     public function getStars(): int
     {
         return $this->stars;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSite(): ?string
+    {
+        return $this->site;
     }
 
     public function getActiveOffersCountAttribute(): int

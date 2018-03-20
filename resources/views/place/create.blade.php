@@ -64,6 +64,26 @@
                         </div>
 
                         <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Phone</span>
+                                    <input name="phone" value="" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place Phone.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Site</span>
+                                    <input name="site" value="" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place Site.</p>
+                        </div>
+
+                        <div class="control-box">
                             <p class="control-select valid-not-empty">
                                 <label>
                                     <span class="input-label">Place category *</span>
