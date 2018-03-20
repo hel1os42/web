@@ -63,7 +63,6 @@
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
                                     </div>
-
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
@@ -181,8 +180,11 @@
                         window.location.reload();
                     },
                     error: function (resp) {
-                        console.log('ERROR: image not sent.');
-                        console.dir(resp);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            console.log('ERROR: image not sent.');
+                            console.dir(resp);
+                        }
                     }
                 });
             }
@@ -233,9 +235,12 @@
                         }
                     },
                     error: function(resp){
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });

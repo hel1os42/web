@@ -7,7 +7,7 @@
 <div class="container">
     <h1>Place information</h1>
     <div class="text-right">
-        <a class="btn-nau" href="{{ route('profile.place.edit') }}">Edit</a>
+        <a href="{{ route('places.edit', [$id]) }}" class="btn btn-nau"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit place</a>
     </div>
     <div class="row">
         <div class="col-xs-3"><p><strong>Name:</strong></p></div>
@@ -21,6 +21,14 @@
         <div class="col-xs-3"><p><strong>About:</strong></p></div>
         <div class="col-xs-9"><p>{{ $about ?: '-' }}</p></div>
     </div>
+    <!--<div class="row">
+        <div class="col-xs-3"><p><strong>Phone:</strong></p></div>
+        <div class="col-xs-9"><p>{{ '-' }}</p></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"><p><strong>Web-site:</strong></p></div>
+        <div class="col-xs-9"><p>{{ '-' }}</p></div>
+    </div>-->
     <div class="row">
         <div class="col-xs-3"><p><strong>Address:</strong></p></div>
         <div class="col-xs-9"><p>{{ $address ?: '-' }}</p></div>
@@ -50,13 +58,6 @@
         <div class="col-xs-9"><p>{{ $latitude }},{{ $longitude }}, radius: {{ $radius }}</div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
-        @if(!auth()->user()->isImpersonated() && auth()->user()->isAdvertiser())
-            <a href="{{ route('places.edit', [$id]) }}" class="pull-right btn btn-nau"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit place</a>
-        @endif
-        </div>
-    </div>
-    <div class="row">
         <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
         <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" alt="Place logo" style="max-width: 100%;"></p></div>
     </div>
@@ -72,7 +73,6 @@
 <script>
 
     let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
-
     srvRequest(rqURL, 'GET', 'json', function(response){
         console.log('Place categories, types, specialities, tags:');
         console.dir(response);

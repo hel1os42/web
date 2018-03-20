@@ -114,7 +114,7 @@
                                 </td>
                                 <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
+                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert finish-date">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status"><span class="offer-status-text">{{ $offer['status'] }}</span></td>
@@ -184,15 +184,7 @@
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
                                                     <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
-                                                        @if(false)
-																												    <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
-                                                        @endif
-                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="margin: 0 16px 8px 0;" class="offer-delete-button">
-                                                            <input name="_method" type="hidden" value="DELETE">
-                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                        </form>
-
+                                                        <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
                                                         <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
                                                         <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
                                                     </div>
@@ -251,7 +243,7 @@
         disableButtonActivate();
 
         /* delete offer with ajax */
-        /*btnDeleteOffer();*/
+        btnDeleteOffer();
 
         function dataTableCreate(selector){
             let $table = $(selector);
@@ -311,10 +303,14 @@
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                            if ($(this).is('.finish-date') && date.getTime() < Date.now()) {
+                                $(this).parents('tr').find('.offer_status_control .b-activate').addClass('expired');
+                            }
                         } else {
                             $(this).html('&#8734;');
                         }
                     });
+                    disableButtonActivate();
 
                     function getTime(time, tz){
                         let h = +time.substr(0, 2) + +tz.substr(0, 3);
@@ -381,12 +377,15 @@
                         }
                     },
                     error: function(resp){
-                        setNauBalance($nau_balance, -deltaNau);
-                        disableButtonActivate();
-                        balanceFineChanging();
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            setNauBalance($nau_balance, -deltaNau);
+                            disableButtonActivate();
+                            balanceFineChanging();
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });
@@ -431,19 +430,20 @@
             let nau = parseFloat(document.querySelector('#nau_balance').dataset.balance);
             document.querySelectorAll('.offer_status_control .b-activate').forEach(function(btn){
                 let reserved = parseFloat(btn.dataset.reserved);
-                btn.disabled = reserved > nau;
+                btn.disabled = btn.classList.contains('expired') || reserved > nau;
             });
         }
 
         function btnDeleteOffer(){
             document.querySelector('#table_your_offers').addEventListener('click', function(e){
                if (e.target.classList.contains('offer-delete-button')) {
+                   let url = e.target.dataset.action;
                    let xhr = new XMLHttpRequest();
-                   xhr.responseType = 'json';
                    xhr.onreadystatechange = function() {
                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                           if (xhr.status === 204) {
-                               console.log('Offer was deleted.');
+                           if (xhr.status === 401) UnAuthorized();
+                           else if (xhr.status === 204) {
+                               alert('Offer was deleted.');
                                location.reload();
                            } else if (xhr.status === 404) {
                                alert('Offer not found.');
@@ -454,9 +454,11 @@
                            }
                        }
                    };
-                   xhr.open('DELETE', e.target.dataset.action, true);
-                   //xhr.setRequestHeader('Accept', 'application/json');
-                   xhr.send(JSON.stringify({'_token': '{{ csrf_token() }}'}));
+                   xhr.open('POST', url, true);
+                   let data = new FormData();
+                   data.append('_token', '{{ csrf_token() }}');
+                   data.append('_method', 'DELETE');
+                   xhr.send(data);
                }
             });
         }

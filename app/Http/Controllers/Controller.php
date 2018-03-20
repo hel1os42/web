@@ -38,7 +38,7 @@ class Controller extends BaseController
     /**
      * @return User
      */
-    protected function user(): User
+    protected function user(): ?User
     {
         return $this->guard->user();
     }

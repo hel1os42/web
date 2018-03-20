@@ -101,9 +101,10 @@ class UserController extends Controller
         $uuid = $this->confirmUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
-        $userData     = $request->isMethod('put')
+
+        $userData = $request->isMethod('put')
             ? $request->all()
-            : array_merge($editableUser->getFillableWithDefaults(['password', 'approved']), $request->all());
+            : array_merge($editableUser->getFillableWithDefaults(['password', 'approved', 'invite_code']), $request->all());
 
         $this->authorize('users.update', [$editableUser, $userData]);
 
@@ -225,7 +226,7 @@ class UserController extends Controller
     {
         $with = [];
 
-        if (isset($newUserData['role_ids'])) {
+        if (isset($newUserData['role_ids']) && count($newUserData['role_ids'])) {
             $this->updateRoles($user, $newUserData['role_ids']);
             array_push($with, 'roles');
         }

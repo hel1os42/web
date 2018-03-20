@@ -15,8 +15,8 @@
                 @include('advert.offer.create-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.create-category')
-                @include('advert.offer.create-working')
                 @include('advert.offer.create-map')
+                @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
             </form>
@@ -70,7 +70,7 @@
         setFieldLimit('[data-max-length]');
 
         /* offer description More */
-        /*offerMoreInit('more_wrap');*/
+        offerMoreInit('more_wrap');
         /*
             let moreTextForTranslate = {
                 hashButtons: 'You can use next tags for create links to additional information',
@@ -191,6 +191,8 @@
         }
 
         function mapDone(map){
+            $('#working_area').removeAttr('style').css('display', 'none');
+            workingAreaWhenDelivery();
             mapMove(map);
             $('#createOfferForm').on('submit', function (e) {
                 e.preventDefault();
@@ -313,8 +315,11 @@
                     }
                 },
                 error: function(resp){
-                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.log(resp);
+                    if (401 === resp.status) UnAuthorized();
+                    else {
+                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                        console.log(resp);
+                    }
                 }
             });
 
@@ -451,8 +456,11 @@
                         window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
                     error: function (resp) {
-                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                        console.log('ERROR: image not sent.');
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                            console.log('ERROR: image not sent.');
+                        }
                     }
                 });
             } else {
@@ -499,6 +507,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>
