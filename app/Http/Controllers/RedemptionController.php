@@ -26,11 +26,27 @@ class RedemptionController extends Controller
 
     public function __construct(
         OfferRepository $offerRepository,
+        RedemptionRepository $redemptionRepository,
         AuthManager $auth
     ) {
-        $this->offerRepository = $offerRepository;
+        $this->offerRepository      = $offerRepository;
+        $this->redemptionRepository = $redemptionRepository;
 
         parent::__construct($auth);
+    }
+
+    /**
+     * Method index of redemptions for User
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index ()
+    {
+        $this->authorize('offers.redemption');
+
+        $redemptions = $this->redemptionRepository->queryByUser($this->user());
+
+        return \response()->render('redemption.index', $redemptions->paginate());
     }
 
     /**

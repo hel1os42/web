@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\NauModels\Redemption;
+use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Contracts\RepositoryInterface;
+use App\Models\User;
 
 /**
  * Class RedemptionRepository
@@ -13,5 +15,14 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 interface RedemptionRepository extends RepositoryInterface
 {
+    /**
+     * @return string
+     */
     public function model(): string;
+
+    /**
+     * @param User $user
+     * @return Builder
+     */
+    public function queryByUser(User $user);
 }
