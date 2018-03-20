@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -216,7 +215,7 @@ class RedemptionController extends Controller
                           ->make(['offerId' => $offerId],
                               [
                                   'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
-                                      Constants::UUID_REGEX)
+                                      \App\Helpers\Constants::UUID_REGEX)
                               ]);
 
         if ($validator->fails()) {
