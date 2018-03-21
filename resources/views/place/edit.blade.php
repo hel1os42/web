@@ -44,6 +44,26 @@
                             <p class="hint">Please, enter the information About Place.</p>
                         </div>
 
+                        <!--<div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Phone</span>
+                                    <input name="phone" value="{{ 'NEED BACKEND' }}" class="formData" maxlength="64">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the phone.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Web-site</span>
+                                    <input name="website" value="{{ 'NEED BACKEND' }}" class="formData" maxlength="128">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the web-site.</p>
+                        </div>-->
+
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
@@ -265,7 +285,7 @@
         $logo_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Logo changed');
-            $logo_image_box.find('.image').attr('data-cropratio', '1');
+            $logo_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $logo_image_box.find('.image').attr('src', "{{ $picture_url }}").on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
@@ -446,9 +466,16 @@
                     }
                 },
                 error: function (resp) {
-                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.log("Something went wrong. Try again, please.");
-                    console.log(resp.status);
+                    if (401 === resp.status) UnAuthorized();
+                    else if (422 === resp.status) {
+                        alert('The alias has already been taken.');
+                        $('#waitPopupOverlay').remove();
+                        $('[name="alias"]').focus();
+                    } else {
+                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                        console.log("Something went wrong. Try again, please.");
+                        console.log(resp.status);
+                    }
                 }
             });
 
@@ -523,8 +550,11 @@
                     callback(n);
                 },
                 error: function (resp) {
-                    $('#waitError').text(resp.status);
-                    console.log('Error:', URI);
+                    if (401 === resp.status) UnAuthorized();
+                    else {
+                        $('#waitError').text(resp.status);
+                        console.log('Error:', URI);
+                    }
                 }
             });
         }

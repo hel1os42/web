@@ -12,6 +12,7 @@ function imageUploader(selector){
 		let imgWrap = createElement('div', box, { class: 'image-wrap' });
 		let img = createElement('img', imgWrap, { class: 'image' });
 		if (box.dataset.cropratio) img.dataset.cropratio = box.dataset.cropratio;
+		if (box.dataset.circle) img.dataset.cropratio = box.dataset.circle;
 
 		let attr = { type: 'file', name };
 		if (maxSize) attr['data-maxsize'] = maxSize;

@@ -378,7 +378,8 @@
 				xhr.send(makeFormData(form));
 				xhr.onreadystatechange = function(){
 					if (xhr.readyState === 4){
-						if (xhr.status === 200) {
+                        if (xhr.status === 401) UnAuthorized();
+						else if (xhr.status === 200) {
 							/* load image */
 							uploadImageToServer(document.getElementById('offerImg'));
 						} else {
@@ -401,7 +402,8 @@
 					xhr.send("file=" + document.getElementById('offerImg').files[0]);
 					xhr.onreadystatechange = function(){
 						if (xhr.readyState === 4){
-							if (xhr.status === 200) {
+                            if (xhr.status === 401) UnAuthorized();
+							else if (xhr.status === 200) {
 								/* куда-то переходим? */
 								window.location.pathname = '/';
 								window.location.hash = '';

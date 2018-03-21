@@ -63,7 +63,6 @@
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
                                     </div>
-
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
@@ -150,7 +149,7 @@
         $userpic_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
-            $userpic_image_box.find('.image').attr('data-cropratio', '1');
+            $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
@@ -181,8 +180,11 @@
                         window.location.reload();
                     },
                     error: function (resp) {
-                        console.log('ERROR: image not sent.');
-                        console.dir(resp);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            console.log('ERROR: image not sent.');
+                            console.dir(resp);
+                        }
                     }
                 });
             }
@@ -233,9 +235,12 @@
                         }
                     },
                     error: function(resp){
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else {
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });

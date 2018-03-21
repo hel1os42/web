@@ -76,12 +76,13 @@ class User extends Authenticatable implements PhoneAuthenticable
         ];
 
         $this->casts = [
-            'name'      => 'string',
-            'email'     => 'string',
-            'phone'     => 'string',
-            'latitude'  => 'double',
-            'longitude' => 'double',
-            'approved'  => 'boolean',
+            'name'        => 'string',
+            'email'       => 'string',
+            'phone'       => 'string',
+            'latitude'    => 'double',
+            'longitude'   => 'double',
+            'approved'    => 'boolean',
+            'invite_code' => 'string',
         ];
 
         $this->fillable = [
@@ -92,6 +93,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'latitude',
             'longitude',
             'approved',
+            'invite_code',
         ];
 
         $this->hidden = [

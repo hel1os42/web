@@ -1,4 +1,8 @@
 <div class="row">
+    <div class="col-lg-10">
+        <p><strong>Invite </strong><label><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
+                         value="{{ $invite_code }}"></label></p>
+    </div>
     <div class="col-sm-6">
         @can('user.update.roles', [$editableUserModel, $roleIds])
             <p><strong>Roles <span style="color:red">(Warning! Changing role can damage user. Use it only when user just created, or in critical situations.)</span></strong></p>
@@ -21,7 +25,8 @@
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
+                        if (xhr.status === 401) UnAuthorized();
+                        else if (xhr.status === 200) {
                             console.dir(xhr.response);
                             let html = '', checked;
                             xhr.response.roles.forEach(function(e, i){

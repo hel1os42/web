@@ -3,13 +3,10 @@
 @section('title', 'NAU show advertiser list')
 
 @section('content')
-    <style>
-        td { padding: 10px; }
-    </style>
 
     <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        <table class="table-users">
+        <table class="table-striped-nau">
             <thead>
                 <tr>
                     <th>User</th>
@@ -186,9 +183,12 @@
                     }
                 },
                 error: function(resp){
-                    $err.text('err-st: ' + resp.status);
-                    console.dir(resp);
-                    alert(`Error ${resp.status}: ${resp.responseText}`);
+                    if (401 === resp.status) UnAuthorized();
+                    else {
+                        $err.text('err-st: ' + resp.status);
+                        console.dir(resp);
+                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                    }
                 }
             });
         });
