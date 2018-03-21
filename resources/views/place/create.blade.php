@@ -67,20 +67,20 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Phone</span>
-                                    <input name="phone" value="" class="formData">
+                                    <input name="phone" value="" class="formData" placeholder="+1234567890" maxlength="16">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Phone.</p>
+                            <p class="hint">Please, enter the Place Phone, example: <em>+1234567890</em>.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Site</span>
-                                    <input name="site" value="" class="formData">
+                                    <span class="input-label">Web-site</span>
+                                    <input name="site" value="" class="formData" placeholder="http://mysite.com" maxlength="64">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Site.</p>
+                            <p class="hint">Please, enter the Place Site, example: <em>http://mysite.com</em>.</p>
                         </div>
 
                         <div class="control-box">
@@ -203,6 +203,9 @@
 
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
+
+        /* fields validator */
+        validationOnFly();
 
         /* specialities accordion */
         $('#place_specialties').on('click', '.sgroup-title', function(){
@@ -394,6 +397,16 @@
                 $place_retailtype.addClass('invalid').find('input').eq(0).focus();
                 res = false;
             }
+            let $place_site = $('[name="site"]');
+            if ($place_site.parents('p').hasClass('invalid')) {
+                $place_site.focus();
+                res = false;
+            }
+            let $place_phone = $('[name="phone"]');
+            if ($place_phone.parents('p').hasClass('invalid')) {
+                $place_phone.focus();
+                res = false;
+            }
             let $place_name = $('[name="name"]');
             if ($place_name.val().length < 3) {
                 $place_name.focus().parents('.control-text').addClass('invalid');
@@ -491,6 +504,27 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function validationOnFly(){
+            /* phone validator */
+            document.getElementsByName('phone')[0].addEventListener('input', function(){
+                let p = this.parentElement.parentElement;
+                p.classList.remove('invalid');
+                let val = this.value.trim();
+                val.replace(/[^0-9+]/, '');
+                if (val[0] !== '+') val = '+' + val;
+                this.value = val;
+                if (!/^\+[0-9]{10,15}$/.test(val)) p.classList.add('invalid');
+            });
+            /* website validator */
+            document.getElementsByName('site')[0].addEventListener('input', function(){
+                let p = this.parentElement.parentElement;
+                p.classList.remove('invalid');
+                let val = this.value.trim();
+                this.value = val;
+                if (!/^https?:\/\/$/.test(val)) p.classList.add('invalid');
+            });
         }
 
     </script>
