@@ -14,7 +14,6 @@ function imageUploader(selector){
 		if (box.dataset.cropratio) img.dataset.cropratio = box.dataset.cropratio;
 		if (box.dataset.circle) img.dataset.cropratio = box.dataset.circle;
 
-
 		let attr = { type: 'file', name };
 		if (maxSize) attr['data-maxsize'] = maxSize;
 		let inputFile = createElement('input', box, attr);
