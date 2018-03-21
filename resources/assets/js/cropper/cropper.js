@@ -22,6 +22,7 @@ function imageCropperInit(img){
 	let Cropper = document.createElement('span');
 	Cropper.classList.add('image-cropper');
 	let html = '<span class="crop-area">';
+	if (img.dataset.circle) html += '<span class="circle"></span>';
 	html += '<span class="move-area"></span>';
 	let cropRatio = _getCropRatio(img);
 	let directions = ['nw', 'ne', 'sw', 'se'];
@@ -118,8 +119,8 @@ function imageCropperCrop(img, newImg){
 	let ctx1 = canvas1.getContext('2d');
 	let ctx2 = canvas2.getContext('2d');
 	ctx1.drawImage(img, 0, 0);
-    ctx2.putImageData(ctx1.getImageData(left, top, width, height), 0, 0);
-    if (!newImg) newImg = document.createElement('img');
+	ctx2.putImageData(ctx1.getImageData(left, top, width, height), 0, 0);
+	if (!newImg) newImg = document.createElement('img');
 	newImg.setAttribute('src', canvas2.toDataURL("image/jpeg", 0.8));
 	return newImg;
 }
@@ -146,7 +147,7 @@ function _setShadePositions(Cropper){
 
 function _cropperMoveStart(e){
 	window.Cropper = this.parentElement.parentElement;
-	window.Cropper.addEventListener('mousemove', _cropperMove);
+	window.addEventListener('mousemove', _cropperMove);
 	window.addEventListener('mouseup', _cropperMoveEnd);
 	window.CropperInf = { state: 'move' };
 	window.CropperInf.startPoint = { x: e.pageX, y: e.pageY };
@@ -168,7 +169,7 @@ function _cropperMove(e){
 }
 function _cropperMoveEnd(){
 	try {
-		window.Cropper.removeEventListener('mousemove', _cropperMove);
+		window.removeEventListener('mousemove', _cropperMove);
 		window.removeEventListener('mouseup', _cropperMoveEnd);
 	} catch (e) { /*console.dir(e);*/ }
 	window.Cropper = null;
@@ -177,7 +178,7 @@ function _cropperMoveEnd(){
 
 function _cropperCropStart(e){
 	window.Cropper = this.parentElement.parentElement;
-	window.Cropper.addEventListener('mousemove', _cropperCrop);
+	window.addEventListener('mousemove', _cropperCrop);
 	window.addEventListener('mouseup', _cropperCropEnd);
 	window.CropperInf = { state: 'crop' };
 	window.CropperInf.startPoint = { x: e.pageX, y: e.pageY };
@@ -280,7 +281,7 @@ function _cropperCrop(e){
 function _cropperCropEnd(){
 	try {
 		window.removeEventListener('mousemove', _cropperCrop);
-		window.Cropper.removeEventListener('mouseup', _cropperCropEnd);
+		window.removeEventListener('mouseup', _cropperCropEnd);
 	} catch (e) { /*console.dir(e);*/ }
 	window.Cropper = null;
 	window.CropperInf = null;

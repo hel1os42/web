@@ -149,7 +149,7 @@
         $userpic_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
-            $userpic_image_box.find('.image').attr('data-cropratio', '1');
+            $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
