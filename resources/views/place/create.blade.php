@@ -229,7 +229,7 @@
         $logo_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Logo changed');
-            $logo_image_box.find('.image').attr('data-cropratio', '1');
+            $logo_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $logo_image_box.find('.image').on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
