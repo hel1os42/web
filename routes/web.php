@@ -265,8 +265,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('places.offers.show');
     $router->post('places/{uuid}/picture', 'Place\PictureController@storePicture')->name('places.picture.store');
     $router->post('places/{uuid}/cover', 'Place\PictureController@storeCover')->name('places.cover.store');
-    $router->get('places/{uuid}/redemptions', 'PlaceController@showPlaceRedemptions')
-        ->where('uuid','[a-z0-9-]+')
+    $router->get('places/{place}/redemptions', 'PlaceController@showPlaceRedemptions')
         ->name('places.list.redemptions');
 
 

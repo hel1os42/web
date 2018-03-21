@@ -3,9 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\NauModels\Redemption;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
-use App\Models\User;
 
 /**
  * Class RedemptionRepository
@@ -19,4 +18,11 @@ interface RedemptionRepository extends RepositoryInterface
      * @return string
      */
     public function model(): string;
+
+    /**
+     * @param array $offersId
+     *
+     * @return Collection
+     */
+    public function findForOffers(array $offersId): Collection;
 }

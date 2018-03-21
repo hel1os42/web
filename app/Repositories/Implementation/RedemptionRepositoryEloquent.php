@@ -4,6 +4,7 @@ namespace App\Repositories\Implementation;
 
 use App\Models\NauModels\Redemption;
 use App\Repositories\RedemptionRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 
@@ -31,5 +32,20 @@ class RedemptionRepositoryEloquent extends BaseRepository implements RedemptionR
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    /**
+     * @param array $offersId
+     *
+     * @return Collection
+     */
+    public function findForOffers(array $offersId): Collection
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->whereIn('offer_id', $offersId)->get();
+        $this->resetModel();
+
+        return $this->parserResult($model);
     }
 }

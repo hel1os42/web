@@ -42,7 +42,7 @@ class RedemptionController extends Controller
     {
         $placeUuid = $this->user()->place->id;
 
-        return \response()->redirectTo(route('places.list.redemptions', [$placeUuid]));
+        return \response()->redirectTo(route('places.list.redemptions', $placeUuid));
     }
 
     /**

@@ -13,6 +13,7 @@ use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Place;
 
 /**
  * Class PlaceController
@@ -126,15 +127,13 @@ class PlaceController extends Controller
      *
      * @return Response
      */
-    public function showPlaceRedemptions(string $uuid,
-        PlaceRepository $placesRepository,
+    public function showPlaceRedemptions(Place $place,
         RedemptionRepository $redemptionRepository
     ): Response
     {
-        $place = $placesRepository->find($uuid);
         $this->authorize('places.redemptions.list', $place);
-        $offers      = $place->offers()->pluck('id')->toArray();
-        $redemptions = $redemptionRepository->findWhereIn('user_id', $offers);
+        $offersId    = $place->offers()->pluck('id')->toArray();
+        $redemptions = $redemptionRepository->findForOffers($offersId);
 
         return \response()->render('place.redemptions', ['data' => $redemptions]);
     }
