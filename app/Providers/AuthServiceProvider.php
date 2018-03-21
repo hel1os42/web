@@ -66,12 +66,13 @@ class AuthServiceProvider extends ServiceProvider
 
         'offers.picture.store.byOfferData' => 'OfferPolicy@pictureStoreByOfferData',
 
-        'places.list'          => 'PlacePolicy@index',
-        'places.show'          => 'PlacePolicy@show',
-        'places.offers.list'   => 'PlacePolicy@showOffers',
-        'places.create'        => 'PlacePolicy@create',
-        'places.update'        => 'PlacePolicy@update',
-        'places.picture.store' => 'PlacePolicy@pictureStore',
+        'places.list'             => 'PlacePolicy@index',
+        'places.show'             => 'PlacePolicy@show',
+        'places.offers.list'      => 'PlacePolicy@showOffers',
+        'places.create'           => 'PlacePolicy@create',
+        'places.update'           => 'PlacePolicy@update',
+        'places.picture.store'    => 'PlacePolicy@pictureStore',
+        'places.redemptions.list' => 'PlacePolicy@redemptionsIndex',
 
         'places.testimonials.list'   => 'TestimonialPolicy@index',
         'places.testimonials.create' => 'TestimonialPolicy@create',

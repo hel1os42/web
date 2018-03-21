@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -25,27 +26,23 @@ class RedemptionController extends Controller
 
     public function __construct(
         OfferRepository $offerRepository,
-        RedemptionRepository $redemptionRepository,
         AuthManager $auth
     ) {
-        $this->offerRepository      = $offerRepository;
-        $this->redemptionRepository = $redemptionRepository;
+        $this->offerRepository = $offerRepository;
 
         parent::__construct($auth);
     }
 
     /**
-     * Method index of redemptions for User
+     * Method index redirect to redemptions for User
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function index ()
     {
-        $this->authorize('offers.redemption');
+        $placeUuid = $this->user()->place->id;
 
-        $redemptions = $this->redemptionRepository->queryByUser($this->user());
-
-        return \response()->render('redemption.index', $redemptions->paginate());
+        return \response()->redirectTo(route('places.list.redemptions', [$placeUuid]));
     }
 
     /**
@@ -215,7 +212,7 @@ class RedemptionController extends Controller
                           ->make(['offerId' => $offerId],
                               [
                                   'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
-                                      \App\Helpers\Constants::UUID_REGEX)
+                                      Constants::UUID_REGEX)
                               ]);
 
         if ($validator->fails()) {

@@ -19,10 +19,4 @@ interface RedemptionRepository extends RepositoryInterface
      * @return string
      */
     public function model(): string;
-
-    /**
-     * @param User $user
-     * @return Builder
-     */
-    public function queryByUser(User $user);
 }

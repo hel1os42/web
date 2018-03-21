@@ -3,11 +3,9 @@
 namespace App\Repositories\Implementation;
 
 use App\Models\NauModels\Redemption;
-use App\Models\User;
 use App\Repositories\RedemptionRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class RedemptionRepositoryEloquent
@@ -33,20 +31,5 @@ class RedemptionRepositoryEloquent extends BaseRepository implements RedemptionR
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return Builder
-     */
-    public function queryByUser(User $user): Builder
-    {
-        $this->applyCriteria();
-        $this->applyScope();
-        $model = $this->model->byUser($user);
-        $this->resetModel();
-
-        return $this->parserResult($model);
     }
 }

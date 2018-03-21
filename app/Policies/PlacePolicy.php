@@ -75,4 +75,17 @@ class PlacePolicy extends Policy
                || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
                || ($user->isAdvertiser() && $user->equals($place->user));
     }
+
+    /**
+     * @param User  $user
+     * @param Place $place
+     *
+     * @return bool
+     */
+    public function redemptionsIndex(User $user, Place $place): bool
+    {
+        return $user->isAdmin()
+            || (($user->isAgent() || $user->isChiefAdvertiser()) && $user->hasChild($place->user))
+            || ($user->isAdvertiser() && $user->equals($place->user));
+    }
 }

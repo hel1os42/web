@@ -7,6 +7,7 @@ use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
+use App\Repositories\RedemptionRepository;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -116,6 +117,26 @@ class PlaceController extends Controller
         $offers->data = $offerRepository->parserResult($offers);
 
         return \response()->render('user.offer.index', $offers);
+    }
+
+    /**
+     * @param string               $uuid
+     * @param PlaceRepository      $placesRepository
+     * @param RedemptionRepository $redemptionRepository
+     *
+     * @return Response
+     */
+    public function showPlaceRedemptions(string $uuid,
+        PlaceRepository $placesRepository,
+        RedemptionRepository $redemptionRepository
+    ): Response
+    {
+        $place = $placesRepository->find($uuid);
+        $this->authorize('places.redemptions.list', $place);
+        $offers      = $place->offers()->pluck('id')->toArray();
+        $redemptions = $redemptionRepository->findWhereIn('user_id', $offers);
+
+        return \response()->render('place.redemptions', ['data' => $redemptions]);
     }
 
     /**
