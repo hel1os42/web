@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
-use App\Models\User\FavoritePlaces;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -192,22 +191,6 @@ class Place extends Model
     public function getStars(): int
     {
         return $this->stars;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getSite(): ?string
-    {
-        return $this->site;
     }
 
     public function getActiveOffersCountAttribute(): int
