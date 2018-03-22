@@ -77,7 +77,7 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Web-ite</span>
+                                    <span class="input-label">Web-site</span>
                                     <input name="site" value="{{ $site }}" class="formData" maxlength="64">
                                 </label>
                             </p>
@@ -597,7 +597,7 @@
                 p.classList.remove('invalid');
                 let val = this.value.trim();
                 this.value = val;
-                if (val.length && !/^https?:\/\/$/.test(val)) p.classList.add('invalid');
+                if (val.length && !/^https?:\/\/.{3,}$/.test(val)) p.classList.add('invalid');
             });
         }
 
