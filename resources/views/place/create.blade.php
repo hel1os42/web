@@ -43,26 +43,6 @@
                             <p class="hint">Please, enter the information About Place.</p>
                         </div>
 
-                        <!--<div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">Phone</span>
-                                    <input name="phone" value="" class="formData">
-                                </label>
-                            </p>
-                            <p class="hint">Please, enter the phone.</p>
-                        </div>
-
-                        <div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">Web-site</span>
-                                    <input name="website" value="" class="formData">
-                                </label>
-                            </p>
-                            <p class="hint">Please, enter the web-site.</p>
-                        </div>-->
-
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
@@ -87,20 +67,20 @@
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Phone</span>
-                                    <input name="phone" value="" class="formData" placeholder="+1234567890" maxlength="16">
+                                    <input name="phone" value="" class="formData" maxlength="16">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Phone, example: <em>+1234567890</em>.</p>
+                            <p class="hint">Please, enter the Place phone, example: <em>+1234567890</em>, 10-15 digits.</p>
                         </div>
 
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
                                     <span class="input-label">Web-site</span>
-                                    <input name="site" value="" class="formData" placeholder="http://mysite.com" maxlength="64">
+                                    <input name="site" value="" class="formData" maxlength="64">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Site, example: <em>http://mysite.com</em>.</p>
+                            <p class="hint">Please, enter the Place site, example: <em>http://mysite.com</em>.</p>
                         </div>
 
                         <div class="control-box">
@@ -542,10 +522,10 @@
                 let p = this.parentElement.parentElement;
                 p.classList.remove('invalid');
                 let val = this.value.trim();
-                val.replace(/[^0-9+]/, '');
-                if (val[0] !== '+') val = '+' + val;
+                val = val.replace(/[^0-9+]/, '');
+                if (val.length && val[0] !== '+') val = '+' + val;
                 this.value = val;
-                if (!/^\+[0-9]{10,15}$/.test(val)) p.classList.add('invalid');
+                if (val.length && !/^\+[0-9]{10,15}$/.test(val)) p.classList.add('invalid');
             });
             /* website validator */
             document.getElementsByName('site')[0].addEventListener('input', function(){
@@ -553,7 +533,7 @@
                 p.classList.remove('invalid');
                 let val = this.value.trim();
                 this.value = val;
-                if (!/^https?:\/\/$/.test(val)) p.classList.add('invalid');
+                if (val.length && !/^https?:\/\/$/.test(val)) p.classList.add('invalid');
             });
         }
 
