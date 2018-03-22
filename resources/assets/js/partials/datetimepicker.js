@@ -10,9 +10,7 @@ $(window).on('keyup', function(e){
 		let $picker = $('.picker');
 		if ($picker.is('#timepicker')) {
 			let t = $picker.find('.controls strong').text();
-			if (/^\d\d:__$/.test(t)) {
-				$($picker.get(0).parentInput).val(t.replace(/_/g, '0')).trigger('change');
-			}
+			if (/^\d\d:__$/.test(t)) $($picker.get(0).parentInput).val(t.replace(/_/g, '0')).trigger('change');
 		}
 		$picker.remove();
 	}
