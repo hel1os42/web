@@ -181,6 +181,8 @@ div.dataTables_wrapper div.dataTables_filter input {
     font-size: 70%;
 }
 .dataTable tr.shown + tr .offer-picture {
+    display: block;
     max-width: 100%;
     max-height: 120px;
+    background: url(/img/loading.gif) no-repeat left center;
 }

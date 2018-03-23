@@ -9,6 +9,7 @@
         function imgError(image) {
             image.onerror = "";
             image.src = "/img/imagenotfound.svg";
+            image.style.backgroundImage = 'none';
             return true;
         }
     </script>
@@ -19,7 +20,7 @@
         <div class="col-sm-12 dashboard-advert-header" style="background-image: url({{ $coverUrl }});">
             <div class="offer-logo col-sm-3">
                 @if( $place instanceof \App\Models\Place)
-                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture'])}}" onerror="imgError(this)" style="position: absolute;"><br>
+                    <img src="{{ route('places.picture.show', [$place->getKey(), 'picture']) }}?size=desktop" onerror="imgError(this)" style="position: absolute;"><br>
                 @endif
             </div>
             <div class="advert-header-wrap">
@@ -112,7 +113,7 @@
                                     {{ $counter++ }}
                                     <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
                                 </td>
-                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
+                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}?size=desktop" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
                                 <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert finish-date">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
@@ -127,7 +128,7 @@
                                                 <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9 category-id" data-fix-category="true" data-uuid="{{ $offer['category_id'] }}">{{ $offer['category_id'] }}</span></p>
                                             </div>
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
+                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="" data-src="{{ $offer['picture_url'] }}?size=mobile" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
                                             </div>
                                         </div>
                                         <div class="row set">
@@ -252,6 +253,9 @@
                 let dt_table = $table.on('init.dt', function(){
                         $('.data-loading').hide();
                         $(this).animate({'opacity': "1"}, 400);
+                        $('.offer-picture').each(function(){
+                            $(this).css('background-image', 'none').attr('src', $(this).attr('data-src'));
+                        });
                     })
                     .DataTable({
                         "bPaginate": false,
