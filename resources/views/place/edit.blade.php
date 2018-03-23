@@ -597,7 +597,7 @@
                 p.classList.remove('invalid');
                 let val = this.value.trim();
                 this.value = val;
-                if (val.length && !/^https?:\/\/.{3,}$/.test(val)) p.classList.add('invalid');
+                if (val.length && !/^https?:\/\/.+\..{2,}$/.test(val)) p.classList.add('invalid');
             });
         }
 
