@@ -254,7 +254,7 @@
                         $('.data-loading').hide();
                         $(this).animate({'opacity': "1"}, 400);
                         $('.offer-picture').each(function(){
-                            $(this).css('background-image', 'none').attr('src', $(this).attr('data-src'));
+                            $(this).attr('src', $(this).attr('data-src'));
                         });
                     })
                     .DataTable({
