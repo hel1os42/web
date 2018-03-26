@@ -77,6 +77,8 @@ class CreateUpdateRequest extends FormRequest
             'specialities.*.retail_type' => 'string|exists:specialities,retail_type_id',
             'specialities.*.specs'       => 'array',
             'specialities.*.specs.*'     => 'string|exists:specialities,slug',
+            'phone'                      => 'nullable|regex:/\+[0-9]{10,15}/',
+            'site'                       => 'nullable|url',
         ];
     }
 }
