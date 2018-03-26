@@ -52,6 +52,7 @@ class AuthServiceProvider extends ServiceProvider
         'operators.update' => 'OperatorPolicy@update',
 
         'offer_links.index'  => 'OfferLinkPolicy@index',
+        'offer_links.show'   => 'OfferLinkPolicy@show',
         'offer_links.create' => 'OfferLinkPolicy@create',
         'offer_links.update' => 'OfferLinkPolicy@update',
         'offer_links.delete' => 'OfferLinkPolicy@delete',
@@ -98,6 +99,7 @@ class AuthServiceProvider extends ServiceProvider
         'user.update.parents'     => 'UserPolicy@updateParents',
         'user.update.roles'       => 'UserPolicy@updateRoles',
         'impersonate'             => 'UserPolicy@impersonate',
+        'users.relink'            => 'UserPolicy@relink',
 
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',

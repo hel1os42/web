@@ -25,6 +25,21 @@ class OfferLinkPolicy
     }
 
     /**
+     * Determine whether the user can view the offerLink.
+     *
+     * @param User $user
+     * @param OfferLink $offerLink
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @return bool
+     */
+    public function show(User $user, OfferLink $offerLink)
+    {
+        return true;
+    }
+
+    /**
      * Determine whether the user can create offerLinks.
      *
      * @param User $user
