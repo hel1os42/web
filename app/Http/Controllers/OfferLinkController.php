@@ -85,8 +85,6 @@ class OfferLinkController extends Controller
         $place     = $this->findPlace($placeUuid);
         $offerLink = $this->findOfferLink($place, $identifier);
 
-        $this->authorize('offer_links.show', $offerLink);
-
         return \response()->render('offer_links.show', $offerLink->toArray());
     }
 
