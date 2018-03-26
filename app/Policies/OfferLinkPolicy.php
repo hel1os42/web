@@ -34,7 +34,7 @@ class OfferLinkPolicy
      */
     public function show(User $user, OfferLink $offerLink)
     {
-        return $this->isAllowed($user, $offerLink->place->user);
+        return true;
     }
 
     /**
