@@ -7,10 +7,10 @@
             <div class="card card-user">
                 <div class="author">
                     @if (file_exists(public_path('../storage/app/images/profile/pictures/' . $id . '.jpg')))
-                        <img class="img avatar" src="{{ route('users.picture.show', [$id]) }}">
+                        <img class="img avatar" src="{{ route('users.picture.show', [$id]) }}?size=desktop">
                     @else
                         <a href="#">
-                            <img class="img avatar" src="{{ asset('img/avatar.png') }}">
+                            <img class="img avatar" src="{{ asset('img/avatar.png') }}?size=desktop">
                         </a>
                     @endif
                 </div>
