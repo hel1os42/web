@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Class Timeframes
  * @package App\Models
+ *
+ * @property int       $days
+ * @property \DateTime $from
+ * @property \DateTime $to
  */
 class Timeframe extends Model
 {

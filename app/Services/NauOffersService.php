@@ -7,8 +7,11 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use App\Models\Timeframe;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use Carbon\Carbon;
+use Faker\Provider\DateTime;
 use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -114,5 +117,40 @@ class NauOffersService implements OffersService
         $activationCode->redemption()->associate($redemption)->update();
 
         return $redemption;
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     */
+    public function isActiveNowByWorkTime(Offer $offer): bool
+    {
+        $timezone = $offer->account->owner->place->timezone;
+        /**
+         * @var WeekDaysService $weekDaysService
+         */
+        $weekDaysService = app(WeekDaysService::class);
+        $currentDate = Carbon::now($timezone);
+        $currentDayOfWeek = $currentDate->format('N');
+        $currentTime = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
+
+        /**
+         * @var Timeframe $timeframe
+         */
+        foreach ($offer->timeframes as $timeframe) {
+            $daysOfWeek = $weekDaysService->daysToWeekDays($timeframe->days, true);
+            foreach ($daysOfWeek as $dayOfWeek) {
+                if($dayOfWeek == $currentDayOfWeek) {
+                    $timeframefrom = Carbon::createFromTimeString($timeframe->from, new \DateTimeZone('UTC'))->setTimezone($timezone);
+                    $timeframeTo = Carbon::createFromTimeString($timeframe->to, new \DateTimeZone('UTC'))->setTimezone($timezone);
+                    if($timeframefrom <= $currentTime && $timeframeTo >= $currentTime) {
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 }

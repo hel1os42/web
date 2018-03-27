@@ -75,6 +75,18 @@ class AppServiceProvider extends ServiceProvider
 
         $this->setUserViewsData();
 
+        Validator::extend('isTimezone', function ($attribute, $value, $parameters, $validator) {
+            try
+            {
+                new \DateTimeZone($value);
+            }
+            catch (\Exception $e)
+            {
+                return false;
+            }
+
+            return true;
+        });
 
         Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
             $count = \DB::table('tags')->where('id', '<>', $parameters[1])

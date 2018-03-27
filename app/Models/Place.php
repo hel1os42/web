@@ -25,6 +25,7 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property string                       alias
  * @property float                        latitude
  * @property float                        longitude
+ * @property string                       timezone
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
@@ -93,6 +94,7 @@ class Place extends Model
             'latitude',
             'longitude',
             'radius',
+            'timezone',
         ];
 
         $this->attributes = [
