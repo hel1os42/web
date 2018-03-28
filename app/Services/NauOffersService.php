@@ -7,11 +7,9 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
-use App\Models\Timeframe;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
 use Carbon\Carbon;
-use Faker\Provider\DateTime;
 use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -19,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 /**
  * Class NauOffersService
  * NS: App\Services
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NauOffersService implements OffersService
 {
@@ -29,8 +29,11 @@ class NauOffersService implements OffersService
      */
     private $gate;
 
-    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository, Gate $gate)
-    {
+    public function __construct(
+        ActivationCodeRepository $activationCodeRepository,
+        OfferRepository $offerRepository,
+        Gate $gate
+    ) {
         $this->activationCodeRepository = $activationCodeRepository;
         $this->offerRepository          = $offerRepository;
         $this->gate                     = $gate;
@@ -130,27 +133,31 @@ class NauOffersService implements OffersService
         /**
          * @var WeekDaysService $weekDaysService
          */
-        $weekDaysService = app(WeekDaysService::class);
-        $currentDate = Carbon::now($timezone);
+        $weekDaysService  = app(WeekDaysService::class);
+        $currentDate      = Carbon::now($timezone);
         $currentDayOfWeek = $currentDate->format('N');
-        $currentTime = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
+        $currentTime      = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
 
         /**
-         * @var Timeframe $timeframe
+         * @var \App\Models\Timeframe $timeframe
          */
         foreach ($offer->timeframes as $timeframe) {
             $daysOfWeek = $weekDaysService->daysToWeekDays($timeframe->days, true);
             foreach ($daysOfWeek as $dayOfWeek) {
-                if($dayOfWeek == $currentDayOfWeek) {
-                    $timeframefrom = Carbon::createFromTimeString($timeframe->from, new \DateTimeZone('UTC'))->setTimezone($timezone);
-                    $timeframeTo = Carbon::createFromTimeString($timeframe->to, new \DateTimeZone('UTC'))->setTimezone($timezone);
-                    if($timeframefrom <= $currentTime && $timeframeTo >= $currentTime) {
-                        return true;
-                    }
+                if ($dayOfWeek == $currentDayOfWeek
+                    && $this->getUtcTimeStringAndSetTimezone($timeframe->from, $timezone) <= $currentTime
+                    && $this->getUtcTimeStringAndSetTimezone($timeframe->to, $timezone) >= $currentTime) {
+                    return true;
                 }
             }
-
         }
+
         return false;
+    }
+
+    private function getUtcTimeStringAndSetTimezone(string $timeString, $timezone)
+    {
+        return Carbon::createFromTimeString($timeString,
+            new \DateTimeZone('UTC'))->setTimezone($timezone);
     }
 }

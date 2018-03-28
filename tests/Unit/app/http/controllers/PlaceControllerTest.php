@@ -570,7 +570,8 @@ class PlaceControllerTest extends TestCase
             'alias'       => $this->faker->uuid,
             'latitude'    => $this->faker->latitude,
             'longitude'   => $this->faker->longitude,
-            'radius'      => $this->faker->randomNumber()
+            'radius'      => $this->faker->randomNumber(),
+            'timezone'    => 'UTC',
         ];
 
         if ($withCategories) {
@@ -633,6 +634,7 @@ class PlaceControllerTest extends TestCase
                     'specialities.*.specs.*'     => null,
                     'tags'                       => null,
                     'tags.*'                     => null,
+                    'timezone'                   => null,
                 ]
             ],
         ];
