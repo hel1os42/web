@@ -43,6 +43,7 @@ $( document ).ready( function() {
             },
             error:      function( data ) {
                 if (401 === resp.status) UnAuthorized();
+                else if (0 === resp.status) AdBlockNotification();
                 else {
                     modalBody.hide();
                     resultBody.show();
@@ -70,8 +71,9 @@ function srvRequest(url, method, respType, callback){
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 401) UnAuthorized();
-            else if (xhr.status === 200) { callback(xhr.response); }
-            else if (xhr.status === 400) { console.log('Error 400'); }
+            else if (xhr.status === 0) AdBlockNotification();
+            else if (xhr.status === 200) callback(xhr.response);
+            else if (xhr.status === 400) console.log('Error 400 - bad request');
             else { console.log('Something else other than 200 was returned'); }
         }
     };
@@ -100,6 +102,11 @@ function UnAuthorized(s){
     if (!s) s = 'You are not authorized.';
     alert(s);
     location.reload();
+}
+
+function AdBlockNotification(s){
+    if (!s) s = 'Please disable Adblock to work with NAU cabinet.';
+    alert(s);
 }
 
 function pagenavyCompact(pagenavy){

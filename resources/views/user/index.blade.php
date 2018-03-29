@@ -184,6 +184,7 @@
                 },
                 error: function(resp){
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else {
                         $err.text('err-st: ' + resp.status);
                         console.dir(resp);

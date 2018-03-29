@@ -73,7 +73,7 @@
 
         <div class="tab-content">
 
-            <div id="tab_your_offers" class="tab-pane fade in active">
+            <div id="tab_your_offers" class="tab-pane fade in active" data-token="{{ csrf_token() }}" data-links-url="{{ route('places.offer_links.index', auth()->user()->place->id) }}">
                 <img class="data-loading" src="{{ asset('img/loading.gif') }}" alt="wait..." style="display:block; margin: 0 auto;">
 
                 <table id="table_your_offers" class="display" style="opacity:0;">
@@ -123,7 +123,7 @@
                                     <div>
                                         <div class="row set">
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-3">Description:</span> <span class="col-xs-9">{{ $offer['description'] }}</span></p>
+                                                <p class="row"><span class="title col-xs-3">Description:</span> <span class="col-xs-9 offer-description">{{ $offer['description'] }}</span></p>
                                                 <p class="row"><span class="title col-xs-3">Location:</span> <span class="col-xs-9">{{ $offer['country'] }}, {{ $offer['city'] }} (radius: {{ $offer['radius'] / 1000 }} km)<br>{{ $offer['latitude'] }}, {{ $offer['longitude'] }}</span></p>
                                                 <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9 category-id" data-fix-category="true" data-uuid="{{ $offer['category_id'] }}">{{ $offer['category_id'] }}</span></p>
                                             </div>
@@ -223,6 +223,7 @@
 @push('scripts')
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/partials/offer-more-show.js') }}"></script>
     <script>
 
         /* dataTable */
@@ -245,6 +246,9 @@
 
         /* delete offer with ajax */
         btnDeleteOffer();
+
+        /* offer description links */
+        offerMoreShow();
 
         function dataTableCreate(selector){
             let $table = $(selector);
@@ -382,6 +386,7 @@
                     },
                     error: function(resp){
                         if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
                         else {
                             setNauBalance($nau_balance, -deltaNau);
                             disableButtonActivate();
@@ -440,30 +445,27 @@
 
         function btnDeleteOffer(){
             document.querySelector('#table_your_offers').addEventListener('click', function(e){
-               if (e.target.classList.contains('offer-delete-button')) {
-                   let url = e.target.dataset.action;
-                   let xhr = new XMLHttpRequest();
-                   xhr.onreadystatechange = function() {
-                       if (xhr.readyState === XMLHttpRequest.DONE) {
-                           if (xhr.status === 401) UnAuthorized();
-                           else if (xhr.status === 204) {
-                               alert('Offer was deleted.');
-                               location.reload();
-                           } else if (xhr.status === 404) {
-                               alert('Offer not found.');
-                           } else if (xhr.status === 422) {
-                               alert(xhr.responseText);
-                           } else {
-                               alert('Something wrong, error ' + xhr.status + ' (see console).');
-                           }
-                       }
-                   };
-                   xhr.open('POST', url, true);
-                   let data = new FormData();
-                   data.append('_token', '{{ csrf_token() }}');
-                   data.append('_method', 'DELETE');
-                   xhr.send(data);
-               }
+                if (e.target.classList.contains('offer-delete-button')) {
+                    let url = e.target.dataset.action;
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 401) UnAuthorized();
+                            else if (xhr.status === 0) AdBlockNotification();
+                            else if (xhr.status === 204) {
+                                alert('Offer was deleted.');
+                                location.reload();
+                            } else if (xhr.status === 404) alert('Offer not found.');
+                            else if (xhr.status === 422) alert(xhr.responseText);
+                            else alert('Something wrong, error ' + xhr.status + ' (see console).');
+                        }
+                    };
+                    xhr.open('POST', url, true);
+                    let data = new FormData();
+                    data.append('_token', '{{ csrf_token() }}');
+                    data.append('_method', 'DELETE');
+                    xhr.send(data);
+                }
             });
         }
 

@@ -150,6 +150,7 @@ function offerMoreInit(id, text){
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 item.classList.remove('wait');
                 if (xhr.status === 401) UnAuthorized();
+                else if (xhr.status === 0) AdBlockNotification();
                 else if (xhr.status === 200) {
                     if (!editorInput) item.classList.add('can-edit');
                     if (editorInput) item.querySelector('.btn-close-item').style.display = '';
@@ -196,6 +197,7 @@ function offerMoreInit(id, text){
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     item.classList.remove('wait');
                     if (xhr.status === 401) UnAuthorized();
+                    else if (xhr.status === 0) AdBlockNotification();
                     else if (xhr.status === 204) {
                         $(item).slideUp(function(){
                             item.parentElement.removeChild(item);
@@ -294,6 +296,7 @@ function offerMoreInit(id, text){
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 401) UnAuthorized();
+                else if (xhr.status === 0) AdBlockNotification();
                 else if (xhr.status === 200) {
                     console.dir(xhr.response.data);
                     xhr.response.data.forEach(function(json){ addItem(json); });
