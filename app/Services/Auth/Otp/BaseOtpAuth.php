@@ -3,10 +3,18 @@
 namespace App\Services\Auth\Otp;
 
 use App\Jobs\ProcessSendOtpRequest;
+use GuzzleHttp\Client;
 
+/**
+ * Class BaseOtpAuth
+ * @package App\Services\Auth\Otp
+ *
+ * @property Client $client
+ */
 abstract class BaseOtpAuth
 {
     use OtpAuthTrait, OtpHttpTrait;
+
     /**
      * @var Client
      */
@@ -39,7 +47,6 @@ abstract class BaseOtpAuth
      * @param string $phoneNumber
      */
     abstract protected function codeGenerate(string $phoneNumber): void;
-
 
 
     protected function createSendOtpRequestJob(
