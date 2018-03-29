@@ -119,13 +119,14 @@ abstract class AbstractPictureController extends Controller
         $path = $this->picturePathFor($identity);
 
         if ($this->filesystem->exists($path)) {
-            $picture      = $this->imageManager
+            $picture = $this->imageManager
                 ->make(storage_path('app/' . $path))
                 ->resize($this->pictureWidth, $this->pictureHeight, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 })
                 ->encode();
+
             $cacheControl = (int)config('nau.image_cache_control');
             $cacheControl = $cacheControl == 0 ? 'no-cache' : 'max-age=' . $cacheControl;
 
