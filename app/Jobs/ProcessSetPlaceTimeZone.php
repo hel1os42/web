@@ -49,6 +49,7 @@ class ProcessSetPlaceTimeZone implements ShouldQueue
          * @var TimezoneDbService
          */
         $timezoneService = app($this->timezoneServiceClass);
+
         try {
             $timezone = $timezoneService->getTimezoneByLocation($this->place->latitude, $this->place->longitude);
         } catch (Exception $exception) {
