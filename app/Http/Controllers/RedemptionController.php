@@ -234,7 +234,7 @@ class RedemptionController extends Controller
         $offerService = app(OffersService::class);
 
         if (!$offerService->isActiveNowByWorkTime($offer)) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
+            throw new HttpException(Response::HTTP_FORBIDDEN, 'Offer is currently unavailable.');
         }
     }
 }

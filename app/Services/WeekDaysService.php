@@ -56,10 +56,11 @@ interface WeekDaysService
 
     /**
      * @param array $weekDays
+     * @param bool  $numeric
      *
      * @return int
      */
-    public function weekDaysToDays(array $weekDays): int;
+    public function weekDaysToDays(array $weekDays, bool $numeric = false): int;
 
     /**
      * @param int  $days

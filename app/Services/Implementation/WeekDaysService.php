@@ -33,13 +33,14 @@ class WeekDaysService implements WeekDaysServiceInterface
 
     /**
      * @param array $weekDays
+     * @param bool  $numeric
      *
      * @return int
      */
-    public function weekDaysToDays(array $weekDays): int
+    public function weekDaysToDays(array $weekDays, bool $numeric = false): int
     {
         $days     = 0;
-        $backlist = array_flip(self::LIST);
+        $backlist = array_flip($numeric ? self::LIST_NUMERIC : self::LIST);
         foreach ($weekDays as $weekDay) {
             $days = $days | $backlist[$weekDay];
         }

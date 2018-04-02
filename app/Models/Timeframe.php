@@ -6,6 +6,7 @@ use App\Helpers\Constants;
 use App\Models\NauModels\Offer;
 use App\Traits\Uuids;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int       $days
  * @property \DateTime $from
  * @property \DateTime $to
+ * @method Builder|Timeframe byDays(int $days)
+ * @method Builder|Timeframe byOffer(Offer $offer)
  */
 class Timeframe extends Model
 {
@@ -85,5 +88,29 @@ class Timeframe extends Model
         $this->attributes['to'] = Carbon::createFromFormat(Constants::TIME_FORMAT, $toTime)
                                           ->setTimezone('UTC')
                                           ->toTimeString();
+    }
+
+    /**
+     * @param Builder $builder
+     * @param int     $days
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByDays(Builder $builder, int $days): Builder
+    {
+        return $builder->where('days', '&', $days);
+    }
+
+    /**
+     * @param Builder $builder
+     * @param Offer   $offer
+     *
+     * @return Builder
+     * @throws \InvalidArgumentException
+     */
+    public function scopeByOffer(Builder $builder, Offer $offer): Builder
+    {
+        return $builder->where('offer_id', $offer->getId());
     }
 }

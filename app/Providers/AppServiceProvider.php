@@ -20,6 +20,8 @@ use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use App\Services\PlaceService;
+use App\Services\TimezoneDbService;
+use App\Services\Implementation\TimezoneDbService as TimezoneDbServiceImpl;
 use App\Services\WeekDaysService;
 use App\Services\ImageService as ImageServiceInterface;
 use App\Services\Implementation\ImageService;
@@ -125,6 +127,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PlaceService::class,
             PlaceServiceImpl::class
+        );
+
+        $this->app->bind(
+            TimezoneDbService::class,
+            TimezoneDbServiceImpl::class
         );
     }
 

@@ -7,8 +7,10 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use App\Models\Timeframe;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use App\Repositories\TimeframeRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
@@ -133,29 +135,32 @@ class NauOffersService implements OffersService
         /**
          * @var WeekDaysService $weekDaysService
          */
-        $weekDaysService  = app(WeekDaysService::class);
-        $currentDate      = Carbon::now($timezone);
-        $currentDayOfWeek = $currentDate->format('N');
-        $currentTime      = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
-
+        $weekDaysService = app(WeekDaysService::class);
         /**
-         * @var \App\Models\Timeframe $timeframe
+         * @var TimeframeRepository $timeframeRepository
          */
-        foreach ($offer->timeframes as $timeframe) {
-            $daysOfWeek = $weekDaysService->daysToWeekDays($timeframe->days, true);
-            foreach ($daysOfWeek as $dayOfWeek) {
-                if ($dayOfWeek == $currentDayOfWeek
-                    && $this->getUtcTimeStringAndSetTimezone($timeframe->from, $timezone) <= $currentTime
-                    && $this->getUtcTimeStringAndSetTimezone($timeframe->to, $timezone) >= $currentTime) {
-                    return true;
-                }
-            }
+        $timeframeRepository = app(TimeframeRepository::class);
+        $currentDate         = Carbon::now($timezone);
+        $currentTime         = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
+        $timeframe           = $timeframeRepository->findByOfferAndDays($offer,
+            $weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
+
+        if ($timeframe instanceof Timeframe
+            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timezone) <= $currentTime
+            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timezone) >= $currentTime) {
+            return true;
         }
 
         return false;
     }
 
-    private function getUtcTimeStringAndSetTimezone(string $timeString, $timezone)
+    /**
+     * @param string $timeString
+     * @param string $timezone
+     *
+     * @return mixed
+     */
+    private function getTimeWithTimezoneConvertion(string $timeString, string $timezone)
     {
         return Carbon::createFromTimeString($timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
