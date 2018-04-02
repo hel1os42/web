@@ -153,30 +153,8 @@ class AppServiceProvider extends ServiceProvider
                 $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
                 $children          = $editableUserModel->children->toArray();
 
-                if (auth()->user()->isAdmin()) {
-                    $allChildren = \App\Models\User::query()->get();
-                } else {
-                    $allChildren = auth()->user()->children;
-                }
-
-                $allPossibleChildren = [];
-
-
-                if ($editableUserModel->isAgent()) {
-                    $rolesForChildSet = [\App\Models\Role::ROLE_CHIEF_ADVERTISER, \App\Models\Role::ROLE_ADVERTISER];
-                } else {
-                    $rolesForChildSet = [\App\Models\Role::ROLE_ADVERTISER];
-                }
-
-                foreach ($allChildren as $childValue) {
-                    if ($childValue->hasRoles($rolesForChildSet)) {
-                        $allPossibleChildren[] = $childValue->toArray();
-                    }
-                }
-
                 $view->with('roleIds', $roleIds);
                 $view->with('children', $children);
-                $view->with('allPossibleChildren', $allPossibleChildren);
                 $view->with('editableUserModel', $editableUserModel);
             }
         );

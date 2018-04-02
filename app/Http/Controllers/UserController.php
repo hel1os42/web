@@ -362,11 +362,10 @@ class UserController extends Controller
             array_push($with, 'parents');
         }
 
-        if (isset($newUserData['child_ids'])) {
-            $this->authorize('user.update.children', [$user, $newUserData['child_ids']]);
-            $user->children()->sync($newUserData['child_ids'], true);
-            array_push($with, 'parents');
-        }
+        $children = $newUserData['child_ids'] ?? [];
+        $this->authorize('user.update.children', [$user, $children]);
+        $user->children()->sync($children, true);
+        array_push($with, 'parents');
 
         if (!empty($with)) {
             $user->save();

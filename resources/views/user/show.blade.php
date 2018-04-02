@@ -131,6 +131,10 @@
         </div>
     </div>
 
+    @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+        @include('role-partials.children-modal')
+    @endif
+
 @stop
 
 @push('styles')
