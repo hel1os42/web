@@ -76,6 +76,7 @@ class TimeframeRepositoryEloquent extends BaseRepository implements TimeframeRep
     public function replaceManyForOffer(array $timeframes, Offer $offer): Collection
     {
         $offer->timeframes()->delete();
+
         return $this->createManyForOffer($timeframes, $offer);
     }
 
@@ -93,7 +94,7 @@ class TimeframeRepositoryEloquent extends BaseRepository implements TimeframeRep
         /**
          * @var Timeframe $model
          */
-        $model = $this->model;
+        $model  = $this->model;
         $result = $model->byOffer($offer)->byDays($days)->first();
 
         $this->resetModel();
