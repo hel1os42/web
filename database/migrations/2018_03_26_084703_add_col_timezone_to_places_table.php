@@ -20,7 +20,7 @@ class AddColTimezoneToPlacesTable extends Migration
         $places = DB::table('places')->get();
 
         foreach ($places as $place) {
-            ProcessSetPlaceTimeZone::dispatch(\App\Services\TimezoneDbService::class, $place)->delay(1);
+            ProcessSetPlaceTimeZone::dispatch($place)->delay(1);
         }
     }
 

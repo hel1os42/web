@@ -23,10 +23,6 @@ class ProcessSetPlaceTimeZone implements ShouldQueue
     public $tries = 1;
 
     /**
-     * @var string
-     */
-    private $timezoneServiceClass;
-    /**
      * @var Place
      */
     private $place;
@@ -34,22 +30,15 @@ class ProcessSetPlaceTimeZone implements ShouldQueue
     /**
      * ProcessSetPlaceTimeZone constructor.
      *
-     * @param       $timezoneServiceClass
-     * @param       $place
+     * @param $place
      */
-    public function __construct($timezoneServiceClass, $place)
+    public function __construct($place)
     {
-        $this->timezoneServiceClass = $timezoneServiceClass;
-        $this->place                = $place;
+        $this->place = $place;
     }
 
-    public function handle()
+    public function handle(TimezoneDbService $timezoneService)
     {
-        /**
-         * @var TimezoneDbService
-         */
-        $timezoneService = app($this->timezoneServiceClass);
-
         try {
             $timezone = $timezoneService->getTimezoneByLocation($this->place->latitude, $this->place->longitude);
         } catch (Exception $exception) {
