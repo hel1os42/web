@@ -31,14 +31,21 @@ class NauOffersService implements OffersService
      */
     private $gate;
 
+    /**
+     * @var WeekDaysService
+     */
+    private $weekDaysService;
+
     public function __construct(
         ActivationCodeRepository $activationCodeRepository,
         OfferRepository $offerRepository,
-        Gate $gate
+        Gate $gate,
+        WeekDaysService $weekDaysService
     ) {
         $this->activationCodeRepository = $activationCodeRepository;
         $this->offerRepository          = $offerRepository;
         $this->gate                     = $gate;
+        $this->weekDaysService          = $weekDaysService;
     }
 
     /**
@@ -132,10 +139,7 @@ class NauOffersService implements OffersService
     public function isActiveNowByWorkTime(Offer $offer): bool
     {
         $timezone = $offer->account->owner->place->timezone;
-        /**
-         * @var WeekDaysService $weekDaysService
-         */
-        $weekDaysService = app(WeekDaysService::class);
+
         /**
          * @var TimeframeRepository $timeframeRepository
          */
@@ -143,7 +147,7 @@ class NauOffersService implements OffersService
         $currentDate         = Carbon::now($timezone);
         $currentTime         = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
         $timeframe           = $timeframeRepository->findByOfferAndDays($offer,
-            $weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
+            $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
 
         if ($timeframe instanceof Timeframe
             && $this->getTimeWithTimezoneConvertion($timeframe->from, $timezone) <= $currentTime
