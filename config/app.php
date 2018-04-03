@@ -256,7 +256,5 @@ return [
             'description' => 'Get new iPhone X with discount.',
         ],
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
-    ],
-
-    'timezonedb_key' => env('TIMEZONEDB_KEY', ''),
+    ]
 ];

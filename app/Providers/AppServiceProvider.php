@@ -128,11 +128,6 @@ class AppServiceProvider extends ServiceProvider
             PlaceService::class,
             PlaceServiceImpl::class
         );
-
-        $this->app->bind(
-            TimezoneDbService::class,
-            TimezoneDbServiceImpl::class
-        );
     }
 
     private function setUserViewsData()
