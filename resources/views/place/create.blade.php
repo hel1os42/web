@@ -333,7 +333,7 @@
 
             formData.push({
                 "name": "_token",
-                "value": $('[name="_token"]').val()
+                "value": $('[name="_token"]').val().toString()
             });
 
             formBoxRetailType.querySelectorAll('input:checked').forEach(function(checkbox){
@@ -384,6 +384,7 @@
                 },
                 error: function (resp) {
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else if (422 === resp.status) {
                         alert('The alias has already been taken.');
                         $('#waitPopupOverlay').remove();
@@ -436,14 +437,12 @@
         }
 
         function redirectPage(n){
-            if (n.count === 0) {
-                window.location.replace(redirectUrl);
-            }
+            if (n.count === 0) window.location.replace(redirectUrl);
         }
 
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
-            formData.append('_token', $box.find('[name="_token"]').val());
+            formData.append('_token', $('[name="_token"]').val().toString());
             /*if ($box.attr('id') === 'logo_image_box') {
                 formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
             } else {
@@ -467,6 +466,7 @@
                 },
                 error: function (resp) {
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else {
                         $('#waitError').text(resp.status);
                         console.log('Error:', URI);

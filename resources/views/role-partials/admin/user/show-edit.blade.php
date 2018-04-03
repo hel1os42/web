@@ -26,6 +26,7 @@
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 401) UnAuthorized();
+                        else if (xhr.status === 0) AdBlockNotification();
                         else if (xhr.status === 200) {
                             console.dir(xhr.response);
                             let html = '', checked;

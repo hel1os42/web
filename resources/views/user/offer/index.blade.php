@@ -33,6 +33,7 @@
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === XMLHttpRequest.DONE) {
                     if (xmlhttp.status === 401) UnAuthorized();
+                    else if (xmlhttp.status === 0) AdBlockNotification();
                     else if (xmlhttp.status === 200) {
                         let sel = document.getElementById("offer-category");
                         sel.innerHTML = xmlhttp.responseText;

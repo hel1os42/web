@@ -1,5 +1,6 @@
 .image-uploader-box {
 	position: relative;
+	overflow: hidden;
 	padding: 10px 10px 4px;
 	min-height: 120px;
 	text-align: center;
@@ -13,12 +14,29 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 }
-.image-uploader-box.dnd-hover:before {
-	content: "";
+.image-uploader-box:after {
+	content: "Click here for change image";
+	position: absolute;
+	display: none;
+	right: 15px;
+	top: 6px;
+	font-size: 80%;
+	line-height: 1.2em;
+	font-style: italic;
+	color: #999;
+}
+.image-uploader-box.changed:after {
+	display: block;
+}
+.image-uploader-box.changed:before,
+.image-uploader-box.dnd-hover:before,
+.image-uploader-box.dnd-hover:after {
+	display: none;
 }
 .image-uploader-box .image-wrap {
 	position: relative;
 	display: inline-block;
+	margin-top: 20px;
 	max-width: 100%;
 	line-height: 0;
 }
@@ -37,13 +55,16 @@
 .image-uploader-box [type="file"] {
 	position: absolute;
 	z-index: 10;
-	left: 0;
+	left: -300px;
 	top: 0;
-	width: 100%;
+	width: calc(100% + 300px);
 	height: 100%;
 	display: block;
 	cursor: pointer;
 	opacity: 0;
+}
+.image-uploader-box.dnd-hover [type="file"] {
+	z-index: 200;
 }
 .image-uploader-box [type="file"]:focus {
 	outline: none;
