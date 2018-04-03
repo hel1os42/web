@@ -104,7 +104,7 @@ function mapValues(map){
 
 
 function getTimeZone(map, callback){
-    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
+    let googleApiKey = 'AIzaSyC48pxde4WB6_JWxR9KOcLID8CAQQRyapo';
     let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
     let timestamp = Math.round(new Date().valueOf() / 1000);
     let lat = map.getCenter().lat;
