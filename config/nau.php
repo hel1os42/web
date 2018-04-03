@@ -60,5 +60,6 @@ return [
                 'height' => 1024,
             ],
         ],
-    ]
+    ],
+    'image_cache_control' => env('IMAGE_CACHE_CONTROL', 10800),
 ];

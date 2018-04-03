@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\NauModels\Offer;
 use App\Models\OfferLink;
+use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
+use App\Observers\TestimonialObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
@@ -53,11 +55,14 @@ class AppServiceProvider extends ServiceProvider
         Offer::observe(OfferObserver::class);
         User::observe(UserObserver::class);
         OfferLink::observe(OfferLinkObserver::class);
+        Testimonial::observe(TestimonialObserver::class);
 
         ViewFacade::composer(
-            ['*'], function (View $view) {
+            ['*'],
+            function (View $view) {
                 $authUser = auth()->user();
-                if (null != $authUser && ($authUser instanceof User) && null == array_get($view->getData(), 'authUser')) {
+                if (null != $authUser && ($authUser instanceof User) && null == array_get($view->getData(),
+                        'authUser')) {
                     $authUser->load('accounts');
                     $view->with('authUser', $authUser->toArray());
 
@@ -92,9 +97,10 @@ class AppServiceProvider extends ServiceProvider
 
         Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
             $count = \DB::table('tags')->where('id', '<>', $parameters[1])
-                       ->where('category_id', $value)
-                       ->where('slug', $parameters[0])
-                       ->count();
+                        ->where('category_id', $value)
+                        ->where('slug', $parameters[0])
+                        ->count();
+
             return $count === 0;
         });
     }
@@ -133,7 +139,8 @@ class AppServiceProvider extends ServiceProvider
     private function setUserViewsData()
     {
         ViewFacade::composer(
-            ['user.show'], function (View $view) {
+            ['user.show'],
+            function (View $view) {
                 $editableUserArray = $view->getData();
                 /** @var User $editableUserModel */
                 $editableUserModel = User::query()->find($editableUserArray['id']);
@@ -169,7 +176,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         ViewFacade::composer(
-            ['user.index'], function (View $view) {
+            ['user.index'],
+            function (View $view) {
                 $specialUsersArray = \App\Models\NauModels\User::getSpecialUsersArray();
                 $accountRepository = app(AccountRepository::class);
                 $accounts          = $accountRepository->findAndSortByOwnerIds(array_keys($specialUsersArray))->toArray();

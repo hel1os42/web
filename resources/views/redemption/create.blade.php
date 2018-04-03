@@ -46,13 +46,17 @@
                 if (xhr.status >= 200 && xhr.status < 300){
                     alert('Success.');
                     code.value = '';
-                } else {
-                    alert('This code is wrong.');
-                }
+                } else alert('This code is wrong.');
+                code.focus();
             },
             error: function(resp){
-                alert('This code is wrong.');
-                console.log(resp);
+                if (401 === resp.status) UnAuthorized();
+                else if (0 === resp.status) AdBlockNotification();
+                else {
+                    alert('This code is wrong.');
+                    console.log(resp);
+                    code.focus();
+                }
             }
         });
     });

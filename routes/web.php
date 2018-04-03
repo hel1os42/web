@@ -33,6 +33,9 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
             $router->get('{phone_number}/code', 'Auth\LoginController@getOtpCode')
                    ->where('phone_number', '\+[0-9]+')
                    ->name('get-login-otp-code');
+
+            $router->get('operator', 'Auth\LoginController@getLoginOperator')
+                ->name('loginFormOperator');
         });
 
         $router->group(['prefix' => 'register'], function () use ($router) {
@@ -71,8 +74,11 @@ $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
  * redemption operator & activation codes
  */
 $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($router) {
+    $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
+
     $router->get('activation_codes/{code}', 'ActivationCodeController@show')
         ->name('activation_codes.show');
+
     $router->resource('redemptions', 'RedemptionController', [
         'except' => [
             'update',
@@ -91,7 +97,6 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
 
-    $router->get('auth/logout', 'Auth\LoginController@logout')->name('logout');
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
     $router->get('auth/impersonate/{uuid}', 'Auth\LoginController@impersonate')->where('uuid',
@@ -279,6 +284,19 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
             'store'   => 'places.offer_links.store',
             'destroy' => 'places.offer_links.destroy',
             'update'  => 'places.offer_links.update',
+        ]
+    ]);
+
+    $router->resource('places/{placeUuid}/testimonials', 'Place\TestimonialController', [
+        'only' => [
+            'store',
+            'index',
+            'update',
+        ],
+        'names'       => [
+            'index'   => 'places.testimonials.index',
+            'store'   => 'places.testimonials.store',
+            'update'  => 'places.testimonials.update',
         ]
     ]);
 

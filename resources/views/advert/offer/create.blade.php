@@ -15,8 +15,8 @@
                 @include('advert.offer.create-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.create-category')
-                @include('advert.offer.create-working')
                 @include('advert.offer.create-map')
+                @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
             </form>
@@ -70,7 +70,7 @@
         setFieldLimit('[data-max-length]');
 
         /* offer description More */
-        /*offerMoreInit('more_wrap');*/
+        offerMoreInit('more_wrap');
         /*
             let moreTextForTranslate = {
                 hashButtons: 'You can use next tags for create links to additional information',
@@ -110,14 +110,19 @@
         });
 
         function dateTimePickerInit(){
+            let today = new Date();
             let $startDate = $('[name="start_date"]'),
                 $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
-                datePicker($(this), new Date());
+                datePicker($(this), today);
             });
             $finishDate.on('focus click', function(){
                 if (!$startDate.val()) $startDate.focus();
-                else datePicker($(this), new Date($startDate.val()));
+                else {
+                    let minDate = new Date($startDate.val());
+                    if (today.getTime() > minDate.getTime()) minDate = today;
+                    datePicker($(this), minDate);
+                }
             });
             $('.js-timepicker').on('focus click', function(){
                 timePicker($(this));
@@ -191,6 +196,8 @@
         }
 
         function mapDone(map){
+            $('#working_area').removeAttr('style').css('display', 'none');
+            workingAreaWhenDelivery();
             mapMove(map);
             $('#createOfferForm').on('submit', function (e) {
                 e.preventDefault();
@@ -313,8 +320,12 @@
                     }
                 },
                 error: function(resp){
-                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.log(resp);
+                    if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
+                    else {
+                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                        console.log(resp);
+                    }
                 }
             });
 
@@ -436,7 +447,7 @@
             let $img = $offer_image_box.find('.image');
             if ($file.attr('data-changed') && $img.attr('data-crop')) {
                 let formData = new FormData();
-                formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+                formData.append('_token', $('[name="_token"]').val().toString());
                 let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
                 for(let i of formData) { console.log(i); }
@@ -451,8 +462,12 @@
                         window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
                     error: function (resp) {
-                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                        console.log('ERROR: image not sent.');
+                        if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
+                        else {
+                            $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                            console.log('ERROR: image not sent.');
+                        }
                     }
                 });
             } else {
@@ -499,6 +514,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>

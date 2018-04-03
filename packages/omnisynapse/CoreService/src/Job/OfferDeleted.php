@@ -94,7 +94,18 @@ class OfferDeleted extends AbstractJob
      */
     protected function fireModelEvents($responseObject): void
     {
-        $offer = Offer::query()->withoutGlobalScopes()->findOrFail($responseObject->getOfferId());
+        $offer = $this->getModel($responseObject->getOfferId());
         event('eloquent.deleted: ' . get_class($offer), $offer);
+    }
+
+    /**
+     * @param $modelId
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function getConcreteModel($modelId)
+    {
+        return Offer::query()->withoutGlobalScopes()->findOrFail($modelId);
     }
 }

@@ -222,7 +222,7 @@
     color: #7b728c;
     background: #fff;
 }
-.nau-form [type="submit"] {
+.nau-form [type="submit"]:not(.note-link-btn) {
     font-size: 22px;
     line-height: 18px;
     font-weight: bold;

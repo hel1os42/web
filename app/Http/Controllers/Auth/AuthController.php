@@ -66,7 +66,8 @@ class AuthController extends Controller
             return \response()->error(Response::HTTP_UNAUTHORIZED, trans('auth.failed'));
         }
 
-        $errors = ['email' => trans('auth.failed')];
+        $errors = ['email' => trans('auth.failed'),
+            'alias' => trans('auth.failed')];
 
         return redirect()->back()
             ->withInput($request->only('email', 'remember'))

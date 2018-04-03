@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
-use App\Models\User\FavoritePlaces;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +37,8 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property User                         user
  * @property Collection                   testimonials
  * @property NauModels\Offer[]|Collection offers
+ * @property string                       phone
+ * @property string                       site
  *
  * @method static static|Builder byUser(User $user)
  * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
@@ -79,6 +80,8 @@ class Place extends Model
             'stars'             => 'integer',
             'is_featured'       => 'boolean',
             'has_active_offers' => 'boolean',
+            'phone'             => 'string',
+            'site'              => 'string',
         ];
 
         $this->hidden = [
@@ -94,18 +97,22 @@ class Place extends Model
             'latitude',
             'longitude',
             'radius',
+            'phone',
+            'site',
             'timezone',
         ];
 
         $this->attributes = [
-            'name'            => null,
-            'description'     => null,
-            'about'           => null,
-            'address'         => null,
-            'alias'           => null,
-            'latitude'        => 0,
-            'longitude'       => 0,
-            'radius'          => 1
+            'name'        => null,
+            'description' => null,
+            'about'       => null,
+            'address'     => null,
+            'alias'       => null,
+            'latitude'    => 0,
+            'longitude'   => 0,
+            'radius'      => 1,
+            'phone'       => null,
+            'site'        => null,
         ];
 
         $this->appends = [

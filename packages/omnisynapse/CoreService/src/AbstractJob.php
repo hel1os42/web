@@ -6,6 +6,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -17,10 +19,13 @@ use OmniSynapse\CoreService\Response\BaseResponse;
  * @package OmniSynapse\CoreService
  *
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    const GET_MODEL_ATTEMPTS = 3;
 
     /** @var CoreService */
     protected $coreService;
@@ -208,5 +213,37 @@ abstract class AbstractJob implements ShouldQueue
             'request'  => (null !== $this->getRequestObject()) ? $this->getRequestObject()->jsonSerialize() : null,
             'response' => $responseContent,
         ]);
+    }
+
+    /**
+     * @param     $modelId
+     * @param int $attempt
+     *
+     * @return Model|null
+     * @throws ModelNotFoundException
+     */
+    protected function getModel($modelId, int $attempt = 1): ?Model
+    {
+        $model = null;
+        try {
+            $model = $this->getConcreteModel($modelId);
+        } catch (ModelNotFoundException $exception) {
+            if ($attempt < self::GET_MODEL_ATTEMPTS) {
+                logger()->info('attempt', [$attempt]);
+                usleep(200 * $attempt);
+                return $this->getModel($modelId, ++$attempt);
+            }
+            throw $exception;
+        }
+        return $model;
+    }
+
+    /**
+     * @param $modelId
+     * @throws ModelNotFoundException
+     * @SuppressWarnings("unused")
+     */
+    protected function getConcreteModel($modelId)
+    {
     }
 }

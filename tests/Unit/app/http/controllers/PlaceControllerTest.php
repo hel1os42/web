@@ -571,6 +571,8 @@ class PlaceControllerTest extends TestCase
             'latitude'    => $this->faker->latitude,
             'longitude'   => $this->faker->longitude,
             'radius'      => $this->faker->randomNumber(),
+            'phone'       => $this->faker->phoneNumber,
+            'site'        => $this->faker->url,
             'timezone'    => 'UTC',
         ];
 
@@ -634,6 +636,8 @@ class PlaceControllerTest extends TestCase
                     'specialities.*.specs.*'     => null,
                     'tags'                       => null,
                     'tags.*'                     => null,
+                    'phone'                      => null,
+                    'site'                       => null,
                     'timezone'                   => null,
                 ]
             ],

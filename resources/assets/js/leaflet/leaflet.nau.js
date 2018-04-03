@@ -35,6 +35,9 @@ function mapMove(map){
 
 */
 
+const GOOGLE_API_KEY = 'AIzaSyC48pxde4WB6_JWxR9KOcLID8CAQQRyapo';
+const GOOGLE_GEOCODE_URI = 'https://maps.googleapis.com/maps/api/timezone/json?';
+
 function mapInit(options){
 
     let $map = $('#' + options.id);
@@ -104,19 +107,19 @@ function mapValues(map){
 
 
 function getTimeZone(map, callback){
-    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
-    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
     let timestamp = Math.round(new Date().valueOf() / 1000);
     let lat = map.getCenter().lat;
     let lng = map.getCenter().lng;
     while (lng > 180) lng -= 360;
     while (lng < -180) lng += 360;
-    let requestUrl = url + `location=${lat},${lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+    let requestUrl = GOOGLE_GEOCODE_URI + `location=${lat},${lng}&timestamp=${timestamp}&key=${GOOGLE_API_KEY}`;
     return httpGetAsync(requestUrl, callback);
 
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
+            if (4 === xhr.readyState && 0 === xhr.status) AdBlockNotification();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 let tz = convertRawOffset(response.rawOffset);
@@ -141,18 +144,18 @@ function getTimeZone(map, callback){
 }
 
 function getTimeZoneGPS(gps, callback){
-    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
-    let url = 'https://maps.googleapis.com/maps/api/timezone/json?';
     let timestamp = Math.round(new Date().valueOf() / 1000);
     if (typeof gps.lng === 'string') gps.lng = parseFloat(gps.lng);
     while (gps.lng > 180) gps.lng -= 360;
     while (gps.lng < -180) gps.lng += 360;
-    let requestUrl = url + `location=${gps.lat},${gps.lng}&timestamp=${timestamp}&key=${googleApiKey}`;
+    let requestUrl = GOOGLE_GEOCODE_URI + `location=${gps.lat},${gps.lng}&timestamp=${timestamp}&key=${GOOGLE_API_KEY}`;
     return httpGetAsync(requestUrl, callback);
 
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
+            if (4 === xhr.readyState && 0 === xhr.status) AdBlockNotification();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 let tz = convertRawOffset(response.rawOffset);
@@ -177,14 +180,14 @@ function getTimeZoneGPS(gps, callback){
 }
 
 function getGpsByAddress(address, callback){
-    let googleApiKey = 'AIzaSyBDIVqRKhG9ABriA2AhOKe238NZu3cul9Y';
-    let url = 'https://maps.googleapis.com/maps/api/geocode/json?';
-    let requestUrl = url + `address=${encodeURIComponent(address)}&key=${googleApiKey}`;
+    let requestUrl = GOOGLE_GEOCODE_URI + `address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
     return httpGetAsync(requestUrl, callback);
 
     function httpGetAsync(theUrl, callback){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
+            if (4 === xhr.readyState && 401 === xhr.status) UnAuthorized();
+            if (4 === xhr.readyState && 0 === xhr.status) AdBlockNotification();
             if (4 === xhr.readyState && 200 === xhr.status){
                 let response = JSON.parse(xhr.responseText);
                 callback(response);
@@ -194,4 +197,3 @@ function getGpsByAddress(address, callback){
         xhr.send(null);
     }
 }
-
