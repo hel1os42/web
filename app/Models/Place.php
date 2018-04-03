@@ -98,14 +98,14 @@ class Place extends Model
         ];
 
         $this->attributes = [
-            'name'        => null,
-            'description' => null,
-            'about'       => null,
-            'address'     => null,
-            'alias'       => null,
-            'latitude'    => 0,
-            'longitude'   => 0,
-            'radius'      => 1
+            'name'            => null,
+            'description'     => null,
+            'about'           => null,
+            'address'         => null,
+            'alias'           => null,
+            'latitude'        => 0,
+            'longitude'       => 0,
+            'radius'          => 1
         ];
 
         $this->appends = [
@@ -114,7 +114,8 @@ class Place extends Model
             'offers_count',
             'active_offers_count',
             'picture_url',
-            'cover_url'
+            'cover_url',
+            'timezone_offset',
         ];
 
         parent::__construct($attributes);
@@ -186,6 +187,25 @@ class Place extends Model
     public function getStars(): int
     {
         return $this->stars;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTimezoneOffsetAttribute(): string
+    {
+        $utcTimezone = new \DateTimeZone('UTC');
+        $currentDate = new \DateTime('now', $utcTimezone);
+
+        try {
+            $timezone = new \DateTimeZone($this->timezone);
+        } catch (\Exception $exception) {
+            $timezone = $utcTimezone;
+        }
+
+        $timezoneOffsetInSec = $timezone->getOffset($currentDate);
+
+        return sprintf("%+03d00", $timezoneOffsetInSec / 3600);
     }
 
     public function getActiveOffersCountAttribute(): int
