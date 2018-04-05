@@ -38,7 +38,7 @@ class RedemptionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function index ()
+    public function index()
     {
         $placeUuid = $this->user()->place->id;
 
