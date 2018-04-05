@@ -51,6 +51,8 @@
     </script>
 </div>
 
+@can('user.update.children', [$editableUserModel, array_column($children, 'id')])
+
 <div class="row">
     <div class="col-sm-6">
         <p><strong>Set children</strong></p>
@@ -77,3 +79,5 @@
 
     </div>
 </div>
+
+@endcan

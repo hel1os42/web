@@ -97,6 +97,8 @@
 </style>
 @endpush
 
-@push('scripts')
-    <script src="{{ asset('js/children-modal.js') }}"></script>
-@endpush
+@can('user.update.children', [$editableUserModel, array_column($children, 'id')])
+    @push('scripts')
+        <script src="{{ asset('js/children-modal.js') }}"></script>
+    @endpush
+@endcan

@@ -1,3 +1,5 @@
+@can('user.update.children', [$editableUserModel, array_column($children, 'id')])
+
 <div class="row">
     <div class="col-sm-3">
         <p><strong>Children</strong></p>
@@ -25,3 +27,5 @@
 
     </div>
 </div>
+
+@endcan

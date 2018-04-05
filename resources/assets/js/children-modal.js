@@ -93,13 +93,16 @@
         if (data) {
             for (i in data) {
                 let child = data[i],
-                    mark, disClass;
+                    mark = '', disClass = '';
 
                 if ( current_children.includes(child['id']) ) {
                     mark = 'disabled';
                     disClass = ' class="disabled" title="User was already added"';
-                } else {
-                    mark = disClass = '';
+                }
+
+                if ( child['roles'][0]['name'] == 'admin' || child['roles'][0]['name'] == 'agent' ) {
+                    mark = 'disabled';
+                    disClass = ' class="disabled" title="User can\'t be added"';
                 }
 
                 let row = [
