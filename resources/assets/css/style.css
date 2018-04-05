@@ -410,3 +410,69 @@ footer p {
 .nobs-modal .close-modal:hover {
     opacity: 1;
 }
+#tab_your_offers .offer-description a,
+.note-editor .note-editable a,
+#offerLinkModal .offer-link-content a {
+	text-decoration: underline;
+}
+
+#offerLinkModal {
+    position: fixed;
+    z-index: 10032;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+#offerLinkModal .offer-link-modal-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+}
+#offerLinkModal .offer-link-modal-content {
+    position: fixed;
+    left: 50px;
+    top: 30px;
+    right: 50px;
+    bottom: 30px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+}
+#offerLinkModal .close-offer-link-modal {
+    position: absolute;
+    display: block;
+    right: 0;
+    top: 0;
+    text-align: center;
+    width: 60px;
+    height: 60px;
+    font-size: 40px;
+    line-height: 60px;
+    cursor: pointer;
+    color: #999;
+    opacity: 0.5;
+}
+#offerLinkModal .close-offer-link-modal:hover {
+    opacity: 1;
+}
+#offerLinkModal h2 {
+    margin: 0 32px 0 0;
+    font-size: 1.6em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+#offerLinkModal .offer-link-content {
+    position: absolute;
+    left: 30px;
+    top: 80px;
+    right: 30px;
+    bottom: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

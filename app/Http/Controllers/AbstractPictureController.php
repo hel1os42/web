@@ -127,8 +127,11 @@ abstract class AbstractPictureController extends Controller
                 })
                 ->encode();
 
+            $cacheControl = (int)config('nau.image_cache_control');
+            $cacheControl = $cacheControl == 0 ? 'no-cache' : 'max-age=' . $cacheControl;
+
             return \response($picture, Response::HTTP_OK)->header('Content-Type',
-                $this->pictureMimeTypes[$this->pictureFormat]);
+                $this->pictureMimeTypes[$this->pictureFormat])->header('Cache-Control', $cacheControl);
         }
 
 

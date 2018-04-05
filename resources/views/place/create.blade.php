@@ -43,26 +43,6 @@
                             <p class="hint">Please, enter the information About Place.</p>
                         </div>
 
-                        <!--<div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">Phone</span>
-                                    <input name="phone" value="" class="formData">
-                                </label>
-                            </p>
-                            <p class="hint">Please, enter the phone.</p>
-                        </div>
-
-                        <div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">Web-site</span>
-                                    <input name="website" value="" class="formData">
-                                </label>
-                            </p>
-                            <p class="hint">Please, enter the web-site.</p>
-                        </div>-->
-
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
@@ -81,6 +61,26 @@
                                 </label>
                             </p>
                             <p class="hint">Please, enter the Place Alias.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Phone</span>
+                                    <input name="phone" value="" class="formData" maxlength="16">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place phone, example: <em>+1234567890</em>, 10-15 digits.</p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Web-site</span>
+                                    <input name="site" value="" class="formData" maxlength="64">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place site, example: <em>http://mysite.com</em>.</p>
                         </div>
 
                         <div class="control-box">
@@ -204,6 +204,9 @@
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
 
+        /* fields validator */
+        validationOnFly();
+
         /* specialities accordion */
         $('#place_specialties').on('click', '.sgroup-title', function(){
            $(this).toggleClass('active').next().slideToggle();
@@ -229,7 +232,7 @@
         $logo_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Logo changed');
-            $logo_image_box.find('.image').attr('data-cropratio', '1');
+            $logo_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $logo_image_box.find('.image').on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
@@ -330,7 +333,7 @@
 
             formData.push({
                 "name": "_token",
-                "value": $('[name="_token"]').val()
+                "value": $('[name="_token"]').val().toString()
             });
 
             formBoxRetailType.querySelectorAll('input:checked').forEach(function(checkbox){
@@ -381,6 +384,7 @@
                 },
                 error: function (resp) {
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else if (422 === resp.status) {
                         alert('The alias has already been taken.');
                         $('#waitPopupOverlay').remove();
@@ -399,6 +403,16 @@
             let $place_retailtype = $('#place_retailtype');
             if ($place_retailtype.find('input:checked').length < 1) {
                 $place_retailtype.addClass('invalid').find('input').eq(0).focus();
+                res = false;
+            }
+            let $place_site = $('[name="site"]');
+            if ($place_site.parents('p').hasClass('invalid')) {
+                $place_site.focus();
+                res = false;
+            }
+            let $place_phone = $('[name="phone"]');
+            if ($place_phone.parents('p').hasClass('invalid')) {
+                $place_phone.focus();
                 res = false;
             }
             let $place_name = $('[name="name"]');
@@ -423,14 +437,12 @@
         }
 
         function redirectPage(n){
-            if (n.count === 0) {
-                window.location.replace(redirectUrl);
-            }
+            if (n.count === 0) window.location.replace(redirectUrl);
         }
 
         function sendImage(n, $box, URI, callback){
             let formData = new FormData();
-            formData.append('_token', $box.find('[name="_token"]').val());
+            formData.append('_token', $('[name="_token"]').val().toString());
             /*if ($box.attr('id') === 'logo_image_box') {
                 formData.append('picture', $box.find('[type="file"]').get(0).files[0]);
             } else {
@@ -454,6 +466,7 @@
                 },
                 error: function (resp) {
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else {
                         $('#waitError').text(resp.status);
                         console.log('Error:', URI);
@@ -501,6 +514,27 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function validationOnFly(){
+            /* phone validator */
+            document.getElementsByName('phone')[0].addEventListener('input', function(){
+                let p = this.parentElement.parentElement;
+                p.classList.remove('invalid');
+                let val = this.value.trim();
+                val = val.replace(/[^0-9+]/, '');
+                if (val.length && val[0] !== '+') val = '+' + val;
+                this.value = val;
+                if (val.length && !/^\+[0-9]{10,15}$/.test(val)) p.classList.add('invalid');
+            });
+            /* website validator */
+            document.getElementsByName('site')[0].addEventListener('input', function(){
+                let p = this.parentElement.parentElement;
+                p.classList.remove('invalid');
+                let val = this.value.trim();
+                this.value = val;
+                if (val.length && !/^https?:\/\/.+\..{2,}$/.test(val)) p.classList.add('invalid');
+            });
         }
 
     </script>

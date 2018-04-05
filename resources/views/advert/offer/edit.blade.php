@@ -110,14 +110,19 @@
         });
 
         function dateTimePickerInit(){
+            let today = new Date();
             let $startDate = $('[name="start_date"]'),
                 $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
-                datePicker($(this), new Date());
+                datePicker($(this), today);
             });
             $finishDate.on('focus click', function(){
                 if (!$startDate.val()) $startDate.focus();
-                else datePicker($(this), new Date($startDate.val()));
+                else {
+                    let minDate = new Date($startDate.val());
+                    if (today.getTime() > minDate.getTime()) minDate = today;
+                    datePicker($(this), minDate);
+                }
             });
             $('.js-timepicker').on('focus click', function(){
                 timePicker($(this));
@@ -357,6 +362,7 @@
                 },
                 error: function(resp){
                     if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
                     else {
                         $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
                         console.dir(resp);
@@ -475,7 +481,7 @@
             let $img = $offer_image_box.find('.image');
             if ($file.attr('data-changed') && $img.attr('data-crop')) {
                 let formData = new FormData();
-                formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+                formData.append('_token', $('[name="_token"]').val().toString());
                 let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
                 for(let i of formData) { console.log(i); }
@@ -491,6 +497,7 @@
                     },
                     error: function (resp) {
                         if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
                         else {
                             $('#waitError').text(resp.status);
                             console.log('ERROR: image not sent.');

@@ -7,10 +7,10 @@
             <div class="card card-user">
                 <div class="author">
                     @if (file_exists(public_path('../storage/app/images/profile/pictures/' . $id . '.jpg')))
-                        <img class="img avatar" src="{{ route('users.picture.show', [$id]) }}">
+                        <img class="img avatar" src="{{ route('users.picture.show', [$id]) }}?size=desktop">
                     @else
                         <a href="#">
-                            <img class="img avatar" src="{{ asset('img/avatar.png') }}">
+                            <img class="img avatar" src="{{ asset('img/avatar.png') }}?size=desktop">
                         </a>
                     @endif
                 </div>
@@ -149,7 +149,7 @@
         $userpic_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
-            $userpic_image_box.find('.image').attr('data-cropratio', '1');
+            $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
         $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
@@ -181,6 +181,7 @@
                     },
                     error: function (resp) {
                         if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
                         else {
                             console.log('ERROR: image not sent.');
                             console.dir(resp);
@@ -236,6 +237,7 @@
                     },
                     error: function(resp){
                         if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
                         else {
                             $err.text('err-st: ' + resp.status);
                             console.dir(resp);

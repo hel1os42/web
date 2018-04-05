@@ -51,6 +51,7 @@
             },
             error: function(resp){
                 if (401 === resp.status) UnAuthorized();
+                else if (0 === resp.status) AdBlockNotification();
                 else {
                     alert('This code is wrong.');
                     console.log(resp);

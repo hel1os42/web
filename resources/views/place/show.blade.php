@@ -21,14 +21,6 @@
         <div class="col-xs-3"><p><strong>About:</strong></p></div>
         <div class="col-xs-9"><p>{{ $about ?: '-' }}</p></div>
     </div>
-    <!--<div class="row">
-        <div class="col-xs-3"><p><strong>Phone:</strong></p></div>
-        <div class="col-xs-9"><p>{{ '-' }}</p></div>
-    </div>
-    <div class="row">
-        <div class="col-xs-3"><p><strong>Web-site:</strong></p></div>
-        <div class="col-xs-9"><p>{{ '-' }}</p></div>
-    </div>-->
     <div class="row">
         <div class="col-xs-3"><p><strong>Address:</strong></p></div>
         <div class="col-xs-9"><p>{{ $address ?: '-' }}</p></div>
@@ -36,6 +28,14 @@
     <div class="row">
         <div class="col-xs-3"><p><strong>Alias:</strong></p></div>
         <div class="col-xs-9"><p>{{ $alias ?: '-' }}</p></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"><p><strong>Phone:</strong></p></div>
+        <div class="col-xs-9"><p>{{ $phone ?: '-' }}</p></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"><p><strong>Site:</strong></p></div>
+        <div class="col-xs-9"><p>{{ $site ?: '-' }}</p></div>
     </div>
     <div class="row">
         <div class="col-xs-3"><p><strong>Place category:</strong></div>
@@ -59,11 +59,11 @@
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}" alt="Place logo" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}?size=desktop" alt="Place logo" style="max-width: 100%;"></p></div>
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place cover:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}" alt="Place cover" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}?size=desktop" alt="Place cover" style="max-width: 100%;"></p></div>
     </div>
 </div>
 
