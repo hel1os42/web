@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Models\User;
-use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use Carbon\Carbon;
