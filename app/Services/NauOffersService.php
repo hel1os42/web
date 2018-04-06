@@ -135,6 +135,7 @@ class NauOffersService implements OffersService
      * @param Offer $offer
      *
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public function isActiveNowByWorkTime(Offer $offer): bool
     {
@@ -145,7 +146,7 @@ class NauOffersService implements OffersService
          */
         $timeframeRepository = app(TimeframeRepository::class);
         $currentDate         = Carbon::now($timezone);
-        $currentTime         = Carbon::createFromTimeString($currentDate->toTimeString(), $timezone);
+        $currentTime         = Carbon::createFromFormat('H:i:s', $currentDate->toTimeString(), $timezone);
         $timeframe           = $timeframeRepository->findByOfferAndDays($offer,
             $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
 
@@ -162,11 +163,11 @@ class NauOffersService implements OffersService
      * @param string $timeString
      * @param string $timezone
      *
-     * @return mixed
+     * @throws \InvalidArgumentException
      */
     private function getTimeWithTimezoneConvertion(string $timeString, string $timezone)
     {
-        return Carbon::createFromTimeString($timeString,
+        return Carbon::createFromFormat('H:i:s', $timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
     }
 }
