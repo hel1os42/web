@@ -8,6 +8,8 @@
     <div class="col-sm-9">
         @if(isset($children))
             <div class="children-wrap" style="padding-bottom: 16px;">
+                <input type="hidden" name="child_ids[]">
+
                 @foreach($children as $child)
                     <p>
                         <input type="hidden"

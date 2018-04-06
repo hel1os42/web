@@ -363,12 +363,10 @@ class UserController extends Controller
             array_push($with, 'parents');
         }
 
-        if ($this->user()->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])
-            && $this->user()->getId() !== $user->getId()) {
-
-            $children = $newUserData['child_ids'] ?? [];
-            $this->authorize('user.update.children', [$user, $children]);
-            $user->children()->sync($children, true);
+        if (isset($newUserData['child_ids'])) {
+            $childIds = array_filter($newUserData['child_ids']);
+            $this->authorize('user.update.children', [$user, $childIds]);
+            $user->children()->sync($childIds, true);
             array_push($with, 'children');
         }
 

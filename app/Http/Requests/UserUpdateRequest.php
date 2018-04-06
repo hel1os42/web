@@ -56,7 +56,7 @@ class UserUpdateRequest extends FormRequest
             ),
             'child_ids'            => 'array',
             'child_ids.*'          => sprintf(
-                'string|regex:%s|exists:users,id',
+                'nullable|string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'              => 'boolean',
