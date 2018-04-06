@@ -46,9 +46,11 @@ class UserController extends Controller
             ? $this->userRepository
             : $this->userRepository->getChildrenByUser($this->user());
 
-        $perPage = request()->get('per_page') > config('repository.pagination.max_limit')
+        $requestedPerPage = request()->get('per_page');
+
+        $perPage = $requestedPerPage > config('repository.pagination.max_limit')
             ? null
-            : request()->get('per_page');
+            : $requestedPerPage;
 
         return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])
             ->paginate($perPage));
