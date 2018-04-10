@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementation;
 
+use App\Helpers\Constants;
 use App\Models\Category;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
@@ -10,9 +11,10 @@ use App\Services\Criteria\MappableRequestCriteria;
 use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Illuminate\Container\Container as Application;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Auth;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
@@ -30,6 +32,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 {
+    use ValidatesRequests;
+
     protected $timeframeRepository;
     protected $categoryRepository;
     protected $reservationService;
@@ -299,5 +303,36 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->builderWithoutGlobalScopes();
 
         return $this;
+    }
+
+
+    /**
+     * @param string $offerId
+     */
+    public function validateOffer(string $offerId): void
+    {
+        $validator = $this->getValidationFactory()
+            ->make(['offerId' => $offerId],
+                [
+                    'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
+                        Constants::UUID_REGEX)
+                ]);
+
+        if ($validator->fails()) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+    }
+
+    public function validateOfferAndGetOwn(string $offerId): Offer
+    {
+        $this->validateOffer($offerId);
+
+        $offer = $this->find($offerId);
+
+        if (!$offer->isOwner(Auth::user())) {
+            throw new HttpException(Response::HTTP_FORBIDDEN);
+        }
+
+        return $offer;
     }
 }

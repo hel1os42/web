@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -70,4 +69,14 @@ interface OfferRepository extends RepositoryInterface
     public function withoutGlobalScopes(): OfferRepository;
 
     public function parserResult($result);
+
+    /**
+     * @param string $offerId
+     */
+    public function validateOffer(string $offerId): void;
+
+    /**
+     * @param string $offerId
+     */
+    public function validateOfferAndGetOwn(string $offerId): Offer;
 }
