@@ -58,6 +58,14 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
             return \response()->error(Response::HTTP_NOT_FOUND);
         }
+        logger()->debug('ErrorHandler ', [
+                'code'    => $exception->getCode(),
+                'message' => $exception->getMessage(),
+                'file'    => $exception->getFile(),
+                'line'    => $exception->getLine(),
+                'trace'   => $exception->getTraceAsString(),
+            ]
+        );
 
         return parent::render($request, $exception);
     }
