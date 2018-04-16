@@ -14,8 +14,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (auth()->user() instanceof \App\Models\Operator) {
+            return \response()->render('operator', []);
+        }
+
         $table = null;
-        $view  = ($this->user() instanceof \App\Models\Operator) ? 'operator' : 'home';
 
         if ($this->user()->isAdmin()) {
             $table = $this->getAdminStatistic();
@@ -23,7 +26,7 @@ class HomeController extends Controller
             $table = $this->getAgentStatistic();
         }
 
-        return \response()->render($view, ['table' => $table]);
+        return \response()->render('home', ['table' => $table]);
     }
 
     /**
