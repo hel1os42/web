@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property null|float  discount_finish_price
  * @property null|string currency
  * @property null|string owner_id
+ * @property int         timeframes_offset
  */
 class OfferData extends Model
 {
@@ -64,6 +65,7 @@ class OfferData extends Model
             'discount_start_price',
             'currency',
             'owner_id',
+            'timeframes_offset',
         ];
 
         $this->attributes = [

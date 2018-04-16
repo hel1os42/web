@@ -12,24 +12,25 @@ use Illuminate\Foundation\Http\FormRequest;
  * Class OfferRequest
  * @package App\Http\Requests\Auth
  *
- * @property string label
- * @property string description
- * @property float reward
+ * @property string         label
+ * @property string         description
+ * @property float          reward
  * @property \Carbon\Carbon start_date
  * @property \Carbon\Carbon finish_date
- * @property string category_id
- * @property int max_count
- * @property int max_for_user
- * @property int max_per_day
- * @property int|null max_for_user_per_day
- * @property int|null max_for_user_per_week
- * @property int|null max_for_user_per_month
- * @property int user_level_min
- * @property string latitude
- * @property string longitude
- * @property int radius
- * @property string country
- * @property string city
+ * @property string         category_id
+ * @property int            max_count
+ * @property int            max_for_user
+ * @property int            max_per_day
+ * @property int|null       max_for_user_per_day
+ * @property int|null       max_for_user_per_week
+ * @property int|null       max_for_user_per_month
+ * @property int            user_level_min
+ * @property string         latitude
+ * @property string         longitude
+ * @property int            radius
+ * @property string         country
+ * @property string         city
+ * @property int            timeframes_offset
  *
  */
 class OfferRequest extends FormRequest
@@ -53,6 +54,7 @@ class OfferRequest extends FormRequest
     {
         $weekDaysService  = app(WeekDaysService::class);
         $offerReservation = app(OfferReservation::class);
+
         return [
             'label'                  => 'required|string|min:3|max:40',
             'description'            => 'required|string|max:200',
@@ -87,6 +89,7 @@ class OfferRequest extends FormRequest
                 'required|string|in:%s',
                 implode(',', $weekDaysService->fullList())
             ),
+            'timeframes_offset'      => 'required|integer',
             'delivery'               => 'required|boolean',
             'type'                   => sprintf(
                 'nullable|required_with:gift_bonus_descr,discount_percent|in:%s',

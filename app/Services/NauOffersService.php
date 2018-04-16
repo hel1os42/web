@@ -139,7 +139,8 @@ class NauOffersService implements OffersService
      */
     public function isActiveNowByWorkTime(Offer $offer): bool
     {
-        $timezone = $offer->account->owner->place->timezone;
+        $timezone          = $offer->account->owner->place->timezone;
+        $timeframeTimezone = new \DateTimeZone($offer->offerData->timeframes_offset);
 
         /**
          * @var TimeframeRepository $timeframeRepository
@@ -151,8 +152,8 @@ class NauOffersService implements OffersService
             $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
 
         if ($timeframe instanceof Timeframe
-            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timezone) <= $currentTime
-            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timezone) >= $currentTime) {
+            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timeframeTimezone) <= $currentTime
+            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timeframeTimezone) >= $currentTime) {
             return true;
         }
 
