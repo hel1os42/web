@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property null|string currency
  * @property null|string owner_id
  * @property int         timeframes_offset
+ * @property \DateTime   updated_at
  */
 class OfferData extends Model
 {
@@ -146,5 +147,13 @@ class OfferData extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 }
