@@ -10,17 +10,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class OfferData
  * @package App\Models
  *
- * @property string      id
- * @property boolean     delivery
- * @property null|string type
- * @property null|string gift_bonus_descr
- * @property null|float  discount_percent
- * @property null|float  discount_start_price
- * @property null|float  discount_finish_price
- * @property null|string currency
- * @property null|string owner_id
- * @property int         timeframes_offset
- * @property \DateTime   updated_at
+ * @property string                      id
+ * @property boolean                     delivery
+ * @property null|string                 type
+ * @property null|string                 gift_bonus_descr
+ * @property null|float                  discount_percent
+ * @property null|float                  discount_start_price
+ * @property null|float                  discount_finish_price
+ * @property null|string                 currency
+ * @property null|string                 owner_id
+ * @property int                         timeframes_offset
+ * @property \App\Models\NauModels\Offer $offer
  */
 class OfferData extends Model
 {
@@ -147,13 +147,5 @@ class OfferData extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
     }
 }

@@ -22,7 +22,7 @@ class AddTimeframeOffsetColToOfferDataTable extends Migration
         foreach ($offersData as $offer) {
             $placeTimezone = new DateTimeZone($offer->owner->place->timezone ?? 'UTC');
             $offer->update([
-                'timeframes_offset' => (new DateTime($offer->getUpdatedAt()))->setTimezone($placeTimezone)->getOffset()
+                'timeframes_offset' => (new DateTime($offer->offer->updated_at))->setTimezone($placeTimezone)->getOffset()
             ]);
             $offer->save();
         }
