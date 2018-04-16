@@ -72,11 +72,13 @@ interface OfferRepository extends RepositoryInterface
 
     /**
      * @param string $offerId
+     *
+     * @return bool
      */
-    public function validateOffer(string $offerId): void;
+    public function validateOffer(string $offerId): bool;
 
     /**
      * @param string $offerId
      */
-    public function validateOfferAndGetOwn(string $offerId): Offer;
+    public function validateOfferAndGetOwn(string $offerId): ?Offer;
 }

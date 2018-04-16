@@ -53,7 +53,9 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
-        $this->offerRepository->validateOffer($offerId);
+        if (!$this->offerRepository->validateOffer($offerId)) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $offer = $this->offerRepository->find($offerId);
 
@@ -73,6 +75,10 @@ class RedemptionController extends Controller
     public function createFromOffer(string $offerId): Response
     {
         $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $this->authorize('offers.redemption', $offer);
 
@@ -143,6 +149,10 @@ class RedemptionController extends Controller
     {
         $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
 
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
+
         $this->authorize('offers.redemption.confirm', $offer);
 
         $redemption = $offersService->redeemByOfferAndCode($offer, $request->code);
@@ -195,6 +205,10 @@ class RedemptionController extends Controller
     public function showFromOffer(string $offerId, string $rid): Response
     {
         $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $redemption = $offer->redemptions()->findOrFail($rid);
 

@@ -308,8 +308,10 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
 
     /**
      * @param string $offerId
+     *
+     * @return bool
      */
-    public function validateOffer(string $offerId): void
+    public function validateOffer(string $offerId): bool
     {
         $validator = $this->getValidationFactory()
             ->make(['offerId' => $offerId],
@@ -318,21 +320,18 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
                         Constants::UUID_REGEX)
                 ]);
 
-        if ($validator->fails()) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
-        }
+        return !$validator->fails();
     }
 
-    public function validateOfferAndGetOwn(string $offerId): Offer
+    public function validateOfferAndGetOwn(string $offerId): ?Offer
     {
-        $this->validateOffer($offerId);
+        if ($this->validateOffer($offerId)) {
+            $found = $this->find($offerId);
+            $offer = $found->isOwner(Auth::user()) ? $found : null;
 
-        $offer = $this->find($offerId);
-
-        if (!$offer->isOwner(Auth::user())) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
+            return $offer;
         }
 
-        return $offer;
+        return null;
     }
 }
