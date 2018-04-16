@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index()
     {
         $table = null;
-        $view = ($this->user() instanceof \App\Models\Operator) ? 'operator' : 'home';
+        $view  = ($this->user() instanceof \App\Models\Operator) ? 'operator' : 'home';
 
         if ($this->user()->isAdmin()) {
             $table = $this->getAdminStatistic();
