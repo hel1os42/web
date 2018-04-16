@@ -86,13 +86,8 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
         ],
         'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
-    $router->get('/', function () {
-        $view = 'home';
-        if(auth()->user() instanceof \App\Models\Operator) {
-            $view = 'operator';
-        }
-        return response()->render($view, []);
-    })->name('home');
+
+    $router->get('/', 'HomeController@index')->name('home');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
