@@ -10,7 +10,6 @@ use Illuminate\Http\Response;
 use App\Repositories\RoleRepository;
 use App\Repositories\OfferRepository;
 
-
 class HomeController extends Controller
 {
     /**
