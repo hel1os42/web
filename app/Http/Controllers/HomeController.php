@@ -50,7 +50,7 @@ class HomeController extends Controller
         $users = $roleRepository->scopeQuery(function (Role $query) {
             return $query->join('users_roles', 'users_roles.role_id', 'roles.id');
         })
-            ->get(['name'])
+            ->all(['name'])
             ->groupBy('name')
             ->map(function ($list) {
                 return $list->count();
@@ -79,7 +79,7 @@ class HomeController extends Controller
                 ->scopeAccount($user->getAccountForNau())
                 ->withoutGlobalScopes()
                 ->withCount(['redemptions'])
-                ->get();
+                ->all();
         });
 
         $offersCount = $offersByUser->reduce(function ($count, $item) {
