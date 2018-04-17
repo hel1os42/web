@@ -140,7 +140,7 @@ class NauOffersService implements OffersService
     public function isActiveNowByWorkTime(Offer $offer): bool
     {
         $timezone          = $offer->account->owner->place->timezone;
-        $timeframeTimezone = new \DateTimeZone($offer->offerData->timeframes_offset);
+        $timeframeTimezone = new \DateTimeZone(timezone_name_from_abbr("", $offer->offerData->timeframes_offset));
 
         /**
          * @var TimeframeRepository $timeframeRepository
