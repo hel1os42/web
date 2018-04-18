@@ -73,6 +73,10 @@ class AuthServiceProvider extends ServiceProvider
         'places.update'        => 'PlacePolicy@update',
         'places.picture.store' => 'PlacePolicy@pictureStore',
 
+        'places.testimonials.list'   => 'TestimonialPolicy@index',
+        'places.testimonials.create' => 'TestimonialPolicy@create',
+        'places.testimonials.update' => 'TestimonialPolicy@update',
+
         'offers.redemption'         => 'RedemptionPolicy@index',
         'offers.redemption.confirm' => 'RedemptionPolicy@confirm',
         'offers.redemption.show'    => 'RedemptionPolicy@show',
@@ -95,6 +99,7 @@ class AuthServiceProvider extends ServiceProvider
         'user.update.parents'     => 'UserPolicy@updateParents',
         'user.update.roles'       => 'UserPolicy@updateRoles',
         'impersonate'             => 'UserPolicy@impersonate',
+        'users.relink'            => 'UserPolicy@relink',
 
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',

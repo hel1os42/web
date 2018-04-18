@@ -45,6 +45,17 @@
     position: relative;
     padding: 0 80px 0 160px;
 }
+#more_wrap .more-item:before {
+    content: "";
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    background: url(/img/loading.gif) no-repeat center center;
+    background-size: contain;
+}
 #more_wrap .more-item label {
     font-weight: normal;
 }
@@ -69,16 +80,32 @@
 #more_wrap .more-item .tag input {
     padding-left: 24px;
 }
-#more_wrap .more-item .btn {
+#more_wrap .more-item .btn.btn-save-item,
+#more_wrap .more-item .btn.btn-edit-item,
+#more_wrap .more-item .btn.btn-close-item,
+#more_wrap .more-item .btn.btn-remove-item {
     position: absolute;
     top: 0;
-    width: 26px;
+    right: 0;
 }
+#more_wrap .more-item .btn.btn-save-item,
 #more_wrap .more-item .btn.btn-edit-item {
-    right: 40px;
+    display: none;
 }
 #more_wrap .more-item .btn.btn-remove-item {
-    right: 0;
+    top: auto;
+    right: -80px;
+    bottom: 20px;
+}
+#more_wrap .more-item .btn.btn-close-item {
+    top: 22px;
+    right: 15px;
+    z-index: 505;
+}
+#more_wrap .more-item.not-saved .btn.btn-save-item,
+#more_wrap .more-item.can-edit .btn.btn-edit-item,
+#more_wrap .more-item.wait:before {
+    display: block;
 }
 #more_wrap .more-item .content-length {
     position: absolute;
@@ -90,22 +117,18 @@
     line-height: 1.2em;
     font-style: italic;
 }
-#editorMoreModal,
-#editorMoreModal .link-dialog {
-    background: rgba(0, 0, 0, 0.8);
+#more_wrap .more-item.tag-error .tag:before,
+#more_wrap .more-item.tag-error .tag input {
+    font-weight: bold;
+    color: red;
 }
-#editorMoreModal .link-dialog .checkbox {
+#more_wrap .more-description {
+    position: relative;
+    margin: 0 0 0 -160px;
+}
+#more_wrap .note-editor.note-frame.value-empty {
+    border-color: #ff5a00;
+}
+#more_wrap .link-dialog .checkbox {
     display: none;
-}
-#editorMoreModal .link-dialog .modal-header {
-    padding-bottom: 0;
-}
-#editorMoreModal .link-dialog .modal-footer {
-    padding: 0 15px 12px;
-}
-#editorMoreModal .link-dialog label {
-    font-weight: normal;
-}
-#editorMoreModal .link-dialog .modal-dialog {
-    padding-top: 0;
 }

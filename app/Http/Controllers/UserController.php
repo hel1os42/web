@@ -45,7 +45,15 @@ class UserController extends Controller
         $users = $this->user()->isAdmin()
             ? $this->userRepository
             : $this->userRepository->getChildrenByUser($this->user());
-        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])->paginate());
+
+        $requestedPerPage = request()->get('per_page');
+
+        $perPage = $requestedPerPage > config('repository.pagination.max_limit')
+            ? null
+            : $requestedPerPage;
+
+        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])
+            ->paginate($perPage));
     }
 
     /**
@@ -101,9 +109,10 @@ class UserController extends Controller
         $uuid = $this->confirmUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
-        $userData     = $request->isMethod('put')
+
+        $userData = $request->isMethod('put')
             ? $request->all()
-            : array_merge($editableUser->getFillableWithDefaults(['password', 'approved']), $request->all());
+            : array_merge($editableUser->getFillableWithDefaults(['password', 'approved', 'invite_code']), $request->all());
 
         $this->authorize('users.update', [$editableUser, $userData]);
 
@@ -225,7 +234,7 @@ class UserController extends Controller
     {
         $with = [];
 
-        if (isset($newUserData['role_ids'])) {
+        if (isset($newUserData['role_ids']) && count($newUserData['role_ids'])) {
             $this->updateRoles($user, $newUserData['role_ids']);
             array_push($with, 'roles');
         }

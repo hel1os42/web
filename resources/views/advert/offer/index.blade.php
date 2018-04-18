@@ -9,6 +9,7 @@
         function imgError(image) {
             image.onerror = "";
             image.src = "/img/imagenotfound.svg";
+            image.style.backgroundImage = 'none';
             return true;
         }
     </script>
@@ -19,7 +20,7 @@
         <div class="col-sm-12 dashboard-advert-header" style="background-image: url({{ $coverUrl }});">
             <div class="offer-logo col-sm-3">
                 @if( $place instanceof \App\Models\Place)
-                    <img src="{{route('places.picture.show', [$place->getKey(), 'picture'])}}" onerror="imgError(this)" style="position: absolute;"><br>
+                    <img src="{{ route('places.picture.show', [$place->getKey(), 'picture']) }}?size=desktop" onerror="imgError(this)" style="position: absolute;"><br>
                 @endif
             </div>
             <div class="advert-header-wrap">
@@ -72,7 +73,7 @@
 
         <div class="tab-content">
 
-            <div id="tab_your_offers" class="tab-pane fade in active">
+            <div id="tab_your_offers" class="tab-pane fade in active" data-token="{{ csrf_token() }}" data-links-url="{{ route('places.offer_links.index', auth()->user()->place->id) }}">
                 <img class="data-loading" src="{{ asset('img/loading.gif') }}" alt="wait..." style="display:block; margin: 0 auto;">
 
                 <table id="table_your_offers" class="display" style="opacity:0;">
@@ -112,9 +113,9 @@
                                     {{ $counter++ }}
                                     <div class="gps" data-offerid="{{$offer['id']}}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}"></div>
                                 </td>
-                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
+                                <td class="details-control"><span class="button-details"><img src="{{ $offer['picture_url'] }}?size=desktop" alt="offer picture" width="32" onerror="imgError(this);"></span></td>
                                 <td>{{ $offer['label'] }}</td>
-                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert">{{ $offer['finish_date'] }}</span></td>
+                                <td class="working-period"><span class="js-date-convert">{{ $offer['start_date'] }}</span> &nbsp;&mdash;&nbsp; <span class="js-date-convert finish-date">{{ $offer['finish_date'] }}</span></td>
                                 <td>{{ $offer['reward'] }}</td>
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status"><span class="offer-status-text">{{ $offer['status'] }}</span></td>
@@ -122,12 +123,12 @@
                                     <div>
                                         <div class="row set">
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-3">Description:</span> <span class="col-xs-9">{{ $offer['description'] }}</span></p>
+                                                <p class="row"><span class="title col-xs-3">Description:</span> <span class="col-xs-9 offer-description">{{ $offer['description'] }}</span></p>
                                                 <p class="row"><span class="title col-xs-3">Location:</span> <span class="col-xs-9">{{ $offer['country'] }}, {{ $offer['city'] }} (radius: {{ $offer['radius'] / 1000 }} km)<br>{{ $offer['latitude'] }}, {{ $offer['longitude'] }}</span></p>
                                                 <p class="row"><span class="title col-xs-3">Category:</span> <span class="col-xs-9 category-id" data-fix-category="true" data-uuid="{{ $offer['category_id'] }}">{{ $offer['category_id'] }}</span></p>
                                             </div>
                                             <div class="col-xs-6">
-                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="{{ $offer['picture_url'] }}" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
+                                                <p class="row"><span class="title col-xs-4">Offer Picture:</span> <span class="col-xs-8"><img id="img-{{ $offer['id'] }}" src="" data-src="{{ $offer['picture_url'] }}?size=mobile" alt="offer picture" class="offer-picture"  onerror="imgError(this);"></span></p>
                                             </div>
                                         </div>
                                         <div class="row set">
@@ -184,15 +185,7 @@
                                             <div class="col-xs-6">
                                                 <div class="pull-right">
                                                     <div style="display: inline-block;" class="offer-edit-button-wrapper oeb-{{ $offer['status'] }}">
-                                                        @if(false)
-																												    <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
-                                                        @endif
-                                                        <form method="POST" action="{{ route('advert.offers.destroy', $offer['id']) }}" style="margin: 0 16px 8px 0;" class="offer-delete-button">
-                                                            <input name="_method" type="hidden" value="DELETE">
-                                                            <input name="_token" type="hidden" value={{ csrf_token() }}>
-                                                            <input class="btn btn-danger" type="submit" value="Delete offer">
-                                                        </form>
-
+                                                        <span class="btn btn-danger offer-delete-button" data-action="{{ route('advert.offers.destroy', $offer['id']) }}">Delete offer</span>
                                                         <a href="{{ route('advert.offers.edit', $offer['id']) }}" class="btn-nau offer-edit-button">Edit information</a>
                                                         <span class="offer-edit-no-button">You must deactivate the offer to delete or edit it.</span>
                                                     </div>
@@ -230,6 +223,7 @@
 @push('scripts')
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
+    <script src="{{ asset('js/partials/offer-more-show.js') }}"></script>
     <script>
 
         /* dataTable */
@@ -251,7 +245,10 @@
         disableButtonActivate();
 
         /* delete offer with ajax */
-        /*btnDeleteOffer();*/
+        btnDeleteOffer();
+
+        /* offer description links */
+        offerMoreShow();
 
         function dataTableCreate(selector){
             let $table = $(selector);
@@ -260,6 +257,9 @@
                 let dt_table = $table.on('init.dt', function(){
                         $('.data-loading').hide();
                         $(this).animate({'opacity': "1"}, 400);
+                        $('.offer-picture').each(function(){
+                            $(this).attr('src', $(this).attr('data-src'));
+                        });
                     })
                     .DataTable({
                         "bPaginate": false,
@@ -311,10 +311,14 @@
                             date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
                             date.setHours(date.getHours() + +tz.substr(0, 3));
                             $(this).text(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
+                            if ($(this).is('.finish-date') && date.getTime() < Date.now()) {
+                                $(this).parents('tr').find('.offer_status_control .b-activate').addClass('expired');
+                            }
                         } else {
                             $(this).html('&#8734;');
                         }
                     });
+                    disableButtonActivate();
 
                     function getTime(time, tz){
                         let h = +time.substr(0, 2) + +tz.substr(0, 3);
@@ -381,12 +385,16 @@
                         }
                     },
                     error: function(resp){
-                        setNauBalance($nau_balance, -deltaNau);
-                        disableButtonActivate();
-                        balanceFineChanging();
-                        $err.text('err-st: ' + resp.status);
-                        console.dir(resp);
-                        alert(`Error ${resp.status}: ${resp.responseText}`);
+                        if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
+                        else {
+                            setNauBalance($nau_balance, -deltaNau);
+                            disableButtonActivate();
+                            balanceFineChanging();
+                            $err.text('err-st: ' + resp.status);
+                            console.dir(resp);
+                            alert(`Error ${resp.status}: ${resp.responseText}`);
+                        }
                     }
                 });
             });
@@ -431,33 +439,33 @@
             let nau = parseFloat(document.querySelector('#nau_balance').dataset.balance);
             document.querySelectorAll('.offer_status_control .b-activate').forEach(function(btn){
                 let reserved = parseFloat(btn.dataset.reserved);
-                btn.disabled = reserved > nau;
+                btn.disabled = btn.classList.contains('expired') || reserved > nau;
             });
         }
 
         function btnDeleteOffer(){
             document.querySelector('#table_your_offers').addEventListener('click', function(e){
-               if (e.target.classList.contains('offer-delete-button')) {
-                   let xhr = new XMLHttpRequest();
-                   xhr.responseType = 'json';
-                   xhr.onreadystatechange = function() {
-                       if (xhr.readyState === XMLHttpRequest.DONE) {
-                           if (xhr.status === 204) {
-                               console.log('Offer was deleted.');
-                               location.reload();
-                           } else if (xhr.status === 404) {
-                               alert('Offer not found.');
-                           } else if (xhr.status === 422) {
-                               alert(xhr.responseText);
-                           } else {
-                               alert('Something wrong, error ' + xhr.status + ' (see console).');
-                           }
-                       }
-                   };
-                   xhr.open('DELETE', e.target.dataset.action, true);
-                   //xhr.setRequestHeader('Accept', 'application/json');
-                   xhr.send(JSON.stringify({'_token': '{{ csrf_token() }}'}));
-               }
+                if (e.target.classList.contains('offer-delete-button')) {
+                    let url = e.target.dataset.action;
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 401) UnAuthorized();
+                            else if (xhr.status === 0) AdBlockNotification();
+                            else if (xhr.status === 204) {
+                                alert('Offer was deleted.');
+                                location.reload();
+                            } else if (xhr.status === 404) alert('Offer not found.');
+                            else if (xhr.status === 422) alert(xhr.responseText);
+                            else alert('Something wrong, error ' + xhr.status + ' (see console).');
+                        }
+                    };
+                    xhr.open('POST', url, true);
+                    let data = new FormData();
+                    data.append('_token', '{{ csrf_token() }}');
+                    data.append('_method', 'DELETE');
+                    xhr.send(data);
+                }
             });
         }
 

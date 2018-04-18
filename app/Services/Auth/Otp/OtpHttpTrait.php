@@ -80,6 +80,7 @@ trait OtpHttpTrait
         }
 
         try {
+            /** @var Psr7Response $result */
             $result = $this->client->request($method, $path, $data);
         } catch (ConnectException $exception) {
             $message = 'Can\'t send otp code. Try again later.';

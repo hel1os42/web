@@ -47,14 +47,17 @@ class ProcessSendOtpRequest implements ShouldQueue
      */
     public function handle()
     {
+        /** @var BaseOtpAuth $gate */
         $gate = app($this->gateClass);
 
-        try{
-            list($method, $path, $data, $headers, $auth) = $this->data;
-        }catch (Exception $exception){
-            logger($exception->getMessage());
+        list($method, $path, $data, $headers, $auth) = $this->data;
+
+        try {
+            $gate->request($method, $path, $data, $headers, $auth);
+        } catch (Exception $exception) {
+            logger()->error('Failed to send otp Request:',
+                ['message' => $exception->getMessage(), 'code' => $exception->getCode()]);
         }
 
-        $gate->request($method, $path, $data, $headers, $auth);
     }
 }

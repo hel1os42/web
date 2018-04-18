@@ -15,8 +15,8 @@
                 @include('advert.offer.edit-main-info')
                 @include('partials/offer-picture-filepicker')
                 @include('advert.offer.edit-category')
-                @include('advert.offer.edit-working')
                 @include('advert.offer.edit-map')
+                @include('advert.offer.edit-working')
                 @include('advert.offer.edit-redemption')
 
             </form>
@@ -27,17 +27,21 @@
 
 
 @push('styles')
+    <link rel="stylesheet" type="text/css" href="{{ asset('js/summernote/summernote.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/datetimepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/leaflet/leaflet.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/offer-more.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('js/summernote/summernote.min.js') }}"></script>
     <script src="{{ asset('js/formdata.min.js') }}"></script>
     <script src="{{ asset('js/partials/datetimepicker.js') }}"></script>
     <script src="{{ asset('js/partials/control-range.js') }}"></script>
+    <script src="{{ asset('js/partials/offer-more.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script src="{{ asset('js/cropper/imageuploader.js') }}"></script>
@@ -64,6 +68,18 @@
 
         /* you can not input more than N characters in this fields */
         setFieldLimit('[data-max-length]');
+
+        /* offer description More */
+        offerMoreInit('more_wrap');
+        /*
+            let moreTextForTranslate = {
+                hashButtons: 'You can use next tags for create links to additional information',
+                title: 'More information',
+                addButton: 'Add item',
+                ...
+            };
+            offerMoreInit('more_wrap', moreTextForTranslate);
+        */
 
         /* picture */
         imageUploader('#offer_image_box .image-box');
@@ -94,14 +110,19 @@
         });
 
         function dateTimePickerInit(){
+            let today = new Date();
             let $startDate = $('[name="start_date"]'),
                 $finishDate = $('[name="finish_date"]');
             $startDate.on('focus click', function(){
-                datePicker($(this), new Date());
+                datePicker($(this), today);
             });
             $finishDate.on('focus click', function(){
                 if (!$startDate.val()) $startDate.focus();
-                else datePicker($(this), new Date($startDate.val()));
+                else {
+                    let minDate = new Date($startDate.val());
+                    if (today.getTime() > minDate.getTime()) minDate = today;
+                    datePicker($(this), minDate);
+                }
             });
             $('.js-timepicker').on('focus click', function(){
                 timePicker($(this));
@@ -184,6 +205,8 @@
         }
 
         function mapDone(map){
+            $('#working_area').removeAttr('style').css('display', 'none');
+            workingAreaWhenDelivery();
             mapMove(map);
             $('#editOfferForm').on('submit', function (e) {
                 e.preventDefault();
@@ -338,8 +361,12 @@
                     }
                 },
                 error: function(resp){
-                    $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
-                    console.dir(resp);
+                    if (401 === resp.status) UnAuthorized();
+                    else if (0 === resp.status) AdBlockNotification();
+                    else {
+                        $('#waitError').text(`Error ${resp.status}: ${resp.responseText}`);
+                        console.dir(resp);
+                    }
                 }
             });
 
@@ -454,7 +481,7 @@
             let $img = $offer_image_box.find('.image');
             if ($file.attr('data-changed') && $img.attr('data-crop')) {
                 let formData = new FormData();
-                formData.append('_token', $offer_image_box.find('[name="_token"]').val());
+                formData.append('_token', $('[name="_token"]').val().toString());
                 let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
                 for(let i of formData) { console.log(i); }
@@ -469,8 +496,12 @@
                         window.location.replace("{{ route('advert.offers.index') }}?orderBy=updated_at&sortedBy=desc");
                     },
                     error: function (resp) {
-                        $('#waitError').text(resp.status);
-                        console.log('ERROR: image not sent.');
+                        if (401 === resp.status) UnAuthorized();
+                        else if (0 === resp.status) AdBlockNotification();
+                        else {
+                            $('#waitError').text(resp.status);
+                            console.log('ERROR: image not sent.');
+                        }
                     }
                 });
             } else {
@@ -517,6 +548,16 @@
                 if (isNaN(lat) || isNaN(lng)) return str;
                 return {lat, lng};
             }
+        }
+
+        function workingAreaWhenDelivery(){
+            let workingArea = document.getElementById('working_area');
+            let checkboxDelivery = document.getElementById('check_delivery');
+            if (checkboxDelivery.checked) workingArea.style.display = '';
+            checkboxDelivery.addEventListener('change', function(){
+                if (this.checked) $(workingArea).slideDown();
+                else $(workingArea).slideUp();
+            });
         }
 
     </script>

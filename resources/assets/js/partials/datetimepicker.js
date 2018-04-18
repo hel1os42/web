@@ -6,7 +6,14 @@
 $(window).on('keyup', function(e){
 	if (e.keyCode === 27) $('.picker').remove();
 }).on('mousedown', function(e){
-	if ($(e.target).parents('.picker').length === 0) $('.picker').remove();
+	if ($(e.target).parents('.picker').length === 0) {
+		let $picker = $('.picker');
+		if ($picker.is('#timepicker')) {
+			let t = $picker.find('.controls strong').text();
+			if (/^\d\d:__$/.test(t)) $($picker.get(0).parentInput).val(t.replace(/_/g, '0')).trigger('change');
+		}
+		$picker.remove();
+	}
 });
 
 function add0(n){
@@ -14,13 +21,13 @@ function add0(n){
 }
 
 function setPickerPosition($input, pickerId){
-	let $picker = $(pickerId),
-		offset = { x: $input.offset().left, y: $input.offset().top },
-		overSizedX = offset.x + $picker.outerWidth() > $(document.body).outerWidth(),
-		overSizedY = offset.y + $picker.outerHeight() + $input.outerHeight() + 8 > $(document.body).outerHeight(),
-		left =  offset.x + (overSizedX ? $input.outerWidth() - $picker.outerWidth() : 0) + 'px',
-		top = offset.y + (overSizedY ? - $picker.outerHeight() - 8 : $input.outerHeight() + 8) + 'px';
-    $picker.css({left, top});
+	let $picker = $(pickerId);
+	let offset = { x: $input.offset().left, y: $input.offset().top };
+	let overSizedX = offset.x + $picker.outerWidth() > $(document.body).outerWidth();
+	let overSizedY = offset.y + $picker.outerHeight() + $input.outerHeight() + 8 > $(document.body).outerHeight();
+	let left =  offset.x + (overSizedX ? $input.outerWidth() - $picker.outerWidth() : 0) + 'px';
+	let top = offset.y + (overSizedY ? - $picker.outerHeight() - 8 : $input.outerHeight() + 8) + 'px';
+	$picker.css({left, top});
 }
 
 
@@ -28,32 +35,33 @@ function setPickerPosition($input, pickerId){
 
 function datePicker($input, minDate){
 	let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    $('.picker').remove();
-    let date = newDate();
+	$('.picker').remove();
+	let date = newDate();
 	if (minDate) minDate = newDate(minDate.getTime());
-    if ($input.val()) { date = newDate($input.val()); }
-    $(document.body).append(createPicker(date, $input, minDate));
-    setPickerPosition($input, '#datepicker');
+	if ($input.val()) { date = newDate($input.val()); }
+	$(document.body).append(createPicker(date, $input, minDate));
+	setPickerPosition($input, '#datepicker');
 	function createPicker(date, $input, minDate){
 		let picker = document.createElement('div');
+		let $picker = $(picker);
 		let html = '<p class="controls"><span class="prevYear" data-shift="-12" title="Previous Year">&lt;&lt;</span>';
 		html += '<span class="prevMonth"  data-shift="-1" title="Previous Month">&lt;</span>';
 		html += '<strong>' + months[date.getMonth()] + ', ' + date.getFullYear() + '</strong>';
 		html += '<span class="nextYear"  data-shift="12" title="Next Year">&gt;&gt;</span>';
 		html += '<span class="nextMonth"  data-shift="1" title="Next Month">&gt;</span>';
 		html += '</p><table>' + getTable(date, minDate) + '</table>';
-		$(picker).html(html).attr('id', 'datepicker').addClass('picker').on('click', function(e){
+		$picker.html(html).attr('id', 'datepicker').addClass('picker').on('click', function(e){
 			let tdate;
 			if ($(e.target).is('td')) {
-			    let y = $(e.target).data('year'),
-                    m = add0(parseInt($(e.target).data('month')) + 1),
-                    d = add0($(e.target).data('date'));
+				let y = $(e.target).data('year'),
+					m = add0(parseInt($(e.target).data('month')) + 1),
+					d = add0($(e.target).data('date'));
 				tdate = newDate(y + '/' + m + '/' + d);
 				if ($(e.target).hasClass('not-this-month')) {
-                    $(picker).find('table').html(getTable(tdate, minDate));
-                    $(picker).find('.controls strong').text(months[m - 1] + ', ' + y);
-                } else if ($(e.target).hasClass('not-active')) {
-				    return false;
+					$picker.find('table').html(getTable(tdate, minDate));
+					$picker.find('.controls strong').text(months[m - 1] + ', ' + y);
+				} else if ($(e.target).hasClass('not-active')) {
+					return false;
 				} else {
 					//$input.val(days[day(tdate.getDay())] + ' ' + y + '/' + m + '/' + d).trigger('change').focus();
 					$input.val(y + '-' + m + '-' + d).trigger('change').focus();
@@ -61,14 +69,14 @@ function datePicker($input, minDate){
 				}
 			}
 			if ($(e.target).is('span') && $(e.target).parent().hasClass('controls')) {
-				let $td = $(picker).find('td').not('.not-this-month').eq(0);
+				let $td = $picker.find('td').not('.not-this-month').eq(0);
 				tdate = newDate($td.data('year') + '/' + add0(parseInt($td.data('month')) + 1) + '/' + '01');
 				tdate.setMonth(tdate.getMonth() + parseInt($(e.target).data('shift')));
-				$(picker).find('table').html(getTable(tdate, minDate));
-                $(picker).find('.controls strong').text(months[tdate.getMonth()] + ', ' + tdate.getFullYear());
+				$picker.find('table').html(getTable(tdate, minDate));
+				$picker.find('.controls strong').text(months[tdate.getMonth()] + ', ' + tdate.getFullYear());
 			}
 		});
-		return $(picker);
+		return $picker;
 	}
 	function getTable(date, minDate){
 		let d = newDate(date.getTime());
@@ -116,11 +124,13 @@ function datePicker($input, minDate){
 
 /* timepicker */
 function timePicker($input){
-    $('.picker').remove();
-    $(document.body).append(createPicker($input));
-    setPickerPosition($input, '#timepicker');
+	$('.picker').remove();
+	$(document.body).append(createPicker($input));
+	setPickerPosition($input, '#timepicker');
 	function createPicker($input){
 		let picker = document.createElement('div');
+		let $picker = $(picker);
+		picker.parentInput = $input;
 		let html = '<table><tr><th colspan="6">Hour</th><th class="sep">&nbsp;</th><th>Min</th></tr>';
 		for (let i = 0; i < 4; i++){
 			html += '<tr>';
@@ -129,23 +139,23 @@ function timePicker($input){
 		}
 		html += '</table><p class="controls"><strong>__:__</strong> ';
 		html += '<span class="midnight">23:59</span></p>';
-		$(picker).html(html).attr('id', 'timepicker').addClass('picker').on('click', function(e){
-			if ($(e.target).hasClass('hour')) changeClass($(e.target), '.hour', $(picker));
-			if ($(e.target).hasClass('min')) changeClass($(e.target), '.min', $(picker));
-			let h = picker.querySelector('.hour.active'),
-			    m = picker.querySelector('.min.active'),
-			    hval = h ? add0(parseInt(h.innerText)) : '__',
-			    mval = m ? m.innerText : ':__';
-			$(picker).find('.controls strong').text(hval + mval);
+		$picker.html(html).attr('id', 'timepicker').addClass('picker').on('click', function(e){
+			if ($(e.target).hasClass('hour')) changeClass($(e.target), '.hour', $picker);
+			if ($(e.target).hasClass('min')) changeClass($(e.target), '.min', $picker);
+			let h = picker.querySelector('.hour.active');
+			let m = picker.querySelector('.min.active');
+			let hval = h ? add0(parseInt(h.innerText)) : '__';
+			let mval = m ? m.innerText : ':__';
+			$picker.find('.controls strong').text(hval + mval);
 			let val;
-			if (h && m) val = $(picker).find('.controls strong').text();
+			if (h && m) val = $picker.find('.controls strong').text();
 			if ($(e.target).hasClass('midnight')) val = $(e.target).text();
 			if (val) {
 				$input.val(val).trigger('change').focus();
-                $('.picker').remove();
+				$('.picker').remove();
 			}
 		});
-		return $(picker);
+		return $picker;
 	}
 	function changeClass($td, cls, $picker){
 		$td.toggleClass('active');
