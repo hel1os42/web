@@ -76,4 +76,12 @@ trait HasOfferData
     {
         return $this->offerData->currency;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getTimeframesOffsetAttribute(): ?string
+    {
+        return $this->offerData->timeframes_offset;
+    }
 }

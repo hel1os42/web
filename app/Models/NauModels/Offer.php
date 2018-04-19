@@ -556,6 +556,7 @@ class Offer extends AbstractNauModel
             'discount_start_price',
             'discount_finish_price',
             'currency',
+            'timeframes_offset',
         ];
     }
 
