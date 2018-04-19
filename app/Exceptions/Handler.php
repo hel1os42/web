@@ -58,14 +58,6 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
             return \response()->error(Response::HTTP_NOT_FOUND);
         }
-        logger()->debug('ErrorHandler ', [
-                'code'    => $exception->getCode(),
-                'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine(),
-                'trace'   => $exception->getTraceAsString(),
-            ]
-        );
 
         return parent::render($request, $exception);
     }
@@ -80,6 +72,10 @@ class Handler extends ExceptionHandler
      */
     protected function toIlluminateResponse($response, Exception $exception)
     {
+        if ($exception instanceof TokenMismatchException) {
+            $exception = new TokenMismatchException("CsRf Token Mismatch", $exception->getCode(), $exception);
+        }
+
         if (request()->expectsJson()) {
             return response()->error($response->getStatusCode(), $exception->getMessage());
         }
