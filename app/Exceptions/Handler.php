@@ -72,6 +72,10 @@ class Handler extends ExceptionHandler
      */
     protected function toIlluminateResponse($response, Exception $exception)
     {
+        if ($exception instanceof TokenMismatchException) {
+            $exception = new TokenMismatchException("CsRf Token Mismatch", $exception->getCode(), $exception);
+        }
+
         if (request()->expectsJson()) {
             return response()->error($response->getStatusCode(), $exception->getMessage());
         }
