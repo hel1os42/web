@@ -154,8 +154,11 @@ class NauOffersService implements OffersService
             $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
 
         if ($timeframe instanceof Timeframe
-            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timeframeTimezone) <= $currentTime
-            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timeframeTimezone) >= $currentTime) {
+            && $currentTime->between(
+                $this->getTimeWithTimezoneConvertion($timeframe->from, $timeframeTimezone),
+                $this->getTimeWithTimezoneConvertion($timeframe->to, $timeframeTimezone)
+            )
+        ) {
             return true;
         }
 
@@ -163,12 +166,13 @@ class NauOffersService implements OffersService
     }
 
     /**
-     * @param string $timeString
-     * @param string $timezone
+     * @param string        $timeString
+     * @param \DateTimeZone $timezone
      *
+     * @return Carbon
      * @throws \InvalidArgumentException
      */
-    private function getTimeWithTimezoneConvertion(string $timeString, \DateTimeZone $timezone)
+    private function getTimeWithTimezoneConvertion(string $timeString, \DateTimeZone $timezone): Carbon
     {
         return Carbon::createFromFormat('H:i:s', $timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
