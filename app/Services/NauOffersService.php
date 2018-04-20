@@ -168,7 +168,7 @@ class NauOffersService implements OffersService
      *
      * @throws \InvalidArgumentException
      */
-    private function getTimeWithTimezoneConvertion(string $timeString, string $timezone)
+    private function getTimeWithTimezoneConvertion(string $timeString, \DateTimeZone $timezone)
     {
         return Carbon::createFromFormat('H:i:s', $timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
