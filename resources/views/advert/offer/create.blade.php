@@ -50,6 +50,9 @@
 
         const RESERVATION_MULTIPLIER = 10;
 
+        /* timezone */
+        document.getElementsByName('timezone')[0].value = convertTimezoneOffsetFromSecToHrsMin(document.getElementsByName('timeframes_offset')[0].value);
+
         /* dateTime picker init */
         dateTimePickerInit();
 
@@ -198,16 +201,17 @@
         function mapDone(map){
             $('#working_area').removeAttr('style').css('display', 'none');
             workingAreaWhenDelivery();
-            mapMove(map);
+            /* mapMove(map); */
             $('#createOfferForm').on('submit', function (e) {
                 e.preventDefault();
                 if (formValidation()) {
-                    getTimeZone(map, getFormData);
+                    /* getTimeZoneMap(map, getFormData); */
+                    getFormData();
                 }
             });
             validationOnFly();
             /* set map position by GPS or Address */
-            setMapPositionByGpsOrAddress(map);
+            addAction_setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -218,13 +222,22 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            getTimeZone(map, function(tz){
+            getTimeZoneMap(map, function(tz, tzXHR){
                 $('[name="timezone"]').val(tz);
-                $('#map_box').toggleClass('invalid', tz === 'error')
+                $('[name="timeframes_offset"]').val(tzXHR.rawOffset);
+                $('#map_box').toggleClass('invalid', tz === 'error');
             });
         }
 
-        function getFormData(tz){
+        function getFormData(){
+            let tz = $('[name="timezone"]').val();
+            if ($('#check_delivery').is(':checked') && tz === 'error') {
+                let $map = $('#map_box');
+                $map.toggleClass('invalid', tz === 'error');
+                $('html, body').animate({ scrollTop: $map.offset().top }, 400);
+                return false;
+            }
+
             let formData = $('.formData').serializeArray();
 
             formData.push({
@@ -267,12 +280,12 @@
             }
 
             /* working dates */
-            let startDateVal = $('[name="start_date"]').val();
+            let startDateVal = $('[name="start_date"]').val().toString();
             formData.push({
                 "name" : "start_date",
                 "value" : prepareDate(new Date(startDateVal), tz)
             });
-            let finishDateVal = $('[name="finish_date"]').val();
+            let finishDateVal = $('[name="finish_date"]').val().toString();
             formData.push({
                 "name" : "finish_date",
                 "value" : '' === finishDateVal ? null : prepareDate(new Date(finishDateVal), tz)
@@ -475,8 +488,7 @@
             }
         }
 
-        function setMapPositionByGpsOrAddress(map){
-            /* TODO: need refactoring, this code in 4-th pages */
+        function addAction_setMapPositionByGpsOrAddress(map){
             let $country = $('[name="country"]');
             let $city = $('[name="city"]');
             let $gps_crd = $('[name="gps_crd"]');

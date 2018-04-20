@@ -46,21 +46,14 @@
                         <div class="control-box">
                             <p class="control-text">
                                 <label>
-                                    <span class="input-label">Address</span>
-                                    <input name="address" value="" class="formData">
-                                </label>
-                            </p>
-                            <p class="hint">Please, enter the Place address.</p>
-                        </div>
-
-                        <div class="control-box">
-                            <p class="control-text">
-                                <label>
-                                    <span class="input-label">Alias</span>
+                                    <span class="input-label">Alias *</span>
                                     <input name="alias" value="" class="formData">
                                 </label>
                             </p>
-                            <p class="hint">Please, enter the Place Alias.</p>
+                            <p class="hint">
+                                Please, enter the Place Alias.<br>
+                                The alias must be at least 3 characters.
+                            </p>
                         </div>
 
                         <div class="control-box">
@@ -110,11 +103,13 @@
 
                         @include('partials/place-cover-filepicker')
 
-                        <div class="control-box">
+                        <div class="control-box" id="map_box">
                             <p><strong>Setting map radius *</strong></p>
-                            <input type="hidden" name="latitude" value="" class="mapFields formData">
-                            <input type="hidden" name="longitude" value="" class="mapFields formData">
-                            <input type="hidden" name="radius" value="" class="mapFields formData">
+                            <input type="hidden" name="latitude" value="" class="formData">
+                            <input type="hidden" name="longitude" value="" class="formData">
+                            <input type="hidden" name="radius" value="" class="formData">
+                            <input type="hidden" name="timezone" value="" class="formData">
+                            <input type="hidden" name="timezone_offset" value="" class="formData">
                             <div class="map-wrap">
                                 <div class="leaflet-map" id="mapid"></div>
                                 <div id="marker"></div>
@@ -127,7 +122,7 @@
                                 <div class="col-xs-10">
                                     <p class="control-text">
                                         <label>
-                                            <span class="input-label">Address or GPS</span>
+                                            <span class="input-label">Search point by address or GPS</span>
                                             <input name="gps_crd" value="">
                                         </label>
                                     </p>
@@ -142,10 +137,21 @@
                                 Examples of address:<br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;<em>6931 Atlantic LA CA</em><br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;<em>Australia, Melbourne, Peate Ave, 16</em><br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Львів, Кобиляньської 16</em><br><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<em>Львів, Кобиляньської 16</em><br>
                                 Example of GPS coordinates:<br>
                                 &nbsp;&nbsp;&nbsp;&nbsp;<em>49.4213687,26.9971402</em>
                             </p>
+                        </div>
+
+                        <div class="control-box">
+                            <p class="control-text">
+                                <label>
+                                    <span class="input-label">Address</span>
+                                    <input name="address" value="" class="formData">
+                                </label>
+                            </p>
+                            <p class="hint">Please, enter the Place address.</p>
+                            <p class="address-examples">You can edit the address at your discretion.</p>
                         </div>
 
                         <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Place"></p>
@@ -308,7 +314,7 @@
         function mapDone(map){
             mapMove(map);
             /* set map position by GPS or Address */
-            setMapPositionByGpsOrAddress(map);
+            addAction_setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -320,11 +326,17 @@
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
             $('[name="gps_crd"]').val($latitude.val() + ', ' + $longitude.val());
+            $('[name="address"]').val('');
+            setAddresByGps();
+            getTimeZoneMap(map, function(tz, tzXHR){
+                $('[name="timezone"]').val(tzXHR.timeZoneId);
+                $('[name="timezone_offset"]').val(tzXHR.rawOffset);
+            });
         }
 
         /* form submit */
 
-        $("#createPlaceForm").on('submit', function(e){
+        $('#createPlaceForm').on('submit', function(e){
             e.preventDefault();
 
             if (!formValidation()) return false;
@@ -386,7 +398,12 @@
                     if (401 === resp.status) UnAuthorized();
                     else if (0 === resp.status) AdBlockNotification();
                     else if (422 === resp.status) {
-                        alert('The alias has already been taken.');
+                        let msg = '';
+                        let obj = JSON.parse(resp.responseText);
+                        for (let key in obj) {
+                            if (msg.length) msg += '\n';
+                            msg += obj[key][0];
+                        }
                         $('#waitPopupOverlay').remove();
                         $('[name="alias"]').focus();
                     } else {
@@ -415,9 +432,19 @@
                 $place_phone.focus();
                 res = false;
             }
+            let $place_alias = $('[name="alias"]');
+            if ($place_alias.val().length < 3) {
+                $place_alias.focus().parents('p').addClass('invalid');
+                res = false;
+            } else $place_alias.parents('p').removeClass('invalid');
             let $place_name = $('[name="name"]');
             if ($place_name.val().length < 3) {
                 $place_name.focus().parents('.control-text').addClass('invalid');
+                res = false;
+            }
+            if ($('[name="timezone"]').val() === 'error') {
+                alert('Timezone error');
+                $('html, body').animate({ scrollTop: $('#map_box').offset().top }, 400);
                 res = false;
             }
             return res;
@@ -475,14 +502,13 @@
             });
         }
 
-        function setMapPositionByGpsOrAddress(map){
-            /* TODO: need refactoring, this code in 4-th pages */
-            let $country = $('[name="country"]');
-            let $city = $('[name="city"]');
+        function addAction_setMapPositionByGpsOrAddress(map){
             let $gps_crd = $('[name="gps_crd"]');
-            setCountryCity();
-            $country.add($city).on('blur', function(){ setCountryCity(); });
-            $('#btn_gps_crd').on('click', function(){
+            $('#btn_gps_crd').on('click', btnSearchPointClick);
+            $gps_crd.on('keypress', function(e){
+                if (e.keyCode === 13) { btnSearchPointClick(); return false; }
+            });
+            function btnSearchPointClick(){
                 let address = $gps_crd.val().trim();
                 if (address.length < 5) return false;
                 address = tryConvertToGPS(address);
@@ -499,7 +525,7 @@
                         }
                     });
                 }
-            });
+            }
             function setCountryCity(){
                 let country = $country.val();
                 let city = $city.val();
@@ -534,6 +560,20 @@
                 let val = this.value.trim();
                 this.value = val;
                 if (val.length && !/^https?:\/\/.+\..{2,}$/.test(val)) p.classList.add('invalid');
+            });
+        }
+
+        function setAddresByGps(){
+            let addressField = document.getElementsByName('address')[0];
+            let lat = parseFloat(document.getElementsByName('latitude')[0].value);
+            let lng = parseFloat(document.getElementsByName('longitude')[0].value);
+            if (addressField.value.length > 0 || isNaN(lat) || isNaN(lng)) return;
+            getAddressByGps(lat, lng, function(xhr){
+                if (xhr && xhr.status === 'OK' && xhr.results && xhr.results.length > 0 && xhr.results[0].formatted_address) {
+                    let address = xhr.results[0].formatted_address;
+                    console.log('Found address:', address);
+                    addressField.value = address;
+                }
             });
         }
 
