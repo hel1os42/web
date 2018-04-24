@@ -37,7 +37,7 @@ class PlaceController extends Controller
         $places = $placeRepository->getActiveByCategoriesAndPosition($request->category_ids, $request->latitude,
             $request->longitude, $request->radius);
 
-        $places = $places->paginate(50);
+        $places = $places->paginate(30);
         $placeRepository->setPresenter(new \App\Presenters\PlacePresenter($this->auth, $offerRepository));
         $places->data = $placeRepository->parserResult($places);
         return response()->render('place.index', $places);
