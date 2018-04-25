@@ -50,6 +50,9 @@
 
         const RESERVATION_MULTIPLIER = 10;
 
+        /* timezone */
+        document.getElementsByName('timezone')[0].value = convertTimezoneOffsetFromSecToHrsMin(document.getElementsByName('timeframes_offset')[0].value);
+
         /* dateTime picker init */
         dateTimePickerInit();
 
@@ -207,17 +210,19 @@
         function mapDone(map){
             $('#working_area').removeAttr('style').css('display', 'none');
             workingAreaWhenDelivery();
-            mapMove(map);
+            /* mapMove(map); */
             $('#editOfferForm').on('submit', function (e) {
                 e.preventDefault();
                 if (formValidation()) {
-                    getTimeZone(map, getFormData);
+                    /* getTimeZoneMap(map, getFormData); */
+                    getFormData();
                 }
             });
             validationOnFly();
-            getTimeZone(map, fillTimeframes);
+            /* getTimeZoneMap(map, fillTimeframes); */
+            fillTimeframes();
             /* set map position by GPS or Address */
-            setMapPositionByGpsOrAddress(map);
+            addAction_setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -228,19 +233,23 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            getTimeZone(map, function(tz){
+            getTimeZoneMap(map, function(tz, tzXHR){
                 $('[name="timezone"]').val(tz);
-                $('#map_box').toggleClass('invalid', tz === 'error')
+                $('[name="timeframes_offset"]').val(tzXHR.rawOffset);
+                $('#map_box').toggleClass('invalid', tz === 'error');
             });
         }
 
-        function fillTimeframes(tz){
+        function fillTimeframes(){
+            let offset = parseInt($('[name="timeframes_offset"]').val().toString());
+            let offsetHours = Math.floor(offset / 3600);
+            let offsetMins = Math.floor(offset / 60) % 60;
             let $box = $('#dayInfoBox');
             $box.find('[data-checked="true"]').prop('checked', true).parents('.day-info').removeClass('passive');
             $box.find('input[data-value]').each(function(){
                 let val = $(this).attr('data-value');
-                let h = +val.substr(0, 2) + +tz.substr(0, 3);
-                let m = +val.substr(3, 2) + +(tz[0] + tz.substr(3, 2));
+                let h = +val.substr(0, 2) + offsetHours;
+                let m = +val.substr(3, 2) + offsetMins;
                 if (m > 59) { m -=60; h++; }
                 if (m < 0) { m +=60; h--; }
                 m = add0(m);
@@ -253,15 +262,22 @@
                 let val = $(this).val().replace(' ', 'T');
                 if (val.length > 1) {
                     let date = new Date(val);
-                    date.setMinutes(date.getMinutes() + +(tz[0] + tz.substr(3, 2)));
-                    date.setHours(date.getHours() + +tz.substr(0, 3));
+                    date.setMinutes(date.getMinutes() + offsetMins);
+                    date.setHours(date.getHours() + offsetHours);
                     $(this).val(date.getFullYear() + '-' + add0(date.getMonth() + 1) + '-' + add0(date.getDate()));
                 }
             });
-            function add0(n) { return n < 10 ? '0' + n : n; }
         }
 
-        function getFormData(tz){
+        function getFormData(){
+            let tz = $('[name="timezone"]').val();
+            if ($('#check_delivery').is(':checked') && tz === 'error') {
+                let $map = $('#map_box');
+                $map.toggleClass('invalid', tz === 'error');
+                $('html, body').animate({ scrollTop: $map.offset().top }, 400);
+                return false;
+            }
+
             let formData = $('.formData').serializeArray();
 
             formData.push({
@@ -293,7 +309,7 @@
                 "name" : "delivery",
                 "value" : $('[name="delivery"]').prop('checked') ? "1" : "0"
             });
-            let discount_start_price = parseInt($('[name="discount_start_price"]').val());
+            let discount_start_price = parseInt($('[name="discount_start_price"]').val().toString());
             if (discount_start_price > 0) {
                 formData.push({
                     "name" : "discount_start_price",
@@ -315,12 +331,12 @@
             }
 
             /* working dates */
-            let startDateVal = $('[name="start_date"]').val();
+            let startDateVal = $('[name="start_date"]').val().toString();
             formData.push({
                 "name" : "start_date",
                 "value" : prepareDate(new Date(startDateVal), tz)
             });
-            let finishDateVal = $('[name="finish_date"]').val();
+            let finishDateVal = $('[name="finish_date"]').val().toString();
             formData.push({
                 "name" : "finish_date",
                 "value" : '' === finishDateVal ? null : prepareDate(new Date(finishDateVal), tz)
@@ -509,14 +525,17 @@
             }
         }
 
-        function setMapPositionByGpsOrAddress(map){
-            /* TODO: need refactoring, this code in 4-th pages */
+        function addAction_setMapPositionByGpsOrAddress(map){
             let $country = $('[name="country"]');
             let $city = $('[name="city"]');
             let $gps_crd = $('[name="gps_crd"]');
             setCountryCity();
             $country.add($city).on('blur', function(){ setCountryCity(); });
-            $('#btn_gps_crd').on('click', function(){
+            $('#btn_gps_crd').on('click', btnSearchPointClick);
+            $gps_crd.on('keypress', function(e){
+                if (e.keyCode === 13) { btnSearchPointClick(); return false; }
+            });
+            function btnSearchPointClick(){
                 let address = $gps_crd.val().trim();
                 if (address.length < 5) return false;
                 address = tryConvertToGPS(address);
@@ -533,7 +552,7 @@
                         }
                     });
                 }
-            });
+            }
             function setCountryCity(){
                 let country = $country.val();
                 let city = $city.val();

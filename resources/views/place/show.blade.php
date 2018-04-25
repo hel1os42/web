@@ -4,6 +4,12 @@
 
 @section('content')
 
+@push('styles')
+<style>
+    .position-subtitle { display: inline-block; padding-right: 8px; min-width: 80px; font-style: italic; }
+</style>
+@endpush
+
 <div class="container">
     <h1>Place information</h1>
     <div class="text-right">
@@ -55,7 +61,12 @@
     </div>
     <div class="row">
         <div class="col-xs-3"><p><strong>Position:</strong></div>
-        <div class="col-xs-9"><p>{{ $latitude }},{{ $longitude }}, radius: {{ $radius }}</div>
+        <div class="col-xs-9">
+            <p>
+                <span class="position-subtitle">GPS:</span> {{ $latitude }},{{ $longitude }}<br>
+                <span class="position-subtitle">radius:</span> {{ $radius }} m<br>
+                <span class="position-subtitle">timezone:</span> {{ $timezone }} (<span class="time-offset" data-value="{{ $timezone_offset }}">{{ $timezone_offset }}</span>)
+        </div>
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
@@ -71,6 +82,7 @@
 
 @push('scripts')
 <script>
+(function(){
 
     let rqURL = '/places/{{ $id }}?with=category;retailTypes;specialities;tags';
     srvRequest(rqURL, 'GET', 'json', function(response){
@@ -82,5 +94,9 @@
         document.getElementById('placeInfoTags').innerText = response.tags.length ? response.tags.map(function(e){ return e.name; }).join(', ') : '-';
     });
 
+    let span = document.querySelector('.time-offset');
+    span.innerText = convertTimezoneOffsetFromSecToHrsMin(parseInt(span.innerText));
+
+})();
 </script>
 @endpush

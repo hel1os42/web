@@ -5,7 +5,7 @@ body {
     background: #fff;
 }
 *:focus {
-    outline: none;
+    outline: none !important;
 }
 a {
     display: inline-block;
@@ -16,7 +16,8 @@ a:focus {
     color: #ff8a0e;
 }
 h1 {
-    margin: 20px 0;
+    font-size: 2.5em;
+    margin: 20px 0 30px;
     text-align: center;
 }
 button {
@@ -26,6 +27,14 @@ iframe {
     display: block;
     width: 100%;
     border: none;
+}
+.btn {
+    background-color: #fff;
+}
+.btn:hover,
+.btn:focus,
+.btn:active {
+    outline: none !important;
 }
 .btn-nau {
     display: inline-block;
@@ -64,6 +73,10 @@ iframe {
     min-height: 100vh;
     padding-bottom: 60px;
     margin-bottom: -38px; /* height of footer */
+}
+
+main .container {
+    margin-top: 20px;
 }
 
 header {
@@ -323,9 +336,17 @@ footer p {
 
 .user-approve-controls form {
     display: inline-block;
+    padding-left: 12px;
+}
+.user-approve-controls .span-approved,
+.user-approve-controls .span-disapproved {
+    min-width: 32px;
 }
 .user-approve-controls .span-approved {
     color: green;
+}
+.user-approve-controls .span-disapproved {
+    color: red;
 }
 .user-approve-controls .span-approved,
 .user-approve-controls .span-disapproved,
@@ -345,14 +366,24 @@ footer p {
     display: inline-block;
 }
 
+.user-approve-controls .cant-approve-no-images {
+    display: none;
+    color: red;
+    font-size: 80%;
+    white-space: nowrap;
+    text-align: center;
+}
+.user-approve-controls button.b-disapproved:disabled + .cant-approve-no-images {
+    display: block;
+}
+
 .table-striped-nau {
     margin-top: 24px;
     width: 100%;
 }
 .table-striped-nau th {
     border-bottom: 1px solid #999;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px;
 }
 .table-striped-nau tr:not(:last-child) td {
     border-bottom: 1px solid #ddd;
@@ -410,6 +441,7 @@ footer p {
 .nobs-modal .close-modal:hover {
     opacity: 1;
 }
+
 #tab_your_offers .offer-description a,
 .note-editor .note-editable a,
 #offerLinkModal .offer-link-content a {
@@ -475,4 +507,65 @@ footer p {
     bottom: 30px;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.offer-status {
+    text-align: center;
+    line-height: 1.3em;
+}
+.offer-status-text-color-active {
+    color: #71d901;
+}
+.offer-status-text-color-deactive {
+    color: #f08301;
+}
+.offer-status .offer-status-text-no-image,
+.offer-status .offer-status-text-no-nau,
+.offer-status .offer-status-text-expired {
+    display: none;
+    font-size: 70%;
+    line-height: 1.3em;
+    color: #f08301;
+}
+tr.offer-status-no-image .offer-status .offer-status-text-no-image,
+tr.offer-status-no-nau .offer-status .offer-status-text-no-nau,
+tr.offer-status-expired .offer-status .offer-status-text-expired {
+    display: block;
+}
+tr.offer-status-no-image > td,
+tr.offer-status-no-nau > td,
+tr.offer-status-expired > td {
+    background: rgba(255, 0, 0, 0.15);
+}
+
+.user-place-info {
+    position: relative;
+    overflow: hidden;
+}
+.user-place-info img.place-logo,
+.user-place-info img.place-cover {
+    position: absolute;
+    top: -32px;
+    width: 16px;
+    height: 16px;
+}
+
+.user-place-info .user-place-img-wrap {
+    display: inline-block;
+    background: url(/img/loading.gif) no-repeat center center;
+    background-size: contain;
+    border: 1px solid #ddd;
+}
+.user-place-info .user-place-img-wrap.error {
+    background-image: url(/img/imagenotfound.svg);
+}
+.user-place-info .user-place-img-wrap img {
+    display: block;
+}
+.table-users tr.error-img td {
+    background: rgba(255, 0, 0, 0.15);
+}
+
+.row[class*=f-] p {
+    font-size: 100%;
 }
