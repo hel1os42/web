@@ -22,6 +22,8 @@ use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use App\Services\PlaceService;
+use App\Services\TimezoneDbService;
+use App\Services\Implementation\TimezoneDbService as TimezoneDbServiceImpl;
 use App\Services\WeekDaysService;
 use App\Services\ImageService as ImageServiceInterface;
 use App\Services\Implementation\ImageService;
@@ -80,6 +82,18 @@ class AppServiceProvider extends ServiceProvider
 
         $this->setUserViewsData();
 
+        Validator::extend('isTimezone', function ($attribute, $value, $parameters, $validator) {
+            try
+            {
+                new \DateTimeZone($value);
+            }
+            catch (\Exception $e)
+            {
+                return false;
+            }
+
+            return true;
+        });
 
         Validator::extend('uniqueCategoryIdAndSlug', function ($attribute, $value, $parameters, $validator) {
             $count = \DB::table('tags')->where('id', '<>', $parameters[1])

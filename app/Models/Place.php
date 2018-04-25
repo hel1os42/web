@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Helpers\Attributes;
 use App\Models\NauModels\Offer;
 use App\Models\Place\RelationsTrait;
+use App\Models\Place\ScopesTrait;
 use App\Traits\Uuids;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Prettus\Repository\Traits\PresentableTrait;
@@ -24,6 +24,7 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property string                       alias
  * @property float                        latitude
  * @property float                        longitude
+ * @property string                       timezone
  * @property int                          radius
  * @property int                          stars
  * @property bool                         is_featured
@@ -39,16 +40,16 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property string                       phone
  * @property string                       site
  *
- * @method static static|Builder byUser(User $user)
- * @method static static|Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
- * @method static static|Builder filterByCategories(array $categoryIds)
- * @method static static|Builder filterByActiveOffersAvailability()
- * @method static static|Builder orderByPosition(string $lat = null, string $lng = null)
- * @method static static|Builder byAlias(String $alias)
+ * @method static static|\Illuminate\Database\Eloquent\Builder byUser(User $user)
+ * @method static static|\Illuminate\Database\Eloquent\Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
+ * @method static static|\Illuminate\Database\Eloquent\Builder filterByCategories(array $categoryIds)
+ * @method static static|\Illuminate\Database\Eloquent\Builder filterByActiveOffersAvailability()
+ * @method static static|\Illuminate\Database\Eloquent\Builder orderByPosition(string $lat = null, string $lng = null)
+ * @method static static|\Illuminate\Database\Eloquent\Builder byAlias(String $alias)
  */
 class Place extends Model
 {
-    use Uuids, RelationsTrait, PresentableTrait;
+    use Uuids, RelationsTrait, PresentableTrait, ScopesTrait;
 
     /**
      * Place constructor.
@@ -98,6 +99,7 @@ class Place extends Model
             'radius',
             'phone',
             'site',
+            'timezone',
         ];
 
         $this->attributes = [
@@ -119,7 +121,8 @@ class Place extends Model
             'offers_count',
             'active_offers_count',
             'picture_url',
-            'cover_url'
+            'cover_url',
+            'timezone_offset',
         ];
 
         parent::__construct($attributes);
@@ -191,6 +194,25 @@ class Place extends Model
     public function getStars(): int
     {
         return $this->stars;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTimezoneOffsetAttribute(): string
+    {
+        $utcTimezone = new \DateTimeZone('UTC');
+        $currentDate = new \DateTime('now', $utcTimezone);
+
+        try {
+            $timezone = new \DateTimeZone($this->timezone);
+        } catch (\Exception $exception) {
+            $timezone = $utcTimezone;
+        }
+
+        $timezoneOffsetInSec = $timezone->getOffset($currentDate);
+
+        return sprintf("%+03d%02d", $timezoneOffsetInSec / 3600, ($timezoneOffsetInSec % 3600) / 60);
     }
 
     public function getActiveOffersCountAttribute(): int
@@ -436,113 +458,10 @@ class Place extends Model
     }
 
     /**
-     * @param Builder $builder
-     * @param User    $user
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeByUser($builder, User $user): Builder
-    {
-        return $builder->where('user_id', $user->getId());
-    }
-
-    /**
-     * @param Builder     $builder
-     * @param string|null $lat
-     * @param string|null $lng
-     * @param int|null    $radius
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeFilterByPosition(
-        Builder $builder,
-        string $lat = null,
-        string $lng = null,
-        int $radius = null
-    ): Builder {
-        if (empty($lat) || empty($lng) || $radius < 1) {
-            return $builder->whereNull('latitude')->whereNull('longitude')->whereNull('radius');
-        }
-
-        return $builder->whereRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((latitude - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(latitude * PI()/180) * 
-        COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((longitude - %2$s) * 
-        PI()/180 / 2), 2)))) < (radius + %3$d)',
-            $this->getConnection()->getPdo()->quote($lat),
-            $this->getConnection()->getPdo()->quote($lng),
-            $radius));
-    }
-
-    /**
-     * @param Builder     $builder
-     * @param string|null $lat
-     * @param string|null $lng
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
-    {
-        if (isset($lat, $lng)) {
-            return $builder->orderByRaw(sprintf('(6371000 * 2 * 
-        ASIN(SQRT(POWER(SIN((latitude - ABS(%1$s)) * 
-        PI()/180 / 2), 2) + COS(latitude * PI()/180) * 
-        COS(ABS(%1$s) * PI()/180) * 
-        POWER(SIN((longitude - %2$s) * 
-        PI()/180 / 2), 2))))',
-                $this->getConnection()->getPdo()->quote($lat),
-                $this->getConnection()->getPdo()->quote($lng)));
-        }
-
-        return $builder;
-    }
-
-    /**
-     * @param Builder $builder
-     * @param array   $categoryIds
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeFilterByCategories(Builder $builder, array $categoryIds): Builder
-    {
-        return $builder->whereHas('categories', function (Builder $builder) use ($categoryIds) {
-            $builder->whereIn('id', $categoryIds)->whereNull('parent_id');
-        });
-    }
-
-    /**
-     * @param Builder $builder
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeFilterByActiveOffersAvailability(Builder $builder): Builder
-    {
-        return $builder->where('has_active_offers', '=', true);
-    }
-
-    /**
      * @return array
      */
     public function getFillableWithDefaults(): array
     {
         return Attributes::getFillableWithDefaults($this);
-    }
-
-    /**
-     * @param Builder $builder
-     * @param string  $alias
-     *
-     * @return Builder
-     * @throws \InvalidArgumentException
-     */
-    public function scopeByAlias($builder, string $alias): Builder
-    {
-        return $builder->where('alias', $alias);
     }
 }

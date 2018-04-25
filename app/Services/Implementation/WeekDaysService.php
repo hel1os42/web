@@ -33,13 +33,14 @@ class WeekDaysService implements WeekDaysServiceInterface
 
     /**
      * @param array $weekDays
+     * @param bool  $numeric
      *
      * @return int
      */
-    public function weekDaysToDays(array $weekDays): int
+    public function weekDaysToDays(array $weekDays, bool $numeric = false): int
     {
         $days     = 0;
-        $backlist = array_flip(self::LIST);
+        $backlist = array_flip($numeric ? self::LIST_NUMERIC : self::LIST);
         foreach ($weekDays as $weekDay) {
             $days = $days | $backlist[$weekDay];
         }
@@ -48,17 +49,19 @@ class WeekDaysService implements WeekDaysServiceInterface
     }
 
     /**
-     * @param int $weekDays
+     * @param int  $days
+     * @param bool $numeric
      *
      * @return array
      */
-    public function daysToWeekDays(int $days): array
+    public function daysToWeekDays(int $days, bool $numeric = false): array
     {
-        $weekDays = [];
-        $day      = 1;
+        $weekDays     = [];
+        $day          = 1;
+        $weekDaysList = $numeric ? self::LIST_NUMERIC : self::LIST;
         while ($day <= self::LAST_DAY) {
             if (($days & $day) > 0) {
-                $weekDays[] = self::LIST[$day];
+                $weekDays[] = $weekDaysList[$day];
             }
             $day = $day << 1;
         }

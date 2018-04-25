@@ -7,8 +7,11 @@ use App\Exceptions\Offer\Redemption\CannotRedeemException;
 use App\Models\ActivationCode;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
+use App\Models\Timeframe;
 use App\Repositories\ActivationCodeRepository;
 use App\Repositories\OfferRepository;
+use App\Repositories\TimeframeRepository;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Gate;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -16,6 +19,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 /**
  * Class NauOffersService
  * NS: App\Services
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NauOffersService implements OffersService
 {
@@ -26,11 +31,21 @@ class NauOffersService implements OffersService
      */
     private $gate;
 
-    public function __construct(ActivationCodeRepository $activationCodeRepository, OfferRepository $offerRepository, Gate $gate)
-    {
+    /**
+     * @var WeekDaysService
+     */
+    private $weekDaysService;
+
+    public function __construct(
+        ActivationCodeRepository $activationCodeRepository,
+        OfferRepository $offerRepository,
+        Gate $gate,
+        WeekDaysService $weekDaysService
+    ) {
         $this->activationCodeRepository = $activationCodeRepository;
         $this->offerRepository          = $offerRepository;
         $this->gate                     = $gate;
+        $this->weekDaysService          = $weekDaysService;
     }
 
     /**
@@ -114,5 +129,45 @@ class NauOffersService implements OffersService
         $activationCode->redemption()->associate($redemption)->update();
 
         return $redemption;
+    }
+
+    /**
+     * @param Offer $offer
+     *
+     * @return bool
+     * @throws \InvalidArgumentException
+     */
+    public function isActiveNowByWorkTime(Offer $offer): bool
+    {
+        $timezone = $offer->account->owner->place->timezone;
+
+        /**
+         * @var TimeframeRepository $timeframeRepository
+         */
+        $timeframeRepository = app(TimeframeRepository::class);
+        $currentDate         = Carbon::now($timezone);
+        $currentTime         = Carbon::createFromFormat('H:i:s', $currentDate->toTimeString(), $timezone);
+        $timeframe           = $timeframeRepository->findByOfferAndDays($offer,
+            $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
+
+        if ($timeframe instanceof Timeframe
+            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timezone) <= $currentTime
+            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timezone) >= $currentTime) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $timeString
+     * @param string $timezone
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function getTimeWithTimezoneConvertion(string $timeString, string $timezone)
+    {
+        return Carbon::createFromFormat('H:i:s', $timeString,
+            new \DateTimeZone('UTC'))->setTimezone($timezone);
     }
 }

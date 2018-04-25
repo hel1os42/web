@@ -71,6 +71,7 @@ class CreateUpdateRequest extends FormRequest
             'latitude'                   => 'required_with:longitude,radius|numeric|between:-90,90',
             'longitude'                  => 'required_with:latitude,radius|numeric|between:-180,180',
             'radius'                     => 'required_with:latitude,longitude|integer|min:1',
+            'timezone'                   => empty($required) ? 'required_with:latitude,longitude|' : $required . 'string|isTimezone',
             'tags'                       => 'nullable|array',
             'tags.*'                     => 'string|exists:tags,slug',
             'specialities'               => 'nullable|array',
