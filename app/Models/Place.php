@@ -210,9 +210,7 @@ class Place extends Model
             $timezone = $utcTimezone;
         }
 
-        $timezoneOffsetInSec = $timezone->getOffset($currentDate);
-
-        return sprintf("%+03d%02d", $timezoneOffsetInSec / 3600, ($timezoneOffsetInSec % 3600) / 60);
+        return $timezone->getOffset($currentDate);
     }
 
     public function getActiveOffersCountAttribute(): int

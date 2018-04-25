@@ -139,7 +139,10 @@ class NauOffersService implements OffersService
      */
     public function isActiveNowByWorkTime(Offer $offer): bool
     {
-        $timezone = $offer->account->owner->place->timezone;
+        $timezone               = $offer->account->owner->place->timezone;
+        $timeframeTimezoneInSec = $offer->offerData->timeframes_offset;
+        $timeframeTimezone      = new \DateTimeZone(sprintf("%+03d%02d", $timeframeTimezoneInSec / 3600,
+            ($timeframeTimezoneInSec % 3600) / 60));
 
         /**
          * @var TimeframeRepository $timeframeRepository
@@ -151,8 +154,11 @@ class NauOffersService implements OffersService
             $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
 
         if ($timeframe instanceof Timeframe
-            && $this->getTimeWithTimezoneConvertion($timeframe->from, $timezone) <= $currentTime
-            && $this->getTimeWithTimezoneConvertion($timeframe->to, $timezone) >= $currentTime) {
+            && $currentTime->between(
+                $this->getTimeWithTimezoneConvertion($timeframe->from, $timeframeTimezone),
+                $this->getTimeWithTimezoneConvertion($timeframe->to, $timeframeTimezone)
+            )
+        ) {
             return true;
         }
 
@@ -160,12 +166,13 @@ class NauOffersService implements OffersService
     }
 
     /**
-     * @param string $timeString
-     * @param string $timezone
+     * @param string        $timeString
+     * @param \DateTimeZone $timezone
      *
+     * @return Carbon
      * @throws \InvalidArgumentException
      */
-    private function getTimeWithTimezoneConvertion(string $timeString, string $timezone)
+    private function getTimeWithTimezoneConvertion(string $timeString, \DateTimeZone $timezone): Carbon
     {
         return Carbon::createFromFormat('H:i:s', $timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
