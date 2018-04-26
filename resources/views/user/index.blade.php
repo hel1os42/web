@@ -109,6 +109,8 @@
     searchForm();
 
     fillSearchForm();
+    
+    updateAdminUsersSearchForm();
 
     pagenavyCompact(document.getElementById('table_pager'));
 
@@ -119,7 +121,11 @@
     function searchForm(){
         let searchBlock = document.getElementById('admin-users-search');
         let searchForm = searchBlock.querySelector('#search-form');
+        let nameInput = searchBlock.querySelector('#name');
         let emailInput = searchBlock.querySelector('#email');
+        let phoneInput = searchBlock.querySelector('#phone');
+        let placeNameInput = searchBlock.querySelector('#place-name');
+        let placeDescrInput = searchBlock.querySelector('#place-description');
         let roleSelect = searchBlock.querySelector('#role');
 
         let searchOptions = location.search.substr(1).split('&');
@@ -141,15 +147,42 @@
             searchForm.appendChild(sortedBy);
         }
 
-        function updateAdminUsersSearchForm() {
-            let result = '';
-            if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
-            if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
-            if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
-            searchBlock.querySelector('#search-field').value = result;
-        }
+        let makeParamStr = ( obj ) => {
+            let arr = [];
+            for (var key in obj) {
+                arr.push(key + ':' + obj[key]);
+            }
+            return arr.join(';');
+        };
 
-        emailInput.addEventListener( "input", updateAdminUsersSearchForm );
+        window.updateAdminUsersSearchForm = () => {
+            let result = {};
+            if ( emailInput.value !== '' ) {
+                result['email'] = emailInput.value;
+            }
+            if ( nameInput.value !== '' ) {
+                result['name'] = nameInput.value;
+            }
+            if ( phoneInput.value !== '' ) {
+                result['phone'] = phoneInput.value;
+            }
+            if ( placeNameInput.value !== '' ) {
+                result['place.name'] = placeNameInput.value;
+            }
+            if ( placeDescrInput.value !== '' ) {
+                result['place.description'] = placeDescrInput.value;
+            }
+            if ( roleSelect.value !== '' ) {
+                result['roles.name'] = roleSelect.value;
+            }
+
+            searchBlock.querySelector('#search-field').value = makeParamStr(result);
+        };
+
+        searchBlock.querySelectorAll('input[type="text"]').forEach( (e) => {
+            e.addEventListener( "input", updateAdminUsersSearchForm );
+        });
+        
         if ( roleSelect ) {
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
@@ -208,8 +241,17 @@
         if (search) {
             search = search[1].split(';');
             search = search.map(function(e){ return e.split(':'); });
+
             let searchByEmail = search.find(function(e){ return e[0] === 'email' });
             if (searchByEmail) document.getElementById('email').value = searchByEmail[1];
+            let searchByName = search.find(function(e){ return e[0] === 'name' });
+            if (searchByName) document.getElementById('name').value = searchByName[1];
+            let searchByPhone = search.find(function(e){ return e[0] === 'phone' });
+            if (searchByPhone) document.getElementById('phone').value = searchByPhone[1];
+            let searchByPlaceName = search.find(function(e){ return e[0] === 'place.name' });
+            if (searchByPlaceName) document.getElementById('place-name').value = searchByPlaceName[1];
+            let searchByPlaceDescr = search.find(function(e){ return e[0] === 'place.description' });
+            if (searchByPlaceDescr) document.getElementById('place-description').value = searchByPlaceDescr[1];
             let searchByRole = search.find(function(e){ return e[0] === 'roles.name' });
             let roleSelect = document.getElementById('role');
             if (searchByRole && roleSelect) {
