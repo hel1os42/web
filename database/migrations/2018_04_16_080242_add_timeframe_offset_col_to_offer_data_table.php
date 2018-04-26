@@ -17,14 +17,18 @@ class AddTimeframeOffsetColToOfferDataTable extends Migration
             });
         }
 
-        $offersData = (new \App\Models\OfferData())->get();
+        $offersData = class_exists('\App\Models\OfferData') ? (new \App\Models\OfferData())->get() : [];
         /**@var \App\Models\OfferData $offer */
         foreach ($offersData as $offer) {
-            $placeTimezone = new DateTimeZone($offer->owner->place->timezone ?? 'UTC');
-            $offer->update([
-                'timeframes_offset' => (new DateTime($offer->offer->updated_at))->setTimezone($placeTimezone)->getOffset()
-            ]);
-            $offer->save();
+            try {
+                $placeTimezone = new DateTimeZone($offer->owner->place->timezone ?? 'UTC');
+                $offer->update([
+                    'timeframes_offset' => (new DateTime($offer->offer->updated_at))->setTimezone($placeTimezone)->getOffset()
+                ]);
+                $offer->save();
+            } catch (\Exception $exception) {
+                logger('Can\'t get offer timezone');
+            }
         }
     }
 
