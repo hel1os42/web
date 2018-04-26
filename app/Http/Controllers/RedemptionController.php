@@ -46,8 +46,6 @@ class RedemptionController extends Controller
 
         $offer = $this->offerRepository->find($offerId);
 
-        $this->validateOfferByWorkTime($offer);
-
         $this->authorize('offers.redemption', $offer);
 
         $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
@@ -222,19 +220,5 @@ class RedemptionController extends Controller
         }
 
         return $offer;
-    }
-
-    /**
-     * @param Offer $offer
-     *
-     * @throws HttpException
-     */
-    private function validateOfferByWorkTime(Offer $offer): void
-    {
-        $offerService = app(OffersService::class);
-
-        if (!$offerService->isActiveNowByWorkTime($offer)) {
-            throw new HttpException(Response::HTTP_FORBIDDEN, 'Offer is currently unavailable.');
-        }
     }
 }

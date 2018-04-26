@@ -152,7 +152,6 @@ class NauOffersService implements OffersService
         $currentTime         = Carbon::createFromFormat('H:i:s', $currentDate->toTimeString(), $timezone);
         $timeframe           = $timeframeRepository->findByOfferAndDays($offer,
             $this->weekDaysService->weekDaysToDays([$currentDate->format('N')], true));
-
         if ($timeframe instanceof Timeframe
             && $currentTime->between(
                 $this->getTimeWithTimezoneConvertion($timeframe->from, $timeframeTimezone),
@@ -174,7 +173,8 @@ class NauOffersService implements OffersService
      */
     private function getTimeWithTimezoneConvertion(string $timeString, \DateTimeZone $timezone): Carbon
     {
-        return Carbon::createFromFormat('H:i:s', $timeString,
+        $dateTime = Carbon::createFromFormat('H:i:s', $timeString,
             new \DateTimeZone('UTC'))->setTimezone($timezone);
+        return Carbon::createFromFormat('H:i:s', $dateTime->toTimeString(), $timezone);
     }
 }
