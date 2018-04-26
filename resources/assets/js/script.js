@@ -55,8 +55,9 @@ $( document ).ready( function() {
     }
 } );
 
-// --send nau part
 
+
+function add0(n) { return n < 10 ? '0' + n : n.toString(); }
 
 /* 
 url - string of request-URL
@@ -186,4 +187,12 @@ function base64toBlob(base64Data, contentType) {
         byteArrays[sliceIndex] = new Uint8Array(bytes);
     }
     return new Blob(byteArrays, { type: contentType });
+}
+
+function convertTimezoneOffsetFromSecToHrsMin(sec){
+    let sign = sec < 0 ? '-' : '+';
+    sec = Math.abs(sec);
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor(sec / 60) % 60;
+    return sign + add0(h) + add0(m);
 }

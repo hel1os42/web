@@ -6,70 +6,69 @@
 
     <div class="container" style="margin-top: 40px;">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        <table class="table-striped-nau">
+        <table class="table-striped-nau table-users">
             <thead>
                 <tr>
                     <th>User</th>
-                    <th></th>
+                    <th>&nbsp;</th>
                     <th>Place</th>
-                    <th></th>
-                    <th>Balance</th>
-                    <th></th>
-                    <th>Approved</th>
-                    <th>Actions</th>
+                    <th>&nbsp;</th>
+                    <th class="text-center">Balance</th>
+                    <th class="text-center">Approved</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             @foreach ($data as $user)
                 <tr>
-                    <td>{{$user['name'] ?: '-'}}
-                        <br>
-                        <span>{{$user['email']}}</span><br>
-                        <span>{{$user['phone']}}</span>
+                    <td>
+                        {{ $user['name'] ?: '-' }}<br>
+                        <span>{{ $user['email'] }}</span><br>
+                        <span>{{ $user['phone'] }}</span>
                     </td>
                     <td>
-                        <a href="{{route('users.show', $user['id'])}}">
+                        <a href="{{ route('users.show', $user['id']) }}">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            User profile
                         </a>
                     </td>
 
                 @if(isset($user['place']['id']))
-                    <td>
-                        <a href="{{route('places.show', $user['place']['id'])}}"> {{$user['place']['name']}} </a>
+                    <td class="user-place-info">
+                        <span class="user-place-img-wrap"><img alt="" width="32" height="32" data-src="{{ $user['place']['picture_url'] }}?size=mobile" src=""></span>
+                        <span class="user-place-img-wrap"><img alt="" width="96" height="32" data-src="{{ $user['place']['cover_url'] }}?size=mobile" src=""></span><br>
+                        <a href="{{ route('places.show', $user['place']['id']) }}">{{ $user['place']['name'] }}</a>
                     </td>
                     <td>
-                        <a href="{{route('places.edit', $user['place']['id'])}}">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        <a href="{{ route('places.edit', $user['place']['id']) }}">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Place edit
                         </a>
                     </td>
                 @else
                     <td>-</td>
-                    <td></td>
+                    <td>&nbsp;</td>
                 @endif
 
                 @if(isset($user['accounts']['NAU']['balance']))
                     <td>
-                        {{$user['accounts']['NAU']['balance']}}
-                    </td>
-                    <td>
                         <button type="submit"
                                 class="btn btn-sm transaction-open-dialog"
                                 data-toggle="modal"
-                                data-destination="{{$user['accounts']['NAU']['address']}}"
+                                data-destination="{{ $user['accounts']['NAU']['address'] }}"
                                 data-target="#sendNauModal">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                         </button>
+                        {{ $user['accounts']['NAU']['balance'] }}
                     </td>
                 @else
                     <td>
-                        - <i class="fa fa-info" aria-hidden="true" style="color: red;"></i>
+                        - <i class="fa fa-info" aria-hidden="true" style="color: red;" title="You do not have NAU balance"></i>
                     </td>
-                    <td></td>
                 @endif
                 <td>
                     @include('role-partials.selector', ['partialRoute' => 'user.index-approved', 'data' => ['user' => $user]])
                 </td>
                 <td>
-                    <a href="{{route('impersonate', $user['id'])}}">login as</a>
+                    <a href="{{ route('impersonate', $user['id']) }}">login as</a>
                 </td>
             </tr>
             @endforeach
@@ -85,7 +84,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Send NAU</h4>
             </div>
-            <div class="transaction modal-body" data-url="{{route('transaction.complete')}}">
+            <div class="transaction modal-body" data-url="{{ route('transaction.complete') }}">
                 {{ csrf_field() }}
                 @include('role-partials.selector', ['partialRoute' => 'user.index-balance-form', 'data' => ['specialUserAccounts' => $specialUserAccounts]])
                 <input type="hidden" name="destination" id="destination" value="">
@@ -110,15 +109,23 @@
     searchForm();
 
     fillSearchForm();
+    
+    updateAdminUsersSearchForm();
 
     pagenavyCompact(document.getElementById('table_pager'));
 
     userStatusControl();
 
+    placeImages();
+
     function searchForm(){
         let searchBlock = document.getElementById('admin-users-search');
         let searchForm = searchBlock.querySelector('#search-form');
+        let nameInput = searchBlock.querySelector('#name');
         let emailInput = searchBlock.querySelector('#email');
+        let phoneInput = searchBlock.querySelector('#phone');
+        let placeNameInput = searchBlock.querySelector('#place-name');
+        let placeDescrInput = searchBlock.querySelector('#place-description');
         let roleSelect = searchBlock.querySelector('#role');
 
         let searchOptions = location.search.substr(1).split('&');
@@ -140,15 +147,42 @@
             searchForm.appendChild(sortedBy);
         }
 
-        function updateAdminUsersSearchForm() {
-            let result = '';
-            if ( emailInput.value !== '' ) result = 'email:' + emailInput.value;
-            if ( emailInput.value !== '' && roleSelect.value !== '' ) result += ';';
-            if ( roleSelect.value !== '' ) result += 'roles.name:' + roleSelect.value;
-            searchBlock.querySelector('#search-field').value = result;
-        }
+        let makeParamStr = ( obj ) => {
+            let arr = [];
+            for (var key in obj) {
+                arr.push(key + ':' + obj[key]);
+            }
+            return arr.join(';');
+        };
 
-        emailInput.addEventListener( "input", updateAdminUsersSearchForm );
+        window.updateAdminUsersSearchForm = () => {
+            let result = {};
+            if ( emailInput.value !== '' ) {
+                result['email'] = emailInput.value;
+            }
+            if ( nameInput.value !== '' ) {
+                result['name'] = nameInput.value;
+            }
+            if ( phoneInput.value !== '' ) {
+                result['phone'] = phoneInput.value;
+            }
+            if ( placeNameInput.value !== '' ) {
+                result['place.name'] = placeNameInput.value;
+            }
+            if ( placeDescrInput.value !== '' ) {
+                result['place.description'] = placeDescrInput.value;
+            }
+            if ( roleSelect.value !== '' ) {
+                result['roles.name'] = roleSelect.value;
+            }
+
+            searchBlock.querySelector('#search-field').value = makeParamStr(result);
+        };
+
+        searchBlock.querySelectorAll('input[type="text"]').forEach( (e) => {
+            e.addEventListener( "input", updateAdminUsersSearchForm );
+        });
+        
         if ( roleSelect ) {
             roleSelect.addEventListener( "change", updateAdminUsersSearchForm );
         }
@@ -175,8 +209,12 @@
                 data: formData,
                 success: function(data, textStatus, xhr){
                     if (201 === xhr.status){
-                        $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
-                        $user_status.val($user_status.val() === '0' ? '1' : '0');
+                        let newStatusApproved = $user_status.val() === '1';
+                        $box.removeClass('status-wait').addClass('status-' + (newStatusApproved ? '' : 'dis') + 'approved');
+                        if (!newStatusApproved) {
+                            $box.find('.b-disapproved').prop('disabled', true);
+                        }
+                        $user_status.val(newStatusApproved ? '0' : '1');
                     } else {
                         $err.text('err-st: ' + xhr.status);
                         console.dir(xhr);
@@ -203,8 +241,17 @@
         if (search) {
             search = search[1].split(';');
             search = search.map(function(e){ return e.split(':'); });
+
             let searchByEmail = search.find(function(e){ return e[0] === 'email' });
             if (searchByEmail) document.getElementById('email').value = searchByEmail[1];
+            let searchByName = search.find(function(e){ return e[0] === 'name' });
+            if (searchByName) document.getElementById('name').value = searchByName[1];
+            let searchByPhone = search.find(function(e){ return e[0] === 'phone' });
+            if (searchByPhone) document.getElementById('phone').value = searchByPhone[1];
+            let searchByPlaceName = search.find(function(e){ return e[0] === 'place.name' });
+            if (searchByPlaceName) document.getElementById('place-name').value = searchByPlaceName[1];
+            let searchByPlaceDescr = search.find(function(e){ return e[0] === 'place.description' });
+            if (searchByPlaceDescr) document.getElementById('place-description').value = searchByPlaceDescr[1];
             let searchByRole = search.find(function(e){ return e[0] === 'roles.name' });
             let roleSelect = document.getElementById('role');
             if (searchByRole && roleSelect) {
@@ -212,6 +259,21 @@
                 for (let i = 0; i < options.length; i++) if (options[i].value === searchByRole[1]) options[i].selected = true;
             }
         }
+    }
+
+    function placeImages(){
+        document.querySelectorAll('.user-place-img-wrap img').forEach(function(img){
+            img.onerror = function(){
+                this.onerror = "";
+                this.style.opacity = 0;
+                this.parentElement.classList.add('error');
+                let tr = this.parentElement.parentElement.parentElement;
+                tr.classList.add('error-img');
+                tr.querySelector('.b-disapproved').disabled = true;
+            };
+            img.setAttribute('src', img.dataset.src);
+            delete img.dataset.src;
+        });
     }
 
 </script>
