@@ -11,16 +11,21 @@ class UpdateTimeframesOffsetColInOffersDataTable extends Migration
      */
     public function up()
     {
-        $offersData = (new \App\Models\OfferData())->get();
+        $offersData = class_exists('\App\Models\OfferData') ? (new \App\Models\OfferData())->get() : [];
+
         /**@var \App\Models\OfferData $offer */
         foreach ($offersData as $offer) {
-            $placeTimezone = $offer->owner->place->timezone;
-            if($placeTimezone === "Europe/Kiev") {
-                $placeTimezone = new DateTimeZone($placeTimezone);
-                $offer->update([
-                    'timeframes_offset' => (new DateTime($offer->offer->created_at))->setTimezone($placeTimezone)->getOffset()
-                ]);
-                $offer->save();
+            try {
+                $placeTimezone = $offer->owner->place->timezone;
+                if ($placeTimezone === "Europe/Kiev") {
+                    $placeTimezone = new DateTimeZone($placeTimezone);
+                    $offer->update([
+                        'timeframes_offset' => (new DateTime($offer->offer->created_at))->setTimezone($placeTimezone)->getOffset()
+                    ]);
+                    $offer->save();
+                }
+            } catch (\Exception $exception) {
+                logger('Can\'t get offer timezone');
             }
         }
     }
