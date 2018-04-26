@@ -447,10 +447,10 @@
             let nau = parseFloat(document.querySelector('#nau_balance').dataset.balance);
             document.querySelectorAll('.offer_status_control .b-activate').forEach(function(btn){
                 let reserved = parseFloat(btn.dataset.reserved);
-                let offerDeactive = tr.dataset.offerStatus === 'deactive';
                 let tr = btn.parentElement;
                 while (tr && tr.tagName.toLowerCase() !== 'tr') tr = tr.parentElement;
                 let noImage = tr && tr.classList.contains('offer-status-no-image');
+                let offerDeactive = tr && tr.dataset.offerStatus === 'deactive';
                 let expired = btn.classList.contains('expired');
                 tr.classList[(offerDeactive && reserved > nau) ? 'add' : 'remove']('offer-status-no-nau');
                 tr.classList[expired ? 'add' : 'remove']('offer-status-expired');
