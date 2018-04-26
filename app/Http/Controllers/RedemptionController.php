@@ -221,18 +221,4 @@ class RedemptionController extends Controller
 
         return $offer;
     }
-
-    /**
-     * @param Offer $offer
-     *
-     * @throws HttpException
-     */
-    private function validateOfferByWorkTime(Offer $offer): void
-    {
-        $offerService = app(OffersService::class);
-
-        if (!$offerService->isActiveNowByWorkTime($offer)) {
-            throw new HttpException(Response::HTTP_FORBIDDEN, 'Offer is currently unavailable.');
-        }
-    }
 }
