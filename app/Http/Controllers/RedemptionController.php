@@ -46,8 +46,6 @@ class RedemptionController extends Controller
 
         $offer = $this->offerRepository->find($offerId);
 
-        $this->validateOfferByWorkTime($offer);
-
         $this->authorize('offers.redemption', $offer);
 
         $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
