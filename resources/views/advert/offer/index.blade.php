@@ -113,7 +113,7 @@
                             $counter = $from;
                         @endphp
                         @foreach ($data as $offer)
-                            <tr>
+                            <tr data-offer-status="{{ $offer['status'] }}">
                                 <td>
                                     {{ $counter++ }}
                                     <div class="gps" data-offerid="{{ $offer['id'] }}" data-lat="{{ $offer['latitude'] }}" data-lng="{{ $offer['longitude'] }}" data-timeframesoffset="{{ $offer['timeframes_offset'] }}"></div>
@@ -346,6 +346,7 @@
 
                 let $nau_balance = $('#nau_balance');
                 let $box = $(this).parents('.offer_status_control');
+                let $tr = $box.parents('tr');
                 let $offer_status = $box.find('[name="status"]');
                 let $err = $box.find('.waiting-response');
 
@@ -371,6 +372,7 @@
                             let status = $offer_status.val();
                             let $offerStatusText = $box.parent().children('.offer-status').find('.offer-status-text');
                             $offerStatusText.text(status);
+                            $tr.get(0).dataset.offerStatus = status;
                             $offerStatusText[(status === 'active' ? 'remove' : 'add') + 'Class']('offer-status-text-color-deactive')[(status === 'active' ? 'add' : 'remove') + 'Class']('offer-status-text-color-active');
                             $box.removeClass('osc_wait').addClass('osc_' + status);
 
@@ -448,8 +450,9 @@
                 let tr = btn.parentElement;
                 while (tr && tr.tagName.toLowerCase() !== 'tr') tr = tr.parentElement;
                 let noImage = tr && tr.classList.contains('offer-status-no-image');
+                let offerDeactive = tr && tr.dataset.offerStatus === 'deactive';
                 let expired = btn.classList.contains('expired');
-                tr.classList[reserved > nau ? 'add' : 'remove']('offer-status-no-nau');
+                tr.classList[(offerDeactive && reserved > nau) ? 'add' : 'remove']('offer-status-no-nau');
                 tr.classList[expired ? 'add' : 'remove']('offer-status-expired');
                 btn.disabled = expired || reserved > nau || noImage;
             });
