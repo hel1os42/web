@@ -371,7 +371,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function generateInvite(): string
     {
-        $newInvite = substr(uniqid(), 0, 5);
+        $newInvite = substr(uniqid(), 0, rand(3, 8));
 
         return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
     }
