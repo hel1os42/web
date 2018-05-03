@@ -48,11 +48,10 @@ class HomeController extends Controller
     protected function getAdminStatistic(RoleRepository $roleRepository): Collection
     {
         $users = $roleRepository->scopeQuery(function (Role $query) {
-            $order = array_reverse($query->getAllRoles());
-            $order = implode("', '", $order);
+            $orderedFields = array_reverse($query->getAllRoles());
 
             return $query->join('users_roles', 'users_roles.role_id', 'roles.id')
-                ->orderByRaw(sprintf("FIELD(name, '%s')", $order));
+                ->orderByRaw(sprintf("FIELD(name, '%s')", implode("', '", $orderedFields)));
         })
             ->all(['name'])
             ->groupBy('name')
