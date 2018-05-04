@@ -42,8 +42,6 @@ class User extends AbstractNauModel
 
         $this->primaryKey = 'id';
 
-        $this->appends = ['points'];
-
         $this->setVisible([
             'level',
             'points'
@@ -68,14 +66,6 @@ class User extends AbstractNauModel
     public function getPoints(): int
     {
         return $this->points;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPointsAttribute(): int
-    {
-        return $this->getLevel() * 100;
     }
 
     /**
