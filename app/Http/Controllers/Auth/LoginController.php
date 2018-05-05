@@ -20,7 +20,7 @@ class LoginController extends AuthController
     public function getLogin()
     {
         return $this->auth->user()
-            ? \response()->redirectTo(route('home'))
+            ? \response()->redirectTo(route('statistics'))
             : \response()->render('auth.login', [
                 'email'    => null,
                 'password' => null
@@ -33,7 +33,7 @@ class LoginController extends AuthController
     public function getLoginOperator()
     {
         return $this->auth->user()
-            ? \response()->redirectTo(route('home'))
+            ? \response()->redirectTo(route('statistics'))
             : \response()->render('auth.loginOperator', [
                 'alias' => null,
                 'login' => null,
@@ -167,7 +167,7 @@ class LoginController extends AuthController
             ->guard($user instanceof \App\Models\Operator ? 'operator' : 'web')
             ->login($user);
 
-        return \response()->redirectTo(route('home'));
+        return \response()->redirectTo(route('statistics'));
     }
 
     /**
@@ -196,7 +196,7 @@ class LoginController extends AuthController
 
         return \request()->wantsJson()
             ? \response()->render('', $this->user()->toArray())
-            : \response()->redirectTo(route('home'));
+            : \response()->redirectTo(route('statistics'));
     }
 
     /**

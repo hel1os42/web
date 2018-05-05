@@ -8,8 +8,8 @@
         <h1>{{  __('msg.welcome', ['name' => $authUser['name']]) }}</h1>
 
         @auth
-            @if( ! empty($table))
-                @foreach( $table as $name => $list )
+            @if( ! empty($data))
+                @foreach( $data as $name => $list )
                     <div class="row f-25">
                         <div class="col-sm-4 p-5">
                             <p> {{ __('words.' . $name) }} </p>

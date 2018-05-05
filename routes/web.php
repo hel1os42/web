@@ -87,7 +87,7 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
         'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
 
-    $router->get('/', 'HomeController@index')->name('home');
+    $router->get('/statistics', 'StatisticsController@index')->name('statistics');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {

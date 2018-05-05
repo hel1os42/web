@@ -6,11 +6,11 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\RoleRepository;
 use App\Repositories\OfferRepository;
 
-class HomeController extends Controller
+class StatisticsController extends Controller
 {
     /**
      * @param RoleRepository $roleRepository
@@ -29,15 +29,15 @@ class HomeController extends Controller
             return \response()->render('operator', []);
         }
 
-        $table = null;
+        $statistics = null;
 
         if ($this->user()->isAdmin()) {
-            $table = $this->getAdminStatistic($roleRepository);
+            $statistics = $this->getAdminStatistic($roleRepository);
         } elseif ($this->user()->isAgent()) {
-            $table = $this->getAgentStatistic($offerRepository);
+            $statistics = $this->getAgentStatistic($offerRepository);
         }
 
-        return \response()->render('home', ['table' => $table]);
+        return \response()->render('statistics', ['data' => $statistics]);
     }
 
     /**
