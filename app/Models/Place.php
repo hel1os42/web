@@ -123,6 +123,7 @@ class Place extends Model
             'picture_url',
             'cover_url',
             'timezone_offset',
+            'redemptions_count'
         ];
 
         parent::__construct($attributes);
@@ -246,6 +247,17 @@ class Place extends Model
     public function getOffersAttribute()
     {
         return $this->offers()->get();
+    }
+
+    /**
+     * @return int
+     * @throws \App\Exceptions\TokenException
+     */
+    public function getRedemptionsCountAttribute(): int
+    {
+        return $this->offers()->get()->sum(function (Offer $item) {
+            return $item->getRedemptionsCount();
+        });
     }
 
     /**

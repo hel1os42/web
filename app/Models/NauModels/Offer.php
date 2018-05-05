@@ -52,6 +52,7 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property null|float discount_finish_price
  * @property null|string currency
  * @property bool        is_favorite
+ * @property int redemptions_count
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -346,6 +347,22 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * @return int
+     */
+    public function getRedemptionsCount(): int
+    {
+        return $this->redemptions_count;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedemptionsCountAttribute(): int
+    {
+        return $this->redemptions()->count();
+    }
+
+    /**
      * Get the description with offer links
      *
      * @return string
@@ -557,6 +574,7 @@ class Offer extends AbstractNauModel
             'discount_finish_price',
             'currency',
             'timeframes_offset',
+            'redemptions_count',
         ];
     }
 
