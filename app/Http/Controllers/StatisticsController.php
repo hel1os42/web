@@ -25,9 +25,9 @@ class StatisticsController extends Controller
         Authenticatable $authUser
     ): Response
     {
-        if ($authUser instanceof \App\Models\Operator) {
-            return \response()->render('operator', []);
-        }
+//        if ($authUser instanceof \App\Models\Operator) {
+//            return \response()->render('operator', []);
+//        }
 
         $statistics = null;
 

@@ -86,11 +86,17 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
         ],
         'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
+});
 
-    $router->get('/statistics', 'StatisticsController@index')->name('statistics');
+$router->group(['middleware' => 'auth:operator'], function () use ($router) {
+    $router->get('/redemption', function() {
+        return response()->render('operator', []);
+    })->name('redemption');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
+
+    $router->get('/statistics', 'StatisticsController@index')->name('statistics');
 
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 
