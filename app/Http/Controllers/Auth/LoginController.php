@@ -165,10 +165,10 @@ class LoginController extends AuthController
     {
         if ($user instanceof \App\Models\Operator) {
             $guardName = 'operator';
-            $route    = 'home';
+            $route     = 'home';
         } else {
             $guardName = 'web';
-            $route    = 'statistics';
+            $route     = 'statistics';
         }
 
         $this->auth->guard($guardName)->login($user);
