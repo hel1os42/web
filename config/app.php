@@ -256,5 +256,10 @@ return [
             'description' => 'Get new iPhone X with discount.',
         ],
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
-    ]
+    ],
+
+    /**
+     * Lock time in minutes
+     */
+    'race_condition_lock_time' => env('RACE_CONDITION_LOCK_TIME', 1)
 ];

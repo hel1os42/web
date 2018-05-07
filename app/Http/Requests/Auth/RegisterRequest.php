@@ -44,8 +44,8 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone',
-            'email'            => 'required_without:phone|nullable|email|max:255|unique:users,email',
+            'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/',
+            'email'            => 'required_without:phone|nullable|email|max:255',
             'password'         => 'required_with:email|nullable|min:6|max:255',
             'password_confirm' => 'required_with:email|nullable|same:password'
         ];
