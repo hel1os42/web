@@ -164,14 +164,14 @@ class LoginController extends AuthController
     private function postLoginSession(Authenticatable $user)
     {
         if ($user instanceof \App\Models\Operator) {
-            $userType = 'operator';
+            $guardName = 'operator';
             $route    = 'home';
         } else {
-            $userType = 'web';
+            $guardName = 'web';
             $route    = 'statistics';
         }
 
-        $this->auth->guard($userType)->login($user);
+        $this->auth->guard($guardName)->login($user);
         return \response()->redirectTo(route($route));
     }
 
