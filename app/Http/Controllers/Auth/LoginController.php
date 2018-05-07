@@ -33,7 +33,7 @@ class LoginController extends AuthController
     public function getLoginOperator()
     {
         return $this->auth->user()
-            ? \response()->redirectTo(route('redemption'))
+            ? \response()->redirectTo(route('home'))
             : \response()->render('auth.loginOperator', [
                 'alias' => null,
                 'login' => null,
@@ -165,7 +165,7 @@ class LoginController extends AuthController
     {
         if ($user instanceof \App\Models\Operator) {
             $userType = 'operator';
-            $route    = 'redemption';
+            $route    = 'home';
         } else {
             $userType = 'web';
             $route    = 'statistics';

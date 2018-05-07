@@ -81,17 +81,14 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
 
     $router->resource('redemptions', 'RedemptionController', [
         'except' => [
+            'index',
             'update',
-            'destroy',
+            'destroy'
         ],
         'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
-});
 
-$router->group(['middleware' => 'auth:operator'], function () use ($router) {
-    $router->get('/redemption', function() {
-        return response()->render('operator', []);
-    })->name('redemption');
+    $router->get('/', 'HomeController')->name('home');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {

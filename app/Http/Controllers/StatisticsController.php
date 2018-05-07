@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\RoleRepository;
@@ -15,20 +14,14 @@ class StatisticsController extends Controller
     /**
      * @param RoleRepository $roleRepository
      * @param OfferRepository $offerRepository
-     * @param Authenticatable $authUser
      *
      * @return Response
      */
     public function index(
         RoleRepository $roleRepository,
-        OfferRepository $offerRepository,
-        Authenticatable $authUser
+        OfferRepository $offerRepository
     ): Response
     {
-//        if ($authUser instanceof \App\Models\Operator) {
-//            return \response()->render('operator', []);
-//        }
-
         $statistics = null;
 
         if ($this->user()->isAdmin()) {
