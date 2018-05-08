@@ -6,10 +6,21 @@ use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+/**
+ * Class UserController
+ *
+ * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserController extends Controller
 {
     /**
@@ -143,27 +154,17 @@ class UserController extends Controller
      */
     public function store(Requests\Auth\RegisterRequest $request)
     {
-        $newUserData = $request->except('approved');
+        $newUserData = $this->prepareRegistrationData($request);
 
-        $registrator = $request->getRegistrator();
+        $user = $this->createUser($newUserData);
 
-        $view = 'auth.registered';
-
-        if (null !== $registrator) {
-            $view                       = 'user.show';
-            $newUserData['referrer_id'] = $registrator->id;
-            $this->authorize('users.create', [$newUserData]);
-        }
-
-        $user = $this->userRepository->create($newUserData);
-
-        $success = $user->exists;
-
-        if (!$success) {
+        if (false === $user->exists) {
             throw new UnprocessableEntityHttpException();
         }
 
-        $user = null !== $registrator ? $this->createRelationData($user, $newUserData) : $user;
+        $view = $request->getRegistrator() instanceof User
+            ? 'user.show'
+            : 'auth.registered';
 
         return response()->render(
             $view,
@@ -171,6 +172,122 @@ class UserController extends Controller
             Response::HTTP_CREATED,
             route('users.show', [$user->getId()])
         );
+    }
+
+    /**
+     * @param Requests\Auth\RegisterRequest $request
+     * @return array
+     */
+    private function prepareRegistrationData(Requests\Auth\RegisterRequest $request): array
+    {
+        $newUserData = $request->except('approved');
+        $registrator = $request->getRegistrator();
+
+        if ($registrator instanceof User) {
+            $newUserData['referrer_id'] = $registrator->getKey();
+        }
+
+        return $newUserData;
+    }
+
+    /**
+     * @param array $newUserData
+     *
+     * @return User
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    private function createUser(array $newUserData): User
+    {
+        $lockTime = Carbon::now()->addSeconds(config('app.race_condition_lock_time'));
+
+        $keyData = array_merge($newUserData, ['domain' => config('app.url')]);
+        $lockKey = 'avoid-register-race-condition' . md5(json_encode($keyData));
+
+        if (false === Cache::add($lockKey, 1, $lockTime)) {
+            $registeredUser = $this->findRegisteredUser($newUserData);
+
+            // for security reason we must re-validate uniqueness
+            if (false === $registeredUser->exists) {
+                $this->validateUserUniqueness($newUserData);
+            }
+
+            return $registeredUser;
+        }
+
+        $this->validateUserUniqueness($newUserData);
+
+        $newUser = $this->userRepository->create($newUserData);
+
+        if (false === $newUser->wasRecentlyCreated) {
+            throw new UnprocessableEntityHttpException();
+        }
+
+        if (auth()->check() && $this->authorize('users.create', [$newUserData])) {
+            $newUser = $this->createRelationData($newUser, $newUserData);
+        }
+
+        return $newUser;
+    }
+
+    /**
+     * @param array $newUserData
+     *
+     * @return void
+     */
+    private function validateUserUniqueness(array $newUserData)
+    {
+        $uniquenessRules = [
+            'email' => 'unique:users,email',
+            'phone' => 'unique:users,phone',
+        ];
+
+        Validator::validate($newUserData, $uniquenessRules);
+    }
+
+    /**
+     * @param array $userData
+     *
+     * @return User
+     */
+    private function findRegisteredUser(array $userData): User
+    {
+        $foundedUsers = $this->userRepository->scopeQuery(function ($query) use ($userData) {
+            $conditions = array_only($userData, ['email', 'phone']);
+            $query      = $this->getConditionSubQuery($query, $conditions);
+
+            $from = Carbon::now()->subSeconds(config('app.race_condition_lock_time'));
+            $to   = Carbon::now();
+
+            $query = $query->whereBetween('created_at', array($from, $to));
+
+            return $query;
+        })->paginate(1);
+
+        return $foundedUsers->isEmpty()
+            ? new User()
+            : $foundedUsers->first();
+    }
+
+    /**
+     * @param User $model
+     * @param array $conditions
+     *
+     * @return Builder
+     */
+    private function getConditionSubQuery(User $model, array $conditions): Builder
+    {
+        if (0 === count($conditions)) {
+            return $model->newQuery();
+        }
+
+        return $model->where(function ($subQuery) use ($conditions) {
+            foreach ($conditions as $field => $value) {
+                $subQuery = $subQuery->orWhere($field, $value);
+            }
+
+            return $subQuery;
+        });
     }
 
     /**
@@ -224,7 +341,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array $newUserData
      *
      * @return User
@@ -261,7 +378,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array $roleIds
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException
