@@ -259,7 +259,7 @@ return [
     ],
 
     /**
-     * Lock time in minutes
+     * Lock time in seconds
      */
-    'race_condition_lock_time' => env('RACE_CONDITION_LOCK_TIME', 1)
+    'race_condition_lock_time' => env('RACE_CONDITION_LOCK_TIME', 5)
 ];

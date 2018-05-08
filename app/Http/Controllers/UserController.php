@@ -8,11 +8,19 @@ use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+/**
+ * Class UserController
+ *
+ * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserController extends Controller
 {
     /**
@@ -191,14 +199,15 @@ class UserController extends Controller
      */
     private function createUser(array $newUserData): User
     {
-        $minutes = config('app.race_condition_lock_time');
-        //@TODO add domain name to key for prevent keys intersection
-        $lockKey = 'avoid-register-race-condition' . md5(json_encode($newUserData));
+        $lockTime = Carbon::now()->addSeconds(config('app.race_condition_lock_time'));
 
-        if (false === Cache::add($lockKey, 1, $minutes)) {
+        $keyData = array_merge($newUserData, ['domain' => config('app.url')]);
+        $lockKey = 'avoid-register-race-condition' . md5(json_encode($keyData));
+
+        if (false === Cache::add($lockKey, 1, $lockTime)) {
             $registeredUser = $this->findRegisteredUser($newUserData);
 
-            // for security reason we must revalidate euniqueness
+            // for security reason we must re-validate uniqueness
             if (false === $registeredUser->exists) {
                 $this->validateUserUniqueness($newUserData);
             }
@@ -244,16 +253,11 @@ class UserController extends Controller
     private function findRegisteredUser(array $userData): User
     {
         $foundedUsers = $this->userRepository->scopeQuery(function ($query) use ($userData) {
-            if (array_has($userData, 'email')) {
-                $query = $query->where('email', array_get($userData, 'email'));
-            }
+            $conditions = array_only($userData, ['email', 'phone']);
+            $query      = $this->getConditionSubQuery($query, $conditions);
 
-            if (array_has($userData, 'phone')) {
-                $query = $query->where('phone', array_get($userData, 'phone'));
-            }
-
-            $from = Carbon::now()->subMinutes(config('app.race_condition_lock_time'));
-            $to = Carbon::now();
+            $from = Carbon::now()->subSeconds(config('app.race_condition_lock_time'));
+            $to   = Carbon::now();
 
             $query = $query->whereBetween('created_at', array($from, $to));
 
@@ -263,6 +267,27 @@ class UserController extends Controller
         return $foundedUsers->isEmpty()
             ? new User()
             : $foundedUsers->first();
+    }
+
+    /**
+     * @param User $model
+     * @param array $conditions
+     *
+     * @return Builder
+     */
+    private function getConditionSubQuery(User $model, array $conditions): Builder
+    {
+        if (0 === count($conditions)) {
+            return $model->newQuery();
+        }
+
+        return $model->where(function ($subQuery) use ($conditions) {
+            foreach ($conditions as $field => $value) {
+                $subQuery = $subQuery->orWhere($field, $value);
+            }
+
+            return $subQuery;
+        });
     }
 
     /**
