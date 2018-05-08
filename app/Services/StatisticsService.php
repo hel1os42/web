@@ -12,12 +12,5 @@ interface StatisticsService
      *
      * @return Collection
      */
-    public function getAdminStatistic(User $user): Collection;
-
-    /**
-     * @param User $user
-     *
-     * @return array
-     */
-    public function getAgentStatistic(User $user): array;
+    public function getStatisticsFor(User $user): Collection;
 }

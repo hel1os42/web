@@ -13,6 +13,7 @@ class StatisticsService implements StatisticsServiceInterface
 {
     private $roleRepository;
     private $offerRepository;
+    private $user;
 
     public function __construct(
         RoleRepository $roleRepository,
@@ -23,11 +24,28 @@ class StatisticsService implements StatisticsServiceInterface
     }
 
     /**
-     * @param User $user must be admin
-     *
+     * @param User $user
      * @return Collection
      */
-    public function getAdminStatistic(User $user): Collection
+    public function getStatisticsFor(User $user): Collection
+    {
+        $this->user = $user;
+        $statistics = collect();
+
+        if ($this->user->isAdmin()) {
+            $statistics = $this->getAdminStatistic();
+
+        } elseif ($this->user->isAgent()) {
+            $statistics = $this->getAgentStatistic();
+        }
+
+        return $statistics;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function getAdminStatistic(): Collection
     {
         $users = $this->roleRepository->scopeQuery(function (Role $query) {
             $orderedFields = array_reverse($query->getAllRoles());
@@ -46,18 +64,16 @@ class StatisticsService implements StatisticsServiceInterface
             });
 
         // add new item to collection head
-        return collect(['users_all' => $user->count()])
+        return collect(['users_all' => $this->user->count()])
             ->merge($users);
     }
 
     /**
-     * @param User $user must be agent
-     *
-     * @return array
+     * @return Collection
      */
-    public function getAgentStatistic(User $user): array
+    protected function getAgentStatistic(): Collection
     {
-        $users = $user->children;
+        $users = $this->user->children;
 
         $offersByUser = $users->map(function (User $user) {
             return $this->offerRepository
@@ -73,11 +89,11 @@ class StatisticsService implements StatisticsServiceInterface
             return $count;
         }, ['offers' => 0, 'redemptions' => 0]);
 
-        return [
+        return collect([
             'advertisers'          => $users->count(),
             'advertisers_approved' => $users->where('approved', true)->count(),
             'offers'               => $offersCount['offers'],
             'redemptions'          => $offersCount['redemptions']
-        ];
+        ]);
     }
 }

@@ -14,13 +14,7 @@ class StatisticsController extends Controller
      */
     public function index(StatisticsService $statisticsService): Response
     {
-        $statistics = [];
-
-        if ($this->user()->isAdmin()) {
-            $statistics = $statisticsService->getAdminStatistic($this->user());
-        } elseif ($this->user()->isAgent()) {
-            $statistics = $statisticsService->getAgentStatistic($this->user());
-        }
+        $statistics = $statisticsService->getStatisticsFor($this->user());
 
         return \response()->render('statistics', ['data' => $statistics]);
     }
