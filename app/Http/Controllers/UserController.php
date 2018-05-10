@@ -238,8 +238,8 @@ class UserController extends Controller
     private function validateUserUniqueness(array $newUserData)
     {
         $uniquenessRules = [
-            'email' => 'unique:users,email',
-            'phone' => 'unique:users,phone',
+            'email' => 'nullable|unique:users,email',
+            'phone' => 'nullable|unique:users,phone',
         ];
 
         Validator::validate($newUserData, $uniquenessRules);
