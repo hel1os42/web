@@ -1,7 +1,7 @@
 <div class="container">
     <div class="clearfix">
         <div class="logo pull-left">
-            <a href="/"><img src="{{ asset('img/logo.png') }}" alt="nau.io"></a>
+            <a href="{{ route('statistics') }}"><img src="{{ asset('img/logo.png') }}" alt="nau.io"></a>
             <img id="kcolBdA" class="advert ads banner" src="/img/advert/banner.gif" alt="This must be hidden">
         </div>
         <script>

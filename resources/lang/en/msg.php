@@ -11,8 +11,9 @@ return [
         'activating' => 'During activation...'
     ],
     'transaction' => [
-    'balance' => 'Your balance :balance NAU!',
-    'saved' => 'The following data was successfully saved!',
-    'accepted' => 'Transaction created and accepted to queue.',
+        'balance' => 'Your balance :balance NAU!',
+        'saved' => 'The following data was successfully saved!',
+        'accepted' => 'Transaction created and accepted to queue.',
     ],
+    'welcome' => 'Welcome to NAU, :Name!',
 ];

@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="container" style="margin-top: 40px;">
+    <div class="container">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
         <table class="table-striped-nau table-users">
             <thead>
