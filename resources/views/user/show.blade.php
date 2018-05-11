@@ -40,12 +40,20 @@
                                     <p><strong>Email</strong></p>
                                     <p><strong>Phone</strong></p>
                                     <p><strong>Invite code</strong></p>
+                                    <p>
+                                        <strong>
+                                            {{ __('users.fields.points') }}
+                                        </strong>
+                                    </p>
                                 </div>
                                 <div class="col-sm-9 p-5">
                                     <p>{{ $name ?: '-' }}</p>
                                     <p>{{ $email ?: '-' }}</p>
                                     <p>{{ $phone ?: '-' }}</p>
                                     <p>{{ $invite_code }}</p>
+                                    <p>
+                                        {{ $points }}
+                                    </p>
                                 </div>
                             </div>
                             <div class="row">
