@@ -216,14 +216,6 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @return int
      */
-    public function getPoints(): int
-    {
-        return $this->points;
-    }
-
-    /**
-     * @return int
-     */
     public function getPointsAttribute(): int
     {
         return $this->coreUser->points ?? 0;
@@ -371,7 +363,7 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function generateInvite(): string
     {
-        $newInvite = substr(uniqid(), 0, rand(3, 8));
+        $newInvite = substr(md5(rand()), 0, 5);
 
         return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
     }

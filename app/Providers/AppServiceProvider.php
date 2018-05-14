@@ -26,6 +26,8 @@ use App\Services\NauOffersService;
 use App\Services\OfferReservation;
 use App\Services\OffersService;
 use App\Services\PlaceService;
+use App\Services\StatisticsService;
+use App\Services\Implementation\StatisticsService as StatisticsServiceImpl;
 use App\Services\WeekDaysService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
@@ -131,6 +133,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PlaceService::class,
             PlaceServiceImpl::class
+        );
+        $this->app->bind(
+            StatisticsService::class,
+            StatisticsServiceImpl::class
         );
     }
 

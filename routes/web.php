@@ -81,21 +81,19 @@ $router->group(['middleware' => 'auth:jwt,web,operator'], function () use ($rout
 
     $router->resource('redemptions', 'RedemptionController', [
         'except' => [
+            'index',
             'update',
             'destroy',
         ],
         'parameters' => [ 'redemptions' => 'uuid_id' ]
     ]);
-    $router->get('/', function () {
-        $view = 'home';
-        if(auth()->user() instanceof \App\Models\Operator) {
-            $view = 'operator';
-        }
-        return response()->render($view, []);
-    })->name('home');
+
+    $router->get('/', 'HomeController')->name('home');
 });
 
 $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
+
+    $router->get('statistics', 'StatisticsController@index')->name('statistics');
 
     $router->get('auth/token', 'Auth\LoginController@tokenRefresh')->name('auth.token.refresh');
 

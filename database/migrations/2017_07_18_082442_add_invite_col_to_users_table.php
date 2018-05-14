@@ -42,10 +42,12 @@ class AddInviteColToUsersTable extends Migration
 
     private function generateInvite()
     {
-        $newInvite = substr(uniqid(), 0, rand(3, 8));
+        $newInvite = substr(md5(rand()), 0, 5);
+
         if (count(DB::table('users')->where('invite_code', $newInvite)->get())) {
             return $this->generateInvite();
         }
+
         return $newInvite;
     }
 }
