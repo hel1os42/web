@@ -45,6 +45,11 @@
                                             {{ __('users.fields.points') }}
                                         </strong>
                                     </p>
+                                    <p>
+                                        <strong>
+                                            {{ __('users.fields.last_logged_in_at') }}
+                                        </strong>
+                                    </p>
                                 </div>
                                 <div class="col-sm-9 p-5">
                                     <p>{{ $name ?: '-' }}</p>
@@ -53,6 +58,12 @@
                                     <p>{{ $invite_code }}</p>
                                     <p>
                                         {{ $points }}
+                                    </p>
+                                    <p>
+                                        {{ $last_logged_in_at
+                                            ? Carbon\Carbon::parse($last_logged_in_at)->format('Y-m-d H:i') . ' (UTC)'
+                                            : '-'
+                                         }}
                                     </p>
                                 </div>
                             </div>

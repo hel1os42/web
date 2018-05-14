@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Operator;
 use App\Services\Auth\Otp\OtpAuth;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
@@ -136,6 +137,8 @@ class LoginController extends AuthController
         }
 
         $session->migrate(true);
+
+        event(new Login($user, false));
 
         return $request->wantsJson()
             ? $this->postLoginJwt($user)
