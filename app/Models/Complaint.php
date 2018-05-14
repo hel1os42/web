@@ -25,9 +25,9 @@ class Complaint extends Model
 {
     use Uuids;
 
-    const STATUS_INBOX = 'inbox';
+    const STATUS_INBOX   = 'inbox';
     const STATUS_SENDING = 'sending';
-    const STATUS_SENT = 'sent';
+    const STATUS_SENT    = 'sent';
 
     /**
      * Complaint constructor.

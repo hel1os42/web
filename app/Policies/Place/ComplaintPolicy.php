@@ -13,7 +13,7 @@ class ComplaintPolicy extends Policy
      *
      * @return bool
      *
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function create(User $user, Place $place): bool
     {

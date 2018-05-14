@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers\Place;
 
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Place\Complaint\CreateRequest;
 use App\Models\Complaint;
@@ -73,5 +72,4 @@ class ComplaintController extends Controller
 
         return \response()->render('', $complaint->toArray(), Response::HTTP_CREATED, route('places.show', [$placeId]));
     }
-
 }
