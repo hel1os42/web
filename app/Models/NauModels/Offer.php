@@ -118,6 +118,7 @@ class Offer extends AbstractNauModel
         'longitude',
         'radius',
         'reserved',
+        'points',
     ];
 
     protected static function boot()
@@ -151,6 +152,12 @@ class Offer extends AbstractNauModel
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    /** @return int */
+    public function getPoints(): int
+    {
+        return $this->points;
     }
 
     /** @return string */
@@ -489,6 +496,7 @@ class Offer extends AbstractNauModel
             'lng'                    => null,
             'radius'                 => null,
             'reserved'               => $defaultReward * $reservationMultiplier,
+            'points'                 => 1,
         ];
     }
 
@@ -516,6 +524,7 @@ class Offer extends AbstractNauModel
             'radius',
             'status',
             'reserved',
+            'points',
         ];
     }
 
@@ -591,6 +600,7 @@ class Offer extends AbstractNauModel
             'discount_percent'       => 'float',
             'discount_start_price'   => 'float',
             'currency'               => 'string',
+            'points'                 => 'integer',
         ];
     }
 

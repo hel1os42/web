@@ -181,6 +181,13 @@
                                                         <p class="row"><span class="title col-xs-4">Monthly:</span> <span class="col-xs-8">{{ $offer['max_for_user_per_month'] }}</span></p>
                                                         <p>&nbsp;</p>
                                                         <p class="row"><span class="title col-xs-4">User level:<br><small>(min)</small></span> <span class="col-xs-8">{{ $offer['user_level_min'] }}</span></p>
+                                                        <p class="row">
+                                                            <span class="title col-xs-4">
+                                                                {{ __('offers.points_for_redemption') }}
+                                                            </span>
+                                                            <span class="col-xs-8">
+                                                                {{ array_get($offer, 'points', '?') }}
+                                                            </span></p>
                                                     </div>
                                                 </div>
                                             </div>

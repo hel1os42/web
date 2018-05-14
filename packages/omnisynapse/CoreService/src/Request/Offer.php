@@ -53,6 +53,9 @@ class Offer implements \JsonSerializable
     /** @var  @var float */
     public $reserved;
 
+    /** @var integer */
+    public $points;
+
     /**
      * Offer constructor.
      *
@@ -92,6 +95,7 @@ class Offer implements \JsonSerializable
             ->setCategoryId($offer->getCategoryId())
             ->setGeo($geo)
             ->setLimits($limits)
+            ->setPoints($offer->getPoints())
             ->setReward($offer->getReward())
             ->setStartDate($offer->getStartDate())
             ->setEndDate($offer->getFinishDate())
@@ -117,6 +121,7 @@ class Offer implements \JsonSerializable
             'end_date'          => null === $this->endDate ? null : $this->endDate->format(self::DATE_FORMAT),
             'status'            => $this->status,
             'reserved'          => $this->reserved,
+            'points'            => $this->points,
         ];
     }
 
@@ -188,6 +193,16 @@ class Offer implements \JsonSerializable
     public function setLimits(Limits $limits): Offer
     {
         $this->limits = $limits;
+        return $this;
+    }
+
+    /**
+     * @param int $points
+     * @return Offer
+     */
+    public function setPoints(int $points): Offer
+    {
+        $this->points = $points;
         return $this;
     }
 

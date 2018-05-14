@@ -216,14 +216,6 @@ class User extends Authenticatable implements PhoneAuthenticable
     /**
      * @return int
      */
-    public function getPoints(): int
-    {
-        return $this->points;
-    }
-
-    /**
-     * @return int
-     */
     public function getPointsAttribute(): int
     {
         return $this->coreUser->points ?? 0;

@@ -108,7 +108,8 @@ class OfferRequest extends FormRequest
             'currency'               => sprintf(
                 'nullable|required_with:discount_start_price|string|in:%s',
                 implode(',', Constants::CURRENCIES)
-            )
+            ),
+            'points' => 'required|integer'
         ];
     }
 } 
