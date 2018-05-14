@@ -61,5 +61,6 @@ return [
             ],
         ],
     ],
-    'image_cache_control' => env('IMAGE_CACHE_CONTROL', 10800),
+    'image_cache_control'    => env('IMAGE_CACHE_CONTROL', 10800),
+    'support_email'          => env('SUPPORT_EMAIL', 'help@nau.io'),
 ];

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Place\Testimonial;
+namespace App\Http\Requests\Place\Complaint;
 
-use App\Models\Testimonial;
+use App\Models\Complaint;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -19,8 +19,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text'  => 'string|min:3|max:120',
-            'stars' => 'required|numeric|between:1,5',
+            'text' => 'required|string|min:3|max:160',
         ];
     }
 
@@ -35,7 +34,7 @@ class CreateRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             if (!$this->uniqueForUser()) {
-                $validator->errors()->add('testimonial', trans('validation.unique_user_testimonial'));
+                $validator->errors()->add('compliant', trans('validation.unique_user_complaint'));
             }
         });
     }
@@ -46,10 +45,9 @@ class CreateRequest extends FormRequest
      */
     private function uniqueForUser()
     {
-        return Testimonial::query()
-                          ->where('user_id', auth()->user()->id)
-                          ->where('place_id', request()->route('placeUuid'))
-                          ->first() === null
-               || $this->request->get('text') === null;
+        return Complaint::query()
+                        ->where('user_id', auth()->user()->id)
+                        ->where('place_id', request()->route('placeUuid'))
+                        ->first() === null;
     }
 }
