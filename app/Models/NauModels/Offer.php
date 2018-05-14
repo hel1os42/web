@@ -359,7 +359,7 @@ class Offer extends AbstractNauModel
      */
     public function getRedemptionsCountAttribute(): int
     {
-        return $this->redemptions()->count();
+        return $this->activationCodes()->whereNotNull('redemption_id')->count();
     }
 
     /**
