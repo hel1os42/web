@@ -4,8 +4,10 @@ namespace App\Mail;
 
 use App\Models\Complaint;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class PlaceComplaint extends Mailable
 {
@@ -28,13 +30,26 @@ class PlaceComplaint extends Mailable
 
     /**
      * @return $this
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     public function build()
     {
         $this->to(config('nau.support_email'), 'NAU place complaint');
-        $this->complaint->update(['status' => Complaint::STATUS_SENT]);
 
         return $this->view('mail.complaint.message', $this->complaint->fresh(['user', 'place'])->toArray());
     }
+
+    /**
+     * @param Mailer $mailer
+     *
+     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     */
+    public function send(Mailer $mailer)
+    {
+        parent::send($mailer);
+
+        if(0 === count(Mail::failures())) {
+            $this->complaint->update(['status' => Complaint::STATUS_SENT]);
+        }
+    }
+
 }
