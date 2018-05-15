@@ -15,6 +15,7 @@ class AlterRedemptionIdCol extends Migration
     {
         Schema::table('activation_codes', function (Blueprint $table) {
             $table->index('redemption_id');
+            $table->index('offer_id');
         });
     }
 
@@ -27,6 +28,7 @@ class AlterRedemptionIdCol extends Migration
     {
         Schema::table('activation_codes', function (Blueprint $table) {
             $table->dropIndex('activation_codes_redemption_id_index');
+            $table->dropIndex('activation_codes_offer_id_index');
         });
     }
 }
