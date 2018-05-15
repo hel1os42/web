@@ -47,9 +47,8 @@ class PlaceComplaint extends Mailable
     {
         parent::send($mailer);
 
-        if(0 === count(Mail::failures())) {
+        if (0 === count(Mail::failures())) {
             $this->complaint->update(['status' => Complaint::STATUS_SENT]);
         }
     }
-
 }
