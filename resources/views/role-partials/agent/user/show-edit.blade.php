@@ -1,8 +1,7 @@
 @can('user.update.children', [$editableUserModel, array_column($children, 'id')])
-
     <div class="row">
         <div class="col-sm-3">
-            <p><strong>Children</strong></p>
+            {{ __('users.fields.children') }}
         </div>
 
         <div class="col-sm-9">
@@ -24,10 +23,9 @@
                 </div>
             @endif
             <button id="add_children" class="btn" type="button" data-toggle="modal" data-target="#add_children_list">
-                Add children
+                {{ __('buttons.add_children') }}
             </button>
 
         </div>
     </div>
-
 @endcan

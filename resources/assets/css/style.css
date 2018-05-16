@@ -3,6 +3,7 @@ body {
     color: #3f4c5d;
     font: normal 16px/24px "Open Sans", Helvetica, Arial, sans-serif;
     background: #fff;
+    overflow-y: scroll;
 }
 *:focus {
     outline: none !important;
@@ -185,9 +186,21 @@ footer p {
     border-color: #ff5a00;
 }
 .tab-content {
-    padding: 35px 15px 16px;
+    padding: 25px 15px 16px;
     border: 1px solid #e0e0e0;
     border-top-color: transparent;
+}
+.tab-content .row div:first-child {
+    font-weight: bold;
+}
+.tab-content label {
+    margin-bottom: 2px;
+}
+.tab-content #profile .row {
+    margin-bottom: 3px;
+}
+#profile-main form [class*="col-"]:first-child {
+    padding-left: 10px;
 }
 
 .pagenavy {

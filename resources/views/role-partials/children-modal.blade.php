@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" tabindex="-1">&times;</button>
-                <h4 class="modal-title">Children list</h4>
+                <h4 class="modal-title">{{ __('users.titles.children_list') }}</h4>
             </div>
             <div class="modal-body">
 
@@ -12,17 +12,16 @@
                       style="display: inline-block;">
                     <input type="hidden" name="search" id="search-field" value="">
                     <input type="hidden" name="searchJoin" value="and">
-                    <label for="search_field">Search by name, email, phone or place:</label>
+                    <label for="search_field">{{ __('msg.profile.search_by_fields')  }}</label>
                     <p>
                         <input id="search_field" type="text" value="">
                         @if( auth()->user()->isAdmin())
                             <label>
                                 <select name="role" id="role">
-                                    <option value="" selected>By All Roles</option>
-                                    <option value="agent">Agent</option>
-                                    <option value="chief_advertiser">Chief advertiser</option>
-                                    <option value="advertiser">Advertiser</option>
-                                    <option value="user">User</option>
+                                    <option value="" selected>{{ __('words.all_roles') }}</option>
+                                    <option value="chief_advertiser">{{ __('words.chief_advertiser') }}</option>
+                                    <option value="advertiser">{{ __('words.advertiser') }}</option>
+                                    <option value="user">{{ __('words.user') }}</option>
                                 </select>
                             </label>
                         @endif
@@ -34,10 +33,10 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Place</th>
+                            <th>{{ __('users.fields.name') }}</th>
+                            <th>{{ __('users.fields.email') }}</th>
+                            <th>{{ __('users.fields.phone') }}</th>
+                            <th>{{ __('users.fields.place') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +49,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="add_selected_children">Add selected users</button>
+                <button type="button" class="btn btn-default" id="add_selected_children">{{ __('buttons.add_selected_users') }}</button>
             </div>
         </div>
     </div>
