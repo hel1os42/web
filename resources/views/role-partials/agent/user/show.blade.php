@@ -2,7 +2,7 @@
     <div class="col-sm-3 p-5">
         {{ __('users.fields.id') }}
     </div>
-    <div class="col-sm-9 p-5">
+    <div class="col-sm-9 p-5" id="editable_user_id">
         {{ $id }}
     </div>
 </div>

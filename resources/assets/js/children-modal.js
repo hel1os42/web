@@ -75,14 +75,22 @@
         Children.get_params = encodeURIComponent( params + role );
         if ( Children.get_params ) {
             let sign;
-            if (url.indexOf('page=') === -1) {
+            if (url.indexOf('?') === -1) {
                 sign = '?';
             } else {
                 sign = '&';
             }
             Children.get_params = sign + 'search=' + Children.get_params;
         }
-        if ( role ) Children.get_params += '&searchJoin=and';
+        if ( role ) {
+            Children.get_params += '&searchJoin=and';
+        }
+
+        if ( Children.get_params ) {
+            Children.get_params += '&';
+        }
+        Children.get_params += 'availableForUser=' + document.getElementById('editable_user_id').innerText.trim();
+
     };
 
     Children.render = function( current_children ) {

@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
@@ -33,6 +34,18 @@ class RequestCriteriaEloquent implements CriteriaInterface
      */
     protected $criteriaData;
 
+    protected $availableForUserId;
+
+    /**
+     * @var \Illuminate\Http\Request
+     */
+    protected $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
     /**
      * @param Builder|\Illuminate\Database\Eloquent\Model $model
      * @param RepositoryInterface                         $repository
@@ -48,6 +61,8 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $this->criteriaData = app(CriteriaData::class)
             ->setFieldsSearchable($fieldsSearchable)
             ->init();
+
+        $this->availableForUserId = $this->request->get('availableForUser');
 
         $this->applySearch()
              ->applyOrderBy()
@@ -171,17 +186,14 @@ class RequestCriteriaEloquent implements CriteriaInterface
      */
     protected function applyFilterForUser()
     {
-        if (null === $this->criteriaData->getSearchValues()
-            || !isset($this->criteriaData->getSearchValues()['availableForUser'])) {
+        if (null === $this->availableForUserId) {
             return $this;
         }
 
-        $userId = $this->criteriaData->getSearchValues()['availableForUser'];
-
         if (auth()->user()->isAdmin()) {
-            $this->model = $this->filterForUserByAdmin($userId);
+            $this->model = $this->filterForUserByAdmin();
         } elseif (auth()->user()->isAgent()) {
-            $this->model = $this->filterForUserByAgent($userId);
+            $this->model = $this->filterForUserByAgent();
         }
 
         return $this;
@@ -189,18 +201,17 @@ class RequestCriteriaEloquent implements CriteriaInterface
 
 
     /**
-     * @param string $userId
      * @return Model
      */
-    protected function filterForUserByAdmin($userId)
+    protected function filterForUserByAdmin()
     {
         $model = $this->model;
-        $user  = app(User::class)->find($userId);
+        $user  = app(User::class)->find($this->availableForUserId);
 
-        if ($user->isChiefAdvertiser() && count($parentId = $user->parents()->pluck('id'))) {
+        if (null !== $user && $user->isChiefAdvertiser() && count($parentId = $user->parents()->pluck('id'))) {
 
             $parent   = app(User::class)->find($parentId)->first();
-            $chiefIds = $this->getChildrenChiefsIds($parent, $userId);
+            $chiefIds = $this->getChildrenChiefsIds($parent);
 
             $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
                 ->where(function(Builder $query) use ($parentId) {
@@ -220,14 +231,13 @@ class RequestCriteriaEloquent implements CriteriaInterface
     }
 
     /**
-     * @param string $userId
      * @return Model
      */
-    protected function filterForUserByAgent($userId)
+    protected function filterForUserByAgent()
     {
         $model = $this->model;
 
-        $chiefIds = $this->getChildrenChiefsIds(auth()->user(), $userId);
+        $chiefIds = $this->getChildrenChiefsIds(auth()->user());
         $this->excludeUsersIds($model, $chiefIds);
 
         return $model;
@@ -249,10 +259,9 @@ class RequestCriteriaEloquent implements CriteriaInterface
 
     /**
      * @param User $parent
-     * @param string $currentChiefId
      * @return Collection
      */
-    protected function getChildrenChiefsIds(User $parent, $currentChiefId): Collection
+    protected function getChildrenChiefsIds(User $parent): Collection
     {
         return $parent->children()
             ->with('roles')
@@ -260,8 +269,8 @@ class RequestCriteriaEloquent implements CriteriaInterface
                 $query->where('roles.name', Role::ROLE_CHIEF_ADVERTISER);
             })
             ->pluck('id')
-            ->reject(function($value) use ($currentChiefId) {
-                return $value == $currentChiefId;
+            ->reject(function($value) {
+                return $value == $this->availableForUserId;
             });
     }
 }
