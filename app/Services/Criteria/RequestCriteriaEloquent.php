@@ -8,8 +8,12 @@
 
 namespace App\Services\Criteria;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -48,6 +52,7 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $this->applySearch()
              ->applyOrderBy()
              ->applyFilter()
+             ->applyFilterForUser()
              ->applyWith();
 
         return $this->model;
@@ -159,5 +164,104 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $this->model = $this->model->with(explode(';', $with));
 
         return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function applyFilterForUser()
+    {
+        if (null === $this->criteriaData->getSearchValues()
+            || !isset($this->criteriaData->getSearchValues()['availableForUser'])) {
+            return $this;
+        }
+
+        $userId = $this->criteriaData->getSearchValues()['availableForUser'];
+
+        if (auth()->user()->isAdmin()) {
+            $this->model = $this->filterForUserByAdmin($userId);
+        } elseif (auth()->user()->isAgent()) {
+            $this->model = $this->filterForUserByAgent($userId);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $userId
+     * @return Model
+     */
+    protected function filterForUserByAdmin($userId)
+    {
+        $model = $this->model;
+        $user  = app(User::class)->find($userId);
+
+        if ($user->isChiefAdvertiser() && count($parentId = $user->parents()->pluck('id'))) {
+
+            $parent   = app(User::class)->find($parentId)->first();
+            $chiefIds = $this->getChildrenChiefsIds($parent, $userId);
+
+            $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
+                ->where(function(Builder $query) use ($parentId) {
+                    $query->where('users_parents.parent_id', $parentId)
+                        ->orWhere('users_parents.parent_id', null);
+                });
+
+            $this->excludeUsersIds($model, $chiefIds);
+
+            return $model;
+        }
+
+        $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
+            ->where('users_parents.user_id', null);
+
+        return $model;
+    }
+
+    /**
+     * @param string $userId
+     * @return Model
+     */
+    protected function filterForUserByAgent($userId)
+    {
+        $model = $this->model;
+
+        $chiefIds = $this->getChildrenChiefsIds(auth()->user(), $userId);
+        $this->excludeUsersIds($model, $chiefIds);
+
+        return $model;
+    }
+
+    /**
+     * @param $query
+     * @param $ids
+     */
+    protected function excludeUsersIds(&$query, $ids)
+    {
+        $query->whereNotIn('id', function(QueryBuilder $query) use ($ids) {
+            $query->select('user_id')
+                ->from('users_parents AS up')
+                ->whereIn('up.parent_id', $ids);
+        });
+    }
+
+
+    /**
+     * @param User $parent
+     * @param string $currentChiefId
+     * @return Collection
+     */
+    protected function getChildrenChiefsIds(User $parent, $currentChiefId): Collection
+    {
+        return $parent->children()
+            ->with('roles')
+            ->whereHas('roles', function(Builder $query) {
+                $query->where('roles.name', Role::ROLE_CHIEF_ADVERTISER);
+            })
+            ->pluck('id')
+            ->reject(function($value) use ($currentChiefId) {
+                return $value == $currentChiefId;
+            });
     }
 }
