@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Complaint;
 use App\Models\NauModels\Offer;
 use App\Models\OfferLink;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Observers\ComplaintObserver;
 use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
 use App\Observers\TestimonialObserver;
@@ -13,10 +15,12 @@ use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\PlaceRepository;
+use App\Services\ImageService as ImageServiceInterface;
+use App\Services\Implementation\ImageService;
 use App\Services\Implementation\InvestorAreaService as InvestorAreaServiceImpl;
 use App\Services\Implementation\NauOfferReservation;
-use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
 use App\Services\Implementation\PlaceService as PlaceServiceImpl;
+use App\Services\Implementation\WeekDaysService as WeekDaysServiceImpl;
 use App\Services\InvestorAreaService;
 use App\Services\NauOffersService;
 use App\Services\OfferReservation;
@@ -24,11 +28,7 @@ use App\Services\OffersService;
 use App\Services\PlaceService;
 use App\Services\StatisticsService;
 use App\Services\Implementation\StatisticsService as StatisticsServiceImpl;
-use App\Services\TimezoneDbService;
-use App\Services\Implementation\TimezoneDbService as TimezoneDbServiceImpl;
 use App\Services\WeekDaysService;
-use App\Services\ImageService as ImageServiceInterface;
-use App\Services\Implementation\ImageService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View as ViewFacade;
@@ -58,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         OfferLink::observe(OfferLinkObserver::class);
         Testimonial::observe(TestimonialObserver::class);
+        Complaint::observe(ComplaintObserver::class);
 
         ViewFacade::composer(
             ['*'],
@@ -85,12 +86,9 @@ class AppServiceProvider extends ServiceProvider
         $this->setUserViewsData();
 
         Validator::extend('isTimezone', function ($attribute, $value, $parameters, $validator) {
-            try
-            {
+            try {
                 new \DateTimeZone($value);
-            }
-            catch (\Exception $e)
-            {
+            } catch (\Exception $e) {
                 return false;
             }
 
