@@ -34,32 +34,32 @@ class Identity extends Model implements Transformable
     }
 
     /**
-     * @param mixed $user_id
+     * @param mixed $userId
      * @return Identity
      */
-    public function setUserId($user_id)
+    public function setUserId($userId)
     {
-        $this->user_id = $user_id;
+        $this->user_id = $userId;
         return $this;
     }
 
     /**
-     * @param mixed $provider_id
+     * @param mixed $providerId
      * @return Identity
      */
-    public function setProviderId($provider_id)
+    public function setProviderId($providerId)
     {
-        $this->provider_id = $provider_id;
+        $this->provider_id = $providerId;
         return $this;
     }
 
     /**
-     * @param mixed $external_user_id
+     * @param mixed $externalUserId
      * @return Identity
      */
-    public function setExternalUserId($external_user_id)
+    public function setExternalUserId($externalUserId)
     {
-        $this->external_user_id = $external_user_id;
+        $this->external_user_id = $externalUserId;
         return $this;
     }
 
