@@ -1,6 +1,6 @@
 <?php
 return [
-    'gate'       => env('OTP_GATE', 'smstraffic'),
+    'gate'       => env('OTP_GATE', 'stub'),
     'gate_class' => [
         'sendpulse'  => \App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth::class,
         'smstraffic' => \App\Services\Auth\Otp\SmsTrafficOtpAuth\SmsTrafficOtpAuth::class,
