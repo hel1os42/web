@@ -38,13 +38,15 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'    => 'required_without_all:phone,alias|nullable|email|max:255',
-            'password' => 'required_with:email|nullable|min:6|max:255',
-            'phone'    => 'required_without_all:email,alias|nullable|regex:/\+[0-9]{10,15}/',
-            'code'     => 'required_with:phone|nullable|digits:4|otp',
-            'alias'    => 'required_without_all:phone,email|nullable|min:3|max:255',
-            'login'    => 'required_with:alias|nullable|min:3|max:255',
-            'pin'      => 'required_with:alias|nullable|different:alias|different:login|min:3|max:255',
+            'email'                 => 'required_without_all:phone,alias,identity_access_token|nullable|email|max:255',
+            'password'              => 'required_with:email|nullable|min:6|max:255',
+            'phone'                 => 'required_without_all:email,alias,identity_access_token|nullable|regex:/\+[0-9]{10,15}/',
+            'code'                  => 'required_with:phone|nullable|digits:4|otp',
+            'alias'                 => 'required_without_all:phone,email,identity_access_token|nullable|min:3|max:255',
+            'login'                 => 'required_with:alias|nullable|min:3|max:255',
+            'pin'                   => 'required_with:alias|nullable|different:alias|different:login|min:3|max:255',
+            'identity_provider'     => 'required_with:identity_access_token|string',
+            'identity_access_token' => 'required_without_all:phone,email,alias|nullable|string',
         ];
     }
 
@@ -54,9 +56,15 @@ class LoginRequest extends FormRequest
             return $this->aliasCredentials();
         }
 
-        return null !== $this->email
-            ? $this->emailCredentials()
-            : $this->phoneCredentials();
+        if (null !== $this->email) {
+            return $this->emailCredentials();
+        }
+
+        if (null !== $this->phone) {
+            return $this->phoneCredentials();
+        }
+
+        return $this->getIdentityCredentials();
     }
 
     private function emailCredentials()
@@ -82,5 +90,13 @@ class LoginRequest extends FormRequest
             'password' => $this->pin,
             'alias'    => $this->alias,
         ];
+    }
+
+    private function getIdentityCredentials()
+    {
+        return array_only($this->all(), [
+            'identity_provider',
+            'identity_access_token',
+        ]);
     }
 }

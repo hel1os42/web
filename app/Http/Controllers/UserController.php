@@ -6,11 +6,14 @@ use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -29,16 +32,23 @@ class UserController extends Controller
     private $userRepository;
 
     /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
      * UserController constructor.
      *
      * @param UserRepository $userRepository
-     * @param AuthManager    $authManager
+     * @param UserService $userService
+     * @param AuthManager $authManager
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(UserRepository $userRepository, AuthManager $authManager)
+    public function __construct(UserRepository $userRepository, UserService $userService, AuthManager $authManager)
     {
         $this->userRepository = $userRepository;
+        $this->userService    = $userService;
 
         parent::__construct($authManager);
     }
@@ -147,6 +157,7 @@ class UserController extends Controller
     /**
      * @param Requests\Auth\RegisterRequest $request
      *
+     *
      * @return Response
      * @throws UnprocessableEntityHttpException
      * @throws \LogicException
@@ -156,10 +167,34 @@ class UserController extends Controller
     {
         $newUserData = $this->prepareRegistrationData($request);
 
-        $user = $this->createUser($newUserData);
+        $userService = $this->userService->setIssuer(auth()->user());
+
+        DB::beginTransaction();
+
+        try {
+
+            $user = request()->wantsJson()
+                ? $userService->make($newUserData)
+                : $userService->register($newUserData);
+        } catch (ValidationException $exception) {
+            DB::rollBack();
+
+            throw $exception;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            logger()->error(sprintf('User registration failed. %1$s', $exception->getMessage()), [
+                'exception' => $exception->getTrace(),
+                'data'      => $newUserData,
+            ]);
+
+            throw new UnprocessableEntityHttpException('Something went wrong');
+        }
+
+        DB::commit();
 
         if (false === $user->exists) {
-            throw new UnprocessableEntityHttpException();
+            throw new UnprocessableEntityHttpException('Something went wrong');
         }
 
         $view = $request->getRegistrator() instanceof User

@@ -17,6 +17,7 @@
     "intervention/image": "^2.4",
     "lab404/laravel-impersonate": "^1.2",
     "laravel/framework": "5.4.*",
+    "laravel/socialite": "^3.0",
     "laravel/tinker": "~1.0",
     "laravelcollective/html": "^5.4.0",
     "league/fractal": "^0.17.0",
