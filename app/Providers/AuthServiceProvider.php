@@ -82,6 +82,8 @@ class AuthServiceProvider extends ServiceProvider
         'places.testimonials.create' => 'TestimonialPolicy@create',
         'places.testimonials.update' => 'TestimonialPolicy@update',
 
+        'places.complaints.create' => 'Place\ComplaintPolicy@create',
+
         'offers.redemption'         => 'RedemptionPolicy@index',
         'offers.redemption.confirm' => 'RedemptionPolicy@confirm',
         'offers.redemption.show'    => 'RedemptionPolicy@show',

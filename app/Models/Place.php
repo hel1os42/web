@@ -39,6 +39,7 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property NauModels\Offer[]|Collection offers
  * @property string                       phone
  * @property string                       site
+ * @property int                          redemptions_count
  *
  * @method static static|\Illuminate\Database\Eloquent\Builder byUser(User $user)
  * @method static static|\Illuminate\Database\Eloquent\Builder filterByPosition(string $lat = null, string $lng = null, int $radius = null)
@@ -123,6 +124,7 @@ class Place extends Model
             'picture_url',
             'cover_url',
             'timezone_offset',
+            'redemptions_count',
         ];
 
         parent::__construct($attributes);
@@ -246,6 +248,17 @@ class Place extends Model
     public function getOffersAttribute()
     {
         return $this->offers()->get();
+    }
+
+    /**
+     * @return int
+     * @throws \App\Exceptions\TokenException
+     */
+    public function getRedemptionsCountAttribute(): int
+    {
+        return $this->offers()->get()->sum(function (Offer $item) {
+            return $item->getRedemptionsCount();
+        });
     }
 
     /**
