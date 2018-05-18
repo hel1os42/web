@@ -1,6 +1,6 @@
 <?php
 return [
-    'gate'       => env('OTP_GATE', 'stub'),
+    'gate'       => env('OTP_GATE', 'smstraffic'),
     'gate_class' => [
         'sendpulse'  => \App\Services\Auth\Otp\SendPulseOtpAuth\SendPulseOtpAuth::class,
         'smstraffic' => \App\Services\Auth\Otp\SmsTrafficOtpAuth\SmsTrafficOtpAuth::class,
@@ -19,7 +19,7 @@ return [
             ]
         ],
         'smstraffic' => [
-            'base_api_url' => 'http://www.smstraffic.ru',
+            'base_api_url' => 'https://api.smstraffic.ru',
             'main_path'    => '/multi.php',
             'auth_data'    => [
                 'login'        => env('SMSTRAFFIC_LOGIN', ''),
