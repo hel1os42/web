@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Class UserController
@@ -201,9 +202,14 @@ class UserController extends Controller
             ? 'user.show'
             : 'auth.registered';
 
+        $userData = $user->toArray();
+
+        $userData['token']                = JWTAuth::fromUser($user);
+        $userData['was_recently_created'] = $user->wasRecentlyCreated;
+
         return response()->render(
             $view,
-            $user->toArray(),
+            $userData,
             Response::HTTP_CREATED,
             route('users.show', [$user->getId()])
         );
