@@ -88,7 +88,7 @@
                                         {{ __('users.fields.name') }}
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $name }}"></label>
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label>
                                     </div>
                                 </div>
                                 <div class="row">
