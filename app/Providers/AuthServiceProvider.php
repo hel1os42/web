@@ -11,8 +11,8 @@ use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -76,6 +76,8 @@ class AuthServiceProvider extends ServiceProvider
         'places.testimonials.list'   => 'TestimonialPolicy@index',
         'places.testimonials.create' => 'TestimonialPolicy@create',
         'places.testimonials.update' => 'TestimonialPolicy@update',
+
+        'places.complaints.create' => 'Place\ComplaintPolicy@create',
 
         'offers.redemption'         => 'RedemptionPolicy@index',
         'offers.redemption.confirm' => 'RedemptionPolicy@confirm',

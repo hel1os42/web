@@ -298,6 +298,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
         ]
     ]);
 
+    $router->post('places/{placeUuid}/complaints', 'Place\ComplaintController@store')->name('places.complaints.store');
+
     /**
      * Roles
      */

@@ -48,6 +48,8 @@ class RepositoryServiceProvider extends ServiceProvider
         Implementation\User\FavoriteOfferRepositoryEloquent::class);
         $this->app->bind(Repositories\TestimonialRepository::class,
             Implementation\TestimonialRepositoryEloquent::class);
+        $this->app->bind(Repositories\ComplaintRepository::class,
+            Implementation\ComplaintRepositoryEloquent::class);
 
         $this->app->alias(Repositories\OfferRepository::class, 'offerRepository');
         $this->app->alias(Repositories\OfferLinkRepository::class, 'offerLinkRepository');
