@@ -207,30 +207,43 @@
     };
 
     Children.pagination = function ( opt ) {
-        let block = '';
+        if ( opt.last_page < 2 ) return '';
 
-        if ( opt.last_page > 1 ) {
-            block += '<p class="pagenavy" id="table_pager">';
+        let block     = '<p class="pagenavy" id="table_pager">',
+            dots_item = '<span class="dots">...</span>',
+            cntBefore = false,
+            cntAfter  = false;
 
-            if ( opt.prev_page_url )
-                block += '<a href="' + opt.prev_page_url + '" class="prev"></a>';
+        if ( opt.prev_page_url ) block += '<a href="' + opt.prev_page_url + '" class="prev"></a>';
 
-            for (i=1; i <= opt.last_page; i++) {
-
-                if ( opt.current_page == i ) {
-                    block += '<span class="current">' + i + '</span>';
-                } else {
-                    block += '<a href="' + opt.path + '?page=' + i + '">' + i + '</a>';
+        for (i=1; i <= opt.last_page; i++) {
+            if (i > 2 && i < opt.current_page - 2) {
+                if (!cntBefore) {
+                    block += dots_item;
+                    cntBefore = true;
                 }
+                continue;
             }
 
-            if ( opt.next_page_url )
-                block += '<a href="' + opt.next_page_url + '" class="next"></a>';
+            if (i > opt.current_page + 2 && i < opt.last_page - 1) {
+                if (!cntAfter) {
+                    block += dots_item;
+                    cntAfter = true;
+                }
+                continue;
+            }
 
-            block += '</p>';
+            if ( opt.current_page === i ) {
+                block += '<span class="current">' + i + '</span>';
+                continue;
+            }
+
+            block += '<a href="' + opt.path + '?page=' + i + '">' + i + '</a>';
         }
 
-        return block;
+        if ( opt.next_page_url ) block += '<a href="' + opt.next_page_url + '" class="next"></a>';
+
+        return block + '</p>';
     };
 
     Children.remove_pagination = function() {
