@@ -15,10 +15,10 @@
                     <label for="search_field">{{ __('msg.profile.search_by_fields')  }}</label>
                     <p>
                         <input id="search_field" type="text" value="">
-                        @if( auth()->user()->isAdmin())
+                        @if( auth()->user()->isAdmin() && $editableUserModel->isAgent() )
                             <label>
                                 <select name="role" id="role">
-                                    <option value="" selected>{{ __('words.all_roles') }}</option>
+                                    <option value="chief_advertiser|advertiser" selected>{{ __('words.all_roles') }}</option>
                                     <option value="chief_advertiser">{{ __('words.chief_advertiser') }}</option>
                                     <option value="advertiser">{{ __('words.advertiser') }}</option>
                                     <option value="user">{{ __('words.user') }}</option>
@@ -57,6 +57,16 @@
 
 @push('styles')
 <style>
+    .children-wrap.box-style {
+        margin-top: 6px;
+        margin-bottom: 16px;
+        border: 1px solid #a9a9a9;
+        padding: 8px 8px 0px;
+        width: fit-content;
+        min-width: 50%;
+        max-height: 170px;
+        overflow-y: scroll;
+    }
     .modal-body {
         min-height: 230px;
     }

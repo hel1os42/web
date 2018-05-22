@@ -130,4 +130,12 @@ abstract class AbstractStatement implements SearchStatement
     {
         return null !== $this->value ? true : false;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getRelation(): ?string
+    {
+        return $this->relation;
+    }
 }

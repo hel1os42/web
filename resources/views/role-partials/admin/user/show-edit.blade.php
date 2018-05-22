@@ -67,7 +67,8 @@
 
         <div class="col-sm-9">
             @if(isset($children))
-                <div class="children-wrap" style="padding-bottom: 16px;">
+                @php $box_style = count($children) ? 'box-style' : ''; @endphp
+                <div class="children-wrap {{ $box_style }}">
                     <input type="hidden" name="child_ids[]">
 
                     @foreach($children as $child)

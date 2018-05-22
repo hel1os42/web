@@ -151,7 +151,9 @@ class AppServiceProvider extends ServiceProvider
                 /** @var User $editableUserModel */
                 $editableUserModel = User::query()->find($editableUserArray['id']);
                 $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
-                $children          = $editableUserModel->children->toArray();
+                $children          = $editableUserModel->children()
+                    ->get(['id', 'name', 'email'])
+                    ->toArray();
 
                 $view->with('roleIds', $roleIds);
                 $view->with('children', $children);

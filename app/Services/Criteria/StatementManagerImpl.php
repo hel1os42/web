@@ -117,4 +117,28 @@ class StatementManagerImpl implements StatementManager
             )
         );
     }
+
+    /**
+     * @param string $name
+     * @return null|SearchStatement
+     */
+    public function getAndRemoveStatementByRelation(string $name): ?SearchStatement
+    {
+        foreach ($this->items as $key => $item) {
+            if ($item->getRelation() === $name) {
+                unset($this->items[$key]);
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return int
+     */
+    public function hasStatements(): int
+    {
+        return count($this->items);
+    }
 }

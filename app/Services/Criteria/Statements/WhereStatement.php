@@ -26,9 +26,16 @@ class WhereStatement extends AbstractStatement
                 $this->searchJoin);
         }
 
+        if ('or' === $this->searchJoin) {
+            return $query->orWhereHas($this->relation, function ($query) {
+                /** @var Builder $query */
+                $query->where($this->field, $this->operator, $this->value, 'and');
+            });
+        }
+
         return $query->whereHas($this->relation, function ($query) {
             /** @var Builder $query */
-            $query->where($this->field, $this->operator, $this->value, $this->searchJoin);
+            $query->where($this->field, $this->operator, $this->value, 'and');
         });
     }
 }

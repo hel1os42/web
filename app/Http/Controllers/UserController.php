@@ -366,6 +366,10 @@ class UserController extends Controller
             $childIds = array_filter($newUserData['child_ids']);
             $this->authorize('user.update.children', [$user, $childIds]);
             $user->children()->sync($childIds, true);
+
+            if ($this->user()->isAdmin()) {
+                $this->updateAllParentsWithChildren($user, $childIds);
+            }
             array_push($with, 'children');
         }
 
@@ -376,6 +380,33 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    /**
+     * @param User $editableUser
+     * @param array $childIds
+     */
+    private function updateAllParentsWithChildren(User $editableUser, $childIds)
+    {
+        $deepChildren = collect();
+        foreach ($childIds as $childId) {
+            $child = app(User::class)->find($childId);
+
+            if (null === $child) {
+                continue;
+            }
+
+            $deepChildren = $deepChildren->merge(
+                $child->children()->pluck('id')
+            );
+        }
+
+        $editableUser->children()->sync($deepChildren, false);
+        $parents = $editableUser->parents()->get();
+
+        foreach ($parents as $user) {
+            $user->children()->sync(collect($childIds)->merge($deepChildren), false);
+        }
     }
 
     /**

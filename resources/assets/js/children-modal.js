@@ -51,46 +51,38 @@
     };
 
     Children.setParams = function( url ) {
-        Children.request = [];
-        let searchStr = document.getElementById('search_field').value;
-        let params = '';
+        Children.request    = [];
+        Children.get_params = [];
+
+        let params = [
+            'availableForUser=' + document.getElementById('editable_user_id').innerText.trim()
+        ];
         let role = document.getElementById('role');
         if ( role ) {
-            role = role.options[role.selectedIndex].value;
-            Children.request['role'] = role;
+            Children.request['role'] = role.options[role.selectedIndex].value;
+            role = 'roles.name:' + role.options[role.selectedIndex].value;
         } else {
-            role = 'advertiser';
+            role = 'roles.name:advertiser';
         }
-        role = role ? 'roles.name:' + role : '';
 
+        let searchStr = document.getElementById('search_field').value;
+        let searchParams = '';
         if ( searchStr ) {
             Children.request['string'] = searchStr;
-            params = 'email:' + searchStr
-                // + ';name:' + searchStr
-                // + ';phone:' + searchStr
-                // + ';place.name:' + searchStr
+            searchParams = 'email:' + searchStr
+                + ';name:' + searchStr
+                + ';phone:' + searchStr
+                + ';place.name:' + searchStr
                 + ';';
         }
 
-        Children.get_params = encodeURIComponent( params + role );
-        if ( Children.get_params ) {
-            let sign;
-            if (url.indexOf('?') === -1) {
-                sign = '?';
-            } else {
-                sign = '&';
-            }
-            Children.get_params = sign + 'search=' + Children.get_params;
-        }
-        if ( role ) {
-            Children.get_params += '&searchJoin=and';
-        }
+        params.push('search=' + encodeURIComponent( searchParams + role ));
+        params.push('searchJoin=or');
 
-        if ( Children.get_params ) {
-            Children.get_params += '&';
+        for (let i=0; i<params.length; i++) {
+            let sign = (i === 0 && url.indexOf('?') === -1) ? '?' : '&';
+            Children.get_params += sign + params[i];
         }
-        Children.get_params += 'availableForUser=' + document.getElementById('editable_user_id').innerText.trim();
-
     };
 
     Children.render = function( current_children ) {
@@ -100,17 +92,10 @@
 
         if (data) {
             for (i in data) {
-                let child = data[i],
-                    mark = '', disClass = '';
+                let child = data[i];
 
-                if ( current_children.includes(child['id']) ) {
-                    mark = 'disabled';
-                    disClass = ' class="disabled" title="User was already added"';
-                }
-
-                if ( child['roles'][0]['name'] == 'admin' || child['roles'][0]['name'] == 'agent' ) {
-                    mark = 'disabled';
-                    disClass = ' class="disabled" title="User can\'t be added"';
+                if (current_children.includes(child['id'])) {
+                    continue;
                 }
 
                 let row = [
@@ -118,14 +103,14 @@
                     'class="children-list" ' +
                     'name="child_ids[]" ' +
                     'value="' + child['id'] +
-                    '" ' + mark + '>',
+                    '">',
                     child['name'] ? child['name'] : '-',
                     child['email'],
                     child['phone'] ? child['phone'] : '-',
                     (child['place'] && child['place']['name']) ? child['place']['name'] : '-'
                 ];
 
-                body += '<tr' + disClass + '><td>' + row.join('</td><td>') + '</td></tr>';
+                body += '<tr><td>' + row.join('</td><td>') + '</td></tr>';
             }
         }
 
@@ -151,7 +136,7 @@
         }
     };
 
-    Children.load_callback = function( response ) {
+    Children.load_callback = function( response, additional_callback ) {
         let current_children = Children.get_selected_users( document.querySelectorAll('.added-children') );
 
         if ( response ) {
@@ -159,9 +144,13 @@
             Children.render(current_children);
             Children.waiting('stop');
         }
+
+        if (additional_callback) {
+            additional_callback();
+        }
     };
 
-    Children.load = function( url ) {
+    Children.load = function( url, additional_callback ) {
         let xhr = new XMLHttpRequest();
         if ( ! url )
             url = Children.form.getAttribute('action');
@@ -175,7 +164,7 @@
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 switch (xhr.status) {
-                    case 200 : Children.load_callback( xhr.response );
+                    case 200 : Children.load_callback( xhr.response, additional_callback );
                         break;
                     case 401 : UnAuthorized();
                         break;
@@ -249,6 +238,34 @@
             Children.modal_body.removeChild( document.getElementById('table_pager') );
     };
 
+    Children.has_children = function(block)
+    {
+        if (!block) return null;
+        return block.querySelectorAll('.added-children').length > 0;
+    };
+
+    Children.has_available_children = function() {
+        let current_childrenIds  = Children.get_selected_users( document.querySelectorAll('.added-children') );
+        let availableChildrenIds = Children.response.data.map(function(item) {
+            return item.id;
+        });
+
+        availableChildrenIds = availableChildrenIds.filter(function(item){
+            return current_childrenIds.indexOf(item) === -1;
+        });
+
+        return availableChildrenIds.length;
+    };
+
+    Children.show_hide_add_children_btn = function() {
+        if( Children.has_available_children() || document.getElementById('table_pager')
+            || Children.request['string']) {
+            Children.add_button.style.display = 'block';
+        } else {
+            Children.add_button.style.display = 'none';
+        }
+    };
+
     // EVENT LISTENERS
 
     // OPEN dialog
@@ -272,6 +289,12 @@
         });
         Children.add( selected_users );
         Children.modal_dialog.getElementsByClassName('close')[0].click();
+
+        if (true === Children.has_children( Children.wrap )) {
+            Children.wrap.classList.add('box-style');
+        }
+
+        Children.show_hide_add_children_btn();
     });
 
     // REMOVE child
@@ -279,8 +302,15 @@
         if ( e.target.classList.contains('rm_child')
             && e.target.parentNode.tagName == 'P' ) {
             if ( confirm('Do you really want to remove the child user?') ) {
-                let child = e.target.parentNode;
-                child.parentNode.removeChild( child );
+                let child  = e.target.parentNode;
+                let parent = child.parentNode;
+                parent.removeChild( child );
+
+                if ( false === Children.has_children( parent ) ) {
+                    parent.classList.remove('box-style');
+                }
+
+                Children.show_hide_add_children_btn();
             }
         }
     });
@@ -305,4 +335,6 @@
         }
     });
 
+    // RUNNING
+    Children.load(null, Children.show_hide_add_children_btn);
 })();

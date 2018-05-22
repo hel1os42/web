@@ -21,6 +21,8 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 /**
  * Class CriteriaInterfaceEloquent
  * @package App\Services\Criteria
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RequestCriteriaEloquent implements CriteriaInterface
 {
@@ -91,10 +93,24 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $statementManager = app(StatementManager::class);
         $statementManager->init($this->criteriaData);
 
-        // then we can apply parts or query to our builder
-        $this->model = $this->model->where(function ($query) use ($statementManager) {
-            $statementManager->apply($query);
-        });
+        $roleStatement = $statementManager->getAndRemoveStatementByRelation('roles');
+
+        if ($statementManager->hasStatements()) {
+            // then we can apply parts or query to our builder
+            $this->model = $this->model->where(function ($query) use ($statementManager) {
+                $statementManager->apply($query);
+            });
+        }
+
+        if (null !== $roleStatement) {
+            $roleStatement->setSearchJoin('and');
+            $roleStatementManager = app(StatementManager::class);
+            $roleStatementManager->push($roleStatement);
+
+            $this->model = $this->model->where(function ($query) use ($roleStatementManager) {
+                $roleStatementManager->apply($query);
+            });
+        }
 
         return $this;
     }
@@ -182,36 +198,31 @@ class RequestCriteriaEloquent implements CriteriaInterface
     }
 
     /**
-     * @return $this
+     * @return CriteriaInterface
      */
-    protected function applyFilterForUser()
+    protected function applyFilterForUser(): CriteriaInterface
     {
-        if (null === $this->availableForUserId) {
+        if (null === $this->availableForUserId || !$this->model->getModel() instanceof User) {
             return $this;
         }
 
         if (auth()->user()->isAdmin()) {
-            $this->model = $this->filterForUserByAdmin();
+            $this->filterForUserByAdmin();
         } elseif (auth()->user()->isAgent()) {
-            $this->model = $this->filterForUserByAgent();
+            $this->filterForUserByAgent();
         }
 
         return $this;
     }
 
-
-    /**
-     * @return Model
-     */
     protected function filterForUserByAdmin()
     {
         $model = $this->model;
         $user  = app(User::class)->find($this->availableForUserId);
 
         if (null !== $user && $user->isChiefAdvertiser() && count($parentId = $user->parents()->pluck('id'))) {
-
             $parent   = app(User::class)->find($parentId)->first();
-            $chiefIds = $this->getChildrenChiefsIds($parent);
+            $chiefIds = $this->getChildrenIdsByRole($parent, Role::ROLE_CHIEF_ADVERTISER);
 
             $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
                 ->where(function(Builder $query) use ($parentId) {
@@ -219,35 +230,34 @@ class RequestCriteriaEloquent implements CriteriaInterface
                         ->orWhere('users_parents.parent_id', null);
                 });
 
-            $this->excludeUsersIds($model, $chiefIds);
+            $this->excludeChildrenByParentsIds($model, $chiefIds);
 
-            return $model;
+            $this->model = $model;
+            return;
         }
 
         $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
-            ->where('users_parents.user_id', null);
+            ->where('users_parents.user_id', null)
+            ->orWhere('users_parents.parent_id', $this->availableForUserId);
 
-        return $model;
+        $this->model = $model;
     }
 
-    /**
-     * @return Model
-     */
     protected function filterForUserByAgent()
     {
         $model = $this->model;
 
-        $chiefIds = $this->getChildrenChiefsIds(auth()->user());
-        $this->excludeUsersIds($model, $chiefIds);
+        $chiefIds = $this->getChildrenIdsByRole(auth()->user(), Role::ROLE_CHIEF_ADVERTISER);
+        $this->excludeChildrenByParentsIds($model, $chiefIds);
 
-        return $model;
+        $this->model = $model;
     }
 
     /**
      * @param $query
-     * @param $ids
+     * @param array|Collection $ids
      */
-    protected function excludeUsersIds(&$query, $ids)
+    protected function excludeChildrenByParentsIds(&$query, $ids)
     {
         $query->whereNotIn('id', function(QueryBuilder $query) use ($ids) {
             $query->select('user_id')
@@ -259,14 +269,15 @@ class RequestCriteriaEloquent implements CriteriaInterface
 
     /**
      * @param User $parent
+     * @param string $roleName
      * @return Collection
      */
-    protected function getChildrenChiefsIds(User $parent): Collection
+    protected function getChildrenIdsByRole(User $parent, string $roleName): Collection
     {
         return $parent->children()
             ->with('roles')
-            ->whereHas('roles', function(Builder $query) {
-                $query->where('roles.name', Role::ROLE_CHIEF_ADVERTISER);
+            ->whereHas('roles', function(Builder $query) use ($roleName) {
+                $query->where('roles.name', $roleName);
             })
             ->pluck('id')
             ->reject(function($value) {
