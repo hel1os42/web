@@ -11,7 +11,6 @@ use App\Models\User\RelationsTrait;
 use App\Models\User\RoleTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -65,27 +64,25 @@ class User extends Authenticatable implements PhoneAuthenticable
         $this->initUuid();
 
         $this->attributes = [
-            'name'              => '',
-            'email'             => null,
-            'password'          => null,
-            'remember_token'    => null,
-            'created_at'        => null,
-            'updated_at'        => null,
-            'last_logged_in_at' => null,
-            'referrer_id'       => null,
-            'invite_code'       => null,
-            'approved'          => false,
+            'name'           => '',
+            'email'          => null,
+            'password'       => null,
+            'remember_token' => null,
+            'created_at'     => null,
+            'updated_at'     => null,
+            'referrer_id'    => null,
+            'invite_code'    => null,
+            'approved'       => false,
         ];
 
         $this->casts = [
-            'name'              => 'string',
-            'email'             => 'string',
-            'phone'             => 'string',
-            'latitude'          => 'double',
-            'longitude'         => 'double',
-            'approved'          => 'boolean',
-            'invite_code'       => 'string',
-            'last_logged_in_at' => 'datetime',
+            'name'        => 'string',
+            'email'       => 'string',
+            'phone'       => 'string',
+            'latitude'    => 'double',
+            'longitude'   => 'double',
+            'approved'    => 'boolean',
+            'invite_code' => 'string',
         ];
 
         $this->fillable = [
@@ -233,20 +230,6 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
-     * Set last logged in datetime
-     *
-     * @param Carbon $date
-     *
-     * @return $this
-     */
-    public function setLastLoggedInAt(Carbon $date): User
-    {
-        $this->last_logged_in_at = $date;
-
-        return $this;
-    }
-
-    /**
      * Set user name
      *
      * @param null|string $name
@@ -383,16 +366,6 @@ class User extends Authenticatable implements PhoneAuthenticable
         $newInvite = substr(md5(rand()), 0, 5);
 
         return null !== self::findByInvite($newInvite) ? $this->generateInvite() : $newInvite; // !!DANGEROUS!!
-    }
-
-    /**
-     *  Gets user's last login date
-     *
-     * @return Carbon|null
-     */
-    public function getLastLoggedInAt(): ?Carbon
-    {
-        return $this->last_logged_in_at;
     }
 
     /**

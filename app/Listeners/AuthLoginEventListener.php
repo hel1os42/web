@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Operator;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 
@@ -16,7 +17,9 @@ class AuthLoginEventListener
      */
     public function handle(Login $event)
     {
-        $event->user->setLastLoggedInAt(Carbon::now())
-            ->save();
+        if ($event->user instanceof Operator) {
+            $event->user->setLastLoggedInAt(Carbon::now())
+                ->save();
+        }
     }
 }

@@ -136,9 +136,9 @@ class LoginController extends AuthController
             return $this->sendFailedLoginResponse($request);
         }
 
-        $session->migrate(true);
-
         event(new Login($user, false));
+
+        $session->migrate(true);
 
         return $request->wantsJson()
             ? $this->postLoginJwt($user)

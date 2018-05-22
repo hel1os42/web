@@ -26,9 +26,12 @@
                     <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-                                <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a></li>
-                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Edit profile</a></li>
-                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a></li>
+                                <li class="active"><a href="#profile" aria-controls="profile" role="tab"
+                                                      data-toggle="tab" aria-expanded="true">Profile info</a></li>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab"
+                                       aria-expanded="true">Edit profile</a></li>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab"
+                                                data-toggle="tab" aria-expanded="false">Update photo</a></li>
                             </ul>
                         </div>
                     </div>
@@ -45,11 +48,6 @@
                                             {{ __('users.fields.points') }}
                                         </strong>
                                     </p>
-                                    <p>
-                                        <strong>
-                                            {{ __('users.fields.last_logged_in_at') }}
-                                        </strong>
-                                    </p>
                                 </div>
                                 <div class="col-sm-9 p-5">
                                     <p>{{ $name ?: '-' }}</p>
@@ -59,12 +57,6 @@
                                     <p>
                                         {{ $points }}
                                     </p>
-                                    <p>
-                                        {{ $last_logged_in_at
-                                            ? Carbon\Carbon::parse($last_logged_in_at)->format('Y-m-d H:i') . ' (UTC)'
-                                            : '-'
-                                         }}
-                                    </p>
                                 </div>
                             </div>
                             <div class="row">
@@ -72,7 +64,8 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
-                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
+                            <form action="{{ route('users.update', $id) }}" method="POST"
+                                  enctype="application/x-www-form-urlencoded">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
                                 <div class="row">
@@ -83,9 +76,12 @@
                                         <p><strong>Phone</strong></p>
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name"
+                                                         value="{{ $name }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email"
+                                                         value="{{ $email }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone"
+                                                         value="{{ $phone }}"></label></p>
                                     </div>
 
                                 </div>
@@ -118,7 +114,8 @@
                             <h4 class="title">Update your avatar</h4>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
+                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}"
+                                          enctype="multipart/form-data">
                                         <div class="form-group" id="userpic_image_box">
                                             {{ csrf_field() }}
                                             <div class="image-box" data-maxsize="2097152"></div>
@@ -165,19 +162,19 @@
         /* userpic */
         imageUploader('#userpic_image_box .image-box');
         let $userpic_image_box = $('#userpic_image_box');
-        $userpic_image_box.find('[type="file"]').on('change', function(){
+        $userpic_image_box.find('[type="file"]').on('change', function () {
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
             $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
-        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
+        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function () {
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);
                 imageCropperInit(this);
             }
         });
-        $userpic_image_box.parents('form').on('submit', function(e){
+        $userpic_image_box.parents('form').on('submit', function (e) {
             e.preventDefault();
             let $file = $userpic_image_box.find('[type="file"]');
             let $img = $userpic_image_box.find('.image');
@@ -187,7 +184,9 @@
                 formData.append('_token', $userpic_image_box.find('[name="_token"]').val());
                 let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
-                for(let i of formData) { console.log(i); }
+                for (let i of formData) {
+                    console.log(i);
+                }
                 $.ajax({
                     url: url,
                     data: formData,
@@ -227,8 +226,8 @@
             $('[name="longitude"]').val(values.lng);
         }*/
 
-        function userStatusControl(){
-            $('.user-approve-controls form').on('submit', function(e){
+        function userStatusControl() {
+            $('.user-approve-controls form').on('submit', function (e) {
                 e.preventDefault();
 
                 let $box = $(this).parents('.user-approve-controls');
@@ -243,10 +242,10 @@
                 $.ajax({
                     method: "PATCH",
                     url: $(this).attr('action'),
-                    headers: { 'Accept':'application/json' },
+                    headers: {'Accept': 'application/json'},
                     data: formData,
-                    success: function(data, textStatus, xhr){
-                        if (201 === xhr.status){
+                    success: function (data, textStatus, xhr) {
+                        if (201 === xhr.status) {
                             $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
                             $user_status.val($user_status.val() === '0' ? '1' : '0');
                         } else {
@@ -254,7 +253,7 @@
                             console.dir(xhr);
                         }
                     },
-                    error: function(resp){
+                    error: function (resp) {
                         if (401 === resp.status) UnAuthorized();
                         else if (0 === resp.status) AdBlockNotification();
                         else {
