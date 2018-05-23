@@ -4,6 +4,7 @@ return [
     'fields' => [
         'approved'      => 'Approved',
         'children'      => 'Children',
+        'contacts'      => 'Contacts',
         'email'         => 'Email',
         'name'          => 'Name',
         'parents'       => 'Parents',

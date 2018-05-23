@@ -105,8 +105,7 @@
                     'value="' + child['id'] +
                     '">',
                     child['name'] ? child['name'] : '-',
-                    child['email'],
-                    child['phone'] ? child['phone'] : '-',
+                    child['email'] + (child['phone'] ? ', ' + child['phone'] : ''),
                     (child['place'] && child['place']['name']) ? child['place']['name'] : '-'
                 ];
 
@@ -168,13 +167,20 @@
                         break;
                     case 401 : UnAuthorized();
                         break;
-                    case 500 : Children.addError('Something went wrong. Please try again.');
+                    case 500 :
+                    default  : {
+                        try {
+                            let responseObj = JSON.parse(str);
+                            if (responseObj.error && responseObj.message) Children.addError(responseObj.message);
+                        } catch (e) {
+                            Children.addError('Something went wrong. Please try again.');
+                        }
+                    }
                 }
             }
         };
         xhr.send();
     };
-
 
     Children.add = function( items ) {
         let children = Children.response.data || [];

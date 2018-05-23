@@ -6,7 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" tabindex="-1">&times;</button>
                 <h4 class="modal-title">{{ __('users.titles.children_list') }}</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding-top: 0; padding-bottom: 0;">
 
                 <form method="get" action="{{route('users.index')}}" id="search_children"
                       style="display: inline-block;">
@@ -29,26 +29,27 @@
                     </p>
                 </form>
 
-                <table class="table-striped-nau" style="margin-top: 10px;">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>{{ __('users.fields.name') }}</th>
-                            <th>{{ __('users.fields.email') }}</th>
-                            <th>{{ __('users.fields.phone') }}</th>
-                            <th>{{ __('users.fields.place') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{--only for reading bottom border color--}}
-                        <tr><td></td></tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: scroll">
+                    <table class="table-striped-nau" style="margin-top: 10px;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{ __('users.fields.name') }}</th>
+                                <th>{{ __('users.fields.contacts') }}</th>
+                                <th>{{ __('users.fields.place') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{--only for reading bottom border color--}}
+                            <tr><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <img src="{{ asset('img/loading.gif') }}" alt="wait...">
 
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="padding-bottom: 15px;">
                 <button type="button" class="btn btn-default" id="add_selected_children">{{ __('buttons.add_selected_users') }}</button>
             </div>
         </div>
@@ -58,7 +59,6 @@
 @push('styles')
 <style>
     .children-wrap.box-style {
-        margin-top: 6px;
         margin-bottom: 16px;
         border: 1px solid #a9a9a9;
         padding: 8px 8px 0px;

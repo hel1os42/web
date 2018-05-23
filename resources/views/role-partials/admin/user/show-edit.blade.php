@@ -65,7 +65,7 @@
             {{ __('users.fields.children') }}
         </div>
 
-        <div class="col-sm-9">
+        <div class="col-sm-9 p-5">
             @if(isset($children))
                 @php $box_style = count($children) ? 'box-style' : ''; @endphp
                 <div class="children-wrap {{ $box_style }}">
