@@ -106,7 +106,7 @@
 </style>
 @endpush
 
-@can('user.update.children', [$editableUserModel, array_column($children, 'id')])
+@can('user.update.children', [$editableUserModel, $children->pluck('id')->toArray()])
     @push('scripts')
         <script src="{{ asset('js/children-modal.js') }}"></script>
     @endpush

@@ -191,8 +191,9 @@
         items.forEach(function(id){
             children.forEach(function(val){
                 if (val.id == id) {
+                    let contacts = val.email ? val.email : val.phone;
                     userBlocks += '<p><input type="hidden" class="added-children" name="child_ids[]" value="' + id + '">';
-                    userBlocks += '<strong>' + val.name + ' (' + val.email + ')</strong>';
+                    userBlocks += '<strong>' + val.name + ' (' + contacts + ')</strong>';
                     userBlocks += ' <button type="button" class="close rm_child">×</button></p>';
                     return;
                 }
