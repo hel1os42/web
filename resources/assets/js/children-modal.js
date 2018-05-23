@@ -98,6 +98,9 @@
                     continue;
                 }
 
+                let email = child['email'] ? child['email'] : '';
+                let phone = child['phone'] ? child['phone'] : '';
+
                 let row = [
                     '<input type="checkbox" ' +
                     'class="children-list" ' +
@@ -105,7 +108,7 @@
                     'value="' + child['id'] +
                     '">',
                     child['name'] ? child['name'] : '-',
-                    child['email'] + (child['phone'] ? ', ' + child['phone'] : ''),
+                    (email && phone) ? email + ', ' + phone : email + phone,
                     (child['place'] && child['place']['name']) ? child['place']['name'] : '-'
                 ];
 
@@ -170,8 +173,8 @@
                     case 500 :
                     default  : {
                         try {
-                            let responseObj = JSON.parse(str);
-                            if (responseObj.error && responseObj.message) Children.addError(responseObj.message);
+                            let responseObj = JSON.parse(xhr.response);
+                            if (responseObj.error && responseObj.message) Children.addError('Error: ' + responseObj.message);
                         } catch (e) {
                             Children.addError('Something went wrong. Please try again.');
                         }
