@@ -17,5 +17,8 @@ class EventServiceProvider extends ServiceProvider
             'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
             'SocialiteProviders\\Instagram\\InstagramExtendSocialite@handle',
         ],
+        'Illuminate\Auth\Events\Login'                  => [
+            'App\Listeners\AuthLoginEventListener'
+        ],
     ];
 }

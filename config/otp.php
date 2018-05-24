@@ -19,7 +19,7 @@ return [
             ]
         ],
         'smstraffic' => [
-            'base_api_url' => 'http://www.smstraffic.ru',
+            'base_api_url' => 'https://api.smstraffic.ru',
             'main_path'    => '/multi.php',
             'auth_data'    => [
                 'login'        => env('SMSTRAFFIC_LOGIN', ''),
