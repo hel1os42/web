@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\IdentityProvider;
 use App\Models\User;
-use Laravel\Socialite\Two\User as UserIdentity;
+use Laravel\Socialite\AbstractUser as UserIdentity;
 
 interface UserService
 {

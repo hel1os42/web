@@ -13,7 +13,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
-use Laravel\Socialite\Two\User as UserIdentity;
+use Laravel\Socialite\AbstractUser as UserIdentity;
 
 class UserService implements UserServiceInterface
 {
@@ -179,7 +179,47 @@ class UserService implements UserServiceInterface
             return null;
         }
 
-        return Socialite::driver($identityProvider->getAlias())->userFromToken($identityAccessToken);
+        $oauthProvider = $this->getOauthProvider($identityProvider);
+
+        return $this->getOauthUser($oauthProvider, $identityAccessToken);
+    }
+
+    /**
+     * @param IdentityProvider $identityProvider
+     *
+     * @return mixed
+     */
+    public function getOauthProvider(IdentityProvider $identityProvider)
+    {
+        $alias = $identityProvider->getAlias();
+
+        if ($alias === 'vk') {
+            $alias = 'vkontakte';
+        }
+
+        return Socialite::driver($alias);
+    }
+
+    /**
+     * @param $oauthProvider
+     * @param string $accessToken
+     *
+     * @return \Laravel\Socialite\AbstractUser|null
+     */
+    public function getOauthUser($oauthProvider, string $accessToken): ?\Laravel\Socialite\AbstractUser
+    {
+        switch (get_parent_class($oauthProvider)) {
+            case \Laravel\Socialite\Two\AbstractProvider::class:
+            case \SocialiteProviders\Manager\OAuth2\AbstractProvider::class:
+                return $oauthProvider->userFromToken($accessToken);
+            case \Laravel\Socialite\One\AbstractProvider::class:
+            case \SocialiteProviders\Manager\OAuth1\AbstractProvider::class:
+                list($token, $secret) = explode(':', $accessToken, 2) + array_fill(0, 2, '');
+
+                return $oauthProvider->userFromTokenAndSecret($token, $secret);
+        }
+
+        return null;
     }
 
     /**
@@ -291,6 +331,8 @@ class UserService implements UserServiceInterface
      * @param IdentityProvider $identityProvider
      *
      * @return Identity
+     *
+     * @throws ValidationException
      */
     public function createOrUpdateUserIdentity(User $user, UserIdentity $userIdentity, IdentityProvider $identityProvider): Identity
     {

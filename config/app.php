@@ -191,6 +191,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\CriteriaServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+        SocialiteProviders\Manager\ServiceProvider::class,
     ],
 
     /*

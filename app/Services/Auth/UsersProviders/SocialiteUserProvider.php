@@ -5,16 +5,12 @@ namespace App\Services\Auth\UsersProviders;
 use App\Http\Exceptions\NotImplementedException;
 use App\Models\Identity;
 use App\Models\IdentityProvider;
-use App\Models\Operator;
 use App\Models\User;
 use App\Repositories\IdentityProviderRepository;
 use App\Repositories\IdentityRepository;
-use App\Repositories\OperatorRepository;
-use App\Repositories\PlaceRepository;
+use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Socialite\SocialiteManager;
 
 class SocialiteUserProvider implements UserProvider
@@ -100,8 +96,10 @@ class SocialiteUserProvider implements UserProvider
         $identityProvider = $this->identityProviderRepository
             ->findByField('alias', $providerAlias)->first();
 
-        $user = $this->manager->with($identityProvider->getAlias())
-            ->stateless()->userFromToken($accessToken);
+        $userService = app(UserService::class);
+
+        $oauthProvider = $userService->getOauthProvider($identityProvider);
+        $user          = $userService->getOauthUser($oauthProvider, $accessToken);
 
         $identity = $this->identityRepository->findWhere([
             'identity_provider_id' => $identityProvider->getKey(),

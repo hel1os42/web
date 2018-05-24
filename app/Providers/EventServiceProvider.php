@@ -12,6 +12,10 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-
+        'SocialiteProviders\Manager\SocialiteWasCalled' => [
+            'SocialiteProviders\\Twitter\\TwitterExtendSocialite@handle',
+            'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
+            'SocialiteProviders\\Instagram\\InstagramExtendSocialite@handle',
+        ],
     ];
 }

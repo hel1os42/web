@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Repositories\IdentityProviderRepository;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
+use Laravel\Socialite\Facades\Socialite;
 
 /**
  * Class LoginRequest
@@ -45,12 +49,15 @@ class LoginRequest extends FormRequest
             'alias'                 => 'required_without_all:phone,email,identity_access_token|nullable|min:3|max:255',
             'login'                 => 'required_with:alias|nullable|min:3|max:255',
             'pin'                   => 'required_with:alias|nullable|different:alias|different:login|min:3|max:255',
-            'identity_provider'     => 'required_with:identity_access_token|string',
+            'identity_provider'     => 'required_with:identity_access_token|string|exists:identity_providers,alias',
             'identity_access_token' => 'required_without_all:phone,email,alias|nullable|string',
         ];
     }
 
-    public function credentials()
+    /**
+     * @return array
+     */
+    public function credentials(): array
     {
         if (null !== $this->alias) {
             return $this->aliasCredentials();
@@ -67,7 +74,10 @@ class LoginRequest extends FormRequest
         return $this->getIdentityCredentials();
     }
 
-    private function emailCredentials()
+    /**
+     * @return array
+     */
+    private function emailCredentials(): array
     {
         return [
             'email'    => $this->email,
@@ -75,7 +85,10 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    private function phoneCredentials()
+    /**
+     * @return array
+     */
+    private function phoneCredentials(): array
     {
         return [
             'phone' => $this->phone,
@@ -83,7 +96,10 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    private function aliasCredentials()
+    /**
+     * @return array
+     */
+    private function aliasCredentials(): array
     {
         return [
             'login'    => $this->login,
@@ -92,11 +108,22 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    private function getIdentityCredentials()
+    /**
+     * @return array
+     */
+    private function getIdentityCredentials(): array
     {
         return array_only($this->all(), [
             'identity_provider',
             'identity_access_token',
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuthorizeByIdentityAccessToken(): bool
+    {
+        return $this->has(array_keys($this->getIdentityCredentials()));
     }
 }
