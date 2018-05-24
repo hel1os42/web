@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Operator;
 use App\Services\Auth\Otp\OtpAuth;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
@@ -134,6 +135,8 @@ class LoginController extends AuthController
         if (null === $user) {
             return $this->sendFailedLoginResponse($request);
         }
+
+        event(new Login($user, false));
 
         $session->migrate(true);
 

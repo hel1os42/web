@@ -187,7 +187,8 @@
                                                             </span>
                                                             <span class="col-xs-8">
                                                                 {{ array_get($offer, 'points', '?') }}
-                                                            </span></p>
+                                                            </span>
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
