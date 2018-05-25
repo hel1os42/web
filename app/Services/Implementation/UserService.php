@@ -15,6 +15,12 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\AbstractUser as UserIdentity;
 
+/**
+ * Class UserService
+ * @package App\Services\Implementation
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserService implements UserServiceInterface
 {
     /**
@@ -60,13 +66,14 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     *  Create new or find registered user
+     * Create new or find registered user
      *
      * @param array $attributes
      *
      * @return User
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
+     * @throws ValidationException
      */
     public function make(array $attributes): User
     {
@@ -90,6 +97,7 @@ class UserService implements UserServiceInterface
      * @return User
      *
      * @throws AuthorizationException
+     * @throws ValidationException
      */
     public function register(array $attributes, UserIdentity $userIdentity = null, IdentityProvider $identityProvider = null): User
     {
@@ -113,6 +121,8 @@ class UserService implements UserServiceInterface
      * @param IdentityProvider|null $identityProvider
      *
      * @return User
+     *
+     * @throws ValidationException
      */
     private function update(User $user, array $attributes, UserIdentity $userIdentity = null, IdentityProvider $identityProvider = null): User
     {
@@ -354,5 +364,4 @@ class UserService implements UserServiceInterface
 
         return $identity;
     }
-
 }

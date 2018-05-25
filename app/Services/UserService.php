@@ -31,5 +31,4 @@ interface UserService
      * @return User
      */
     public function register(array $attributes, UserIdentity $userIdentity, IdentityProvider $identityProvider): User;
-
 }

@@ -7,12 +7,8 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use App\Services\UserService;
-use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -232,106 +228,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param array $newUserData
-     *
-     * @return User
-     *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    private function createUser(array $newUserData): User
-    {
-        $lockTime = Carbon::now()->addSeconds(config('app.race_condition_lock_time'));
-
-        $keyData = array_merge($newUserData, ['domain' => config('app.url')]);
-        $lockKey = 'avoid-register-race-condition' . md5(json_encode($keyData));
-
-        if (false === Cache::add($lockKey, 1, $lockTime)) {
-            $registeredUser = $this->findRegisteredUser($newUserData);
-
-            // for security reason we must re-validate uniqueness
-            if (false === $registeredUser->exists) {
-                $this->validateUserUniqueness($newUserData);
-            }
-
-            return $registeredUser;
-        }
-
-        $this->validateUserUniqueness($newUserData);
-
-        $newUser = $this->userRepository->create($newUserData);
-
-        if (false === $newUser->wasRecentlyCreated) {
-            throw new UnprocessableEntityHttpException();
-        }
-
-        if (auth()->check() && $this->authorize('users.create', [$newUserData])) {
-            $newUser = $this->createRelationData($newUser, $newUserData);
-        }
-
-        return $newUser;
-    }
-
-    /**
-     * @param array $newUserData
-     *
-     * @return void
-     */
-    private function validateUserUniqueness(array $newUserData)
-    {
-        $uniquenessRules = [
-            'email' => 'nullable|unique:users,email',
-            'phone' => 'nullable|unique:users,phone',
-        ];
-
-        Validator::validate($newUserData, $uniquenessRules);
-    }
-
-    /**
-     * @param array $userData
-     *
-     * @return User
-     */
-    private function findRegisteredUser(array $userData): User
-    {
-        $foundedUsers = $this->userRepository->scopeQuery(function ($query) use ($userData) {
-            $conditions = array_only($userData, ['email', 'phone']);
-            $query      = $this->getConditionSubQuery($query, $conditions);
-
-            $from = Carbon::now()->subSeconds(config('app.race_condition_lock_time'));
-            $to   = Carbon::now();
-
-            $query = $query->whereBetween('created_at', array($from, $to));
-
-            return $query;
-        })->paginate(1);
-
-        return $foundedUsers->isEmpty()
-            ? new User()
-            : $foundedUsers->first();
-    }
-
-    /**
-     * @param User $model
-     * @param array $conditions
-     *
-     * @return Builder
-     */
-    private function getConditionSubQuery(User $model, array $conditions): Builder
-    {
-        if (0 === count($conditions)) {
-            return $model->newQuery();
-        }
-
-        return $model->where(function ($subQuery) use ($conditions) {
-            foreach ($conditions as $field => $value) {
-                $subQuery = $subQuery->orWhere($field, $value);
-            }
-
-            return $subQuery;
-        });
-    }
-
-    /**
      * @param string|null $uuid
      *
      * @return mixed
@@ -348,37 +244,6 @@ class UserController extends Controller
         $this->authorize('users.referrals.list', $user);
 
         return \response()->render('user.profile.referrals', $user->referrals()->paginate());
-    }
-
-    /**
-     * @param User  $user
-     * @param array $newUserData
-     *
-     * @return User
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    private function createRelationData(User $user, array $newUserData): User
-    {
-        $with = [];
-
-        if (isset($newUserData['role_ids'])) {
-            $this->updateRoles($user, $newUserData['role_ids']);
-            array_push($with, 'roles');
-        }
-
-        if (isset($newUserData['parent_ids'])) {
-            $this->authorize('user.update.parents', [$user, $newUserData['parent_ids']]);
-            $user->parents()->attach($newUserData['parent_ids']);
-            array_push($with, 'parents');
-        }
-
-        if (!empty($with)) {
-            $user->save();
-
-            return $user->fresh($with);
-        }
-
-        return $user;
     }
 
     /**

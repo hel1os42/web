@@ -2,10 +2,8 @@
 
 namespace App\Services\Auth\Guards;
 
-
 use App\Repositories\IdentityRepository;
 use Illuminate\Auth\GuardHelpers;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 
@@ -18,8 +16,14 @@ class IdentityGuard implements Guard
      */
     protected $identityRepository;
 
+    /**
+     * @var UserProvider
+     */
+    protected $userProvider;
+
     public function __construct(UserProvider $userProvider, IdentityRepository $identityRepository)
     {
+        $this->userProvider       = $userProvider;
         $this->identityRepository = $identityRepository;
     }
 

@@ -19,6 +19,12 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Socialite\SocialiteManager;
 
+/**
+ * Class AuthServiceProvider
+ * @package App\Providers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AuthServiceProvider extends ServiceProvider
 {
     /**

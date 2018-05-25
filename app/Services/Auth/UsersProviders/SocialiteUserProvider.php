@@ -41,7 +41,10 @@ class SocialiteUserProvider implements UserProvider
      * Retrieve a user by their unique identifier.
      *
      * @param  mixed $identifier
+     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function retrieveById($identifier)
     {
@@ -53,7 +56,9 @@ class SocialiteUserProvider implements UserProvider
      *
      * @param  mixed $identifier
      * @param  string $token
+     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function retrieveByToken($identifier, $token)
@@ -68,6 +73,8 @@ class SocialiteUserProvider implements UserProvider
      * @param  string $token
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {

@@ -86,5 +86,4 @@ class Identity extends Model implements Transformable
     {
         return $this->external_user_id;
     }
-
 }
