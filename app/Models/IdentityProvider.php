@@ -15,12 +15,6 @@ class IdentityProvider extends Model implements Transformable
     public const PROVIDER_INSTAGRAM = 'instagram';
     public const PROVIDER_TWITTER   = 'twitter';
 
-    protected $attributes = [
-        'id'    => 0,
-        'alias' => '',
-        'name'  => '',
-    ];
-
     protected $fillable = [
         'alias',
         'name',
