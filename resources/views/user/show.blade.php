@@ -43,6 +43,7 @@
                                     <p><strong>Email</strong></p>
                                     <p><strong>Phone</strong></p>
                                     <p><strong>Invite code</strong></p>
+                                    <p><strong>Count of referrals</strong></p>
                                     <p>
                                         <strong>
                                             {{ __('users.fields.points') }}
@@ -54,6 +55,7 @@
                                     <p>{{ $email ?: '-' }}</p>
                                     <p>{{ $phone ?: '-' }}</p>
                                     <p>{{ $invite_code }}</p>
+                                    <p>{{ $referrals_count }}</p>
                                     <p>
                                         {{ $points }}
                                     </p>
