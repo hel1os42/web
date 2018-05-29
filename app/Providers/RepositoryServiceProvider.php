@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories;
 use App\Repositories\Implementation;
+use App\Services\OfferRedemption\Access\Moderator as OfferRedemptionAccessModerator;
+use App\Services\OfferRedemption\Access\Implementation\Moderator;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -50,6 +52,9 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\TestimonialRepositoryEloquent::class);
         $this->app->bind(Repositories\ComplaintRepository::class,
             Implementation\ComplaintRepositoryEloquent::class);
+
+        $this->app->bind(OfferRedemptionAccessModerator::class,
+            Moderator::class);
 
         $this->app->alias(Repositories\OfferRepository::class, 'offerRepository');
         $this->app->alias(Repositories\OfferLinkRepository::class, 'offerLinkRepository');

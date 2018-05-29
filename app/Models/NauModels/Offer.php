@@ -10,6 +10,7 @@ use App\Models\NauModels\Offer\ScopesTrait;
 use App\Models\OfferLink;
 use App\Models\Traits\HasNau;
 use App\Models\User;
+use App\Services\OfferRedemption\Access\Moderator;
 use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
@@ -395,6 +396,19 @@ class Offer extends AbstractNauModel
     }
 
     /**
+     * @return int
+     */
+    public function getRedemptionAccessCodeAttribute(): int
+    {
+        $accessModerator = app()->makeWith(Moderator::class, [
+            'offer'    => $this,
+            'customer' => auth()->user(),
+        ]);
+
+        return $accessModerator->getAccessCode();
+    }
+
+    /**
      * @return bool
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
@@ -584,6 +598,7 @@ class Offer extends AbstractNauModel
             'currency',
             'timeframes_offset',
             'redemptions_count',
+            'redemption_access_code',
         ];
     }
 
