@@ -8,3 +8,6 @@
 <li>
     <a href="{{ route('tags.index') }}">Tags</a>
 </li>
+<li>
+    <a href="{{ route('settings.index') }}">Settings</a>
+</li>

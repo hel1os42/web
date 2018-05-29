@@ -74,6 +74,10 @@
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
                                         <p><strong>Phone</strong></p>
+                                        @can('user.update.invite', [$editableUserModel])
+                                            <br><p><strong>Invite*</strong></p>
+                                            <p style="color:red; font-style:italic">*You can change invite code if the conditions are completed</p>
+                                        @endcan
                                     </div>
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name"
@@ -82,6 +86,10 @@
                                                          value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone"
                                                          value="{{ $phone }}"></label></p>
+                                        @can('user.update.invite', [$editableUserModel])
+                                            <p><label><input style="line-height: 14px; font-size: 14px;" name="invite_code"
+                                                             value="{{ $invite_code }}"></label></p>
+                                        @endcan
                                     </div>
 
                                 </div>

@@ -11,6 +11,7 @@
     "php": ">=7.1.7",
     "ext-mbstring": "*",
     "ext-pdo_pgsql": "*",
+    "anlutro/l4-settings": "^0.7.3",
     "aws/aws-sdk-php": "~3.0",
     "doctrine/dbal": "^2.5",
     "guzzlehttp/guzzle": "^6.3",
