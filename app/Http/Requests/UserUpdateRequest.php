@@ -60,7 +60,8 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'              => 'boolean',
-            'invite_code'          => 'nullable|alpha_dash'
+            'invite_code'          => 'nullable|alpha_dash',
+            'password'             => 'nullable|string|confirmed|min:6',
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {
