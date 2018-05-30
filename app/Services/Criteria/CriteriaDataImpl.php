@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 /**
  * Class CriteriaDataImpl
  * @package App\Services\Criteria
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CriteriaDataImpl implements CriteriaData
 {
@@ -196,25 +198,32 @@ class CriteriaDataImpl implements CriteriaData
     }
 
     /**
-     * @return CriteriaData
+     * @param string $paramsStr
+     * @param string $variableName
      */
-    protected function initSearchValue(): CriteriaData
-    {
-        $search = $this->searchParam();
-        if (false !== stripos($search, ';') || false !== stripos($search, ':')) {
-            $params = explode(';', $search);
+    protected function parseParams(string $paramsStr, string $variableName) {
+        if (false !== stripos($paramsStr, ';') || false !== stripos($paramsStr, ':')) {
+            $params = explode(';', $paramsStr);
             foreach ($params as $param) {
-                $delimiterPosition = stripos($param, ':');
-                if (false === $delimiterPosition) {
+                if (false === $delimiterPosition = stripos($param, ':')) {
                     continue;
                 }
-                $field                      = substr($param, 0, $delimiterPosition);
-                $values                     = substr($param, ++$delimiterPosition, strlen($param));
-                $this->searchValues[$field] = (false === stripos($values, '|'))
+
+                $field                       = substr($param, 0, $delimiterPosition);
+                $values                      = substr($param, ++$delimiterPosition, strlen($param));
+                $this->$variableName[$field] = (false === stripos($values, '|'))
                     ? $values
                     : explode('|', $values);
             }
         }
+    }
+
+    /**
+     * @return CriteriaData
+     */
+    protected function initSearchValue(): CriteriaData
+    {
+        $this->parseParams($this->searchParam(), 'searchValues');
 
         return $this;
     }
@@ -319,23 +328,11 @@ class CriteriaDataImpl implements CriteriaData
             return $this;
         }
 
-        if (false !== stripos($filters, ';') || false !== stripos($filters, ':')) {
-            $params = explode(';', $filters);
-            foreach ($params as $param) {
-                $delimiterPosition = stripos($param, ':');
-                if (false === $delimiterPosition) {
-                    continue;
-                }
-                $field                      = substr($param, 0, $delimiterPosition);
-                $values                     = substr($param, ++$delimiterPosition, strlen($param));
+        $this->parseParams($filters, 'whereFilters');
 
-                if (array_key_exists($field, $this->whereFiltersFilterable)) {
-                    $this->whereFilters[$field] = (false === stripos($values, '|'))
-                        ? $values
-                        : explode('|', $values);
-                }
-            }
-        }
+        $this->whereFilters = array_filter($this->whereFilters, function($field) {
+            return (true === array_key_exists($field, $this->whereFiltersFilterable));
+        }, ARRAY_FILTER_USE_KEY);
 
         return $this;
     }

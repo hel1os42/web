@@ -295,7 +295,7 @@ class UserController extends Controller
     private function updateAllParentsWithChildren(User $editableUser, $childIds)
     {
         $deepChildren = app(UserRepository::class)->scopeQuery(function (User $query) use ($childIds) {
-            $query = $query->join('users_parents','users.id', 'users_parents.user_id')
+            $query = $query->join('users_parents', 'users.id', 'users_parents.user_id')
                 ->whereIn('users_parents.parent_id', $childIds);
             return $query;
         })
