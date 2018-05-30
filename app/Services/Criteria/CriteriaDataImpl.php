@@ -86,7 +86,7 @@ class CriteriaDataImpl implements CriteriaData
     protected $with = null;
 
     /**
-     * Filterable fields list configured in repository
+     * Filterable fields list
      *
      * @var null|array
      */
@@ -198,10 +198,10 @@ class CriteriaDataImpl implements CriteriaData
     }
 
     /**
-     * @param string $paramsStr
+     * @param $paramsStr
      * @param string $variableName
      */
-    protected function parseParams(string $paramsStr, string $variableName) {
+    protected function parseParams($paramsStr, string $variableName) {
         if (false !== stripos($paramsStr, ';') || false !== stripos($paramsStr, ':')) {
             $params = explode(';', $paramsStr);
             foreach ($params as $param) {
