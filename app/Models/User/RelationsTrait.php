@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 use App\Models\ActivationCode;
 use App\Models\AdditionalField;
+use App\Models\Identity;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -142,5 +143,13 @@ trait RelationsTrait
     public function favoriteOffers()
     {
         return $this->belongsToMany(OfferData::class, 'users_favorite_offers', 'user_id', 'offer_id');
+    }
+
+    /**
+     * @return Relations\BelongsToMany
+     */
+    public function identities()
+    {
+        return $this->hasMany(Identity::class);
     }
 }
