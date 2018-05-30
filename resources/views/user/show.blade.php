@@ -73,7 +73,8 @@
                                     <div class="col-sm-3 p-5">
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
-                                        <p><strong>Phone</strong></p>
+                                        <p><strong>Phone</strong></p><br>
+                                        <p><strong>Change password</strong></p>
                                     </div>
                                     <div class="col-sm-9 p-5">
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="name"
@@ -82,6 +83,10 @@
                                                          value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone"
                                                          value="{{ $phone }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                                         name="password" placeholder="enter new password" value=""></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                                         name="password_confirmation" placeholder="confirm new password" value=""></label></p>
                                     </div>
 
                                 </div>
