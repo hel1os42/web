@@ -54,6 +54,11 @@ return [
         'operator' => [
             'driver'   => 'operator',
             'provider' => 'operator',
+        ],
+
+        'identity' => [
+            'driver'   => 'identity',
+            'provider' => 'socialite',
         ]
     ],
 
@@ -88,6 +93,11 @@ return [
         'operator' => [
             'driver' => 'operator',
             'model'  => App\Models\Operator::class,
+        ],
+
+        'socialite' => [
+            'driver' => 'socialite',
+            'model'  => App\Models\User::class,
         ],
     ],
 
