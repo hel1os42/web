@@ -4,8 +4,8 @@ namespace App\Repositories\Implementation;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\Criteria\UserRequestCriteria;
 use Illuminate\Database\Eloquent\Builder;
-use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Validator\Contracts\ValidatorInterface;
@@ -30,7 +30,6 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         'email'             => 'like',
         'place.name'        => 'like',
         'place.description' => 'like',
-        'roles.name'        => 'in',
         'updated_at'        => '=',
     ];
 
@@ -49,7 +48,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
      */
     public function boot()
     {
-        $this->pushCriteria(app(RequestCriteria::class));
+        $this->pushCriteria(app(UserRequestCriteria::class));
     }
 
     public function findByPhone(string $phone): ?User

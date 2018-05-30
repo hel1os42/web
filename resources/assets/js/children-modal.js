@@ -76,7 +76,8 @@
                 + ';';
         }
 
-        params.push('search=' + encodeURIComponent( searchParams + role ));
+        params.push('whereFilters=' + encodeURIComponent( role ));
+        params.push('search=' + encodeURIComponent( searchParams ));
         params.push('searchJoin=or');
 
         for (let i=0; i<params.length; i++) {
@@ -282,7 +283,8 @@
 
     Children.show_hide_add_children_btn = function() {
         if( Children.has_available_children() || document.getElementById('table_pager')
-            || Children.request['string']) {
+            || Children.request['string']
+            || !document.querySelector('#role option:checked').classList.contains('all-roles') ) {
             Children.add_button.style.display = 'block';
         } else {
             Children.add_button.style.display = 'none';

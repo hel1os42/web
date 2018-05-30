@@ -18,7 +18,7 @@
                         @if( auth()->user()->isAdmin() && $editableUserModel->isAgent() )
                             <label>
                                 <select name="role" id="role">
-                                    <option value="chief_advertiser|advertiser" selected>{{ __('words.all_roles') }}</option>
+                                    <option class="all-roles" value="chief_advertiser|advertiser" selected>{{ __('words.all_roles') }}</option>
                                     <option value="chief_advertiser">{{ __('words.chief_advertiser') }}</option>
                                     <option value="advertiser">{{ __('words.advertiser') }}</option>
                                     <option value="user">{{ __('words.user') }}</option>

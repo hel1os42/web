@@ -59,9 +59,4 @@ interface SearchStatement
      * @return bool
      */
     public function isValid(): bool;
-
-    /**
-     * @return null|string
-     */
-    public function getRelation(): ?string;
 }

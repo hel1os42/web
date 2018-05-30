@@ -388,24 +388,19 @@ class UserController extends Controller
      */
     private function updateAllParentsWithChildren(User $editableUser, $childIds)
     {
-        $deepChildren = collect();
-        foreach ($childIds as $childId) {
-            $child = app(User::class)->find($childId);
-
-            if (null === $child) {
-                continue;
-            }
-
-            $deepChildren = $deepChildren->merge(
-                $child->children()->pluck('id')
-            );
-        }
+        $deepChildren = app(UserRepository::class)->scopeQuery(function (User $query) use ($childIds) {
+            $query = $query->join('users_parents','users.id', 'users_parents.user_id')
+                ->whereIn('users_parents.parent_id', $childIds);
+            return $query;
+        })
+            ->all()
+            ->pluck('id');
 
         $editableUser->children()->sync($deepChildren, false);
         $parents = $editableUser->parents()->get();
 
         foreach ($parents as $user) {
-            $user->children()->sync(collect($childIds)->merge($deepChildren), false);
+            $user->children()->sync($deepChildren->merge($childIds), false);
         }
     }
 
