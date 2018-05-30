@@ -31,9 +31,9 @@ class OfferController extends Controller
         AuthManager $authManager,
         WeekDaysService $weekDaysService
     ) {
-        $this->offerRepository = $offerRepository;
+        $this->offerRepository    = $offerRepository;
         $this->categoryRepository = $categoryRepository;
-        $this->weekDaysService = $weekDaysService;
+        $this->weekDaysService    = $weekDaysService;
 
         parent::__construct($authManager);
     }
