@@ -68,7 +68,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-3 p-5">
-                                    Count of referrals
+                                    {{ __('users.fields.referrals_count') }}
                                 </div>
                                 <div class="col-sm-9 p-5">
                                     {{ $referrals_count }}
@@ -117,13 +117,18 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3 p-5">
-                                        Change password
+                                        {{ __('users.fields.password') }}
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
-                                               name="password" placeholder="enter new password" value=""></label>
-                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
-                                                         name="password_confirmation" placeholder="confirm new password" value=""></label>
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password" value=""></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.password_conf') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password_confirmation" value=""></label>
                                     </div>
                                 </div>
 
