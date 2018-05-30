@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Repositories;
 use App\Repositories\Implementation;
+use App\Services;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -45,9 +46,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(Repositories\OfferLinkRepository::class,
             Implementation\OfferLinkRepositoryEloquent::class);
         $this->app->bind(Repositories\User\FavoriteOfferRepository::class,
-        Implementation\User\FavoriteOfferRepositoryEloquent::class);
+            Implementation\User\FavoriteOfferRepositoryEloquent::class);
         $this->app->bind(Repositories\TestimonialRepository::class,
             Implementation\TestimonialRepositoryEloquent::class);
+        $this->app->bind(Repositories\IdentityProviderRepository::class,
+            Implementation\IdentityProviderRepositoryEloquent::class);
+        $this->app->bind(Repositories\IdentityRepository::class,
+            Implementation\IdentityRepositoryEloquent::class);
+        $this->app->bind(Services\UserService::class,
+            Services\Implementation\UserService::class);
         $this->app->bind(Repositories\ComplaintRepository::class,
             Implementation\ComplaintRepositoryEloquent::class);
 

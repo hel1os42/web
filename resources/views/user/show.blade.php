@@ -68,6 +68,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-3 p-5">
+                                    Count of referrals
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $referrals_count }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
                                     {{ __('users.fields.points') }}
                                 </div>
                                 <div class="col-sm-9 p-5">
@@ -105,6 +113,17 @@
                                     </div>
                                     <div class="col-sm-9 p-5">
                                         <label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        Change password
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                               name="password" placeholder="enter new password" value=""></label>
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                                         name="password_confirmation" placeholder="confirm new password" value=""></label>
                                     </div>
                                 </div>
 
@@ -187,19 +206,19 @@
         /* userpic */
         imageUploader('#userpic_image_box .image-box');
         let $userpic_image_box = $('#userpic_image_box');
-        $userpic_image_box.find('[type="file"]').on('change', function(){
+        $userpic_image_box.find('[type="file"]').on('change', function () {
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
             $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
-        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
+        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function () {
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);
                 imageCropperInit(this);
             }
         });
-        $userpic_image_box.parents('form').on('submit', function(e){
+        $userpic_image_box.parents('form').on('submit', function (e) {
             e.preventDefault();
             let $file = $userpic_image_box.find('[type="file"]');
             let $img = $userpic_image_box.find('.image');
@@ -249,8 +268,8 @@
             $('[name="longitude"]').val(values.lng);
         }*/
 
-        function userStatusControl(){
-            $('.user-approve-controls form').on('submit', function(e){
+        function userStatusControl() {
+            $('.user-approve-controls form').on('submit', function (e) {
                 e.preventDefault();
 
                 let $box = $(this).parents('.user-approve-controls');
@@ -267,8 +286,8 @@
                     url: $(this).attr('action'),
                     headers: { 'Accept':'application/json' },
                     data: formData,
-                    success: function(data, textStatus, xhr){
-                        if (201 === xhr.status){
+                    success: function (data, textStatus, xhr) {
+                        if (201 === xhr.status) {
                             $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
                             $user_status.val($user_status.val() === '0' ? '1' : '0');
                         } else {
@@ -276,7 +295,7 @@
                             console.dir(xhr);
                         }
                     },
-                    error: function(resp){
+                    error: function (resp) {
                         if (401 === resp.status) UnAuthorized();
                         else if (0 === resp.status) AdBlockNotification();
                         else {

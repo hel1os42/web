@@ -41,6 +41,9 @@
                     <th>Alias</th>
                     <th>Login</th>
                     <th class="text-center">Status</th>
+                    <th class="text-center">
+                        {{ __('operators.fields.last_logged_in_at') }}
+                    </th>
                     <th class="text-center">Created/updated</th>
                     <th class="text-center">Actions</th>
                 </tr>
@@ -66,6 +69,12 @@
                                 <button type="submit" class="btn btn-default btn-xs btn-active">Deactivate</button>
                                 <button type="submit" class="btn btn-default btn-xs btn-deactive">Activate</button>
                             </form>
+                        </td>
+                        <td>
+                            {{ array_get($operator, 'last_logged_in_at')
+                                ? Carbon\Carbon::parse(array_get($operator, 'last_logged_in_at'))->format('Y-m-d H:i') . ' (UTC)'
+                                : '-'
+                            }}
                         </td>
                         <td class="text-center">
                             <span class="js-date">{{ $operator['created_at'] }}</span><br>
