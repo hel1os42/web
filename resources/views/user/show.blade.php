@@ -56,9 +56,9 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="row">
-                                @include('role-partials.selector', ['partialRoute' => 'user.show'])
-                            </div>
+
+                            @include('role-partials.selector', ['partialRoute' => 'user.show'])
+
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
                             <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">

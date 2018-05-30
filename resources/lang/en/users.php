@@ -2,6 +2,7 @@
 
 return [
     'fields' => [
-        'points' => 'Points',
+        'parents' => 'Parents',
+        'points'  => 'Points',
     ]
 ];

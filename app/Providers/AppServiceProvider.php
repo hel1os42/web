@@ -149,6 +149,7 @@ class AppServiceProvider extends ServiceProvider
                 /** @var User $editableUserModel */
                 $editableUserModel = User::query()->find($editableUserArray['id']);
                 $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
+                $parents           = $editableUserModel->parents()->with('roles')->get(['id', 'name', 'email', 'phone']);
                 $children          = $editableUserModel->children->toArray();
 
                 if (auth()->user()->isAdmin()) {
@@ -173,6 +174,7 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $view->with('roleIds', $roleIds);
+                $view->with('parents', $parents);
                 $view->with('children', $children);
                 $view->with('allPossibleChildren', $allPossibleChildren);
                 $view->with('editableUserModel', $editableUserModel);
