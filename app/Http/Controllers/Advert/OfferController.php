@@ -9,9 +9,11 @@ use App\Http\Requests\Offer\UpdateStatusRequest;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
+use App\Presenters\OfferPresenter;
 use App\Repositories\OfferRepository;
 use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
+use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -24,6 +26,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class OfferController extends Controller
 {
+    use FractalToIlluminatePagination;
+
     private $offerRepository;
     private $weekDaysService;
     private $reservationService;
@@ -50,17 +54,19 @@ class OfferController extends Controller
     public function index(): Response
     {
         $this->authorize('my.offers.list');
-        $account      = $this->user()->getAccountForNau();
-        $paginator    = $this->offerRepository
-            ->with('timeframes')
-            ->scopeAccount($account)
+
+        $repository = $this->offerRepository->setPresenter(OfferPresenter::class);
+
+        $offersData = $repository->with('timeframes')
+            ->scopeAccount($this->user()->getAccountForNau())
             ->paginateWithoutGlobalScopes();
-        $data         = $paginator->toArray();
-        $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
 
-        $data['place'] = $this->user()->place;
+        $responseData = $this->getIlluminatePagination($offersData)
+            ->toArray();
 
-        return \response()->render('advert.offer.index', $data);
+        $responseData['place'] = $this->user()->place;
+
+        return \response()->render('advert.offer.index', $responseData);
     }
 
     /**
@@ -124,14 +130,13 @@ class OfferController extends Controller
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
-        $data = $offer->toArray();
-        if (array_key_exists('timeframes', $data)) {
-            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
-        }
 
         $this->authorize('my.offer.show', $offer);
 
-        return \response()->render('advert.offer.show', $data);
+        $presenter = new OfferPresenter($this->auth, $this->weekDaysService);
+        $offerData = array_get($presenter->present($offer), 'data');
+
+        return \response()->render('advert.offer.show', $offerData);
     }
 
     /**
@@ -205,15 +210,15 @@ class OfferController extends Controller
         if (null === $offer) {
             throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
         }
+
         $offer->load('timeframes');
-        $data = $offer->toArray();
-        if (array_key_exists('timeframes', $data)) {
-            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
-        }
 
         $this->authorize('my.offer.show', $offer);
 
-        return \response()->render('advert.offer.edit', $data);
+        $presenter = new OfferPresenter($this->auth, $this->weekDaysService);
+        $offerData = array_get($presenter->present($offer), 'data');
+
+        return \response()->render('advert.offer.edit', $offerData);
     }
 
     /**

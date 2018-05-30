@@ -7,7 +7,7 @@
  */
 namespace App\Services;
 
-use Illuminate\Support\Collection;
+use App\Models\NauModels\Offer;
 
 /**
  * Interface WeekDaysService
@@ -71,16 +71,9 @@ interface WeekDaysService
     public function daysToWeekDays(int $days, bool $numeric = false): array;
 
     /**
-     * @param Collection $items
+     * @param Offer $offer
      *
      * @return array
      */
-    public function convertOffersCollection(Collection $items): array;
-
-    /**
-     * @param Collection $timeframes
-     *
-     * @return array
-     */
-    public function convertTimeframesCollection(Collection $timeframes): array;
+    public function processOfferTimeFrames(Offer $offer): array;
 }

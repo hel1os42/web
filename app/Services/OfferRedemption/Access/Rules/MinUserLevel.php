@@ -18,6 +18,6 @@ class MinUserLevel extends Rule
      */
     public function validate(): bool
     {
-        return false;
+        return true;
     }
 }
