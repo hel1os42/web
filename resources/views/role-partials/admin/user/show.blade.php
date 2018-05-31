@@ -10,12 +10,12 @@
                     $role     = __('words.' . $user['roles']->pluck('name')->implode(', '));
                 @endphp
 
-                <div data-id="{{ $user['id'] }}" class="m-b-5">
+                <p data-id="{{ $user['id'] }}" class="m-b-5">
                     {!! sprintf('%s (%s) - <i>%s</i>', $user['name'], $contacts, $role) !!}
                     <a href="{{ route('users.show', $user['id']) }}">
                         <i class="fa fa-pencil-square-o m-l-5" aria-hidden="true"></i>
                     </a>
-                </div>
+                </p>
 
             @endforeach
         </div>
