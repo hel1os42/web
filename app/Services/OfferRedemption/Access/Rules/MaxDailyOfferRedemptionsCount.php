@@ -2,6 +2,8 @@
 
 namespace App\Services\OfferRedemption\Access\Rules;
 
+use Carbon\Carbon;
+
 class MaxDailyOfferRedemptionsCount extends Rule
 {
 
@@ -18,6 +20,10 @@ class MaxDailyOfferRedemptionsCount extends Rule
      */
     public function validate(): bool
     {
-        return true;
+        $dailyRedemptionsCount = $this->offer->redemptions()
+            ->daily(Carbon::now(config('app.timezone')))
+            ->count();
+
+        return $dailyRedemptionsCount < $this->limit;
     }
 }

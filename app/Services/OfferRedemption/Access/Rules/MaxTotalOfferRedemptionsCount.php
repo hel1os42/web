@@ -18,6 +18,9 @@ class MaxTotalOfferRedemptionsCount extends Rule
      */
     public function validate(): bool
     {
-        return true;
+        $totalRedemptionsCount = $this->offer->redemptions()
+            ->count();
+
+        return $totalRedemptionsCount < $this->limit;
     }
 }

@@ -18,6 +18,6 @@ class MinUserLevel extends Rule
      */
     public function validate(): bool
     {
-        return true;
+        return $this->customer->getLevel() >= $this->limit;
     }
 }

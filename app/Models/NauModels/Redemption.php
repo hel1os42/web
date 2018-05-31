@@ -26,6 +26,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User   user
  *
  * @method static static|Builder byUser(User $user)
+ * @method Builder daily(Builder $query, Carbon $dateTime)
+ * @method Builder weekly(Builder $query, Carbon $dateTime)
+ * @method Builder monthly(Builder $query, Carbon $dateTime)
  */
 class Redemption extends AbstractNauModel
 {
@@ -148,5 +151,44 @@ class Redemption extends AbstractNauModel
     public function scopeByUser(Builder $builder, User $user)
     {
         return $builder->where('user_id', $user->id);
+    }
+
+    /**
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeDaily(Builder $query, Carbon $dateTime)
+    {
+        $startOfDay = $dateTime->copy()->startOfDay();
+        $endOfDay   = $dateTime->copy()->endOfDay();
+
+        return $query->whereBetween(self::CREATED_AT, [$startOfDay, $endOfDay]);
+    }
+
+    /**
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeWeekly(Builder $query, Carbon $dateTime)
+    {
+        $startOfDay = $dateTime->copy()->startOfWeek();
+        $endOfDay   = $dateTime->copy()->endOfWeek();
+
+        return $query->whereBetween(self::CREATED_AT, [$startOfDay, $endOfDay]);
+    }
+
+    /**
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeMonthly(Builder $query, Carbon $dateTime)
+    {
+        $startOfDay = $dateTime->copy()->startOfMonth();
+        $endOfDay   = $dateTime->copy()->endOfMonth();
+
+        return $query->whereBetween(self::CREATED_AT, [$startOfDay, $endOfDay]);
     }
 }
