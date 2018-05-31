@@ -104,10 +104,11 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
     protected function filterForUserByAdmin()
     {
         $model = $this->model;
-        $user  = app(User::class)->find($this->availableForUserId);
+        $user  = $model->getModel()->find($this->availableForUserId);
 
-        if (null !== $user && $user->isChiefAdvertiser() && count($parentId = $user->parents()->pluck('id'))) {
-            $parent   = app(User::class)->find($parentId)->first();
+        // $parent - can be only Agent in current case
+        if (null !== $user && $user->isChiefAdvertiser() && null !== $parent = $user->parents()->first()) {
+            $parentId = $parent->getId();
             $chiefIds = $this->getChildrenIdsByRole($parent, Role::ROLE_CHIEF_ADVERTISER);
 
             $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
@@ -160,7 +161,6 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
     protected function getChildrenIdsByRole(User $parent, string $roleName): Collection
     {
         return $parent->children()
-            ->with('roles')
             ->whereHas('roles', function(Builder $query) use ($roleName) {
                 $query->where('roles.name', $roleName);
             })
