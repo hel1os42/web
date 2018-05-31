@@ -78,7 +78,7 @@
                                         <p><strong>Phone</strong></p><br>
                                         <p><strong>Change password</strong></p>
                                         @can('user.update.invite', [$editableUserModel])
-                                            <br><p><strong>Invite*</strong></p>
+                                            <br><br><p><strong>Invite*</strong></p>
                                             <p style="color:red; font-style:italic">*You can change invite code if the conditions are completed</p>
                                         @endcan
                                     </div>
