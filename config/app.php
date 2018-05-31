@@ -191,6 +191,8 @@ return [
         App\Providers\RepositoryServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\CriteriaServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
+        SocialiteProviders\Manager\ServiceProvider::class,
     ],
 
     /*
@@ -246,6 +248,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 
     'review_stub' => [
@@ -258,9 +261,4 @@ return [
         ],
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
     ],
-
-    /**
-     * Lock time in seconds
-     */
-    'race_condition_lock_time' => env('RACE_CONDITION_LOCK_TIME', 5)
 ];

@@ -2,18 +2,29 @@
 
 namespace App\Providers;
 
+use App\Repositories\IdentityProviderRepository;
+use App\Repositories\IdentityRepository;
 use App\Repositories\OperatorRepository;
 use App\Repositories\PlaceRepository;
+use App\Services\Auth\Guards\IdentityGuard;
 use App\Services\Auth\Guards\JwtGuard;
 use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
 use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
+use App\Services\Auth\UsersProviders\SocialiteUserProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Hashing\Hasher;
+use Laravel\Socialite\SocialiteManager;
 
+/**
+ * Class AuthServiceProvider
+ * @package App\Providers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -156,6 +167,16 @@ class AuthServiceProvider extends ServiceProvider
         $authManager->extend('operator', function ($app, string $name, array $config) use ($authManager, $operatorRepository) {
             return new OperatorGuard($name, $authManager->createUserProvider($config['provider']),
                 $app['session.store']);
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->provider('socialite', function ($app, array $config) {
+            return new SocialiteUserProvider(new SocialiteManager($app), app(IdentityRepository::class), app(IdentityProviderRepository::class));
+        });
+
+        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+        $authManager->extend('identity', function ($app, string $name, array $config) use ($authManager, $operatorRepository) {
+            return new IdentityGuard($authManager->createUserProvider($config['provider']), app(IdentityRepository::class));
         });
     }
 }

@@ -43,6 +43,7 @@
                                     <p><strong>Email</strong></p>
                                     <p><strong>Phone</strong></p>
                                     <p><strong>Invite code</strong></p>
+                                    <p><strong>Count of referrals</strong></p>
                                     <p>
                                         <strong>
                                             {{ __('users.fields.points') }}
@@ -54,6 +55,7 @@
                                     <p>{{ $email ?: '-' }}</p>
                                     <p>{{ $phone ?: '-' }}</p>
                                     <p>{{ $invite_code }}</p>
+                                    <p>{{ $referrals_count }}</p>
                                     <p>
                                         {{ $points }}
                                     </p>
@@ -73,7 +75,8 @@
                                     <div class="col-sm-3 p-5">
                                         <p><strong>Name</strong></p>
                                         <p><strong>Email</strong></p>
-                                        <p><strong>Phone</strong></p>
+                                        <p><strong>Phone</strong></p><br>
+                                        <p><strong>Change password</strong></p>
                                         @can('user.update.invite', [$editableUserModel])
                                             <br><p><strong>Invite*</strong></p>
                                             <p style="color:red; font-style:italic">*You can change invite code if the conditions are completed</p>
@@ -86,6 +89,10 @@
                                                          value="{{ $email }}"></label></p>
                                         <p><label><input style="line-height: 14px; font-size: 14px;" name="phone"
                                                          value="{{ $phone }}"></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                                         name="password" placeholder="enter new password" value=""></label></p>
+                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
+                                                         name="password_confirmation" placeholder="confirm new password" value=""></label></p>
                                         @can('user.update.invite', [$editableUserModel])
                                             <p><label><input style="line-height: 14px; font-size: 14px;" name="invite_code"
                                                              value="{{ $invite_code }}"></label></p>
