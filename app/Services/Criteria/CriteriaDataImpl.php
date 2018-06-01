@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 /**
  * Class CriteriaDataImpl
  * @package App\Services\Criteria
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class CriteriaDataImpl implements CriteriaData
 {
@@ -83,6 +85,20 @@ class CriteriaDataImpl implements CriteriaData
      */
     protected $with = null;
 
+    /**
+     * Filterable fields list
+     *
+     * @var null|array
+     */
+    protected $whereFiltersFilterable = null;
+    /**
+     * Filtered value
+     *     ?whereFilters=role:name;
+     *
+     * @var null|array
+     */
+    protected $whereFilters = null;
+
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -101,7 +117,8 @@ class CriteriaDataImpl implements CriteriaData
         $this->searchFields = $this->searchFieldsParam();
 
         $this->initSearchValue()
-             ->initSearchFields();
+             ->initSearchFields()
+             ->initWhereFilters();
 
         $this->searchJoin = strtolower($this->searchJoinParam()) === 'and' ? 'and' : 'or';
         $this->orderBy    = $this->orderByParam();
@@ -181,25 +198,32 @@ class CriteriaDataImpl implements CriteriaData
     }
 
     /**
-     * @return CriteriaData
+     * @param $paramsStr
+     * @param string $variableName
      */
-    protected function initSearchValue(): CriteriaData
-    {
-        $search = $this->searchParam();
-        if (false !== stripos($search, ';') || false !== stripos($search, ':')) {
-            $params = explode(';', $search);
+    protected function parseParams($paramsStr, string $variableName) {
+        if (false !== stripos($paramsStr, ';') || false !== stripos($paramsStr, ':')) {
+            $params = explode(';', $paramsStr);
             foreach ($params as $param) {
-                $delimiterPosition = stripos($param, ':');
-                if (false === $delimiterPosition) {
+                if (false === $delimiterPosition = stripos($param, ':')) {
                     continue;
                 }
-                $field                      = substr($param, 0, $delimiterPosition);
-                $values                     = substr($param, ++$delimiterPosition, strlen($param));
-                $this->searchValues[$field] = (false === stripos($values, '|'))
+
+                $field                       = substr($param, 0, $delimiterPosition);
+                $values                      = substr($param, ++$delimiterPosition, strlen($param));
+                $this->$variableName[$field] = (false === stripos($values, '|'))
                     ? $values
                     : explode('|', $values);
             }
         }
+    }
+
+    /**
+     * @return CriteriaData
+     */
+    protected function initSearchValue(): CriteriaData
+    {
+        $this->parseParams($this->searchParam(), 'searchValues');
 
         return $this;
     }
@@ -283,6 +307,56 @@ class CriteriaDataImpl implements CriteriaData
     }
 
     /**
+     * @return null|string
+     */
+    protected function whereFiltersParam(): ?string
+    {
+        return $this->request->get(
+            config('repository.criteria.params.whereFilters', 'whereFilters'),
+            null
+        );
+    }
+
+    /**
+     * @return CriteriaData
+     */
+    protected function initWhereFilters(): CriteriaData
+    {
+        $filters = $this->whereFiltersParam();
+
+        if (null === $this->whereFiltersFilterable || null === $filters) {
+            return $this;
+        }
+
+        $this->parseParams($filters, 'whereFilters');
+
+        $this->whereFilters = array_filter($this->whereFilters, function($field) {
+            return (true === array_key_exists($field, $this->whereFiltersFilterable));
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $this;
+    }
+
+    /**
+     * @param array $whereFiltersFilterable
+     * @return CriteriaData
+     */
+    public function setWhereFiltersFilterable(array $whereFiltersFilterable): CriteriaData
+    {
+        $this->whereFiltersFilterable = $whereFiltersFilterable;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getWhereFiltersFilterable(): ?array
+    {
+        return $this->whereFiltersFilterable;
+    }
+
+    /**
      * @return array|null
      */
     public function getFieldsSearchable()
@@ -341,6 +415,14 @@ class CriteriaDataImpl implements CriteriaData
     /**
      * @return array|null
      */
+    public function getWhereFilters(): ?array
+    {
+        return $this->whereFilters;
+    }
+
+    /**
+     * @return array|null
+     */
     public function getSearchValues(): ?array
     {
         return $this->searchValues;
@@ -370,7 +452,7 @@ class CriteriaDataImpl implements CriteriaData
             'sortedBy'         => $this->getSortedBy(),
             'filter'           => $this->getFilter(),
             'with'             => $this->getWith(),
-
+            'whereFilters'     => $this->getWhereFilters(),
         ];
     }
 }

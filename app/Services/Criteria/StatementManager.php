@@ -8,6 +8,8 @@
 
 namespace App\Services\Criteria;
 
+use App\Services\Criteria\Statements\SearchStatement;
+
 /**
  * Interface StatementManager
  * @package App\Services\Criteria
@@ -15,6 +17,8 @@ namespace App\Services\Criteria;
 interface StatementManager
 {
     public function init(CriteriaData $criteriaData);
+
+    public function initWhereFilters(CriteriaData $criteriaData);
 
     public function apply($builder);
 }
