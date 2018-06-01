@@ -134,10 +134,10 @@
                                 @can('user.update.invite', [$editableUserModel])
                                 <div class="row">
                                     <div class="col-sm-3 p-5">
-                                        {{ __('users.fields.invite') }}
+                                        {{ __('users.fields.invite_code') }}
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="invite_code" value=""></label>
+                                        <label><input style="line-height: 14px; font-size: 14px; " name="invite_code" value="{{ $invite_code }}"></label>
                                     </div>
                                 </div>
                                 @endcan
