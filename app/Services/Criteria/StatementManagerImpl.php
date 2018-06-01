@@ -64,6 +64,32 @@ class StatementManagerImpl implements StatementManager
     }
 
     /**
+     * @param CriteriaData $criteriaData
+     */
+    public function initWhereFilters(CriteriaData $criteriaData)
+    {
+        foreach ($criteriaData->getWhereFilters() as $field => $value) {
+            try {
+                $operator = $criteriaData->getWhereFiltersFilterable();
+
+                $stmt = $this->newStatement($operator[$field])
+                    ->setField($field)
+                    ->setOperator($operator[$field])
+                    ->setSearchJoin('and')
+                    ->setValue($value)
+                    ->initialize();
+
+                if ($stmt->isValid()) {
+                    $this->push($stmt);
+                }
+            } catch (StatementNotFoundException $exception) {
+                logger()->error($exception->getMessage());
+                continue;
+            }
+        }
+    }
+
+    /**
      * @param SearchStatement $stmt
      */
     public function push(SearchStatement $stmt)

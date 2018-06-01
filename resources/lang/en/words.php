@@ -14,9 +14,13 @@ return [
     'users'                 => 'Users',
     'users_all'             => 'All users',
 
+    'all_roles'             => 'All roles',
+
     'offer'                 => 'Offer',
     'offers'                => 'Offers',
     'redemption'            => 'Redemption',
     'redemptions'           => 'Redemptions',
 
+    'yes' => 'Yes',
+    'no'  => 'No',
 ];
