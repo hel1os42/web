@@ -110,4 +110,13 @@ trait HasOfferData
     {
         return $this->offerData->redemption_points_price;
     }
+
+    /**
+     * @return bool
+     */
+    public function isFeatured(): bool
+    {
+        return $this->getFeaturedAttribute();
+    }
+
 }

@@ -14,6 +14,7 @@ use App\Traits\Uuids;
 use Carbon\Carbon;
 use app\Observers\OfferObserver;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Prettus\Repository\Traits\PresentableTrait;
 
@@ -447,10 +448,17 @@ class Offer extends AbstractNauModel
             throw new BadActivationCodeException($this, $code);
         }
 
+        DB::beginTransaction();
+
         $redemption = $this->redemptions()->create(['user_id' => $activationCode->getUserId()]);
+
         if (null === $redemption->getId()) {
+            DB::rollBack();
+
             throw new CannotRedeemException($this, $activationCode->getCode());
         }
+
+        DB::commit();
 
         $activationCode->activated($redemption);
 

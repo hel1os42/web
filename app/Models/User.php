@@ -7,6 +7,7 @@ use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\User as CoreUser;
+use App\Models\User\EnrollmentTrait;
 use App\Models\User\RelationsTrait;
 use App\Models\User\RoleTrait;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
@@ -52,7 +53,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids;
+    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids, EnrollmentTrait;
 
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
 
