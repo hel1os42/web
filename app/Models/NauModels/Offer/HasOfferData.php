@@ -84,4 +84,28 @@ trait HasOfferData
     {
         return $this->offerData->timeframes_offset;
     }
+
+    /**
+     * @return bool
+     */
+    public function getFeaturedAttribute(): bool
+    {
+        return $this->offerData->featured;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReferralPointsPriceAttribute(): int
+    {
+        return $this->offerData->referral_points_price;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedemptionPointsPriceAttribute(): int
+    {
+        return $this->offerData->redemption_points_price;
+    }
 }
