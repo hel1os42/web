@@ -15,9 +15,9 @@ trait HasOfferData
     public function offerData()
     {
         return $this->hasOne(OfferData::class, 'id', 'id')
-                    ->withDefault(function ($model) {
-                        $model->id = $this->getId();
-                    });
+            ->withDefault(function ($model) {
+                $model->id = $this->getId();
+            });
     }
 
     /**
@@ -87,6 +87,8 @@ trait HasOfferData
 
     /**
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getFeaturedAttribute(): bool
     {
