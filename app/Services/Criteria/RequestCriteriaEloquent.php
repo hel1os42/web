@@ -71,7 +71,6 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $statementManager = app(StatementManager::class);
         $statementManager->init($this->criteriaData);
 
-        // then we can apply parts or query to our builder
         $this->model = $this->model->where(function ($query) use ($statementManager) {
             $statementManager->apply($query);
         });
@@ -156,7 +155,13 @@ class RequestCriteriaEloquent implements CriteriaInterface
             return $this;
         }
 
-        $this->model = $this->model->with(explode(';', $with));
+        $withArray = explode(';', $with);
+
+        $withArray = array_filter($withArray, function($relation) {
+            return false !== method_exists($this->model->getModel(), $relation);
+        });
+
+        $this->model = $this->model->with($withArray);
 
         return $this;
     }

@@ -269,9 +269,14 @@ class UserController extends Controller
         }
 
         if (isset($newUserData['child_ids'])) {
-            $this->authorize('user.update.children', [$user, $newUserData['child_ids']]);
-            $user->children()->sync($newUserData['child_ids'], true);
-            array_push($with, 'parents');
+            $childIds = array_filter($newUserData['child_ids']);
+            $this->authorize('user.update.children', [$user, $childIds]);
+            $user->children()->sync($childIds, true);
+
+            if ($this->user()->isAdmin()) {
+                $this->updateAllParentsWithChildren($user, $childIds);
+            }
+            array_push($with, 'children');
         }
 
         if (!empty($with)) {
@@ -281,6 +286,28 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    /**
+     * @param User $editableUser
+     * @param array $childIds
+     */
+    private function updateAllParentsWithChildren(User $editableUser, $childIds)
+    {
+        $deepChildren = app(UserRepository::class)->scopeQuery(function (User $query) use ($childIds) {
+            $query = $query->join('users_parents', 'users.id', 'users_parents.user_id')
+                ->whereIn('users_parents.parent_id', $childIds);
+            return $query;
+        })
+            ->all()
+            ->pluck('id');
+
+        $editableUser->children()->sync($deepChildren, false);
+        $parents = $editableUser->parents()->get();
+
+        foreach ($parents as $user) {
+            $user->children()->sync($deepChildren->merge($childIds), false);
+        }
     }
 
     /**
