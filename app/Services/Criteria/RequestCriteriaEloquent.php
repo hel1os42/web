@@ -155,7 +155,13 @@ class RequestCriteriaEloquent implements CriteriaInterface
             return $this;
         }
 
-        $this->model = $this->model->with(explode(';', $with));
+        $withArray = explode(';', $with);
+
+        $withArray = array_filter($withArray, function($relation) {
+            return false !== method_exists($this->model->getModel(), $relation);
+        });
+
+        $this->model = $this->model->with($withArray);
 
         return $this;
     }
