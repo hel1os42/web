@@ -1,6 +1,6 @@
 <h1>Users list</h1>
 <div id="admin-users-search">
-    <div class="m-b-20">
+    <div class="m-b-10">
         <p>
             <label for="search_fields">
                 <b>Search by user (name, email, phone) or place (name, description):</b>
@@ -23,7 +23,8 @@
 
         <form method="get" action="{{ route('users.index') }}" id="search-form" style="display: inline-block;">
             <input type="hidden" name="search" id="search-field" value="">
-            <input type="hidden" name="searchJoin" value="and">
+            <input type="hidden" name="whereFilters" id="where-filter-field" value="">
+            <input type="hidden" name="searchJoin" value="or">
             <button type="submit" class="btn m-l-10">Search</button>
         </form>
     </div>

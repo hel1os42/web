@@ -121,11 +121,7 @@
     function searchForm(){
         let searchBlock = document.getElementById('admin-users-search');
         let searchForm = searchBlock.querySelector('#search-form');
-        let nameInput = searchBlock.querySelector('#name');
-        let emailInput = searchBlock.querySelector('#email');
-        let phoneInput = searchBlock.querySelector('#phone');
-        let placeNameInput = searchBlock.querySelector('#place-name');
-        let placeDescrInput = searchBlock.querySelector('#place-description');
+        let searchFieldsInput = searchBlock.querySelector('#search_fields');
         let roleSelect = searchBlock.querySelector('#role');
 
         let searchOptions = location.search.substr(1).split('&');
@@ -156,27 +152,22 @@
         };
 
         window.updateAdminUsersSearchForm = () => {
-            let result = {};
-            if ( emailInput.value !== '' ) {
-                result['email'] = emailInput.value;
-            }
-            if ( nameInput.value !== '' ) {
-                result['name'] = nameInput.value;
-            }
-            if ( phoneInput.value !== '' ) {
-                result['phone'] = phoneInput.value;
-            }
-            if ( placeNameInput.value !== '' ) {
-                result['place.name'] = placeNameInput.value;
-            }
-            if ( placeDescrInput.value !== '' ) {
-                result['place.description'] = placeDescrInput.value;
+            let searchResult      = {},
+                whereFilterResult = {};
+
+            if ( searchFieldsInput.value !== '' ) {
+                searchResult['name'] = searchFieldsInput.value;
+                searchResult['email'] = searchFieldsInput.value;
+                searchResult['phone'] = searchFieldsInput.value;
+                searchResult['place.name'] = searchFieldsInput.value;
+                searchResult['place.description'] = searchFieldsInput.value;
             }
             if ( roleSelect.value !== '' ) {
-                result['roles.name'] = roleSelect.value;
+                whereFilterResult['roles.name'] = roleSelect.value;
             }
 
-            searchBlock.querySelector('#search-field').value = makeParamStr(result);
+            searchBlock.querySelector('#search-field').value = makeParamStr(searchResult);
+            searchBlock.querySelector('#where-filter-field').value = makeParamStr(whereFilterResult);
         };
 
         searchBlock.querySelectorAll('input[type="text"]').forEach( (e) => {
@@ -238,25 +229,39 @@
         let searchOptions = decodeURIComponent(location.search.substr(1)).split('&');
         searchOptions = searchOptions.map(function(e){ return e.split('='); });
         let search = searchOptions.find(function(e){ return e[0] === 'search' });
+        let filter = searchOptions.find(function(e){ return e[0] === 'whereFilters' });
+        console.log(search);
         if (search) {
             search = search[1].split(';');
             search = search.map(function(e){ return e.split(':'); });
 
-            let searchByEmail = search.find(function(e){ return e[0] === 'email' });
-            if (searchByEmail) document.getElementById('email').value = searchByEmail[1];
+            let searchFields      = '';
+            let searchFieldsInput = document.getElementById('search_fields');
+
+            let searchByEmail = search.find(function(e){ console.log('_e', e); return e[0] === 'email' });
+            if (!searchFields) searchFields = searchByEmail[1];
             let searchByName = search.find(function(e){ return e[0] === 'name' });
-            if (searchByName) document.getElementById('name').value = searchByName[1];
+            if (!searchFields) searchFields = searchByName[1];
             let searchByPhone = search.find(function(e){ return e[0] === 'phone' });
-            if (searchByPhone) document.getElementById('phone').value = searchByPhone[1];
+            if (!searchFields) searchFields = searchByPhone[1];
             let searchByPlaceName = search.find(function(e){ return e[0] === 'place.name' });
-            if (searchByPlaceName) document.getElementById('place-name').value = searchByPlaceName[1];
+            if (!searchFields) searchFields = searchByPlaceName[1];
             let searchByPlaceDescr = search.find(function(e){ return e[0] === 'place.description' });
-            if (searchByPlaceDescr) document.getElementById('place-description').value = searchByPlaceDescr[1];
-            let searchByRole = search.find(function(e){ return e[0] === 'roles.name' });
+            if (!searchFields) searchFields = searchByPlaceDescr[1];
+
+            if (searchFieldsInput) searchFieldsInput.value = searchFields;
+        }
+
+        if (filter) {
+            filter = filter[1].split(';');
+            filter = filter.map(function(e){ return e.split(':'); });
+
+            let filterByRole = filter.find(function(e){ return e[0] === 'roles.name' });
             let roleSelect = document.getElementById('role');
-            if (searchByRole && roleSelect) {
+
+            if (filterByRole && roleSelect) {
                 let options = roleSelect.children;
-                for (let i = 0; i < options.length; i++) if (options[i].value === searchByRole[1]) options[i].selected = true;
+                for (let i = 0; i < options.length; i++) if (options[i].value === filterByRole[1]) options[i].selected = true;
             }
         }
     }
