@@ -32,8 +32,8 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        level
  * @property int        points
  * @property bool       approved
- * @property int       referral_points
- * @property int       redemption_points
+ * @property int        referral_points
+ * @property int        redemption_points
  * @property Collection offers
  * @property Collection accounts
  * @property Collection roles
@@ -430,7 +430,7 @@ class User extends Authenticatable implements PhoneAuthenticable
                 if ($account instanceof Account) {
                     return $account;
                 }
-            // no break
+                // no break
             default:
                 throw new TokenException($currency);
         }
