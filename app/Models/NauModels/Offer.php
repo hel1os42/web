@@ -32,27 +32,30 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
- * @property null|int max_count
- * @property null|int max_for_user
- * @property null|int max_per_day
- * @property null|int max_for_user_per_day
- * @property null|int max_for_user_per_week
- * @property null|int max_for_user_per_month
- * @property int user_level_min
- * @property null|float latitude
- * @property null|float longitude
- * @property null|int radius
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property boolean delivery
+ * @property null|int    max_count
+ * @property null|int    max_for_user
+ * @property null|int    max_per_day
+ * @property null|int    max_for_user_per_day
+ * @property null|int    max_for_user_per_week
+ * @property null|int    max_for_user_per_month
+ * @property int         user_level_min
+ * @property null|float  latitude
+ * @property null|float  longitude
+ * @property null|int    radius
+ * @property Carbon      created_at
+ * @property Carbon      updated_at
+ * @property boolean     delivery
  * @property null|string type
  * @property null|string gift_bonus_descr
- * @property null|float discount_percent
- * @property null|float discount_start_price
- * @property null|float discount_finish_price
+ * @property null|float  discount_percent
+ * @property null|float  discount_start_price
+ * @property null|float  discount_finish_price
  * @property null|string currency
  * @property bool        is_favorite
- * @property int redemptions_count
+ * @property int         redemptions_count
+ * @property int         referral_points_price
+ * @property int         redemption_points_price
+ * @property bool        is_featured
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -516,7 +519,7 @@ class Offer extends AbstractNauModel
             'points'                  => 1,
             'referral_points_price'   => 0,
             'redemption_points_price' => 0,
-            'is_featured'                => false,
+            'is_featured'             => false,
         ];
     }
 
@@ -630,7 +633,7 @@ class Offer extends AbstractNauModel
             'points'                  => 'integer',
             'referral_points_price'   => 'integer',
             'redemption_points_price' => 'integer',
-            'is_featured'                => 'boolean',
+            'is_featured'             => 'boolean',
         ];
     }
 

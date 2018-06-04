@@ -21,29 +21,31 @@ use Lab404\Impersonate\Models\Impersonate;
  * Class User
  * @package App\Models
  *
- * @property string id
- * @property string name
- * @property string email
- * @property string password
- * @property string phone
- * @property string invite_code
- * @property string referrer_id
- * @property int level
- * @property int points
- * @property bool approved
+ * @property string     id
+ * @property string     name
+ * @property string     email
+ * @property string     password
+ * @property string     phone
+ * @property string     invite_code
+ * @property string     referrer_id
+ * @property int        level
+ * @property int        points
+ * @property bool       approved
+ * @property int       referral_points
+ * @property int       redemption_points
  * @property Collection offers
  * @property Collection accounts
  * @property Collection roles
  * @property Collection parents
  * @property Collection children
- * @property CoreUser coreUser
- * @property User referrer
- * @property int offers_count
- * @property int referrals_count
- * @property int accounts_count
- * @property int activation_codes_count
- * @property Place place
- * @property string picture_url
+ * @property CoreUser   coreUser
+ * @property User       referrer
+ * @property int        offers_count
+ * @property int        referrals_count
+ * @property int        accounts_count
+ * @property int        activation_codes_count
+ * @property Place      place
+ * @property string     picture_url
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany offers
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
@@ -427,7 +429,7 @@ class User extends Authenticatable implements PhoneAuthenticable
                 if ($account instanceof Account) {
                     return $account;
                 }
-                // no break
+            // no break
             default:
                 throw new TokenException($currency);
         }
