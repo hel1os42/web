@@ -116,6 +116,6 @@ trait HasOfferData
      */
     public function isFeatured(): bool
     {
-        return $this->getFeaturedAttribute();
+        return $this->getIsFeaturedAttribute();
     }
 }
