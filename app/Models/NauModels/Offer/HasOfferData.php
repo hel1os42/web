@@ -90,9 +90,9 @@ trait HasOfferData
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
-    public function getFeaturedAttribute(): bool
+    public function getIsFeaturedAttribute(): bool
     {
-        return $this->offerData->featured;
+        return $this->offerData->is_featured;
     }
 
     /**

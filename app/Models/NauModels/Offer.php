@@ -516,7 +516,7 @@ class Offer extends AbstractNauModel
             'points'                  => 1,
             'referral_points_price'   => 0,
             'redemption_points_price' => 0,
-            'featured'                => false,
+            'is_featured'                => false,
         ];
     }
 
@@ -547,7 +547,7 @@ class Offer extends AbstractNauModel
             'points',
             'referral_points_price',
             'redemption_points_price',
-            'featured',
+            'is_featured',
         ];
     }
 
@@ -592,7 +592,7 @@ class Offer extends AbstractNauModel
             'redemptions_count',
             'referral_points_price',
             'redemption_points_price',
-            'featured',
+            'is_featured',
         ];
     }
 
@@ -630,7 +630,7 @@ class Offer extends AbstractNauModel
             'points'                  => 'integer',
             'referral_points_price'   => 'integer',
             'redemption_points_price' => 'integer',
-            'featured'                => 'boolean',
+            'is_featured'                => 'boolean',
         ];
     }
 

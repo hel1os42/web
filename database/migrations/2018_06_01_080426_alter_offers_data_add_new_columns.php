@@ -14,7 +14,7 @@ class AlterOffersDataAddNewColumns extends Migration
     public function up()
     {
         Schema::table('offers_data', function (Blueprint $table) {
-            $table->boolean('featured')->default(false);
+            $table->boolean('is_featured')->default(false);
             $table->unsignedInteger('referral_points_price')->default(0);
             $table->unsignedInteger('redemption_points_price')->default(0);
         });
@@ -29,7 +29,7 @@ class AlterOffersDataAddNewColumns extends Migration
     {
         Schema::table('offers_data', function (Blueprint $table) {
             $table->dropColumn([
-                'featured',
+                'is_featured',
                 'referral_points_price',
                 'redemption_points_price',
             ]);
