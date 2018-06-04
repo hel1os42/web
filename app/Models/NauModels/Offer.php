@@ -120,6 +120,12 @@ class Offer extends AbstractNauModel
         'radius',
         'reserved',
         'points',
+        'max_for_user',
+        'max_per_day',
+        'max_for_user_per_day',
+        'max_for_user_per_week',
+        'max_for_user_per_month',
+        'user_level_min',
     ];
 
     protected static function boot()

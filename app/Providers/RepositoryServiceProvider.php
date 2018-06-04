@@ -53,10 +53,13 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\IdentityProviderRepositoryEloquent::class);
         $this->app->bind(Repositories\IdentityRepository::class,
             Implementation\IdentityRepositoryEloquent::class);
-        $this->app->bind(Services\UserService::class,
-            Services\Implementation\UserService::class);
         $this->app->bind(Repositories\ComplaintRepository::class,
             Implementation\ComplaintRepositoryEloquent::class);
+
+        $this->app->bind(Services\UserService::class,
+            Services\Implementation\UserService::class);
+        $this->app->bind(Services\OfferRedemption\Access\Moderator::class,
+            Services\OfferRedemption\Access\Implementation\Moderator::class);
 
         $this->app->alias(Repositories\OfferRepository::class, 'offerRepository');
         $this->app->alias(Repositories\OfferLinkRepository::class, 'offerLinkRepository');
