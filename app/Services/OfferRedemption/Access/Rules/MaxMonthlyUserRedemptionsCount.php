@@ -2,6 +2,8 @@
 
 namespace App\Services\OfferRedemption\Access\Rules;
 
+use Carbon\Carbon;
+
 class MaxMonthlyUserRedemptionsCount extends Rule
 {
 
@@ -18,6 +20,11 @@ class MaxMonthlyUserRedemptionsCount extends Rule
      */
     public function validate(): bool
     {
-        return true;
+        $userMonthlyRedemptionsCount = $this->offer->redemptions()
+            ->monthly(Carbon::now(config('app.timezone')))
+            ->byUser($this->customer)
+            ->count();
+
+        return $userMonthlyRedemptionsCount < $this->limit;
     }
 }

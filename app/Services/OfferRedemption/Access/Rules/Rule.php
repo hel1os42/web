@@ -18,17 +18,17 @@ abstract class Rule
     /**
      * @var Offer
      */
-    public $offer;
+    protected $offer;
 
     /**
      * @var User
      */
-    public $customer;
+    protected $customer;
 
     /**
      * @var int
      */
-    public $limit;
+    protected $limit;
 
     /**
      * Rule constructor.

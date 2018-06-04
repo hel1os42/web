@@ -18,6 +18,10 @@ class MaxTotalUserRedemptionsCount extends Rule
      */
     public function validate(): bool
     {
-        return true;
+        $userRedemptionsCount = $this->offer->redemptions()
+            ->byUser($this->customer)
+            ->count();
+
+        return $userRedemptionsCount < $this->limit;
     }
 }
