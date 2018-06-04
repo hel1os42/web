@@ -118,5 +118,4 @@ trait HasOfferData
     {
         return $this->getFeaturedAttribute();
     }
-
 }

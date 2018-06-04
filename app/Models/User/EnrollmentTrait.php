@@ -47,4 +47,3 @@ trait EnrollmentTrait
         $this->decrement('referral_points', $points);
     }
 }
-
