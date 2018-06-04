@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Observers\ComplaintObserver;
 use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
-use app\Observers\RedemptionObserver;
+use App\Observers\RedemptionObserver;
 use App\Observers\TestimonialObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
