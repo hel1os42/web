@@ -7,6 +7,13 @@ use App\Models\User;
 use App\Services\OfferRedemption\Access\Rules;
 use App\Services\OfferRedemption\Access\Moderator as AccessModeratorContract;
 
+/**
+ * Class Moderator
+ *
+ * @package App\Services\OfferRedemption\Access\Implementation
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Moderator implements AccessModeratorContract
 {
 
@@ -29,7 +36,7 @@ class Moderator implements AccessModeratorContract
      * AccessModerator constructor.
      *
      * @param Offer $offer
-     * @param User $customer
+     * @param User  $customer
      */
     public function __construct(Offer $offer, User $customer)
     {
@@ -68,6 +75,8 @@ class Moderator implements AccessModeratorContract
             Rules\Rule::LIMIT_MAX_USER_WEEKLY_REDEMPTIONS  => $this->offer->getMaxForUserPerWeek(),
             Rules\Rule::LIMIT_MAX_USER_MONTHLY_REDEMPTIONS => $this->offer->getMaxForUserPerMonth(),
             Rules\Rule::LIMIT_MIN_USER_LEVEL               => $this->offer->getUserLevelMin(),
+            Rules\Rule::LIMIT_MIN_REFERRAL_POINTS          => $this->offer->getReferralPointsPriceAttribute(),
+            Rules\Rule::LIMIT_MIN_REDEMPTION_POINTS        => $this->offer->getRedemptionPointsPriceAttribute(),
         ];
     }
 
@@ -84,6 +93,8 @@ class Moderator implements AccessModeratorContract
             Rules\Rule::LIMIT_MAX_USER_WEEKLY_REDEMPTIONS  => Rules\MaxWeeklyUserRedemptionsCount::class,
             Rules\Rule::LIMIT_MAX_USER_MONTHLY_REDEMPTIONS => Rules\MaxMonthlyUserRedemptionsCount::class,
             Rules\Rule::LIMIT_MIN_USER_LEVEL               => Rules\MinUserLevel::class,
+            Rules\Rule::LIMIT_MIN_REFERRAL_POINTS          => Rules\MinUserReferralPoints::class,
+            Rules\Rule::LIMIT_MIN_REDEMPTION_POINTS        => Rules\MinUserRedemptionPoints::class,
         ];
     }
 

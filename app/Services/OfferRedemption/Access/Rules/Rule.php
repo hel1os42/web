@@ -14,6 +14,8 @@ abstract class Rule
     public const LIMIT_MAX_USER_WEEKLY_REDEMPTIONS  = 1 << 4;
     public const LIMIT_MAX_USER_MONTHLY_REDEMPTIONS = 1 << 5;
     public const LIMIT_MIN_USER_LEVEL               = 1 << 6;
+    public const LIMIT_MIN_REFERRAL_POINTS          = 1 << 7;
+    public const LIMIT_MIN_REDEMPTION_POINTS        = 1 << 8;
 
     /**
      * @var Offer
@@ -34,8 +36,8 @@ abstract class Rule
      * Rule constructor.
      *
      * @param Offer $offer
-     * @param User $customer
-     * @param int $limit
+     * @param User  $customer
+     * @param int   $limit
      */
     public function __construct(Offer $offer, User $customer, int $limit)
     {
