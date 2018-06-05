@@ -32,27 +32,30 @@ use Prettus\Repository\Traits\PresentableTrait;
  * @property null|string country
  * @property null|string city
  * @property null|string category_id
- * @property null|int max_count
- * @property null|int max_for_user
- * @property null|int max_per_day
- * @property null|int max_for_user_per_day
- * @property null|int max_for_user_per_week
- * @property null|int max_for_user_per_month
- * @property int user_level_min
- * @property null|float latitude
- * @property null|float longitude
- * @property null|int radius
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property boolean delivery
+ * @property null|int    max_count
+ * @property null|int    max_for_user
+ * @property null|int    max_per_day
+ * @property null|int    max_for_user_per_day
+ * @property null|int    max_for_user_per_week
+ * @property null|int    max_for_user_per_month
+ * @property int         user_level_min
+ * @property null|float  latitude
+ * @property null|float  longitude
+ * @property null|int    radius
+ * @property Carbon      created_at
+ * @property Carbon      updated_at
+ * @property boolean     delivery
  * @property null|string type
  * @property null|string gift_bonus_descr
- * @property null|float discount_percent
- * @property null|float discount_start_price
- * @property null|float discount_finish_price
+ * @property null|float  discount_percent
+ * @property null|float  discount_start_price
+ * @property null|float  discount_finish_price
  * @property null|string currency
  * @property bool        is_favorite
- * @property int redemptions_count
+ * @property int         redemptions_count
+ * @property int         referral_points_price
+ * @property int         redemption_points_price
+ * @property bool        is_featured
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -498,28 +501,31 @@ class Offer extends AbstractNauModel
         $reservationMultiplier = (int)config('nau.reservation_multiplier');
 
         $this->attributes = [
-            'acc_id'                 => null,
-            'name'                   => '',
-            'descr'                  => '',
-            'reward'                 => $defaultReward,
-            'status'                 => null,
-            'dt_start'               => null,
-            'dt_finish'              => null,
-            'country'                => null,
-            'city'                   => null,
-            'categ'                  => null,
-            'max_count'              => null,
-            'max_for_user'           => null,
-            'max_per_day'            => null,
-            'max_for_user_per_day'   => null,
-            'max_for_user_per_week'  => null,
-            'max_for_user_per_month' => null,
-            'min_level'              => 1,
-            'lat'                    => null,
-            'lng'                    => null,
-            'radius'                 => null,
-            'reserved'               => $defaultReward * $reservationMultiplier,
-            'points'                 => 1,
+            'acc_id'                  => null,
+            'name'                    => '',
+            'descr'                   => '',
+            'reward'                  => $defaultReward,
+            'status'                  => null,
+            'dt_start'                => null,
+            'dt_finish'               => null,
+            'country'                 => null,
+            'city'                    => null,
+            'categ'                   => null,
+            'max_count'               => null,
+            'max_for_user'            => null,
+            'max_per_day'             => null,
+            'max_for_user_per_day'    => null,
+            'max_for_user_per_week'   => null,
+            'max_for_user_per_month'  => null,
+            'min_level'               => 1,
+            'lat'                     => null,
+            'lng'                     => null,
+            'radius'                  => null,
+            'reserved'                => $defaultReward * $reservationMultiplier,
+            'points'                  => 1,
+            'referral_points_price'   => 0,
+            'redemption_points_price' => 0,
+            'is_featured'             => false,
         ];
     }
 
@@ -548,6 +554,9 @@ class Offer extends AbstractNauModel
             'status',
             'reserved',
             'points',
+            'referral_points_price',
+            'redemption_points_price',
+            'is_featured',
         ];
     }
 
@@ -590,41 +599,47 @@ class Offer extends AbstractNauModel
             'currency',
             'timeframes_offset',
             'redemptions_count',
+            'referral_points_price',
+            'redemption_points_price',
+            'is_featured',
         ];
     }
 
     private function initCasts(): void
     {
         $this->casts = [
-            'id'                     => 'string',
-            'account_id'             => 'integer',
-            'label'                  => 'string',
-            'description'            => 'string',
-            'status'                 => 'string',
-            'start_date'             => 'datetime',
-            'finish_date'            => 'datetime',
-            'country'                => 'string',
-            'city'                   => 'string',
-            'category_id'            => 'string',
-            'max_count'              => 'integer',
-            'max_for_user'           => 'integer',
-            'max_per_day'            => 'integer',
-            'max_for_user_per_day'   => 'integer',
-            'max_for_user_per_week'  => 'integer',
-            'max_for_user_per_month' => 'integer',
-            'user_level_min'         => 'integer',
-            'latitude'               => 'double',
-            'longitude'              => 'double',
-            'radius'                 => 'integer',
-            'reward'                 => 'integer',
-            'reserved'               => 'integer',
-            'delivery'               => 'boolean',
-            'type'                   => 'string',
-            'gift_bonus_descr'       => 'string',
-            'discount_percent'       => 'float',
-            'discount_start_price'   => 'float',
-            'currency'               => 'string',
-            'points'                 => 'integer',
+            'id'                      => 'string',
+            'account_id'              => 'integer',
+            'label'                   => 'string',
+            'description'             => 'string',
+            'status'                  => 'string',
+            'start_date'              => 'datetime',
+            'finish_date'             => 'datetime',
+            'country'                 => 'string',
+            'city'                    => 'string',
+            'category_id'             => 'string',
+            'max_count'               => 'integer',
+            'max_for_user'            => 'integer',
+            'max_per_day'             => 'integer',
+            'max_for_user_per_day'    => 'integer',
+            'max_for_user_per_week'   => 'integer',
+            'max_for_user_per_month'  => 'integer',
+            'user_level_min'          => 'integer',
+            'latitude'                => 'double',
+            'longitude'               => 'double',
+            'radius'                  => 'integer',
+            'reward'                  => 'integer',
+            'reserved'                => 'integer',
+            'delivery'                => 'boolean',
+            'type'                    => 'string',
+            'gift_bonus_descr'        => 'string',
+            'discount_percent'        => 'float',
+            'discount_start_price'    => 'float',
+            'currency'                => 'string',
+            'points'                  => 'integer',
+            'referral_points_price'   => 'integer',
+            'redemption_points_price' => 'integer',
+            'is_featured'             => 'boolean',
         ];
     }
 

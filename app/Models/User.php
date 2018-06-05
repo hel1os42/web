@@ -31,6 +31,8 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property int        level
  * @property int        points
  * @property bool       approved
+ * @property int        referral_points
+ * @property int        redemption_points
  * @property Collection offers
  * @property Collection accounts
  * @property Collection roles
@@ -64,25 +66,29 @@ class User extends Authenticatable implements PhoneAuthenticable
         $this->initUuid();
 
         $this->attributes = [
-            'name'           => '',
-            'email'          => null,
-            'password'       => null,
-            'remember_token' => null,
-            'created_at'     => null,
-            'updated_at'     => null,
-            'referrer_id'    => null,
-            'invite_code'    => null,
-            'approved'       => false,
+            'name'              => '',
+            'email'             => null,
+            'password'          => null,
+            'remember_token'    => null,
+            'created_at'        => null,
+            'updated_at'        => null,
+            'referrer_id'       => null,
+            'invite_code'       => null,
+            'approved'          => false,
+            'referral_points'   => 0,
+            'redemption_points' => 0,
         ];
 
         $this->casts = [
-            'name'        => 'string',
-            'email'       => 'string',
-            'phone'       => 'string',
-            'latitude'    => 'double',
-            'longitude'   => 'double',
-            'approved'    => 'boolean',
-            'invite_code' => 'string',
+            'name'              => 'string',
+            'email'             => 'string',
+            'phone'             => 'string',
+            'latitude'          => 'double',
+            'longitude'         => 'double',
+            'approved'          => 'boolean',
+            'invite_code'       => 'string',
+            'referral_points'   => 'integer',
+            'redemption_points' => 'integer',
         ];
 
         $this->fillable = [
@@ -198,6 +204,22 @@ class User extends Authenticatable implements PhoneAuthenticable
     }
 
     /**
+     * @return int
+     */
+    public function getReferralPoints(): int
+    {
+        return $this->referral_points;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedemptionPoints(): int
+    {
+        return $this->redemption_points;
+    }
+
+    /**
      * @return string
      */
     public function getPictureUrlAttribute(): string
@@ -293,6 +315,30 @@ class User extends Authenticatable implements PhoneAuthenticable
         if ($value !== null) {
             $this->attributes['password'] = Hash::make($value);
         }
+    }
+
+    /**
+     * @param int $points
+     *
+     * @return User
+     */
+    public function setReferralPoints(int $points): User
+    {
+        $this->referral_points = $points;
+
+        return $this;
+    }
+
+    /**
+     * @param int $points
+     *
+     * @return User
+     */
+    public function setRedemptionPoints(int $points): User
+    {
+        $this->redemption_points = $points;
+
+        return $this;
     }
 
     protected static function boot()
@@ -439,7 +485,6 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         return $this->activationCodes()->count();
     }
-
 
 
     /**
