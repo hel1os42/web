@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Models\Complaint;
 use App\Models\NauModels\Offer;
+use App\Models\NauModels\Redemption;
 use App\Models\OfferLink;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\ComplaintObserver;
 use App\Observers\OfferLinkObserver;
 use App\Observers\OfferObserver;
+use App\Observers\RedemptionObserver;
 use App\Observers\TestimonialObserver;
 use App\Observers\UserObserver;
 use App\Repositories\AccountRepository;
@@ -59,6 +61,7 @@ class AppServiceProvider extends ServiceProvider
         OfferLink::observe(OfferLinkObserver::class);
         Testimonial::observe(TestimonialObserver::class);
         Complaint::observe(ComplaintObserver::class);
+        Redemption::observe(RedemptionObserver::class);
 
         ViewFacade::composer(
             ['*'],
