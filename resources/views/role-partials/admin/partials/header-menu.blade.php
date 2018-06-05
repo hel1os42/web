@@ -6,11 +6,8 @@
     <a href="{{ route('categories.index') }}">Categories & retail types</a>
 </li>
 <li>
-    <a href="{{ route('tags.index') }}">Tags</a>
-</li>
-
-
-
-<li>
     <a href="{{ route('settings.index') }}">Settings</a>
+</li>
+<li>
+    <a href="{{ route('tags.index') }}">Tags</a>
 </li>
