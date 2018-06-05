@@ -27,6 +27,8 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists($this->tablename);
+
         Schema::create($this->tablename, function(Blueprint $table)
         {
             $table->increments('id');
