@@ -7,6 +7,13 @@ use App\Models\User;
 use App\Services\OfferRedemption\Access\Rules;
 use App\Services\OfferRedemption\Access\Moderator as AccessModeratorContract;
 
+/**
+ * Class Moderator
+ *
+ * @package App\Services\OfferRedemption\Access\Implementation
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Moderator implements AccessModeratorContract
 {
 
