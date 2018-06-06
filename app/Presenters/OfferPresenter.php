@@ -2,6 +2,7 @@
 
 namespace App\Presenters;
 
+use App\Services\WeekDaysService;
 use App\Transformers\OfferTransformer;
 use Illuminate\Auth\AuthManager;
 use Prettus\Repository\Presenter\FractalPresenter;
@@ -13,18 +14,29 @@ use Prettus\Repository\Presenter\FractalPresenter;
  */
 class OfferPresenter extends FractalPresenter
 {
+    /**
+     * @var AuthManager
+     */
     private $authManager;
+
+    /**
+     * @var WeekDaysService
+     */
+    private $weekDaysService;
 
     /**
      * OfferPresenter constructor.
      *
      * @param AuthManager $authManager
+     * @param WeekDaysService $weekDaysService
      *
      * @throws \Exception
      */
-    public function __construct(AuthManager $authManager)
+    public function __construct(AuthManager $authManager, WeekDaysService $weekDaysService)
     {
-        $this->authManager = $authManager;
+        $this->authManager     = $authManager;
+        $this->weekDaysService = $weekDaysService;
+
         parent::__construct();
     }
 
@@ -35,6 +47,6 @@ class OfferPresenter extends FractalPresenter
      */
     public function getTransformer()
     {
-        return new OfferTransformer($this->authManager);
+        return new OfferTransformer($this->authManager, $this->weekDaysService);
     }
 }

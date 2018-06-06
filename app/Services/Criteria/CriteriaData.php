@@ -62,4 +62,20 @@ interface CriteriaData
      * @return string|array|null
      */
     public function getSearchValueByField(string $field);
+
+    /**
+     * @param array $whereFiltersFilterable
+     * @return CriteriaData
+     */
+    public function setWhereFiltersFilterable(array $whereFiltersFilterable): CriteriaData;
+
+    /**
+     * @return array|null
+     */
+    public function getWhereFiltersFilterable(): ?array;
+
+    /**
+     * @return array|null
+     */
+    public function getWhereFilters(): ?array;
 }

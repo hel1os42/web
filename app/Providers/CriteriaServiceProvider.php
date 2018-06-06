@@ -15,6 +15,8 @@ use App\Services\Criteria\CriteriaData;
 use App\Services\Criteria\CriteriaDataImpl;
 use App\Services\Criteria\StatementManager;
 use App\Services\Criteria\StatementManagerImpl;
+use App\Services\Criteria\UserRequestCriteria;
+use App\Services\Criteria\UserRequestCriteriaEloquent;
 use Illuminate\Support\ServiceProvider;
 use Prettus\Repository\Criteria\RequestCriteria;
 
@@ -33,6 +35,10 @@ class CriteriaServiceProvider extends ServiceProvider
         $this->app->bind(
             RequestCriteria::class,
             RequestCriteriaEloquent::class
+        );
+        $this->app->bind(
+            UserRequestCriteria::class,
+            UserRequestCriteriaEloquent::class
         );
         $this->app->bind(
             StatementManager::class,

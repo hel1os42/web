@@ -15,9 +15,9 @@ trait HasOfferData
     public function offerData()
     {
         return $this->hasOne(OfferData::class, 'id', 'id')
-                    ->withDefault(function ($model) {
-                        $model->id = $this->getId();
-                    });
+            ->withDefault(function ($model) {
+                $model->id = $this->getId();
+            });
     }
 
     /**
@@ -83,5 +83,39 @@ trait HasOfferData
     public function getTimeframesOffsetAttribute(): ?string
     {
         return $this->offerData->timeframes_offset;
+    }
+
+    /**
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
+     */
+    public function getIsFeaturedAttribute(): bool
+    {
+        return $this->offerData->is_featured;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReferralPointsPriceAttribute(): int
+    {
+        return $this->offerData->referral_points_price;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRedemptionPointsPriceAttribute(): int
+    {
+        return $this->offerData->redemption_points_price;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFeatured(): bool
+    {
+        return $this->getIsFeaturedAttribute();
     }
 }

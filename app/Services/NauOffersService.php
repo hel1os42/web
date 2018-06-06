@@ -13,6 +13,7 @@ use App\Repositories\OfferRepository;
 use App\Repositories\TimeframeRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Support\Facades\DB;
 use OmniSynapse\CoreService\Exception\RequestException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -111,20 +112,30 @@ class NauOffersService implements OffersService
      */
     private function redeem(?ActivationCode $activationCode): Redemption
     {
+        DB::beginTransaction();
+
         try {
             /** @var Redemption $redemption */
             $redemption = $activationCode->offer->redemptions()->create([
                 'user_id' => $activationCode->getUserId()
             ]);
         } catch (RequestException $exception) {
+            DB::rollBack();
+
             throw new HttpException($exception->getCode(), $exception->getMessage(), $exception);
         } catch (\Throwable $throwable) {
+            DB::rollBack();
+
             throw new HttpException(503, $throwable);
         }
 
         if (null === $redemption->id) {
+            DB::rollBack();
+
             throw new CannotRedeemException($activationCode->offer, $activationCode->getCode());
         }
+
+        DB::commit();
 
         $activationCode->redemption()->associate($redemption)->update();
 

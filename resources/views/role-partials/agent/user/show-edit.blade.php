@@ -1,39 +1,32 @@
-<div class="row">
-    <div class="col-sm-6">
-        @can('user.update.children', [$editableUserModel, array_column($allPossibleChildren, 'id')])
-            <p><strong>Set children</strong></p>
-        @endcan
-    </div>
-    <div class="col-sm-6">
-        @can('user.update.children', [$editableUserModel, array_column($allPossibleChildren, 'id')])
-            @if(isset($allPossibleChildren))
-                @php
-                    $children = isset($children) ? $children : [];
-                    $counter = 0;
-                @endphp
-                <div style="padding-bottom: 16px;">
-                    @foreach($allPossibleChildren as $child)
+@can('user.update.children', [$editableUserModel, $children->pluck('id')->toArray()])
+    <div class="row">
+        <div class="col-sm-3">
+            {{ __('users.fields.children') }}
+        </div>
+
+        <div class="col-sm-9 p-5">
+            @if(isset($children))
+                @php $box_style = $children->count() ? 'box-style' : ''; @endphp
+                <div class="children-wrap {{ $box_style }}">
+                    <input type="hidden" name="child_ids[]">
+
+                    @foreach($children as $child)
                         <p>
-                            <label>
-                                <input type="checkbox"
-                                       name="child_ids[{{ $counter }}]"
-                                       value="{{ $child['id'] }}"
-                                       @foreach($children as $selectedChild)
-                                       @if($selectedChild['id'] === $child['id'])
-                                       checked
-                                        @endif
-                                        @endforeach
-                                > {{ $child['name'] }} <small>{{ $child['email'] }}</small>
-                            </label>
+                            <input type="hidden"
+                                   class="added-children"
+                                   name="child_ids[]"
+                                   value="{{ $child['id'] }}"
+                            >
+                            <strong>{{ $child['name'] }} ({{ $child['email'] ?: $child['phone'] }})</strong>
+                            <button type="button" class="close rm_child">×</button>
                         </p>
-                        @php
-                            $counter++;
-                        @endphp
                     @endforeach
                 </div>
             @endif
-        @endcan
+            <button id="add_children" class="btn" type="button" data-toggle="modal" data-target="#add_children_list">
+                {{ __('buttons.add_children') }}
+            </button>
+
+        </div>
     </div>
-</div>
-
-
+@endcan

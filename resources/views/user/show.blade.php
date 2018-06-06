@@ -26,12 +26,9 @@
                     <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-                                <li class="active"><a href="#profile" aria-controls="profile" role="tab"
-                                                      data-toggle="tab" aria-expanded="true">Profile info</a></li>
-                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab"
-                                       aria-expanded="true">Edit profile</a></li>
-                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab"
-                                                data-toggle="tab" aria-expanded="false">Update photo</a></li>
+                                <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.profile_info') }}</a></li>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.edit_profile') }}</a></li>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">{{ __('users.titles.update_photo') }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -39,26 +36,50 @@
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
                                 <div class="col-sm-3 p-5">
-                                    <p><strong>Name</strong></p>
-                                    <p><strong>Email</strong></p>
-                                    <p><strong>Phone</strong></p>
-                                    <p><strong>Invite code</strong></p>
-                                    <p><strong>Count of referrals</strong></p>
-                                    <p>
-                                        <strong>
-                                            {{ __('users.fields.points') }}
-                                        </strong>
-                                    </p>
+                                    {{ __('users.fields.name') }}
                                 </div>
                                 <div class="col-sm-9 p-5">
-                                    <p>{{ $name ?: '-' }}</p>
-                                    <p>{{ $email ?: '-' }}</p>
-                                    <p>{{ $phone ?: '-' }}</p>
-                                    <p>{{ $invite_code }}</p>
-                                    <p>{{ $referrals_count }}</p>
-                                    <p>
-                                        {{ $points }}
-                                    </p>
+                                    {{ $name ?: '-' }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.email') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $email ?: '-' }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.phone') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $phone ?: '-' }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.invite_code') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $invite_code }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.referrals_count') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $referrals_count }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.points') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $points }}
                                 </div>
                             </div>
 
@@ -66,31 +87,49 @@
 
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
-                            <form action="{{ route('users.update', $id) }}" method="POST"
-                                  enctype="application/x-www-form-urlencoded">
+                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
-                                <div class="row">
 
+                                <div class="row">
                                     <div class="col-sm-3 p-5">
-                                        <p><strong>Name</strong></p>
-                                        <p><strong>Email</strong></p>
-                                        <p><strong>Phone</strong></p><br>
-                                        <p><strong>Change password</strong></p>
+                                        {{ __('users.fields.name') }}
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name"
-                                                         value="{{ $name }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email"
-                                                         value="{{ $email }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone"
-                                                         value="{{ $phone }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
-                                                         name="password" placeholder="enter new password" value=""></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;"
-                                                         name="password_confirmation" placeholder="confirm new password" value=""></label></p>
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label>
                                     </div>
-
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.email') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.phone') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.password') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password" value=""></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.password_conf') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password_confirmation" value=""></label>
+                                    </div>
                                 </div>
 
                                 @if(false)
@@ -113,21 +152,20 @@
                                 @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
 
                                 <div class="row">
-                                    <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
+                                    <p><input type="submit" class="btn-nau pull-right" value="{{ __('buttons.update') }}"></p>
                                 </div>
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <h4 class="title">Update your avatar</h4>
+                            <h4 class="title">{{ __('users.titles.update_avatar') }}</h4>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}"
-                                          enctype="multipart/form-data">
+                                    <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
                                         <div class="form-group" id="userpic_image_box">
                                             {{ csrf_field() }}
                                             <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
-                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="{{ __('buttons.set_photo') }}">
                                         <p class="image-example" style="padding-top:20px; color: #999; font-size: 80%;">
                                             Image requirements:<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<em>format: jpg/jpeg, png</em><br>
@@ -145,6 +183,10 @@
             </div>
         </div>
     </div>
+
+    @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+        @include('role-partials.children-modal')
+    @endif
 
 @stop
 
@@ -191,9 +233,7 @@
                 formData.append('_token', $userpic_image_box.find('[name="_token"]').val());
                 let base64Data = imageCropperCrop($img.get(0)).getAttribute('src').replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
                 formData.append('picture', base64toBlob(base64Data, 'image/jpeg'), 'picture.jpg');
-                for (let i of formData) {
-                    console.log(i);
-                }
+                for(let i of formData) { console.log(i); }
                 $.ajax({
                     url: url,
                     data: formData,
@@ -249,7 +289,7 @@
                 $.ajax({
                     method: "PATCH",
                     url: $(this).attr('action'),
-                    headers: {'Accept': 'application/json'},
+                    headers: { 'Accept':'application/json' },
                     data: formData,
                     success: function (data, textStatus, xhr) {
                         if (201 === xhr.status) {

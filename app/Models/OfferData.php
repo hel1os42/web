@@ -48,14 +48,17 @@ class OfferData extends Model
         $this->initUuid();
 
         $this->casts = [
-            'id'                   => 'string',
-            'delivery'             => 'boolean',
-            'type'                 => 'string',
-            'gift_bonus_descr'     => 'string',
-            'discount_percent'     => 'float',
-            'discount_start_price' => 'float',
-            'currency'             => 'string',
-            'owner_id'             => 'string',
+            'id'                      => 'string',
+            'delivery'                => 'boolean',
+            'type'                    => 'string',
+            'gift_bonus_descr'        => 'string',
+            'discount_percent'        => 'float',
+            'discount_start_price'    => 'float',
+            'currency'                => 'string',
+            'owner_id'                => 'string',
+            'referral_points_price'   => 'integer',
+            'redemption_points_price' => 'integer',
+            'is_featured'             => 'boolean',
         ];
 
         $this->fillable = [
@@ -67,15 +70,21 @@ class OfferData extends Model
             'currency',
             'owner_id',
             'timeframes_offset',
+            'referral_points_price',
+            'redemption_points_price',
+            'is_featured',
         ];
 
         $this->attributes = [
-            'delivery'             => false,
-            'type'                 => null,
-            'gift_bonus_descr'     => null,
-            'discount_percent'     => null,
-            'discount_start_price' => null,
-            'currency'             => null,
+            'delivery'                => false,
+            'type'                    => null,
+            'gift_bonus_descr'        => null,
+            'discount_percent'        => null,
+            'discount_start_price'    => null,
+            'currency'                => null,
+            'referral_points_price'   => 0,
+            'redemption_points_price' => 0,
+            'is_featured'             => false,
         ];
 
         $this->appends = [
