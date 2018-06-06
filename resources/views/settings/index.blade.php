@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Settings')
+@section('title', 'settings list')
 @section('content')
     <div class="container">
     <nav class="row">
@@ -7,8 +7,8 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">item</th>
-                    <th scope="col">value</th>
+                    <th scope="col">{{ __('settings.titles.item') }}</th>
+                    <th scope="col">{{ __('settings.titles.value') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -16,7 +16,7 @@
                     {{ csrf_field() }}
                     @foreach($data as $key => $value)
                     <tr>
-                        <td>{{$key}}</td>
+                        <td>{{ __('settings.fields.'.$key) }}</td>
                         <td><input name="{{$key}}" value="{{$value}}"></td>
                         </tr>
                     @endforeach
