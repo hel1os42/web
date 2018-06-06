@@ -8,7 +8,10 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class FeaturedOfferCriteriaCriteria
+ *
  * @package namespace App\Criteria;
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class FeaturedCriteria implements CriteriaInterface
 {
@@ -31,4 +34,3 @@ class FeaturedCriteria implements CriteriaInterface
         return $model->whereIn('id', $featuredOfferIds);
     }
 }
-

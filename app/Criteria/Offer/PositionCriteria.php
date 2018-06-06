@@ -7,7 +7,10 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class PositionCriteria
+ *
  * @package namespace App\Criteria;
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PositionCriteria implements CriteriaInterface
 {
@@ -57,4 +60,3 @@ class PositionCriteria implements CriteriaInterface
         );
     }
 }
-

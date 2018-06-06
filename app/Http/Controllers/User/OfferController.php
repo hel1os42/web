@@ -16,6 +16,13 @@ use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class OfferController
+ *
+ * @package App\Http\Controllers\User
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class OfferController extends Controller
 {
     use FractalToIlluminatePagination;

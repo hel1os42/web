@@ -8,7 +8,10 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
  * Class CategoryCriteria
+ *
  * @package namespace App\Criteria;
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class CategoryCriteria implements CriteriaInterface
 {
@@ -54,4 +57,3 @@ class CategoryCriteria implements CriteriaInterface
         return $model->whereIn('category_id', $categoryIds);
     }
 }
-
