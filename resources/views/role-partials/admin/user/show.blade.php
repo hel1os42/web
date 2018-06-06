@@ -7,11 +7,13 @@
             @foreach($parents as $user)
                 @php
                     $contacts = $user['email'] ?: $user['phone'];
-                    $role     = __('words.' . $user['roles']->pluck('name')->implode(', '));
+                    $roles    = $user['roles']->pluck('name')->map(function($role) {
+                        return __('words.' . $role);
+                    });
                 @endphp
 
                 <p data-id="{{ $user['id'] }}" class="m-b-5">
-                    {!! sprintf('%s (%s) - <i>%s</i>', $user['name'], $contacts, $role) !!}
+                    {{ $user['name'] }} ({{ $contacts }}) - <i>{{ $roles->implode(', ') }}</i>
                     <a href="{{ route('users.show', $user['id']) }}">
                         <i class="fa fa-pencil-square-o m-l-5" aria-hidden="true"></i>
                     </a>
