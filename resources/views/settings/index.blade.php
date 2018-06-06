@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'settings list')
+@section('title', trans('settings.titles.setting_list'))
 @section('content')
     <div class="container">
     <nav class="row">
