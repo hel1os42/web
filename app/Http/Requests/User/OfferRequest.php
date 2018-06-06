@@ -34,7 +34,7 @@ class OfferRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_ids' => 'required|array',
+            'category_ids' => 'array',
             'category_ids.*' => sprintf(
                 'string|regex:%s|exists:categories,id',
                 \App\Helpers\Constants::UUID_REGEX
