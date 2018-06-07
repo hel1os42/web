@@ -2,7 +2,7 @@
 
 namespace App\Criteria\Offer;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\OfferData;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -25,10 +25,8 @@ class FeaturedCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $featuredOfferIds = DB::table('offers_data')
-            ->where('is_featured', true)
-            ->select('id')
-            ->get()
+        $featuredOfferIds = OfferData::query()
+            ->featured()
             ->pluck('id');
 
         return $model->whereIn('id', $featuredOfferIds);
