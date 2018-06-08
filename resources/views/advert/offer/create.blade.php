@@ -19,6 +19,17 @@
                 @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
+                @can('offers.manage_featured_options')
+                    @include('advert.offer.create-featured-options')
+                @endcan
+
+                <p class="tokens-total">
+                    <strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>{{ __('offers.text.account_tokens') }}</span>
+                </p>
+
+                <p class="clearfix">
+                    <input type="submit" class="btn-nau pull-right" value="{{ __('offers.buttons.create_offer') }}">
+                </p>
             </form>
 
         </div>

@@ -240,6 +240,8 @@ class OfferController extends Controller
 
         $attributes['status'] = $this->inquireStatus($account, $attributes['reward'], $attributes['reserved']);
 
+        $this->moderateAttributes($attributes);
+
         $this->offerRepository->update($attributes, $offer->getId());
 
         return $this->acceptedResponse('advert.offers.show', $offerUuid);
@@ -274,5 +276,17 @@ class OfferController extends Controller
         }
 
         return response(null, 202)->header('Location', $route);
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return void
+     */
+    private function moderateAttributes(array $attributes)
+    {
+        if (false === $this->user()->can('offers.manage_featured_options')) {
+            array_forget($attributes, Offer::featuredOptions());
+        }
     }
 }
