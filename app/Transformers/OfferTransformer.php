@@ -74,9 +74,8 @@ class OfferTransformer extends TransformerAbstract
         $placeKey = 'account.owner.place';
 
         if (array_has($data, $placeKey)) {
-            $data['place'] = array_get($data, $placeKey);
-
-            array_forget($data, 'account');
+            array_forget($data, 'account.address');
+            array_forget($data, 'account.balance');
         }
     }
 }
