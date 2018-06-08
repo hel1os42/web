@@ -666,4 +666,16 @@ class Offer extends AbstractNauModel
             'longitude'      => 'lng'
         ];
     }
+
+    /**
+     * @return array
+     */
+    public static function featuredOptions(): array
+    {
+        return [
+            'referral_points_price',
+            'redemption_points_price',
+            'is_featured',
+        ];
+    }
 }

@@ -22,8 +22,3 @@
         <input name="points" data-min="0" data-max="9999999" data-default="1" value="1" class="js-numeric formData" />
     </label>
 </p>
-
-
-<p class="tokens-total"><strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>You have tokens on your account</span></p>
-
-<p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Offer"></p>
