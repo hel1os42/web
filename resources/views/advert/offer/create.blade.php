@@ -271,6 +271,14 @@
                 });
             });
 
+            /* is_featured */
+            if (1 === $('[name="is_featured"]').length) {
+                formData.push({
+                    "name": "is_featured",
+                    "value": $('[name="is_featured"]').prop('checked') ? "1" : "0"
+                });
+            }
+
             /* offer type */
             formData.push({
                 "name" : "type",
