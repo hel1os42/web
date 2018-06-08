@@ -129,6 +129,7 @@ class Offer extends AbstractNauModel
         'max_for_user_per_day',
         'max_for_user_per_week',
         'max_for_user_per_month',
+        'max_count',
         'user_level_min',
     ];
 
