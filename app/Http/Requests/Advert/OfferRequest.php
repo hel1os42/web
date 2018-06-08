@@ -111,8 +111,8 @@ class OfferRequest extends FormRequest
             ),
             'points' => 'required|integer',
             'is_featured'             => 'nullable|bool',
-            'referral_points_price'   => 'nullable|integer',
-            'redemption_points_price' => 'nullable|integer'
+            'referral_points_price'   => 'nullable|integer|min:0',
+            'redemption_points_price' => 'nullable|integer|min:0'
         ];
     }
 } 
