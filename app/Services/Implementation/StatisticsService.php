@@ -57,8 +57,9 @@ class StatisticsService implements StatisticsServiceInterface
             ->map(function ($list) {
                 return $list->count();
             })
-            ->sortBy(function($count, $role) use ($orderedFields) {
-                return array_search($role, $orderedFields);
+            ->sortBy(function() use ($orderedFields) {
+                // return the order index by role name
+                return array_search(func_get_arg(1), $orderedFields);
             })
             // make plural key names
             ->keyBy(function($list, $key) {
