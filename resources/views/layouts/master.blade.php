@@ -24,6 +24,10 @@
             @show
         </footer>
 
+        @hasSection('modal-print')
+            @yield('modal-print')
+        @endif
+
     </body>
 
     @include('partials.javascripts')

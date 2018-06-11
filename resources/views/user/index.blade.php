@@ -39,9 +39,20 @@
                         <a href="{{ route('places.show', $user['place']['id']) }}">{{ $user['place']['name'] }}</a>
                     </td>
                     <td>
-                        <a href="{{ route('places.edit', $user['place']['id']) }}">
-                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Place edit
-                        </a>
+                        <p>
+                            <a href="{{ route('places.edit', $user['place']['id']) }}">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> {{ __('place.buttons.place_edit') }}
+                            </a>
+                        </p>
+                        <p>
+                            <a href="#" data-toggle="modal" data-target="#print_qr_code"
+                                class="qr-code-modal-open"
+                                data-invite-code="{{ $user['invite_code'] }}"
+                                data-place-name="{{ $user['place']['name'] }}"
+                                data-place-address="{{ $user['place']['address'] }}">
+                                <i class="fa fa-print" aria-hidden="true" style="margin-right: 1px;"></i> {{ __('place.buttons.print_qr_codes') }}
+                            </a>
+                        </p>
                     </td>
                 @else
                     <td>-</td>
@@ -102,6 +113,10 @@
     </div>
 </div>
 @stop
+
+@section('modal-print')
+    @include('partials.modal-qr-print')
+@endsection
 
 @push('scripts')
 <script type="text/javascript">
