@@ -19,6 +19,14 @@
                 @include('advert.offer.edit-working')
                 @include('advert.offer.edit-redemption')
 
+                @can('offers.manage_featured_options')
+                    @include('advert.offer.edit-featured-options')
+                @endcan
+
+                <p class="tokens-total"><strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>{{ __('offers.text.account_tokens') }}</span></p>
+
+                <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="{{ __('buttons.save') }}"></p>
+
             </form>
 
         </div>
@@ -299,6 +307,14 @@
                     "value" : val
                 });
             });
+
+            /* is_featured */
+            if (1 === $('[name="is_featured"]').length) {
+                formData.push({
+                    "name": "is_featured",
+                    "value": $('[name="is_featured"]').prop('checked') ? "1" : "0"
+                });
+            }
 
             /* offer type */
             formData.push({

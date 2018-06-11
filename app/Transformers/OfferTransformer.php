@@ -28,7 +28,7 @@ class OfferTransformer extends TransformerAbstract
     /**
      * OfferTransformer constructor.
      *
-     * @param AuthManager $authManager
+     * @param AuthManager     $authManager
      * @param WeekDaysService $weekDaysService
      */
     public function __construct(AuthManager $authManager, WeekDaysService $weekDaysService)
@@ -61,6 +61,21 @@ class OfferTransformer extends TransformerAbstract
 
         $data['redemption_access_code'] = $accessModerator->getAccessCode();
 
+        $this->handleOfferPlaceData($data);
+
         return $data;
+    }
+
+    /**
+     * @param array $data
+     */
+    private function handleOfferPlaceData(array &$data)
+    {
+        $placeKey = 'account.owner.place';
+
+        if (array_has($data, $placeKey)) {
+            array_forget($data, 'account.address');
+            array_forget($data, 'account.balance');
+        }
     }
 }

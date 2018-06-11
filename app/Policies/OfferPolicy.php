@@ -5,9 +5,32 @@ namespace App\Policies;
 use App\Models\NauModels\Offer;
 use App\Models\Role;
 use App\Models\User;
+use App\Repositories\UserRepository;
+use Lab404\Impersonate\Services\ImpersonateManager;
 
 class OfferPolicy extends Policy
 {
+    /**
+     * @var ImpersonateManager
+     */
+    private $manager;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * OfferPolicy constructor.
+     *
+     * @param ImpersonateManager $manager
+     * @param UserRepository     $userRepository
+     */
+    public function __construct(ImpersonateManager $manager, UserRepository $userRepository)
+    {
+        $this->manager        = $manager;
+        $this->userRepository = $userRepository;
+    }
 
     /**
      * @param User $user
@@ -124,5 +147,29 @@ class OfferPolicy extends Policy
         return ($user->isAdvertiser() && $user->equals($owner))
                || $user->isAdmin()
                || ($user->isAgent() && $user->hasChild($owner));
+    }
+
+    /**
+     * @param User               $user
+     *
+     * @return bool
+     */
+    public function manageFeaturedOptions(User $user): bool
+    {
+        return $user->isAdmin() || $this->isImpersonatedByAdmin();
+    }
+
+    /**
+     * @return bool
+     */
+    private function isImpersonatedByAdmin(): bool
+    {
+        if (false === $this->manager->isImpersonating()) {
+            return false;
+        }
+
+        $user = $this->userRepository->find($this->manager->getImpersonatorId());
+
+        return $user->isAdmin();
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Criteria\Offer\CategoryCriteria;
+use App\Criteria\Offer\FeaturedCriteria;
+use App\Criteria\Offer\PositionCriteria;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\OfferRequest;
 use App\Models\NauModels\Offer;
@@ -13,6 +16,13 @@ use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class OfferController
+ *
+ * @package App\Http\Controllers\User
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class OfferController extends Controller
 {
     use FractalToIlluminatePagination;
@@ -52,23 +62,49 @@ class OfferController extends Controller
     {
         $this->authorize('offers.list');
 
-        $categoryIds = $this->categoryRepository->scopeQuery(function($query) use($request) {
-            return $query->whereIn('id', $request->category_ids)
-                ->orWhereIn('parent_id', $request->category_ids)
-                ->pluck('id');
-        })->all();
+        $offerRepository = $this->getOfferRepository($request);
 
-        $repository = $this->offerRepository->setPresenter(OfferPresenter::class);
-
-        $paginator = $repository->scopeQuery(function($query) use ($request, $categoryIds) {
-            return $query->whereIn('category_id', $categoryIds)
-                ->filterByPosition($request->latitude, $request->longitude, $request->radius)
-                ->select(Offer::$publicAttributes);
-        });
-
-        $offersData = $paginator->paginate($repository->makeModel()->getPerPage());
+        $offersData = $offerRepository->paginate($offerRepository->makeModel()->getPerPage());
 
         return response()->render('user.offer.index', $this->getIlluminatePagination($offersData));
+    }
+
+    /**
+     * @param OfferRequest $request
+     *
+     * @return OfferRepository
+     */
+    private function getOfferRepository(OfferRequest $request): OfferRepository
+    {
+        $repository = $this->offerRepository->setPresenter(OfferPresenter::class);
+
+        $latitude  = $request->latitude;
+        $longitude = $request->longitude;
+        $radius    = $request->radius;
+
+        $repository->pushCriteria(new PositionCriteria($latitude, $longitude, $radius));
+
+        if (true === (bool)$request->featured) {
+            $repository->pushCriteria(new FeaturedCriteria());
+        }
+
+        $requestedCategoryIds = $request->get('category_ids', []);
+
+        if (count($requestedCategoryIds)) {
+            $repository->pushCriteria(new CategoryCriteria($this->categoryRepository, $requestedCategoryIds));
+        }
+
+        $visibleFields = array_merge(Offer::$publicAttributes, ['acc_id']);
+
+        $repository->visible($visibleFields);
+
+        $repository->scopeQuery(function ($query) use ($latitude, $longitude, $visibleFields) {
+            return $query
+                ->orderByPosition($latitude, $longitude)
+                ->select($visibleFields);
+        });
+
+        return $repository;
     }
 
     /**

@@ -26,10 +26,6 @@
     </p>
 </div>
 
-<p class="tokens-total"><strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>You have tokens on your account</span></p>
-
-<p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Save"></p>
-
 <script>
     (function(){
         document.querySelector('#redemptions').querySelectorAll('[data-default]').forEach(function(input){
