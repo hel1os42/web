@@ -1,22 +1,18 @@
-<h1>Advertiser list</h1>
+<h1>{{ __('users.titles.advertiser_list') }}</h1>
 <div id="admin-users-search">
-    <div>
-        <p>By user:&nbsp;&nbsp;
-            <input type="text" name="name" id="name" value="" placeholder="name">
-            <input type="text" name="email" id="email" value="" placeholder="email">
-            <input type="text" name="phone" id="phone" value="" placeholder="phone">
+    <div class="m-b-10">
+        <p>
+            <label for="search_fields">
+                <b>{{ __('users.titles.users_search') }}</b>
+            </label>
         </p>
-    </div>
-    <div>
-        <p>By place:&nbsp;
-            <input type="text" name="place.name" id="place-name" value="" placeholder="name">
-            <input type="text" name="place.description" id="place-description" value="" placeholder="description">
-        </p>
-    </div>
 
-    <form method="get" action="{{ route('users.index') }}" id="search-form" style="display: inline-block;">
-        <input type="hidden" name="search" id="search-field" value="">
-        <input type="hidden" name="searchJoin" value="and">
-        <button type="submit" class="btn">Search</button>
-    </form>
+        <input type="text" name="search_fields" id="search_fields" value="" style="width: 400px;" tabindex="1" />
+
+        <form method="get" action="{{ route('users.index') }}" id="search-form" style="display: inline-block;">
+            <input type="hidden" name="search" id="search-field" value="">
+            <input type="hidden" name="searchJoin" id="search_join" value="">
+            <button type="submit" class="btn m-l-10">{{ __('buttons.search') }}</button>
+        </form>
+    </div>
 </div>
