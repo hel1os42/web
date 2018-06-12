@@ -109,7 +109,10 @@ class OfferRequest extends FormRequest
                 'nullable|required_with:discount_start_price|string|in:%s',
                 implode(',', Constants::CURRENCIES)
             ),
-            'points' => 'required|integer'
+            'points' => 'required|integer',
+            'is_featured'             => 'nullable|bool',
+            'referral_points_price'   => 'nullable|integer|min:0',
+            'redemption_points_price' => 'nullable|integer|min:0'
         ];
     }
 } 

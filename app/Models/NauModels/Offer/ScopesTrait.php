@@ -26,7 +26,7 @@ use Ramsey\Uuid\Uuid;
  * @method static static|Builder filterByCategory(string $categoryId = null)
  * @method static static|Builder filterByCategories(array $categoryIds)
  * @method static static|Builder byOwner(User $user)
- * @method static|Builder groupAndOrderByPosition(string $latitude, string $longitude): Builder
+ * @method Builder orderByPosition(string $latitude, string $longitude)
  * @method static|Builder getPlaces(string $with): Collection
  */
 trait ScopesTrait
@@ -82,8 +82,14 @@ trait ScopesTrait
             $radius));
     }
 
-
-    public function scopeGroupAndOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
+    /**
+     * @param Builder     $builder
+     * @param string|null $lat
+     * @param string|null $lng
+     *
+     * @return Builder
+     */
+    public function scopeOrderByPosition(Builder $builder, string $lat = null, string $lng = null): Builder
     {
         if (isset($lat, $lng)) {
             return $builder->orderByRaw(sprintf('(6371000 * 2 * 
@@ -93,8 +99,7 @@ trait ScopesTrait
         POWER(SIN((lng - %2$s) * 
         PI()/180 / 2), 2))))',
                 \DB::connection()->getPdo()->quote($lat),
-                \DB::connection()->getPdo()->quote($lng)))
-                           ->groupBy('lat', 'lng');
+                \DB::connection()->getPdo()->quote($lng)));
         }
 
         return $builder;
