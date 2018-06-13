@@ -365,7 +365,8 @@
                 [].forEach.call(imgBlocks, function (imgBlock) {
                     let img = imgBlock.getElementsByTagName('img')[0];
                     if (img) {
-                        img.style = 'width:' + imgSize + 'px;' + 'height:' + imgSize + 'px;';
+                        img.style.width = imgSize + 'px';
+                        img.style.height = imgSize + 'px';
                     }
                     imgBlock.style.padding = indentSize + 'px';
                     imgBlock.style.margin = marginSize + 'px';
