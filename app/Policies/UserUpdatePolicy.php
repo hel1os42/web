@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Exceptions\TokenException;
 use App\Models\Role;
 use App\Models\User;
 
@@ -28,8 +29,15 @@ class UserUpdatePolicy extends UserPolicy
      */
     public function updateInvite(User $user, User $editableUser)
     {
+        try {
+            $nauAccount = $editableUser->getAccountForNau();
+        } catch (TokenException $exception) {
+
+            return false;
+        }
+
         return $editableUser->level >= (int)setting('min_level_for_change_invite') ||
-            $editableUser->getAccountForNau()->getBalance() >= (int)setting('min_balance_for_change_invite') ||
+            $nauAccount->getBalance() >= (int)setting('min_balance_for_change_invite') ||
             $user->isAdmin();
     }
 
