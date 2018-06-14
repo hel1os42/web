@@ -271,11 +271,7 @@ class UserController extends Controller
         if (isset($newUserData['child_ids'])) {
             $childIds = array_filter($newUserData['child_ids']);
             $this->authorize('user.update.children', [$user, $childIds]);
-            $user->children()->sync($childIds, true);
-
-            if ($this->user()->isAdmin()) {
-                $this->updateAllParentsWithChildren($user, $childIds);
-            }
+            $this->updateChildrenForUser($user, $childIds);
             array_push($with, 'children');
         }
 
@@ -288,25 +284,56 @@ class UserController extends Controller
         return $user;
     }
 
+
     /**
-     * @param User $editableUser
+     * @param User  $user
      * @param array $childIds
      */
-    private function updateAllParentsWithChildren(User $editableUser, $childIds)
+    private function updateChildrenForUser(User $user, array $childIds)
     {
-        $deepChildren = app(UserRepository::class)->scopeQuery(function (User $query) use ($childIds) {
-            $query = $query->join('users_parents', 'users.id', 'users_parents.user_id')
-                ->whereIn('users_parents.parent_id', $childIds);
-            return $query;
-        })
-            ->all()
-            ->pluck('id');
+        if ($this->user()->isAdmin()) {
+            $removedUsersIds              = $user->children()->pluck('id')->diff($childIds);
+            $grandChildrenOfDetachedUsers = $this->getGrandChildrenByUsers($removedUsersIds)
+                ->pluck('id');
+            $this->updateAllParentsWithChildren(
+                $user,
+                $grandChildrenOfDetachedUsers->merge($removedUsersIds),
+                'detach'
+            );
+            // exclude grandchildren of detached users
+            $childIds = array_diff($childIds, $grandChildrenOfDetachedUsers->toArray());
 
-        $editableUser->children()->sync($deepChildren, false);
+            $grandChildren = $this->getGrandChildrenByUsers($childIds)
+                ->pluck('id');
+            // accept grandchildren
+            $childIds = array_merge($childIds, $grandChildren->toArray());
+
+            $this->updateAllParentsWithChildren($user, $childIds, 'attach');
+        }
+
+        $user->children()->sync($childIds, true);
+    }
+
+    /**
+     * @param  mixed $usersIds
+     * @return UserRepository
+     */
+    private function getGrandChildrenByUsers($usersIds): UserRepository
+    {
+        return app(UserRepository::class)->getGrandChildrenByUsers($usersIds);
+    }
+
+    /**
+     * @param User   $editableUser
+     * @param mixed  $childrenIds
+     * @param string $method
+     */
+    private function updateAllParentsWithChildren(User $editableUser, $childrenIds, string $method)
+    {
         $parents = $editableUser->parents()->get();
 
         foreach ($parents as $user) {
-            $user->children()->sync($deepChildren->merge($childIds), false);
+            $user->children()->$method($childrenIds);
         }
     }
 

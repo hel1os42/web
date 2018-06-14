@@ -101,4 +101,16 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
         return $this->parserResult($model);
     }
+
+    /**
+     * @param mixed $childrenIds
+     * @return UserRepository
+     */
+    public function getGrandChildrenByUsers($childrenIds): UserRepository
+    {
+        $this->model = $this->model->join('users_parents', 'users.id', 'users_parents.user_id')
+            ->whereIn('users_parents.parent_id', $childrenIds);
+
+        return $this;
+    }
 }
