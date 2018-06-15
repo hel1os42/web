@@ -2,6 +2,7 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Events\UserEvent;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -9,6 +10,7 @@ use App\Models\NauModels\Transact;
 use App\Models\User;
 use GuzzleHttp\Client;
 use OmniSynapse\CoreService\Job\CrossChange;
+use OmniSynapse\CoreService\Job\EventOccurred;
 use OmniSynapse\CoreService\Job\OfferCreated;
 use OmniSynapse\CoreService\Job\OfferDeleted;
 use OmniSynapse\CoreService\Job\OfferRedemption;
@@ -107,6 +109,16 @@ class CoreServiceImpl implements CoreService
     public function sendNau(Transact $transaction): AbstractJob
     {
         return new SendNau($transaction, $this);
+    }
+
+    /**
+     * @param UserEvent $event
+     *
+     * @return EventOccurred
+     */
+    public function eventOccurred(UserEvent $event): EventOccurred
+    {
+        return new EventOccurred($this, $event);
     }
 
     /**
