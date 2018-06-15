@@ -292,8 +292,9 @@ class UserController extends Controller
     private function updateChildrenForUser(User $user, array $childIds)
     {
         if ($this->user()->isAdmin()) {
-            $removedUsersIds              = $user->children()->pluck('id')->diff($childIds);
-            $grandChildrenOfDetachedUsers = $this->getGrandChildrenByUsers($removedUsersIds)
+            $removedUsersIds              = $this->getChildrenByUsers([$user->getId()])
+                ->pluck('id')->diff($childIds);
+            $grandChildrenOfDetachedUsers = $this->getChildrenByUsers($removedUsersIds)
                 ->pluck('id');
             $this->updateAllParentsWithChildren(
                 $user,
@@ -303,7 +304,7 @@ class UserController extends Controller
             // exclude grandchildren of detached users
             $childIds = array_diff($childIds, $grandChildrenOfDetachedUsers->toArray());
 
-            $grandChildren = $this->getGrandChildrenByUsers($childIds)
+            $grandChildren = $this->getChildrenByUsers($childIds)
                 ->pluck('id');
             // accept grandchildren
             $childIds = array_merge($childIds, $grandChildren->toArray());
@@ -318,9 +319,9 @@ class UserController extends Controller
      * @param  mixed $usersIds
      * @return UserRepository
      */
-    private function getGrandChildrenByUsers($usersIds): UserRepository
+    private function getChildrenByUsers($usersIds): UserRepository
     {
-        return app(UserRepository::class)->getGrandChildrenByUsers($usersIds);
+        return app(UserRepository::class)->getChildrenByUsers($usersIds);
     }
 
     /**

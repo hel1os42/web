@@ -35,5 +35,5 @@ interface UserRepository extends RepositoryInterface
      * @param mixed $childrenIds
      * @return UserRepository
      */
-    public function getGrandChildrenByUsers($childrenIds): UserRepository;
+    public function getChildrenByUsers($childrenIds): UserRepository;
 }

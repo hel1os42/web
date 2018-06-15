@@ -109,7 +109,7 @@
 @can('user.update.children', [$editableUserModel, $children->pluck('id')->toArray()])
     @push('scripts')
         <script>
-            window.nau_lang = {!! json_encode(__('js_msg')) !!};
+            window.nau_lang = {!! json_encode(__('js_messages')) !!};
         </script>
         <script src="{{ asset('js/children-modal.js') }}"></script>
     @endpush
