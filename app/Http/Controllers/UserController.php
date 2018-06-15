@@ -308,7 +308,7 @@ class UserController extends Controller
             // accept grandchildren
             $childIds = array_merge($childIds, $grandChildren->toArray());
 
-            $this->updateAllParentsWithChildren($user, $childIds, 'attach');
+            $this->updateAllParentsWithChildren($user, $childIds, 'syncWithoutDetaching');
         }
 
         $user->children()->sync($childIds, true);

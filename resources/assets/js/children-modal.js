@@ -8,7 +8,8 @@
         modal_body:         document.querySelector('#add_children_list .modal-body'),
         wrap:               document.getElementsByClassName('children-wrap')[0],
         response:           null,
-        border_row_color:   document.querySelector('.table-striped-nau tr td').style.borderBottomColor
+        border_row_color:   document.querySelector('.table-striped-nau tr td').style.borderBottomColor,
+        parent_roles:       ['agent', 'chief_advertiser'],
     };
 
     Children.waiting = function( action ) {
@@ -101,13 +102,19 @@
 
                 let email = child['email'] ? child['email'] : '';
                 let phone = child['phone'] ? child['phone'] : '';
+                let roles = (child.roles && child.roles.length) ? child.roles : [];
+
+                roles = roles.map(function($role) {
+                   return $role.name;
+                }).join(',');
 
                 let row = [
                     '<input type="checkbox" ' +
                     'class="children-list" ' +
                     'name="child_ids[]" ' +
-                    'value="' + child['id'] +
-                    '">',
+                    'value="' + child['id'] + '" ' +
+                    'data-roles="' + roles +'" ' +
+                    '>',
                     child['name'] ? child['name'] : '-',
                     (email && phone) ? email + ', ' + phone : email + phone,
                     (child['place'] && child['place']['name']) ? child['place']['name'] : '-'
@@ -177,7 +184,7 @@
                             let responseObj = JSON.parse(xhr.response);
                             if (responseObj.error && responseObj.message) Children.addError('Error: ' + responseObj.message);
                         } catch (e) {
-                            Children.addError('Something went wrong. Please try again.');
+                            Children.addError(nau_lang.an_error);
                         }
                     }
                 }
@@ -193,7 +200,14 @@
             children.forEach(function(val){
                 if (val.id == id) {
                     let contacts = val.email ? val.email : val.phone;
-                    userBlocks += '<p><input type="hidden" class="added-children" name="child_ids[]" value="' + id + '">';
+                    let roles    = (val.roles && val.roles.length) ? val.roles : [];
+
+                    roles = roles.map(function($role) {
+                        return $role.name;
+                    }).join(',');
+
+                    userBlocks += '<p><input type="hidden" class="added-children" name="child_ids[]" value="' + id
+                        + '" data-roles="' + roles +'">';
                     userBlocks += '<strong>' + val.name + ' (' + contacts + ')</strong>';
                     userBlocks += ' <button type="button" class="close rm_child">×</button></p>';
                     return;
@@ -308,10 +322,28 @@
     Children.modal_add_button.addEventListener('click', function() {
         let selected_inputs = document.querySelectorAll( '.children-list:checked' );
         let selected_users = Children.get_selected_users( selected_inputs );
+        let exist_user_with_grandchildren = false;
+        let msg_block = document.querySelector('.msg_block');
 
         selected_inputs.forEach(function(el){
             el.removeAttribute('checked');
+            let roles = el.dataset.roles;
+
+            if (!exist_user_with_grandchildren) {
+                let present_parent_roles = Children.parent_roles.filter(function(role) {
+                    return roles.indexOf(role) > -1;
+                });
+
+                if (present_parent_roles.length) {
+                    exist_user_with_grandchildren = true;
+                }
+            }
         });
+
+        if (exist_user_with_grandchildren && msg_block.innerText === '') {
+            document.querySelector('.msg_block').innerText = nau_lang.adding_children.warning_grandchildren;
+        }
+
         Children.add( selected_users );
         Children.modal_dialog.getElementsByClassName('close')[0].click();
 
@@ -326,8 +358,21 @@
     Children.wrap.addEventListener('click', function(e){
         if ( e.target.classList.contains('rm_child')
             && e.target.parentNode.tagName == 'P' ) {
-            if ( confirm('Do you really want to remove the child user?') ) {
-                let child  = e.target.parentNode;
+            let child  = e.target.parentNode;
+            let question = nau_lang.adding_children.confirmation;
+            let roles = child.querySelector('.added-children').dataset.roles;
+
+            if (roles && roles.length) {
+                let present_parent_roles = Children.parent_roles.filter(function(role) {
+                    return roles.indexOf(role) > -1;
+                });
+
+                if (present_parent_roles.length) {
+                    question = nau_lang.adding_children.confirmation_with_grandchildren;
+                }
+            }
+
+            if ( confirm(question) ) {
                 let parent = child.parentNode;
                 parent.removeChild( child );
 
@@ -352,7 +397,6 @@
     Children.modal_dialog.addEventListener('click',function(e) {
         if ( e.target.tagName == 'A'
             && e.target.parentNode.classList.contains('pagenavy') ) {
-
             e.preventDefault();
             Children.waiting('start');
             Children.removeError();
@@ -360,6 +404,15 @@
         }
     });
 
+    Children.add_msgs_block = function() {
+        let wrapper = document.querySelector('.children-wrap');
+        let msg_block = document.createElement('p');
+        msg_block.className = 'msg_block';
+        msg_block.style.color = '#ea9801';
+        wrapper.parentNode.insertBefore(msg_block, wrapper);
+    };
+
     // RUNNING
     Children.load(null, Children.show_hide_add_children_btn);
+    Children.add_msgs_block();
 })();

@@ -77,6 +77,7 @@
                                    class="added-children"
                                    name="child_ids[]"
                                    value="{{ $child['id'] }}"
+                                   data-roles="{{ $child['roles']->pluck('name')->implode(',') }}"
                             >
                             <strong>{{ $child['name'] }} ({{ $child['email'] ?: $child['phone'] }})</strong>
                             <button type="button" class="close rm_child">×</button>
