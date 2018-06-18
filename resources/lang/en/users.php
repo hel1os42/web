@@ -19,10 +19,13 @@ return [
         'roles'           => 'Roles',
     ],
     'titles' => [
-        'children_list' => 'Children list',
-        'edit_profile'  => 'Edit profile',
-        'profile_info'  => 'Profile info',
-        'update_photo'  => 'Update photo',
-        'update_avatar' => 'Update your avatar',
+        'advertiser_list' => 'Advertiser list',
+        'children_list'   => 'Children list',
+        'edit_profile'    => 'Edit profile',
+        'profile_info'    => 'Profile info',
+        'update_photo'    => 'Update photo',
+        'update_avatar'   => 'Update your avatar',
+        'users_search'    => 'Search by user (name, email, phone) or place (name, description):',
+        'users_list'      => 'Users list',
     ],
 ];

@@ -47,16 +47,19 @@ class StatisticsService implements StatisticsServiceInterface
      */
     protected function getAdminStatistic(): Collection
     {
-        $users = $this->roleRepository->scopeQuery(function (Role $query) {
-            $orderedFields = array_reverse($query->getAllRoles());
+        $orderedFields = array_reverse(Role::getAllRoles());
 
-            return $query->join('users_roles', 'users_roles.role_id', 'roles.id')
-                ->orderByRaw(sprintf("FIELD(name, '%s')", implode("', '", $orderedFields)));
+        $users = $this->roleRepository->scopeQuery(function (Role $query) {
+            return $query->join('users_roles', 'users_roles.role_id', 'roles.id');
         })
             ->all(['name'])
             ->groupBy('name')
             ->map(function ($list) {
                 return $list->count();
+            })
+            ->sortBy(function() use ($orderedFields) {
+                // return the order index by role name
+                return array_search(func_get_arg(1), $orderedFields);
             })
             // make plural key names
             ->keyBy(function($list, $key) {
