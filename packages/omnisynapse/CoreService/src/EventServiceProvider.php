@@ -7,11 +7,6 @@ use OmniSynapse\CoreService\Listeners\UserEventSubscriber;
 
 class EventServiceProvider extends ServiceProvider
 {
-    public function __construct(\Illuminate\Contracts\Foundation\Application $app)
-    {
-        parent::__construct($app);
-    }
-
     /**
      * The event listener mappings for the application.
      *
