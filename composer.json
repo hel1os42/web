@@ -12,6 +12,7 @@
     "ext-mbstring": "*",
     "ext-pdo_pgsql": "*",
     "aws/aws-sdk-php": "~3.0",
+    "barryvdh/laravel-debugbar": "~2.4",
     "doctrine/dbal": "^2.5",
     "guzzlehttp/guzzle": "^6.3",
     "intervention/image": "^2.4",
