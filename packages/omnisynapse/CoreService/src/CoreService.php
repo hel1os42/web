@@ -2,12 +2,14 @@
 
 namespace OmniSynapse\CoreService;
 
+use App\Events\UserEvent;
 use App\Models\NauModels\Account;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Transact;
 use App\Models\User;
 use GuzzleHttp\Client;
+use OmniSynapse\CoreService\Job\EventOccurred;
 
 interface CoreService
 {
@@ -62,6 +64,13 @@ interface CoreService
     public function offerDeleted(Offer $offer): AbstractJob;
 
     public function crossChange(Account $account, string $ethAddress, float $amount, bool $isIncoming): AbstractJob;
+
+    /**
+     * @param UserEvent $event
+     *
+     * @return EventOccurred
+     */
+    public function eventOccurred(UserEvent $event): EventOccurred;
 
     public function getClient(): Client;
 }

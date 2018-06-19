@@ -184,6 +184,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
+        OmniSynapse\CoreService\EventServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
         App\Providers\OtpAuthProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
