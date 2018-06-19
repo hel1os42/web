@@ -7,7 +7,7 @@
  */
 namespace App\Services;
 
-use Illuminate\Support\Collection;
+use App\Models\NauModels\Offer;
 
 /**
  * Interface WeekDaysService
@@ -39,6 +39,16 @@ interface WeekDaysService
         self::SUNDAY    => 'su',
     ];
 
+    const LIST_NUMERIC = [
+        self::MONDAY    => 1,
+        self::TUESDAY   => 2,
+        self::WEDNESDAY => 3,
+        self::THURSDAY  => 4,
+        self::FRIDAY    => 5,
+        self::SATURDAY  => 6,
+        self::SUNDAY    => 7,
+    ];
+
     /**
      * @return array
      */
@@ -46,29 +56,24 @@ interface WeekDaysService
 
     /**
      * @param array $weekDays
+     * @param bool  $numeric
      *
      * @return int
      */
-    public function weekDaysToDays(array $weekDays): int;
+    public function weekDaysToDays(array $weekDays, bool $numeric = false): int;
 
     /**
-     * @param int $weekDays
+     * @param int  $days
+     * @param bool $numeric
      *
      * @return array
      */
-    public function daysToWeekDays(int $days): array;
+    public function daysToWeekDays(int $days, bool $numeric = false): array;
 
     /**
-     * @param Collection $items
+     * @param Offer $offer
      *
      * @return array
      */
-    public function convertOffersCollection(Collection $items): array;
-
-    /**
-     * @param Collection $timeframes
-     *
-     * @return array
-     */
-    public function convertTimeframesCollection(Collection $timeframes): array;
+    public function processOfferTimeFrames(Offer $offer): array;
 }

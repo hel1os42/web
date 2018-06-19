@@ -6,10 +6,21 @@ use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
+use App\Services\UserService;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
+/**
+ * Class UserController
+ *
+ * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UserController extends Controller
 {
     /**
@@ -18,16 +29,23 @@ class UserController extends Controller
     private $userRepository;
 
     /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
      * UserController constructor.
      *
      * @param UserRepository $userRepository
-     * @param AuthManager    $authManager
+     * @param UserService $userService
+     * @param AuthManager $authManager
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(UserRepository $userRepository, AuthManager $authManager)
+    public function __construct(UserRepository $userRepository, UserService $userService, AuthManager $authManager)
     {
         $this->userRepository = $userRepository;
+        $this->userService    = $userService;
 
         parent::__construct($authManager);
     }
@@ -45,7 +63,15 @@ class UserController extends Controller
         $users = $this->user()->isAdmin()
             ? $this->userRepository
             : $this->userRepository->getChildrenByUser($this->user());
-        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])->paginate());
+
+        $requestedPerPage = request()->get('per_page');
+
+        $perPage = $requestedPerPage > config('repository.pagination.max_limit')
+            ? null
+            : $requestedPerPage;
+
+        return \response()->render('user.index', $users->with(['roles', 'accounts', 'place'])
+            ->paginate($perPage));
     }
 
     /**
@@ -128,6 +154,7 @@ class UserController extends Controller
     /**
      * @param Requests\Auth\RegisterRequest $request
      *
+     *
      * @return Response
      * @throws UnprocessableEntityHttpException
      * @throws \LogicException
@@ -135,34 +162,69 @@ class UserController extends Controller
      */
     public function store(Requests\Auth\RegisterRequest $request)
     {
-        $newUserData = $request->except('approved');
+        $newUserData = $this->prepareRegistrationData($request);
 
-        $registrator = $request->getRegistrator();
+        $userService = $this->userService->setIssuer(auth()->user());
 
-        $view = 'auth.registered';
+        DB::beginTransaction();
 
-        if (null !== $registrator) {
-            $view                       = 'user.show';
-            $newUserData['referrer_id'] = $registrator->id;
-            $this->authorize('users.create', [$newUserData]);
+        try {
+
+            $user = request()->wantsJson()
+                ? $userService->make($newUserData)
+                : $userService->register($newUserData);
+        } catch (ValidationException $exception) {
+            DB::rollBack();
+
+            throw $exception;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            logger()->error(sprintf('User registration failed. %1$s', $exception->getMessage()), [
+                'exception' => $exception->getTrace(),
+                'data'      => $newUserData,
+            ]);
+
+            throw new UnprocessableEntityHttpException('Something went wrong');
         }
 
-        $user = $this->userRepository->create($newUserData);
+        DB::commit();
 
-        $success = $user->exists;
-
-        if (!$success) {
-            throw new UnprocessableEntityHttpException();
+        if (false === $user->exists) {
+            throw new UnprocessableEntityHttpException('Something went wrong');
         }
 
-        $user = null !== $registrator ? $this->createRelationData($user, $newUserData) : $user;
+        $view = $request->getRegistrator() instanceof User
+            ? 'user.show'
+            : 'auth.registered';
+
+        $userData = $user->toArray();
+
+        $userData['token']                = JWTAuth::fromUser($user);
+        $userData['was_recently_created'] = $user->wasRecentlyCreated;
 
         return response()->render(
             $view,
-            $user->toArray(),
+            $userData,
             Response::HTTP_CREATED,
             route('users.show', [$user->getId()])
         );
+    }
+
+    /**
+     * @param Requests\Auth\RegisterRequest $request
+     * @return array
+     */
+    private function prepareRegistrationData(Requests\Auth\RegisterRequest $request): array
+    {
+        $newUserData = $request->except('approved');
+        $registrator = $request->getRegistrator();
+
+        if ($registrator instanceof User) {
+            $newUserData['referrer_id'] = $registrator->getKey();
+        }
+
+        return $newUserData;
     }
 
     /**
@@ -185,38 +247,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param User  $user
-     * @param array $newUserData
-     *
-     * @return User
-     * @throws \Illuminate\Auth\Access\AuthorizationException
-     */
-    private function createRelationData(User $user, array $newUserData): User
-    {
-        $with = [];
-
-        if (isset($newUserData['role_ids'])) {
-            $this->updateRoles($user, $newUserData['role_ids']);
-            array_push($with, 'roles');
-        }
-
-        if (isset($newUserData['parent_ids'])) {
-            $this->authorize('user.update.parents', [$user, $newUserData['parent_ids']]);
-            $user->parents()->attach($newUserData['parent_ids']);
-            array_push($with, 'parents');
-        }
-
-        if (!empty($with)) {
-            $user->save();
-
-            return $user->fresh($with);
-        }
-
-        return $user;
-    }
-
-    /**
-     * @param User  $user
+     * @param User $user
      * @param array $newUserData
      *
      * @return User
@@ -238,9 +269,14 @@ class UserController extends Controller
         }
 
         if (isset($newUserData['child_ids'])) {
-            $this->authorize('user.update.children', [$user, $newUserData['child_ids']]);
-            $user->children()->sync($newUserData['child_ids'], true);
-            array_push($with, 'parents');
+            $childIds = array_filter($newUserData['child_ids']);
+            $this->authorize('user.update.children', [$user, $childIds]);
+            $user->children()->sync($childIds, true);
+
+            if ($this->user()->isAdmin()) {
+                $this->updateAllParentsWithChildren($user, $childIds);
+            }
+            array_push($with, 'children');
         }
 
         if (!empty($with)) {
@@ -253,7 +289,29 @@ class UserController extends Controller
     }
 
     /**
-     * @param User  $user
+     * @param User $editableUser
+     * @param array $childIds
+     */
+    private function updateAllParentsWithChildren(User $editableUser, $childIds)
+    {
+        $deepChildren = app(UserRepository::class)->scopeQuery(function (User $query) use ($childIds) {
+            $query = $query->join('users_parents', 'users.id', 'users_parents.user_id')
+                ->whereIn('users_parents.parent_id', $childIds);
+            return $query;
+        })
+            ->all()
+            ->pluck('id');
+
+        $editableUser->children()->sync($deepChildren, false);
+        $parents = $editableUser->parents()->get();
+
+        foreach ($parents as $user) {
+            $user->children()->sync($deepChildren->merge($childIds), false);
+        }
+    }
+
+    /**
+     * @param User $user
      * @param array $roleIds
      *
      * @throws \Illuminate\Auth\Access\AuthorizationException

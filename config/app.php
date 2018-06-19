@@ -184,12 +184,15 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         App\Providers\ResponseMacroServiceProvider::class,
         OmniSynapse\CoreService\CoreServiceProvider::class,
+        OmniSynapse\CoreService\EventServiceProvider::class,
         App\Providers\ValidatorServiceProvider::class,
         App\Providers\OtpAuthProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\CriteriaServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
+        SocialiteProviders\Manager\ServiceProvider::class,
     ],
 
     /*
@@ -245,6 +248,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 
     'review_stub' => [
@@ -256,5 +260,5 @@ return [
             'description' => 'Get new iPhone X with discount.',
         ],
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
-    ]
+    ],
 ];

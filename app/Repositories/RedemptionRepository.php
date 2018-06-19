@@ -19,6 +19,8 @@ interface RedemptionRepository extends RepositoryInterface
      */
     public function model(): string;
 
+    public function count(): int;
+
     /**
      * @param array $offersId
      *

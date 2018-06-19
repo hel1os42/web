@@ -1,11 +1,18 @@
-<h1>Advertiser list</h1>
+<h1>{{ __('users.titles.advertiser_list') }}</h1>
 <div id="admin-users-search">
-    <label for="email">By email:</label>
-    <input type="text" name="email" id="email" value="">
+    <div class="m-b-10">
+        <p>
+            <label for="search_fields">
+                <b>{{ __('users.titles.users_search') }}</b>
+            </label>
+        </p>
 
-    <form method="get" action="{{ route('users.index') }}" id="search-form" style="display: inline-block;">
-        <input type="hidden" name="search" id="search-field" value="">
-        <input type="hidden" name="searchJoin" value="and">
-        <button type="submit" class="btn">Search</button>
-    </form>
+        <input type="text" name="search_fields" id="search_fields" value="" style="width: 400px;" tabindex="1" />
+
+        <form method="get" action="{{ route('users.index') }}" id="search-form" style="display: inline-block;">
+            <input type="hidden" name="search" id="search-field" value="">
+            <input type="hidden" name="searchJoin" id="search_join" value="">
+            <button type="submit" class="btn m-l-10">{{ __('buttons.search') }}</button>
+        </form>
+    </div>
 </div>

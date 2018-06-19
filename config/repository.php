@@ -15,7 +15,8 @@ return [
     |
     */
     'pagination' => [
-        'limit' => 10
+        'limit'     => 10,
+        'max_limit' => 100,
     ],
 
     /*
@@ -222,7 +223,8 @@ return [
             'orderBy'      => 'orderBy',
             'sortedBy'     => 'sortedBy',
             'with'         => 'with',
-            'searchJoin'   => 'searchJoin'
+            'searchJoin'   => 'searchJoin',
+            'whereFilters' => 'whereFilters',
         ]
     ],
     /*

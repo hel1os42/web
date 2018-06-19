@@ -69,6 +69,7 @@ class OfferUpdatedTest extends TestCase
 
             'status'   => 'active',
             'reserved' => $faker->randomDigitNotNull,
+            'points'   => $faker->randomDigitNotNull,
         ];
 
         $offerMock = \Mockery::mock(Offer::class);
@@ -94,6 +95,7 @@ class OfferUpdatedTest extends TestCase
         $offerMock->shouldReceive('getAccount')->once()->andReturn($accountMock);
         $offerMock->shouldReceive('getStatus')->once()->andReturn($offer['status']);
         $offerMock->shouldReceive('getReserved')->once()->andReturn($offer['reserved']);
+        $offerMock->shouldReceive('getPoints')->once()->andReturn($offer['points']);
 
         /*
          * GEO
@@ -118,6 +120,7 @@ class OfferUpdatedTest extends TestCase
             'name'        => $offer['name'],
             'description' => $offer['description'],
             'category_id' => $offer['categoryId'],
+            'points'      => $offer['points'],
             'geo'         => $geo->jsonSerialize(),
             'limits'      => $limits->jsonSerialize(),
             'reward'      => $offer['reward'],
@@ -142,6 +145,7 @@ class OfferUpdatedTest extends TestCase
             $this->assertEquals($offer['name'], $response->getName(), 'Offer name');
             $this->assertEquals($offer['description'], $response->getDescription(), 'Offer description');
             $this->assertEquals($offer['categoryId'], $response->getCategoryId(), 'Offer category_id');
+            $this->assertEquals($offer['points'], $response->getPoints(), 'Offer points');
             $this->assertEquals($geo->jsonSerialize(), $response->getGeo()->jsonSerialize(), 'Offer GEO');
             $this->assertEquals($limits->jsonSerialize(), $response->getLimits()->jsonSerialize(), 'Offer id');
             $this->assertEquals($offer['reward'], $response->getReward(), 'Offer reward');

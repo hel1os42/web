@@ -15,6 +15,7 @@ use App\Models\NauModels\Redemption;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;

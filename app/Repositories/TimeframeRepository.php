@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use App\Models\NauModels\Offer;
+use App\Models\Timeframe;
 use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
@@ -33,4 +34,12 @@ interface TimeframeRepository extends RepositoryInterface
      * @return Collection
      */
     public function replaceManyForOffer(array $timeframes, Offer $offer): Collection;
+
+    /**
+     * @param Offer $offer
+     * @param int   $days
+     *
+     * @return Timeframe|null
+     */
+    public function findByOfferAndDays(Offer $offer, int $days): ?Timeframe;
 }

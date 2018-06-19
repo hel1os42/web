@@ -2,26 +2,48 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Criteria\Offer\CategoryCriteria;
+use App\Criteria\Offer\FeaturedCriteria;
+use App\Criteria\Offer\PositionCriteria;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\OfferRequest;
 use App\Models\NauModels\Offer;
+use App\Presenters\OfferPresenter;
+use App\Repositories\CategoryRepository;
 use App\Repositories\OfferRepository;
 use App\Services\WeekDaysService;
+use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class OfferController
+ *
+ * @package App\Http\Controllers\User
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class OfferController extends Controller
 {
+    use FractalToIlluminatePagination;
+
     private $offerRepository;
     private $weekDaysService;
 
+    /**
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+
     public function __construct(
         OfferRepository $offerRepository,
+        CategoryRepository $categoryRepository,
         AuthManager $authManager,
         WeekDaysService $weekDaysService
     ) {
-        $this->offerRepository = $offerRepository;
-        $this->weekDaysService = $weekDaysService;
+        $this->offerRepository    = $offerRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->weekDaysService    = $weekDaysService;
 
         parent::__construct($authManager);
     }
@@ -40,14 +62,49 @@ class OfferController extends Controller
     {
         $this->authorize('offers.list');
 
-        $offers       = $this->offerRepository
-            ->getActiveByCategoriesAndPosition($request->category_ids,
-                $request->latitude, $request->longitude, $request->radius);
-        $paginator    = $offers->select(Offer::$publicAttributes)->paginate();
-        $data         = $paginator->toArray();
-        $data['data'] = $this->weekDaysService->convertOffersCollection($paginator->getCollection());
+        $offerRepository = $this->getOfferRepository($request);
 
-        return response()->render('user.offer.index', $data);
+        $offersData = $offerRepository->paginate($offerRepository->makeModel()->getPerPage());
+
+        return response()->render('user.offer.index', $this->getIlluminatePagination($offersData));
+    }
+
+    /**
+     * @param OfferRequest $request
+     *
+     * @return OfferRepository
+     */
+    private function getOfferRepository(OfferRequest $request): OfferRepository
+    {
+        $repository = $this->offerRepository->setPresenter(OfferPresenter::class);
+
+        $latitude  = $request->latitude;
+        $longitude = $request->longitude;
+        $radius    = $request->radius;
+
+        $repository->pushCriteria(new PositionCriteria($latitude, $longitude, $radius));
+
+        if (true === (bool)$request->featured) {
+            $repository->pushCriteria(new FeaturedCriteria());
+        }
+
+        $requestedCategoryIds = $request->get('category_ids', []);
+
+        if (count($requestedCategoryIds)) {
+            $repository->pushCriteria(new CategoryCriteria($this->categoryRepository, $requestedCategoryIds));
+        }
+
+        $visibleFields = array_merge(Offer::$publicAttributes, ['acc_id']);
+
+        $repository->visible($visibleFields);
+
+        $repository->scopeQuery(function ($query) use ($latitude, $longitude, $visibleFields) {
+            return $query
+                ->orderByPosition($latitude, $longitude)
+                ->select($visibleFields);
+        });
+
+        return $repository;
     }
 
     /**
@@ -68,10 +125,10 @@ class OfferController extends Controller
         if ($offer->isOwner($this->user())) {
             $offer->setVisible(Offer::$publicAttributes);
         }
-        $data = $offer->toArray();
-        if (array_key_exists('timeframes', $data)) {
-            $data['timeframes'] = $this->weekDaysService->convertTimeframesCollection($offer->timeframes);
-        }
-        return \response()->render('user.offer.show', $data);
+
+        $presenter = new OfferPresenter($this->auth, $this->weekDaysService);
+        $offerData = array_get($presenter->present($offer), 'data');
+
+        return \response()->render('user.offer.show', $offerData);
     }
 }

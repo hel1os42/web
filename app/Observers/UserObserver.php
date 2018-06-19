@@ -18,5 +18,9 @@ class UserObserver
             Role::findByName(Role::ROLE_USER)->getId(),
             Role::findByName(Role::ROLE_ADVERTISER)->getId()
         ]);
+
+        if ($user->referrer instanceof User) {
+            $user->referrer->enrollReferralPoints();
+        }
     }
 }

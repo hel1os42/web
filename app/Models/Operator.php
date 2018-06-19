@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Uuids;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -34,10 +35,11 @@ class Operator extends Model implements
         $this->initUuid();
 
         $this->casts = [
-            'place_uuid' => 'string',
-            'login'      => 'string',
-            'password'   => 'string',
-            'is_active'  => 'boolean',
+            'place_uuid'        => 'string',
+            'login'             => 'string',
+            'password'          => 'string',
+            'is_active'         => 'boolean',
+            'last_logged_in_at' => 'datetime'
         ];
 
         $this->hidden = [
@@ -93,6 +95,16 @@ class Operator extends Model implements
     }
 
     /**
+     *  Gets user's last login date
+     *
+     * @return Carbon|null
+     */
+    public function getLastLoggedInAt(): ?Carbon
+    {
+        return $this->last_logged_in_at;
+    }
+
+    /**
      * Get operator status
      *
      * @return bool
@@ -120,5 +132,19 @@ class Operator extends Model implements
     public function setPasswordAttribute(string $password)
     {
         $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
+     * Set last logged in datetime
+     *
+     * @param Carbon $date
+     *
+     * @return
+     */
+    public function setLastLoggedInAt(Carbon $date): Operator
+    {
+        $this->last_logged_in_at = $date;
+
+        return $this;
     }
 }

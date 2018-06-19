@@ -573,6 +573,7 @@ class PlaceControllerTest extends TestCase
             'radius'      => $this->faker->randomNumber(),
             'phone'       => $this->faker->phoneNumber,
             'site'        => $this->faker->url,
+            'timezone'    => 'UTC',
         ];
 
         if ($withCategories) {
@@ -637,6 +638,7 @@ class PlaceControllerTest extends TestCase
                     'tags.*'                     => null,
                     'phone'                      => null,
                     'site'                       => null,
+                    'timezone'                   => null,
                 ]
             ],
         ];

@@ -26,9 +26,9 @@
                     <div class="nav-tabs-navigation">
                         <div class="nav-tabs-wrapper">
                             <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-                                <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Profile info</a></li>
-                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">Edit profile</a></li>
-                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">Update photo</a></li>
+                                <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.profile_info') }}</a></li>
+                                <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.edit_profile') }}</a></li>
+                                <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">{{ __('users.titles.update_photo') }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -36,39 +36,100 @@
                         <div role="tabpanel" class="tab-pane active" id="profile">
                             <div class="row">
                                 <div class="col-sm-3 p-5">
-                                    <p><strong>Name</strong></p>
-                                    <p><strong>Email</strong></p>
-                                    <p><strong>Phone</strong></p>
-                                    <p><strong>Invite code</strong></p>
+                                    {{ __('users.fields.name') }}
                                 </div>
                                 <div class="col-sm-9 p-5">
-                                    <p>{{ $name ?: '-' }}</p>
-                                    <p>{{ $email ?: '-' }}</p>
-                                    <p>{{ $phone ?: '-' }}</p>
-                                    <p>{{ $invite_code }}</p>
+                                    {{ $name ?: '-' }}
                                 </div>
                             </div>
                             <div class="row">
-                                @include('role-partials.selector', ['partialRoute' => 'user.show'])
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.email') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $email ?: '-' }}
+                                </div>
                             </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.phone') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $phone ?: '-' }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.invite_code') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $invite_code }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.referrals_count') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $referrals_count }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.points') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $points }}
+                                </div>
+                            </div>
+
+                            @include('role-partials.selector', ['partialRoute' => 'user.show'])
+
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
                             <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
-                                <div class="row">
 
+                                <div class="row">
                                     <div class="col-sm-3 p-5">
-                                        <p><strong>Name</strong></p>
-                                        <p><strong>Email</strong></p>
-                                        <p><strong>Phone</strong></p>
+                                        {{ __('users.fields.name') }}
                                     </div>
                                     <div class="col-sm-9 p-5">
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label></p>
-                                        <p><label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label></p>
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="name" value="{{ $name }}"></label>
                                     </div>
-
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.email') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="email" value="{{ $email }}"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.phone') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px;" name="phone" value="{{ $phone }}"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.password') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password" value=""></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 p-5">
+                                        {{ __('users.fields.password_conf') }}
+                                    </div>
+                                    <div class="col-sm-9 p-5">
+                                        <label><input style="line-height: 14px; font-size: 14px; -webkit-text-security:disc;" name="password_confirmation" value=""></label>
+                                    </div>
                                 </div>
 
                                 @if(false)
@@ -91,12 +152,12 @@
                                 @include('role-partials.selector', ['partialRoute' => 'user.show-edit'])
 
                                 <div class="row">
-                                    <p><input type="submit" class="btn-nau pull-right" value="Update"></p>
+                                    <p><input type="submit" class="btn-nau pull-right" value="{{ __('buttons.update') }}"></p>
                                 </div>
                             </form>
                         </div>
                         <div role="tabpanel" id="update_photo" class="tab-pane">
-                            <h4 class="title">Update your avatar</h4>
+                            <h4 class="title">{{ __('users.titles.update_avatar') }}</h4>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <form method="POST" action="{{ route('users.picture.store', ['uuid' => $id]) }}" enctype="multipart/form-data">
@@ -104,7 +165,7 @@
                                             {{ csrf_field() }}
                                             <div class="image-box" data-maxsize="2097152"></div>
                                         </div>
-                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="Set photo">
+                                        <input class="btn btn-rose btn-wd btn-md" type="submit" value="{{ __('buttons.set_photo') }}">
                                         <p class="image-example" style="padding-top:20px; color: #999; font-size: 80%;">
                                             Image requirements:<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<em>format: jpg/jpeg, png</em><br>
@@ -122,6 +183,10 @@
             </div>
         </div>
     </div>
+
+    @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+        @include('role-partials.children-modal')
+    @endif
 
 @stop
 
@@ -146,19 +211,19 @@
         /* userpic */
         imageUploader('#userpic_image_box .image-box');
         let $userpic_image_box = $('#userpic_image_box');
-        $userpic_image_box.find('[type="file"]').on('change', function(){
+        $userpic_image_box.find('[type="file"]').on('change', function () {
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
             $userpic_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
-        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function(){
+        $userpic_image_box.find('.image').attr('src', $('.avatar').attr('src')).on('load', function () {
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);
                 imageCropperInit(this);
             }
         });
-        $userpic_image_box.parents('form').on('submit', function(e){
+        $userpic_image_box.parents('form').on('submit', function (e) {
             e.preventDefault();
             let $file = $userpic_image_box.find('[type="file"]');
             let $img = $userpic_image_box.find('.image');
@@ -208,8 +273,8 @@
             $('[name="longitude"]').val(values.lng);
         }*/
 
-        function userStatusControl(){
-            $('.user-approve-controls form').on('submit', function(e){
+        function userStatusControl() {
+            $('.user-approve-controls form').on('submit', function (e) {
                 e.preventDefault();
 
                 let $box = $(this).parents('.user-approve-controls');
@@ -226,8 +291,8 @@
                     url: $(this).attr('action'),
                     headers: { 'Accept':'application/json' },
                     data: formData,
-                    success: function(data, textStatus, xhr){
-                        if (201 === xhr.status){
+                    success: function (data, textStatus, xhr) {
+                        if (201 === xhr.status) {
                             $box.removeClass('status-wait').addClass('status-' + ($user_status.val() === '0' ? 'dis' : '') + 'approved');
                             $user_status.val($user_status.val() === '0' ? '1' : '0');
                         } else {
@@ -235,7 +300,7 @@
                             console.dir(xhr);
                         }
                     },
-                    error: function(resp){
+                    error: function (resp) {
                         if (401 === resp.status) UnAuthorized();
                         else if (0 === resp.status) AdBlockNotification();
                         else {

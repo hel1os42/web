@@ -35,6 +35,22 @@ class RedemptionRepositoryEloquent extends BaseRepository implements RedemptionR
     }
 
     /**
+     * @return int
+     *
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function count(): int
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $model = $this->model->count();
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
      * @param array $offersId
      *
      * @return Collection

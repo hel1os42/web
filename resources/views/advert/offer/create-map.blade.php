@@ -30,10 +30,12 @@
         </div>
         <p id="mapradius">Radius: <span>unknown</span> km.</p>
 
-        <input type="hidden" name="latitude" value="{{ auth()->user()->place->latitude }}" class="mapFields nullableFormData">
-        <input type="hidden" name="longitude" value="{{ auth()->user()->place->longitude }}" class="mapFields nullableFormData">
-        <input type="hidden" name="radius" value="3000" class="mapFields nullableFormData">
-        <input type="hidden" name="timezone" value="+0000">
+        <input type="hidden" name="latitude" value="{{ auth()->user()->place->latitude }}" class="nullableFormData">
+        <input type="hidden" name="longitude" value="{{ auth()->user()->place->longitude }}" class="nullableFormData">
+        <input type="hidden" name="radius" value="3000" class="nullableFormData">
+        <input type="hidden" name="timezone" value="">
+        <input type="hidden" name="timeframes_offset" value="{{ auth()->user()->place->timezone_offset }}" class="formData">
+        <input type="hidden" name="place_timezone_offset" value="{{ auth()->user()->place->timezone_offset }}">
     </div>
 
     <p class="hint">You can not choose sea or ocean.</p>

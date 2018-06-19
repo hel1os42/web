@@ -13,7 +13,7 @@ class VerifyCsrfToken extends BaseVerifier
      * @var array
      */
     protected $except = [
-        //
+        'auth/login',
     ];
 
     public function handle($request, Closure $next)

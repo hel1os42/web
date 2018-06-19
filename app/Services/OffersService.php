@@ -17,4 +17,6 @@ interface OffersService
     public function getActivationCodeByCode(string $code): ActivationCode;
 
     public function redeemByActivationCode(ActivationCode $activationCode);
+
+    public function isActiveNowByWorkTime(Offer $offer): bool;
 }

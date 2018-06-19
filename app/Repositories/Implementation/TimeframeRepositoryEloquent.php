@@ -76,6 +76,29 @@ class TimeframeRepositoryEloquent extends BaseRepository implements TimeframeRep
     public function replaceManyForOffer(array $timeframes, Offer $offer): Collection
     {
         $offer->timeframes()->delete();
+
         return $this->createManyForOffer($timeframes, $offer);
+    }
+
+    /**
+     * @param Offer $offer
+     * @param int   $days
+     *
+     * @return Timeframe|null
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     */
+    public function findByOfferAndDays(Offer $offer, int $days): ?Timeframe
+    {
+        $this->skipCriteria();
+
+        /**
+         * @var Timeframe $model
+         */
+        $model  = $this->model;
+        $result = $model->byOffer($offer)->byDays($days)->first();
+
+        $this->resetModel();
+
+        return $this->parserResult($result);
     }
 }

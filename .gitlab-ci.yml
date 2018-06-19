@@ -34,6 +34,7 @@ build:
       - ./*
 
 PHP_CodeSniffer:
+  image: php:7.1-alpine
   stage: test
   script:
     - vendor/bin/phpcs --standard=guidelines/phpcs.xml --ignore=/vendor,/database,/cache,/compiled,/public,*.blade.php,/resources/assets,/storage/framework,/bootstrap -w --colors --report-full=phpcs-report.txt --report-diff=phpcs-fix.diff --report-gitblame=phpcs-gitblame.txt --report-summary .
@@ -45,6 +46,7 @@ PHP_CodeSniffer:
       - phpcs-gitblame.txt
 
 PHPMD:
+  image: php:7.1-alpine
   stage: test
   script:
     - vendor/bin/phpmd . text ./guidelines/phpmd.xml --exclude vendor,database,cache,compiled,public,tests --suffixes php --reportfile phpmd-report.txt --colors || (cat phpmd-report.txt && false)

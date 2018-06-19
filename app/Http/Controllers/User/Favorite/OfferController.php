@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\User\Favorite;
 
 use App\Http\Requests\User\Favorite\OfferRequest;
+use App\Presenters\OfferPresenter;
 use App\Repositories\OfferRepository;
 use App\Repositories\User\FavoriteOfferRepository;
 use App\Repositories\UserRepository;
@@ -59,10 +60,14 @@ class OfferController extends FavoriteController
         $offers          = $this->favoriteOfferRepository->skipCriteria()->getByUser($user);
         $offersPaginated = $offers->paginate();
 
-        $favorites = $this->offerRepository->findWhereIn('id', $offers->pluck('offer_id')->toArray())->toArray();
+        $offerIds = $offers->pluck('offer_id')->toArray();
+
+        $favorites = $this->offerRepository
+            ->setPresenter(OfferPresenter::class)
+            ->findWhereIn('id', $offerIds);
 
         $pagination = new LengthAwarePaginator(
-            $favorites,
+            array_get($favorites, 'data'),
             $offersPaginated->total(),
             $offersPaginated->perPage(),
             $offersPaginated->currentPage()

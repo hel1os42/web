@@ -52,6 +52,9 @@ class Offer extends BaseResponse
     /** @var float */
     public $reserved;
 
+    /** @var int */
+    public $points;
+
     /**
      * @return string
      */
@@ -90,6 +93,14 @@ class Offer extends BaseResponse
     public function getCategoryId(): string
     {
         return $this->category_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPoints(): int
+    {
+        return $this->points;
     }
 
     /**

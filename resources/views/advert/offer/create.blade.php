@@ -19,6 +19,17 @@
                 @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
+                @can('offers.manage_featured_options')
+                    @include('advert.offer.create-featured-options')
+                @endcan
+
+                <p class="tokens-total">
+                    <strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>{{ __('offers.text.account_tokens') }}</span>
+                </p>
+
+                <p class="clearfix">
+                    <input type="submit" class="btn-nau pull-right" value="{{ __('offers.buttons.create_offer') }}">
+                </p>
             </form>
 
         </div>
@@ -49,6 +60,9 @@
     <script>
 
         const RESERVATION_MULTIPLIER = 10;
+
+        /* timezone */
+        document.getElementsByName('timezone')[0].value = convertTimezoneOffsetFromSecToHrsMin(document.getElementsByName('timeframes_offset')[0].value);
 
         /* dateTime picker init */
         dateTimePickerInit();
@@ -108,6 +122,8 @@
             done: mapDone,
             move: mapMove
         });
+
+        setCityCountry();
 
         function dateTimePickerInit(){
             let today = new Date();
@@ -198,16 +214,17 @@
         function mapDone(map){
             $('#working_area').removeAttr('style').css('display', 'none');
             workingAreaWhenDelivery();
-            mapMove(map);
+            /* mapMove(map); */
             $('#createOfferForm').on('submit', function (e) {
                 e.preventDefault();
                 if (formValidation()) {
-                    getTimeZone(map, getFormData);
+                    /* getTimeZoneMap(map, getFormData); */
+                    getFormData();
                 }
             });
             validationOnFly();
             /* set map position by GPS or Address */
-            setMapPositionByGpsOrAddress(map);
+            addAction_setMapPositionByGpsOrAddress(map);
         }
 
         function mapMove(map){
@@ -218,13 +235,22 @@
             $latitude.val(values.lat);
             $longitude.val(values.lng);
             $('[name="radius"]').val(values.radius);
-            getTimeZone(map, function(tz){
+            getTimeZoneMap(map, function(tz, tzXHR){
                 $('[name="timezone"]').val(tz);
-                $('#map_box').toggleClass('invalid', tz === 'error')
+                $('[name="timeframes_offset"]').val(tzXHR.rawOffset);
+                $('#map_box').toggleClass('invalid', tz === 'error');
             });
         }
 
-        function getFormData(tz){
+        function getFormData(){
+            let tz = $('[name="timezone"]').val();
+            if ($('#check_delivery').is(':checked') && tz === 'error') {
+                let $map = $('#map_box');
+                $map.toggleClass('invalid', tz === 'error');
+                $('html, body').animate({ scrollTop: $map.offset().top }, 400);
+                return false;
+            }
+
             let formData = $('.formData').serializeArray();
 
             formData.push({
@@ -247,6 +273,14 @@
                 });
             });
 
+            /* is_featured */
+            if (1 === $('[name="is_featured"]').length) {
+                formData.push({
+                    "name": "is_featured",
+                    "value": $('[name="is_featured"]').prop('checked') ? "1" : "0"
+                });
+            }
+
             /* offer type */
             formData.push({
                 "name" : "type",
@@ -267,12 +301,12 @@
             }
 
             /* working dates */
-            let startDateVal = $('[name="start_date"]').val();
+            let startDateVal = $('[name="start_date"]').val().toString();
             formData.push({
                 "name" : "start_date",
                 "value" : prepareDate(new Date(startDateVal), tz)
             });
-            let finishDateVal = $('[name="finish_date"]').val();
+            let finishDateVal = $('[name="finish_date"]').val().toString();
             formData.push({
                 "name" : "finish_date",
                 "value" : '' === finishDateVal ? null : prepareDate(new Date(finishDateVal), tz)
@@ -475,8 +509,7 @@
             }
         }
 
-        function setMapPositionByGpsOrAddress(map){
-            /* TODO: need refactoring, this code in 4-th pages */
+        function addAction_setMapPositionByGpsOrAddress(map){
             let $country = $('[name="country"]');
             let $city = $('[name="city"]');
             let $gps_crd = $('[name="gps_crd"]');
@@ -524,6 +557,20 @@
                 if (this.checked) $(workingArea).slideDown();
                 else $(workingArea).slideUp();
             });
+        }
+
+        function setCityCountry(){
+            let lat = $('input[name="latitude"]').val();
+            let lng = $('input[name="longitude"]').val();
+            getAddressByGps(lat, lng, function(resp){
+                if (resp.status === 'OK' && resp.results.length) {
+                    resp = resp.results[0].address_components;
+                    let country = resp.find(function(item){ return item.types[0] === 'country'; });
+                    let city = resp.find(function(item){ return item.types[0] === 'locality'; });
+                    if (country) $('input[name="country"]').val(country.long_name);
+                    if (city) $('input[name="city"]').val(city.long_name);
+                }
+            })
         }
 
     </script>
