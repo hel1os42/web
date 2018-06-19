@@ -14,4 +14,6 @@ use Prettus\Repository\Contracts\RepositoryInterface;
 interface RedemptionRepository extends RepositoryInterface
 {
     public function model(): string;
+
+    public function count(): int;
 }
