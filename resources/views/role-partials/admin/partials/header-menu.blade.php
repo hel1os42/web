@@ -8,11 +8,3 @@
 <li>
     <a href="{{ route('tags.index') }}">Tags</a>
 </li>
-@if(false)
-<li>
-    <a href="{{ route('translations.index') }}">Translation</a>
-</li>
-@endif
-<li>
-    <a href="{{ route('settings.index') }}">Settings</a>
-</li>
