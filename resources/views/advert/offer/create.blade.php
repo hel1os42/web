@@ -123,6 +123,8 @@
             move: mapMove
         });
 
+        setCityCountry();
+
         function dateTimePickerInit(){
             let today = new Date();
             let $startDate = $('[name="start_date"]'),
@@ -555,6 +557,20 @@
                 if (this.checked) $(workingArea).slideDown();
                 else $(workingArea).slideUp();
             });
+        }
+
+        function setCityCountry(){
+            let lat = $('input[name="latitude"]').val();
+            let lng = $('input[name="longitude"]').val();
+            getAddressByGps(lat, lng, function(resp){
+                if (resp.status === 'OK' && resp.results.length) {
+                    resp = resp.results[0].address_components;
+                    let country = resp.find(function(item){ return item.types[0] === 'country'; });
+                    let city = resp.find(function(item){ return item.types[0] === 'locality'; });
+                    if (country) $('input[name="country"]').val(country.long_name);
+                    if (city) $('input[name="city"]').val(city.long_name);
+                }
+            })
         }
 
     </script>
