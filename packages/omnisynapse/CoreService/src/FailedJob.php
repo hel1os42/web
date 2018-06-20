@@ -9,7 +9,7 @@ namespace OmniSynapse\CoreService;
 class FailedJob
 {
     /** @var \Exception */
-    private $exception;
+    protected $exception;
 
     /**
      * @param \Exception $exception

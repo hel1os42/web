@@ -52,6 +52,10 @@ class IdentityGuard implements Guard
             return $this->user;
         }
 
+        if (is_null($this->provider)) {
+            return $this->user;
+        }
+
         return $this->user = $this->provider->retrieveByCredentials(request()->all());
     }
 }
