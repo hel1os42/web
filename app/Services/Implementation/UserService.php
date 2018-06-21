@@ -2,6 +2,7 @@
 
 namespace App\Services\Implementation;
 
+use App\Events\UserMetaCreated;
 use App\Models\Identity;
 use App\Models\IdentityProvider;
 use App\Models\User;
@@ -110,6 +111,8 @@ class UserService implements UserServiceInterface
         if ($userIdentity instanceof UserIdentity && $identityProvider instanceof IdentityProvider) {
             $this->createOrUpdateUserIdentity($newUser, $userIdentity, $identityProvider);
         }
+
+        event(new UserMetaCreated($newUser));
 
         return $newUser;
     }
