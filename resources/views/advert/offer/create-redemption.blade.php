@@ -14,7 +14,7 @@
 <p class="title">Reward options</p>
 <p class="control-range"><span class="input-label">Reward for redemption *</span> <label><input name="reward" data-min="1" data-max="999999" data-default="1" value="1" class="js-numeric formData"></label></p>
 <p class="control-range"><span class="input-label">Token reservation *</span> <label><input name="reserved" data-min="10" data-max="9999999" data-default="10" value="10" class="js-numeric formData"></label></p>
-<p class="control-range">
+<p class="control-range" style="display: none;">
     <span class="input-label">
         {{ __('offers.points_for_redemption') }}
     </span>
@@ -22,8 +22,3 @@
         <input name="points" data-min="0" data-max="9999999" data-default="1" value="1" class="js-numeric formData" />
     </label>
 </p>
-
-
-<p class="tokens-total"><strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>You have tokens on your account</span></p>
-
-<p class="clearfix"><input type="submit" class="btn-nau pull-right" value="Create Offer"></p>

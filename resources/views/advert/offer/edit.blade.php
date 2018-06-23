@@ -19,6 +19,14 @@
                 @include('advert.offer.edit-working')
                 @include('advert.offer.edit-redemption')
 
+                @can('offers.manage_featured_options')
+                    @include('advert.offer.edit-featured-options')
+                @endcan
+
+                <p class="tokens-total"><strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>{{ __('offers.text.account_tokens') }}</span></p>
+
+                <p class="clearfix"><input type="submit" class="btn-nau pull-right" value="{{ __('buttons.save') }}"></p>
+
             </form>
 
         </div>
@@ -111,6 +119,8 @@
             done: mapDone,
             move: mapMove
         });
+
+        setCityCountry();
 
         function dateTimePickerInit(){
             let today = new Date();
@@ -299,6 +309,14 @@
                     "value" : val
                 });
             });
+
+            /* is_featured */
+            if (1 === $('[name="is_featured"]').length) {
+                formData.push({
+                    "name": "is_featured",
+                    "value": $('[name="is_featured"]').prop('checked') ? "1" : "0"
+                });
+            }
 
             /* offer type */
             formData.push({
@@ -577,6 +595,23 @@
                 if (this.checked) $(workingArea).slideDown();
                 else $(workingArea).slideUp();
             });
+        }
+
+        function setCityCountry(){
+            let $country = $('input[name="country"]');
+            let $city = $('input[name="city"]');
+            if ($country.val() && $city.val()) return;
+            let lat = $('input[name="latitude"]').val();
+            let lng = $('input[name="longitude"]').val();
+            getAddressByGps(lat, lng, function(resp){
+                if (resp.status === 'OK' && resp.results.length) {
+                    resp = resp.results[0].address_components;
+                    let country = resp.find(function(item){ return item.types[0] === 'country'; });
+                    let city = resp.find(function(item){ return item.types[0] === 'locality'; });
+                    if (country) $country.val(country.long_name);
+                    if (city) $city.val(city.long_name);
+                }
+            })
         }
 
     </script>

@@ -2,25 +2,62 @@
 
 namespace App\Services\Implementation;
 
+use App\Criteria\Offer\AccountCriteria;
 use App\Models\Role;
 use App\Models\User;
+use App\Repositories\AccountRepository;
 use App\Repositories\OfferRepository;
+use App\Repositories\RedemptionRepository;
 use App\Repositories\RoleRepository;
 use App\Services\StatisticsService as StatisticsServiceInterface;
 use Illuminate\Support\Collection;
 
 class StatisticsService implements StatisticsServiceInterface
 {
+    /**
+     * @var AccountRepository
+     */
+    private $accountRepository;
+
+    /**
+     * @var RoleRepository
+     */
     private $roleRepository;
+
+    /**
+     * @var OfferRepository
+     */
     private $offerRepository;
+
+    /**
+     * @var RedemptionRepository
+     */
+    private $redemptionRepository;
+
+    /**
+     * @var User
+     */
     private $user;
 
+    /**
+     * StatisticsService constructor.
+     *
+     * @param RoleRepository       $roleRepository
+     * @param OfferRepository      $offerRepository
+     * @param AccountRepository    $accountRepository
+     * @param RedemptionRepository $redemptionRepository
+     */
     public function __construct(
         RoleRepository $roleRepository,
-        OfferRepository $offerRepository
-    ) {
-        $this->roleRepository  = $roleRepository;
-        $this->offerRepository = $offerRepository;
+        OfferRepository $offerRepository,
+        AccountRepository $accountRepository,
+        RedemptionRepository $redemptionRepository
+    )
+    {
+        $this->roleRepository       = $roleRepository;
+        $this->offerRepository      = $offerRepository;
+        $this->accountRepository    = $accountRepository;
+        $this->redemptionRepository = $redemptionRepository;
     }
 
     /**
@@ -47,19 +84,22 @@ class StatisticsService implements StatisticsServiceInterface
      */
     protected function getAdminStatistic(): Collection
     {
-        $users = $this->roleRepository->scopeQuery(function (Role $query) {
-            $orderedFields = array_reverse($query->getAllRoles());
+        $orderedFields = array_reverse(Role::getAllRoles());
 
-            return $query->join('users_roles', 'users_roles.role_id', 'roles.id')
-                ->orderByRaw(sprintf("FIELD(name, '%s')", implode("', '", $orderedFields)));
+        $users = $this->roleRepository->scopeQuery(function (Role $query) {
+            return $query->join('users_roles', 'users_roles.role_id', 'roles.id');
         })
             ->all(['name'])
             ->groupBy('name')
             ->map(function ($list) {
                 return $list->count();
             })
+            ->sortBy(function () use ($orderedFields) {
+                // return the order index by role name
+                return array_search(func_get_arg(1), $orderedFields);
+            })
             // make plural key names
-            ->keyBy(function($list, $key) {
+            ->keyBy(function ($list, $key) {
                 return $key . 's';
             });
 
@@ -73,27 +113,28 @@ class StatisticsService implements StatisticsServiceInterface
      */
     protected function getAgentStatistic(): Collection
     {
-        $users = $this->user->children;
+        $childrenData = $this->user->children()->get(['id', 'approved']);
+        $childrenIds  = $childrenData->pluck('id')->toArray();
 
-        $offersByUser = $users->map(function (User $user) {
-            return $this->offerRepository
-                ->scopeAccount($user->getAccountForNau())
-                ->withoutGlobalScopes()
-                ->withCount(['redemptions'])
-                ->all();
-        });
+        $accounts   = $this->accountRepository->findWhereIn('owner_id', $childrenIds, ['id']);
+        $accountIds = $accounts->pluck('id')->toArray();
 
-        $offersCount = $offersByUser->reduce(function ($count, $item) {
-            $count['offers']      += $item->count();
-            $count['redemptions'] += $item->pluck('redemptions_count')->sum();
-            return $count;
-        }, ['offers' => 0, 'redemptions' => 0]);
+        $offerIds = $this->offerRepository
+            ->pushCriteria(new AccountCriteria($accountIds))
+            ->withoutGlobalScopes()
+            ->pluck('id');
+
+        $redemptionsCount = $this->redemptionRepository
+            ->scopeQuery(function ($query) use ($offerIds) {
+                return $query->whereIn('offer_id', $offerIds);
+            })
+            ->count();
 
         return collect([
-            'advertisers'          => $users->count(),
-            'advertisers_approved' => $users->where('approved', true)->count(),
-            'offers'               => $offersCount['offers'],
-            'redemptions'          => $offersCount['redemptions']
+            'advertisers'          => $childrenData->count(),
+            'advertisers_approved' => $childrenData->where('approved', true)->count(),
+            'offers'               => $offerIds->count(),
+            'redemptions'          => $redemptionsCount
         ]);
     }
 }

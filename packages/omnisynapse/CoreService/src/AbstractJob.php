@@ -27,6 +27,8 @@ abstract class AbstractJob implements ShouldQueue
 
     const GET_MODEL_ATTEMPTS = 3;
 
+    public const URL_EVENTS = '/events';
+
     /** @var CoreService */
     protected $coreService;
 

@@ -19,6 +19,17 @@
                 @include('advert.offer.create-working')
                 @include('advert.offer.create-redemption')
 
+                @can('offers.manage_featured_options')
+                    @include('advert.offer.create-featured-options')
+                @endcan
+
+                <p class="tokens-total">
+                    <strong>{{ $authUser['accounts']['NAU']['balance'] }}</strong> <span>{{ __('offers.text.account_tokens') }}</span>
+                </p>
+
+                <p class="clearfix">
+                    <input type="submit" class="btn-nau pull-right" value="{{ __('offers.buttons.create_offer') }}">
+                </p>
             </form>
 
         </div>
@@ -111,6 +122,8 @@
             done: mapDone,
             move: mapMove
         });
+
+        setCityCountry();
 
         function dateTimePickerInit(){
             let today = new Date();
@@ -259,6 +272,14 @@
                     "value" : val
                 });
             });
+
+            /* is_featured */
+            if (1 === $('[name="is_featured"]').length) {
+                formData.push({
+                    "name": "is_featured",
+                    "value": $('[name="is_featured"]').prop('checked') ? "1" : "0"
+                });
+            }
 
             /* offer type */
             formData.push({
@@ -536,6 +557,20 @@
                 if (this.checked) $(workingArea).slideDown();
                 else $(workingArea).slideUp();
             });
+        }
+
+        function setCityCountry(){
+            let lat = $('input[name="latitude"]').val();
+            let lng = $('input[name="longitude"]').val();
+            getAddressByGps(lat, lng, function(resp){
+                if (resp.status === 'OK' && resp.results.length) {
+                    resp = resp.results[0].address_components;
+                    let country = resp.find(function(item){ return item.types[0] === 'country'; });
+                    let city = resp.find(function(item){ return item.types[0] === 'locality'; });
+                    if (country) $('input[name="country"]').val(country.long_name);
+                    if (city) $('input[name="city"]').val(city.long_name);
+                }
+            })
         }
 
     </script>
