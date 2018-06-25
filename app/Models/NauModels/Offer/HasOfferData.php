@@ -118,4 +118,13 @@ trait HasOfferData
     {
         return $this->getIsFeaturedAttribute();
     }
+
+    /**
+     * @return bool
+     */
+    public function isWithoutPaymentInPoints(): bool
+    {
+        return 0 === $this->getRedemptionPointsPriceAttribute()
+            && 0 === $this->getReferralPointsPriceAttribute();
+    }
 }

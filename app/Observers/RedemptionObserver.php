@@ -30,7 +30,7 @@ class RedemptionObserver
      */
     public function created(Redemption $redemption)
     {
-        if (false === $redemption->offer->isFeatured()) {
+        if ($redemption->offer->isWithoutPaymentInPoints()) {
             $redemption->user->enrollRedemptionPoints();
         }
     }
