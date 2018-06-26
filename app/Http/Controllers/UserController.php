@@ -268,13 +268,6 @@ class UserController extends Controller
             array_push($with, 'parents');
         }
 
-        if (isset($newUserData['child_ids'])) {
-            $childIds = array_filter($newUserData['child_ids']);
-            $this->authorize('user.update.children', [$user, $childIds]);
-            $this->updateChildrenForUser($user, $childIds);
-            array_push($with, 'children');
-        }
-
         if (!empty($with)) {
             $user->save();
 
@@ -282,60 +275,6 @@ class UserController extends Controller
         }
 
         return $user;
-    }
-
-
-    /**
-     * @param User  $user
-     * @param array $childIds
-     */
-    private function updateChildrenForUser(User $user, array $childIds)
-    {
-        if ($this->user()->isAdmin()) {
-            $removedUsersIds              = $this->getChildrenByUsers([$user->getId()])
-                ->pluck('id')->diff($childIds);
-            $grandChildrenOfDetachedUsers = $this->getChildrenByUsers($removedUsersIds)
-                ->pluck('id');
-            $this->updateAllParentsWithChildren(
-                $user,
-                $grandChildrenOfDetachedUsers->merge($removedUsersIds),
-                'detach'
-            );
-            // exclude grandchildren of detached users
-            $childIds = array_diff($childIds, $grandChildrenOfDetachedUsers->toArray());
-
-            $grandChildren = $this->getChildrenByUsers($childIds)
-                ->pluck('id');
-            // accept grandchildren
-            $childIds = array_merge($childIds, $grandChildren->toArray());
-
-            $this->updateAllParentsWithChildren($user, $childIds, 'syncWithoutDetaching');
-        }
-
-        $user->children()->sync($childIds, true);
-    }
-
-    /**
-     * @param  mixed $usersIds
-     * @return UserRepository
-     */
-    private function getChildrenByUsers($usersIds): UserRepository
-    {
-        return app(UserRepository::class)->getChildrenByUsers($usersIds);
-    }
-
-    /**
-     * @param User   $editableUser
-     * @param mixed  $childrenIds
-     * @param string $method
-     */
-    private function updateAllParentsWithChildren(User $editableUser, $childrenIds, string $method)
-    {
-        $parents = $editableUser->parents()->get();
-
-        foreach ($parents as $user) {
-            $user->children()->$method($childrenIds);
-        }
     }
 
     /**

@@ -7,9 +7,9 @@
                 <h4 class="modal-title">{{ __('users.titles.children_list') }}</h4>
             </div>
             <div class="modal-body" style="padding-top: 0; padding-bottom: 0;">
+                <p class="messages"></p>
 
-                <form method="get" action="{{route('users.index')}}" id="search_children"
-                      style="display: inline-block;">
+                <form method="get" action="{{route('users.index')}}" id="search_children" style="display: inline-block;">
                     <input type="hidden" name="search" id="search-field" value="">
                     <input type="hidden" name="searchJoin" value="and">
                     <label for="search_field">{{ __('msg.profile.search_by_fields')  }}</label>
@@ -29,28 +29,35 @@
                     </p>
                 </form>
 
-                <div style="overflow-x: scroll">
-                    <table class="table-striped-nau" style="margin-top: 10px;">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>{{ __('users.fields.name') }}</th>
-                                <th>{{ __('users.fields.contacts') }}</th>
-                                <th>{{ __('users.fields.place') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{--only for reading bottom border color--}}
-                            <tr><td></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <form id="update_children_form" action="{{ route('users.children', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
+                    {{ csrf_field() }}
+                    {{ method_field('PATCH') }}
+
+                    <div style="overflow-x: scroll">
+                        <table class="table-striped-nau" style="margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>{{ __('users.fields.name') }}</th>
+                                    <th>{{ __('users.fields.contacts') }}</th>
+                                    <th>{{ __('users.fields.place') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{--only for reading bottom border color--}}
+                                <tr><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
 
                 <img src="{{ asset('img/loading.gif') }}" alt="wait...">
 
+                <p class="pagenavy" id="modal_pagination"></p>
             </div>
             <div class="modal-footer" style="padding-bottom: 15px;">
-                <button type="button" class="btn btn-default" id="add_selected_children">{{ __('buttons.add_selected_users') }}</button>
+                {{--<button type="button" class="btn btn-default" id="add_selected_children">{{ __('buttons.add_selected_users') }}</button>--}}
+                <button type="button" data-dismiss="modal" class="btn btn-default" id="attach_selected_children">{{ __('buttons.attach_selected_users') }}</button>
             </div>
         </div>
     </div>
@@ -58,15 +65,6 @@
 
 @push('styles')
 <style>
-    .children-wrap.box-style {
-        margin-bottom: 16px;
-        border: 1px solid #a9a9a9;
-        padding: 8px 8px 0px;
-        width: fit-content;
-        min-width: 50%;
-        max-height: 170px;
-        overflow-y: scroll;
-    }
     .modal-body {
         min-height: 230px;
     }
@@ -76,11 +74,11 @@
         vertical-align: top;
     }
 
-    .table-striped-nau tbody {
+    .children-wrap .table-striped-nau tbody {
         opacity: 0;
         transition: opacity 0.3s, visibility 0.3s;
     }
-    .table-striped-nau td {
+    .children-wrap .table-striped-nau td {
         padding: 5px;
     }
     #add_selected_children {
@@ -106,11 +104,9 @@
 </style>
 @endpush
 
-@can('user.update.children', [$editableUserModel, $children->pluck('id')->toArray()])
-    @push('scripts')
-        <script>
-            window.nau_lang = {!! json_encode(__('js_messages')) !!};
-        </script>
-        <script src="{{ asset('js/children-modal.js') }}"></script>
-    @endpush
-@endcan
+@push('scripts')
+    <script>
+        window.nau_lang = {!! json_encode(__('js_messages')) !!};
+    </script>
+    <script src="{{ asset('js/children-modal.js') }}"></script>
+@endpush

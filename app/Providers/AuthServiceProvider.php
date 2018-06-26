@@ -109,7 +109,6 @@ class AuthServiceProvider extends ServiceProvider
         'users.update'            => 'UserPolicy@update',
         'users.referrals.list'    => 'UserPolicy@referrals',
         'users.picture.store'     => 'UserPolicy@pictureStore',
-        'user.update.children'    => 'UserPolicy@updateChildren',
         'user.update.parents'     => 'UserPolicy@updateParents',
         'user.update.roles'       => 'UserPolicy@updateRoles',
         'impersonate'             => 'UserPolicy@impersonate',
@@ -118,6 +117,9 @@ class AuthServiceProvider extends ServiceProvider
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',
         'users.favorites.destroy' => 'User\FavoritePolicy@destroy',
+
+        'user.children.list'   => 'User\ChildPolicy@index',
+        'user.children.update' => 'User\ChildPolicy@update',
     ];
 
     /**

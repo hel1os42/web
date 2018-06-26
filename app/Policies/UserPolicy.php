@@ -117,33 +117,6 @@ class UserPolicy extends Policy
     }
 
     /**
-     * @param User  $user
-     * @param User  $editableUser
-     * @param array $childIds
-     *
-     * @return bool
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function updateChildren(User $user, User $editableUser, array $childIds)
-    {
-        foreach ($childIds as $childId) {
-            /**
-             * @var User $child
-             */
-            $child = (new User)->findOrFail($childId);
-            if ($child->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-                return false;
-            }
-            if ($child->hasRoles([Role::ROLE_CHIEF_ADVERTISER]) && $user->isAgent()) {
-                return false;
-            }
-        }
-
-        return !$editableUser->hasRoles([Role::ROLE_ADMIN, Role::ROLE_ADVERTISER, Role::ROLE_USER])
-               && $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
-    }
-
-    /**
      * @param User $user
      * @param User $anotherUser
      *
