@@ -5,13 +5,10 @@ namespace OmniSynapse\CoreService;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\NauModels\Transact;
-use App\Models\User;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use OmniSynapse\CoreService\Observers\OfferObserver;
 use OmniSynapse\CoreService\Observers\RedemptionObserver;
 use OmniSynapse\CoreService\Observers\TransactObserver;
-use OmniSynapse\CoreService\Observers\UserObserver;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -22,7 +19,6 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        User::observe(UserObserver::class);
         Offer::observe(OfferObserver::class);
         Transact::observe(TransactObserver::class);
         Redemption::observe(RedemptionObserver::class);

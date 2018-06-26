@@ -154,6 +154,10 @@ class AppServiceProvider extends ServiceProvider
             StatisticsService::class,
             StatisticsServiceImpl::class
         );
+
+        if ($this->app->isLocal()) {
+            $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+        }
     }
 
     private function setUserViewsData()
