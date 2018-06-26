@@ -29,7 +29,6 @@
                                 <li class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.profile_info') }}</a></li>
                                 <li><a href="#edit" aria-controls="profile" role="tab" data-toggle="tab" aria-expanded="true">{{ __('users.titles.edit_profile') }}</a></li>
                                 <li class=""><a href="#update_photo" aria-controls="update_photo" role="tab" data-toggle="tab" aria-expanded="false">{{ __('users.titles.update_photo') }}</a></li>
-                                <li class=""><a href="#children" aria-controls="children" role="tab" data-toggle="tab" aria-expanded="false">{{ __('users.titles.edit_children') }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -180,9 +179,10 @@
                             </div>
                         </div>
 
-                        @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+
+                        @can('user.children.list', [$editableUserModel])
                             @include('user.children.edit', ['userId' => $id])
-                        @endif
+                        @endcan
 
                     </div>
                 </div>
@@ -190,9 +190,9 @@
         </div>
     </div>
 
-    @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+    @can('user.children.list', [$editableUserModel])
         @include('role-partials.children-modal')
-    @endif
+    @endcan
 
 @stop
 

@@ -116,9 +116,9 @@
                         try {
                             let responseObj = JSON.parse(xhr.response);
                             if (responseObj.error && responseObj.message)
-                                messages('add', 'error', 'Error: ' + responseObj.message, messages_modal);
+                                messages('add', 'error', 'Error: ' + responseObj.message, messages_page);
                         } catch (e) {
-                            messages('add', 'error', nau_lang.an_error, messages_modal);
+                            messages('add', 'error', nau_lang.an_error, messages_page);
                         }
                     }
                 }

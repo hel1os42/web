@@ -5,6 +5,12 @@
 @endphp
 
 <div role="tabpanel" class="tab-pane" id="children" data-children-uri="{{ route('users.children', $userId) }}">
+    <script>
+        let children_tab = document.createElement('li');
+        children_tab.innerHTML = '<a href="#children" aria-controls="children" role="tab" data-toggle="tab" aria-expanded="false">{{ __('users.titles.edit_children') }}</a>';
+        document.getElementById('tabs').appendChild(children_tab);
+    </script>
+
     <form id="children_deleting" action="{{ route('users.children', $userId) }}" method="POST" enctype="application/x-www-form-urlencoded"
           data-user-roles="{{ implode(',', $rolesNames) }}">
         {{ csrf_field() }}
