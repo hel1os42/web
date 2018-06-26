@@ -7,14 +7,12 @@ use App\Events\BroughtFriend;
 use App\Events\ConnectedWithSSO;
 use App\Events\EmailConfirmed;
 use App\Events\UserEvent;
+use App\Events\UserMetaCreated;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use OmniSynapse\CoreService\CoreService;
 
-class UserEventSubscriber implements ShouldQueue
+class UserEventSubscriber
 {
-    use InteractsWithQueue;
 
     /**
      * @var CoreService
@@ -47,6 +45,8 @@ class UserEventSubscriber implements ShouldQueue
             ],
             __CLASS__ . '@handleEvent'
         );
+        $events->listen(UserMetaCreated::class,
+            __CLASS__ . '@onUserMetaCreated');
     }
 
     /**
@@ -55,5 +55,14 @@ class UserEventSubscriber implements ShouldQueue
     public function handleEvent(UserEvent $event)
     {
         dispatch($this->coreService->eventOccurred($event));
+    }
+
+    /**
+     * @param UserMetaCreated $event
+     */
+    public function onUserMetaCreated(UserMetaCreated $event)
+    {
+        $user = $event->getUser();
+        dispatch($this->coreService->userCreated($user));
     }
 }
