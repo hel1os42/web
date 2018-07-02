@@ -134,7 +134,7 @@ class UserController extends Controller
 
         $this->authorize('users.update', [$editableUser, $userData]);
 
-        if (isset($userData['approved']) && $userData['approved'] === false) {
+        if (isset($userData['approved']) && $userData['approved'] == false) {
             $placeService->disapprove($editableUser->place);
         }
 
