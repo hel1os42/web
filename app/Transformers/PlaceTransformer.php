@@ -58,12 +58,12 @@ class PlaceTransformer extends TransformerAbstract
     }
 
     /**
-     * @param $offerDataA
-     * @param $offerDataB
+     * @param array $offerDataA
+     * @param array $offerDataB
      *
      * @return int
      */
-    function sortOffers($offerDataA, $offerDataB): int
+    function sortOffers(array $offerDataA, array $offerDataB): int
     {
         $isFeaturedA = array_get($offerDataA, 'is_featured');
         $isFeaturedB = array_get($offerDataB, 'is_featured');
