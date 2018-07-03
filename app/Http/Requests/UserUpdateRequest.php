@@ -60,7 +60,7 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'               => 'boolean',
-            'invite_code'           => 'nullable|alpha_dash',
+            'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
             'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
         ];
 

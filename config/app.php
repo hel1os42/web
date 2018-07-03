@@ -172,6 +172,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
         Mews\Purifier\PurifierServiceProvider::class,
+        anlutro\LaravelSettings\ServiceProvider::class,
 
         /*
          * Application Service Providers...

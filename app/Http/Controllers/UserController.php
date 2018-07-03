@@ -132,7 +132,7 @@ class UserController extends Controller
             ? $request->all()
             : array_merge($editableUser->getFillableWithDefaults(['password', 'approved', 'invite_code']), $request->all());
 
-        $this->authorize('users.update', [$editableUser, $userData]);
+        $this->authorize('user.update', [$editableUser, $userData]);
 
         if (isset($userData['approved']) && $userData['approved'] == false) {
             $placeService->disapprove($editableUser->place);
