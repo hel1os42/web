@@ -53,6 +53,9 @@ class AuthServiceProvider extends ServiceProvider
         'tags.create' => 'TagPolicy@create',
         'tags.update' => 'TagPolicy@update',
 
+        'settings.list'   => 'SettingsPolicy@index',
+        'settings.update' => 'SettingsPolicy@update',
+
         'offers.list' => 'OfferPolicy@index',
         'offers.show' => 'OfferPolicy@show',
 
@@ -106,14 +109,15 @@ class AuthServiceProvider extends ServiceProvider
         'users.create'            => 'UserPolicy@create',
         'users.list'              => 'UserPolicy@index',
         'users.show'              => 'UserPolicy@show',
-        'users.update'            => 'UserPolicy@update',
         'users.referrals.list'    => 'UserPolicy@referrals',
         'users.picture.store'     => 'UserPolicy@pictureStore',
-        'user.update.children'    => 'UserPolicy@updateChildren',
-        'user.update.parents'     => 'UserPolicy@updateParents',
-        'user.update.roles'       => 'UserPolicy@updateRoles',
         'impersonate'             => 'UserPolicy@impersonate',
-        'users.relink'            => 'UserPolicy@relink',
+
+        'user.update'             => 'UserUpdatePolicy@update',
+        'user.update.children'    => 'UserUpdatePolicy@updateChildren',
+        'user.update.parents'     => 'UserUpdatePolicy@updateParents',
+        'user.update.roles'       => 'UserUpdatePolicy@updateRoles',
+        'user.update.invite'      => 'UserUpdatePolicy@updateInvite',
 
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',
