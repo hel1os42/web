@@ -4,6 +4,7 @@ namespace App\Transformers;
 
 use App\Models\User\FavoritePlaces;
 use App\Repositories\OfferRepository;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 use League\Fractal\TransformerAbstract;
 use App\Models\Place;
@@ -46,10 +47,53 @@ class PlaceTransformer extends TransformerAbstract
               ->append('is_favorite');
 
         $resultModel = $model->toArray();
+
         if (isset($model->offers) && count($model->offers)) {
             $resultModel['offers'] = $this->offerRepository->parserResult($model->offers)['data'];
+
+            usort($resultModel['offers'], [$this, 'sortOffers']);
         }
 
         return $resultModel;
+    }
+
+    /**
+     * @param $offerDataA
+     * @param $offerDataB
+     *
+     * @return int
+     */
+    function sortOffers($offerDataA, $offerDataB): int
+    {
+        $isFeaturedA = array_get($offerDataA, 'is_featured');
+        $isFeaturedB = array_get($offerDataB, 'is_featured');
+
+        if ($isFeaturedA === $isFeaturedB) {
+            $updatedAtA = Carbon::parse(array_get($offerDataA, 'updated_at'));
+            $updatedAtB = Carbon::parse(array_get($offerDataB, 'updated_at'));
+
+            return $this->compareDates($updatedAtA, $updatedAtB);
+        }
+
+        return true === $isFeaturedA
+            ? -1
+            : 1;
+    }
+
+    /**
+     * @param Carbon $dateA
+     * @param Carbon $dateB
+     *
+     * @return int
+     */
+    private function compareDates(Carbon $dateA, Carbon $dateB): int
+    {
+        if ($dateA->equalTo($dateB)) {
+            return 0;
+        }
+
+        return $dateA->greaterThan($dateB)
+            ? -1
+            : 1;
     }
 }
