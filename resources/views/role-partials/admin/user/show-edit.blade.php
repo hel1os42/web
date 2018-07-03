@@ -1,11 +1,4 @@
 <div class="row">
-    <div class="col-sm-3 p-5">
-        {{ __('users.fields.invite_code') }}
-    </div>
-    <div class="col-sm-9 p-5">
-        <label><input style="line-height: 14px; font-size: 14px;" type="text" name="invite_code"
-                      value="{{ $invite_code }}"></label>
-    </div>
 </div>
 
 @can('user.update.roles', [$editableUserModel, $roleIds])
