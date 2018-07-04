@@ -7,9 +7,6 @@
 	background: #f6f6f6;
 	border: 1px solid #ddd;
 }
-.invalid .image-uploader-box {
-	border-color: #ff8a0e;
-}
 .image-uploader-box:before {
 	content: "Check image";
 	position: absolute;
