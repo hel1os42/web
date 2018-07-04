@@ -101,7 +101,7 @@
         $offer_image_box.find('[type="file"]').on('change', function(){
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
-            $offer_image_box.find('.image').attr('data-cropratio', '1');
+            $offer_image_box.removeClass('invalid').find('.image').attr('data-cropratio', '1');
         });
         $offer_image_box.find('.image').on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
@@ -403,6 +403,7 @@
             /* offer image */
             let $imgBox = $('#offer_image_box');
             if (!$imgBox.find('[type="file"]').val()) {
+                $imgBox.addClass('invalid');
                 $('html, body').animate({ scrollTop: $imgBox.offset().top - 40 });
                 res = false;
             }
