@@ -62,7 +62,7 @@
             position: relative;
             color: gray;
         }
-        img[src*="loading"] {
+        #children img[src*="loading"] {
             display: none;
             margin: 0;
         }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -54,27 +55,25 @@ class ChildController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param string  $userId
+     * @param Requests\User\ChildRequest $request
+     * @param string                     $userId
      *
      * @return RedirectResponse
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, string $userId): RedirectResponse
+    public function update(Requests\User\ChildRequest $request, string $userId): RedirectResponse
     {
-        if (isset($request['children_ids'])) {
-            $user        = $this->userRepository->find($userId);
-            $childrenIds = $request['children_ids'];
+        $user        = $this->userRepository->find($userId);
+        $childrenIds = $request['children_ids'];
 
-            $this->authorize('user.children.update', [$user, $childrenIds]);
+        $this->authorize('user.children.update', [$user, $childrenIds]);
 
-            if ($this->user()->isAdmin()) {
-                $childrenIds = $this->includeRelatives($user, $childrenIds, $request->method());
-            }
-
-            $saveMethod = $request->isMethod('put') ? 'sync' : 'syncWithoutDetaching';
-            $user->children()->$saveMethod($childrenIds, true);
+        if ($this->user()->isAdmin()) {
+            $childrenIds = $this->includeRelatives($user, $childrenIds, $request->method());
         }
+
+        $saveMethod = $request->isMethod('put') ? 'sync' : 'syncWithoutDetaching';
+        $user->children()->$saveMethod($childrenIds, true);
 
         if ($request->wantsJson()) {
             return \response()->render('user.show', $user->toArray(), Response::HTTP_OK,
@@ -85,28 +84,26 @@ class ChildController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param string  $userId
+     * @param Requests\User\ChildRequest $request
+     * @param string                     $userId
      *
      * @return Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function destroy(Request $request, string $userId): Response
+    public function destroy(Requests\User\ChildRequest $request, string $userId): Response
     {
-        if (isset($request['children_ids'])) {
-            $user        = $this->userRepository->find($userId);
-            $childrenIds = $request['children_ids'];
+        $user        = $this->userRepository->find($userId);
+        $childrenIds = $request['children_ids'];
 
-            $this->authorize('user.children.update', [$user, $childrenIds]);
+        $this->authorize('user.children.update', [$user, $childrenIds]);
 
-            if ($this->user()->isAdmin()) {
-                $grandChildren = $this->getChildrenByUsers($childrenIds)->pluck('id');
-                $childrenIds   = array_merge($childrenIds, $grandChildren->toArray());
-                $this->updateAllParentsWithChildren($user, $childrenIds, 'detach');
-            }
-
-            $user->children()->detach($childrenIds);
+        if ($this->user()->isAdmin()) {
+            $grandChildren = $this->getChildrenByUsers($childrenIds)->pluck('id');
+            $childrenIds   = array_merge($childrenIds, $grandChildren->toArray());
+            $this->updateAllParentsWithChildren($user, $childrenIds, 'detach');
         }
+
+        $user->children()->detach($childrenIds);
 
         return response(null, Response::HTTP_RESET_CONTENT);
     }

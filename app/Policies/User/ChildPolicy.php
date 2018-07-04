@@ -5,6 +5,7 @@ namespace App\Policies\User;
 use App\Models\Role;
 use App\Models\User;
 use App\Policies\Policy;
+use App\Repositories\UserRepository;
 
 /**
  * Class ChildPolicy
@@ -34,20 +35,26 @@ class ChildPolicy extends Policy
      */
     public function update(User $user, User $editableUser, array $childrenIds): bool
     {
-        foreach ($childrenIds as $childId) {
-            /**
-             * @var User $child
-             */
-            $child = (new User)->findOrFail($childId);
-            if ($child->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])) {
-                return false;
-            }
-            if ($child->hasRoles([Role::ROLE_CHIEF_ADVERTISER]) && $user->isAgent()) {
-                return false;
-            }
+        $excludedRoles = [Role::ROLE_ADMIN, Role::ROLE_AGENT];
+
+        if ($user->isAgent()) {
+            $excludedRoles[] = Role::ROLE_CHIEF_ADVERTISER;
         }
 
+        $usersCount = app(UserRepository::class)
+            ->skipCriteria()
+            ->skipPresenter()
+            ->scopeQuery(function($query) use ($childrenIds) {
+                return $query->whereIn('id', $childrenIds);
+            })
+            ->whereHas('roles', function($query) use ($excludedRoles) {
+                $query->whereNotIn('name', $excludedRoles);
+            })
+            ->all(['id'])
+            ->count();
+
         return !$editableUser->hasRoles([Role::ROLE_ADMIN, Role::ROLE_ADVERTISER, Role::ROLE_USER])
-            && $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT]);
+            && $user->hasRoles([Role::ROLE_ADMIN, Role::ROLE_AGENT])
+            && count($childrenIds) === $usersCount;
     }
 }

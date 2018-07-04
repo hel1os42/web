@@ -56,7 +56,6 @@
                 <p class="pagenavy" id="modal_pagination"></p>
             </div>
             <div class="modal-footer" style="padding-bottom: 15px;">
-                {{--<button type="button" class="btn btn-default" id="add_selected_children">{{ __('buttons.add_selected_users') }}</button>--}}
                 <button type="button" data-dismiss="modal" class="btn btn-default" id="attach_selected_children">{{ __('buttons.attach_selected_users') }}</button>
             </div>
         </div>
