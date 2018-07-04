@@ -400,6 +400,13 @@
             let res = true;
             let val, $control, $hint;
 
+            /* offer image */
+            let $imgBox = $('#offer_image_box');
+            if (!$imgBox.find('[type="file"]').val()) {
+                $('html, body').animate({ scrollTop: $imgBox.offset().top - 40 });
+                res = false;
+            }
+
             /* Map */
             if ($('[name="timezone"]').val() === 'error') res = false;
 
