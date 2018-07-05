@@ -58,6 +58,8 @@
 
         const RESERVATION_MULTIPLIER = 10;
 
+        let offerImage404 = false;
+
         /* timezone */
         document.getElementsByName('timezone')[0].value = convertTimezoneOffsetFromSecToHrsMin(document.getElementsByName('timeframes_offset')[0].value);
 
@@ -96,17 +98,20 @@
         imageUploader('#offer_image_box .image-box');
         let $offer_image_box = $('#offer_image_box');
         $offer_image_box.find('[type="file"]').on('change', function(){
+            offerImage404 = false;
             $(this).attr('data-changed', 'true');
             console.log('Picture changed');
-            $offer_image_box.find('.image').attr('data-cropratio', '1');
+            $offer_image_box.removeClass('invalid').find('.image').attr('data-cropratio', '1');
         });
-        $offer_image_box.find('.image').attr('src', "{{ $picture_url }}").on('load', function(){
+        $offer_image_box.find('.image').on('error', function(){
+            offerImage404 = true;
+        }).on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);
                 imageCropperInit(this);
             }
-        });
+        }).attr('src', "{{ $picture_url }}");
 
         /* map */
         mapInit({
@@ -440,6 +445,14 @@
         function formValidation() {
             let res = true;
             let val, $control, $hint;
+
+            /* offer image */
+            let $imgBox = $('#offer_image_box');
+            if (offerImage404) {
+                $imgBox.addClass('invalid');
+                $('html, body').animate({ scrollTop: $imgBox.offset().top - 40 });
+                res = false;
+            }
 
             /* Map */
             if ($('[name="timezone"]').val() === 'error') res = false;
