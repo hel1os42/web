@@ -134,8 +134,8 @@ class UserController extends Controller
 
         $this->authorize('user.update', [$editableUser, $userData]);
 
-        if (isset($userData['approved']) && $userData['approved'] == false
-            && $editableUser->place !== null) {
+        if ($editableUser->isAdvertiser() && $editableUser->place !== null
+            && isset($userData['approved']) && $userData['approved'] == false) {
             $placeService->disapprove($editableUser->place);
         }
 
