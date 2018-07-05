@@ -79,8 +79,8 @@ class AppServiceProvider extends ServiceProvider
                     $allowedKeys               = ['id', 'name', 'email', 'roles', 'phone', 'picture_url'];
                     $authUserForFront          = array_intersect_key($authUser->toArray(), array_flip($allowedKeys));
                     $authUserForFront['roles'] = array_map(function($role) {
-                        return $role['name'];
-                    }, $authUserForFront['roles']);
+                        return array_get($role, 'name', '');
+                    }, array_get($authUserForFront,'roles', []));
 
                     $view->with('variablesForFront', [
                         'auth_user' => $authUserForFront,
