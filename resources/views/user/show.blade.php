@@ -188,15 +188,21 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        @can('user.children.list', [$editableUserModel])
+                            @include('user.children.edit', ['userId' => $id])
+                        @endcan
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    @if(auth()->user()->isAdmin() || auth()->user()->isAgent())
+    @can('user.children.list', [$editableUserModel])
         @include('role-partials.children-modal')
-    @endif
+    @endcan
 
 @stop
 
@@ -214,6 +220,8 @@
     <script src="{{ asset('js/cropper/cropper.js') }}"></script>
 
     <script>
+        const anchor = window.location.hash;
+        if (anchor) document.querySelector('a[href="%anchor%"]'.replace('%anchor%', anchor)).click();
 
         /* approve/disapprove buttons */
         userStatusControl();

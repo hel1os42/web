@@ -30,4 +30,10 @@ interface UserRepository extends RepositoryInterface
      * @return Builder
      */
     public function getChildrenByUser(User $user): Builder;
+
+    /**
+     * @param mixed $childrenIds
+     * @return UserRepository
+     */
+    public function getChildrenByUsers($childrenIds): UserRepository;
 }

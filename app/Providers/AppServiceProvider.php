@@ -6,6 +6,7 @@ use App\Models\Complaint;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
 use App\Models\OfferLink;
+use App\Models\Role;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\ComplaintObserver;
@@ -74,6 +75,18 @@ class AppServiceProvider extends ServiceProvider
 
                     $placesRepository = app(PlaceRepository::class);
                     $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
+
+                    $allowedKeys               = ['id', 'name', 'email', 'roles', 'phone', 'picture_url'];
+                    $authUserForFront          = array_intersect_key($authUser->toArray(), array_flip($allowedKeys));
+                    $authUserForFront['roles'] = array_map(function($role) {
+                        return array_get($role, 'name', '');
+                    }, array_get($authUserForFront, 'roles', []));
+
+                    $view->with('variablesForFront', [
+                        'auth_user' => $authUserForFront,
+                        'roles'     => array_reverse(Role::getAllRoles()),
+                        'lang'=> __('js'),
+                    ]);
                 }
             }
         );
@@ -156,12 +169,10 @@ class AppServiceProvider extends ServiceProvider
                 /** @var User $editableUserModel */
                 $editableUserModel = User::query()->find($editableUserArray['id']);
                 $roleIds           = array_column(\App\Models\Role::query()->get(['id'])->toArray(), 'id');
-                $parents           = $editableUserModel->parents()->with('roles')->get(['id', 'name', 'email', 'phone']);
-                $children          = $editableUserModel->children()->get(['id', 'name', 'email', 'phone']);
+                $parents           = $editableUserModel->parents()->with('roles:name');
 
                 $view->with('roleIds', $roleIds);
-                $view->with('parents', $parents);
-                $view->with('children', $children);
+                $view->with('parents', $parents->get(['id', 'name', 'email', 'phone']));
                 $view->with('editableUserModel', $editableUserModel);
             }
         );
