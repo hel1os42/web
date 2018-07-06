@@ -540,7 +540,8 @@ footer p {
 }
 .offer-status .offer-status-text-no-image,
 .offer-status .offer-status-text-no-nau,
-.offer-status .offer-status-text-expired {
+.offer-status .offer-status-text-expired,
+.offer-status .offer-status-text-no-approval {
     display: none;
     font-size: 70%;
     line-height: 1.3em;
@@ -548,9 +549,11 @@ footer p {
 }
 tr.offer-status-no-image .offer-status .offer-status-text-no-image,
 tr.offer-status-no-nau .offer-status .offer-status-text-no-nau,
-tr.offer-status-expired .offer-status .offer-status-text-expired {
+tr.offer-status-expired .offer-status .offer-status-text-expired,
+tr.offer-status-no-approval .offer-status .offer-status-text-no-approval {
     display: block;
 }
+tr.offer-status-no-approval > td,
 tr.offer-status-no-image > td,
 tr.offer-status-no-nau > td,
 tr.offer-status-expired > td {
