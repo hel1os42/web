@@ -588,3 +588,16 @@ tr.offer-status-expired > td {
 .row[class*=f-] p {
     font-size: 100%;
 }
+
+.messages .error {
+    color: #C4183C
+}
+.messages .warning {
+    color: #FFB400
+}
+.messages .info {
+    color: #00B8D8
+}
+.messages .success {
+    color: #17C671
+}

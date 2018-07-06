@@ -28,6 +28,7 @@
                     //ad.parentElement.removeChild(ad);
                 }, 1000);
             });
+            window.nau = {!! json_encode($variablesForFront) !!};
         </script>
         @auth
             <div class="controls pull-right">

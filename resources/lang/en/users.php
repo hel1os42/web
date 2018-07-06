@@ -27,5 +27,6 @@ return [
         'update_avatar'   => 'Update your avatar',
         'users_search'    => 'Search by user (name, email, phone) or place (name, description):',
         'users_list'      => 'Users list',
+        'edit_children'   => 'Edit children',
     ],
 ];
