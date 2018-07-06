@@ -465,8 +465,8 @@
                 let expired = btn.classList.contains('expired');
                 tr.classList[(offerDeactive && reserved > nau) ? 'add' : 'remove']('offer-status-no-nau');
                 tr.classList[expired ? 'add' : 'remove']('offer-status-expired');
-                tr.classList[!user_approved ? 'add' : 'remove']('offer-status-no-approval');
-                btn.disabled = expired || reserved > nau || noImage || !user_approved;
+                tr.classList[user_approved === false ? 'add' : 'remove']('offer-status-no-approval');
+                btn.disabled = expired || reserved > nau || noImage || user_approved === false;
             });
         }
 
