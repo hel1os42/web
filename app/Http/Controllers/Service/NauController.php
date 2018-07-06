@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Service;
 
+use App\Events\UserMetaCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Service\CreateUserRequest;
 use App\Http\Requests\Service\ExchangeNau;
@@ -112,6 +113,8 @@ class NauController extends Controller
         if (!$success) {
             throw new UnprocessableEntityHttpException();
         }
+
+        event(new UserMetaCreated($user));
 
         $systemAccount = $accountRepository->findWhere([
                 'owner_id' => '00000000-0000-0000-0000-100000000000'

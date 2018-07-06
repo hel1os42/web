@@ -147,6 +147,50 @@ function pagenavyCompact(pagenavy){
     }
 }
 
+
+// opt   - default nau options with data from ajax response
+// block - DOM element which is main wrapper of the pagination
+function pagenavyCompactAjax( opt, block ) {
+    if ( opt.last_page < 2 ) {
+        block.innerHTML = '';
+        return;
+    }
+
+    let inner_body = '',
+        dots_item  = '<span class="dots">...</span>',
+        cntBefore  = false,
+        cntAfter   = false;
+
+    if (opt.prev_page_url) inner_body += '<a href="' + opt.path + '?page=' + (opt.current_page - 1 ) + '" class="prev"></a>';
+
+    for (i = 1; i <= opt.last_page; i++) {
+        if (i > 2 && i < opt.current_page - 2) {
+            if (!cntBefore) {
+                inner_body += dots_item;
+                cntBefore = true;
+            }
+            continue;
+        }
+        if (i > opt.current_page + 2 && i < opt.last_page - 1) {
+            if (!cntAfter) {
+                inner_body += dots_item;
+                cntAfter = true;
+            }
+            continue;
+        }
+        if ( opt.current_page === i ) {
+            inner_body += '<span class="current">' + i + '</span>';
+            continue;
+        }
+
+        inner_body += '<a href="' + opt.path + '?page=' + i + '">' + i + '</a>';
+    }
+
+    if (opt.next_page_url) inner_body += '<a href="' + opt.path + '?page=' + (opt.current_page + 1 ) + '" class="next"></a>';
+
+    block.innerHTML = inner_body;
+}
+
 function setFieldLimit(selector){
     document.querySelectorAll(selector).forEach(function(input){
         createSpan(input);
@@ -195,4 +239,24 @@ function convertTimezoneOffsetFromSecToHrsMin(sec){
     let h = Math.floor(sec / 3600);
     let m = Math.floor(sec / 60) % 60;
     return sign + add0(h) + add0(m);
+}
+
+// action value  : add|remove|update
+// type   value  : error|warning|info|success
+// element value : HTML DOM Element
+function messages(action, type, text, element) {
+    if (!element || !element.nodeName) return;
+    let message_tmpl = '<p class="%type%">%text%</p>';
+    switch (action) {
+        case 'remove':
+            element.innerHTML = '';
+            break;
+        case 'update':
+            if (text) element.innerHTML = message_tmpl.replace('%text%', text).replace('%type%', type);
+            break;
+        case 'add':
+        default:
+            if (text) element.innerHTML += message_tmpl.replace('%text%', text).replace('%type%', type);
+            break;
+    }
 }
