@@ -125,7 +125,7 @@
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status">
                                     <span class="offer-status-text offer-status-text-color-{{ $offer['status'] }}">{{ $offer['status'] }}</span>
-                                    <span class="offer-status-text-no-approval">no approval</span>
+                                    <span class="offer-status-text-no-approval">user not approved</span>
                                     <span class="offer-status-text-no-image">no image</span>
                                     <span class="offer-status-text-no-nau">no NAU</span>
                                     <span class="offer-status-text-expired">expired</span>
