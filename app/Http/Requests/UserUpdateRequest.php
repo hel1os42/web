@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
 
 /**
  * Class ProfileUpdateRequest
@@ -65,5 +67,32 @@ class UserUpdateRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    /**
+     * @param  Validator $validator
+     *
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function (Validator $validator) {
+            if(in_array(\App\Models\Role::findByName('advertiser')->getId(), $this->get('role_ids', [])) &&
+                0 !== $this->countChildrenEditableUser(request()->id)) {
+                $validator->errors()->add('error', trans('validation.user_children_excess'));
+            }
+        });
+    }
+
+    /**
+     * @param string $userId
+     *
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function countChildrenEditableUser(string $userId): int
+    {
+        return User::query()->where('id', $userId)->first()->children->count();
     }
 } 

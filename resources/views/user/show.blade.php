@@ -87,7 +87,7 @@
 
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
-                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
+                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded" id="form_user_update">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
 
@@ -141,6 +141,19 @@
                                     </div>
                                 </div>
                                 @endcan
+
+                                <div>
+                                @if(auth()->user()->isAgent())
+                                    @if($editableUserModel->isAdvertiser())
+                                        <input class="btn-nau pull-left" name="button_to_chief" value="evolve to chief" type="button" onclick="buttonToChief()">
+                                        <input hidden type="checkbox" id="role_chief_advertiser" name="role_ids[]" value="{{\App\Models\Role::findByName('chief_advertiser')->getId()}}">
+                                    @elseif($editableUserModel->isChiefAdvertiser())
+                                        <input class="btn-nau pull-left" name="button_to_advert" value="degrade to advert" type="button" onclick="buttonToAdvert({{count($children)}})">
+                                        <input hidden type="checkbox" id="role_user" name="role_ids[]" value="{{\App\Models\Role::findByName('user')->getId()}}">
+                                        <input hidden type="checkbox" id="role_advertiser" name="role_ids[]" value="{{\App\Models\Role::findByName('advertiser')->getId()}}">
+                                    @endif
+                                @endif
+                                </div>
 
                                 @if(false)
                                     <div class="row">
@@ -199,6 +212,25 @@
             </div>
         </div>
     </div>
+
+    <script type="application/javascript">
+        function buttonToChief() {
+            document.getElementById('role_chief_advertiser').checked = true;
+            document.getElementById('form_user_update').submit();
+            return false;
+        }
+
+        function buttonToAdvert(countOfChildren) {
+            if(0 === countOfChildren){
+                document.getElementById('role_user').checked = true;
+                document.getElementById('role_advertiser').checked = true;
+                document.getElementById('form_user_update').submit();
+                return false;
+            } else {
+                alert('You can not convert the Chief Advertiser into Advertiser. You must detach Advertisers from this Chief firstly');
+            }
+        }
+    </script>
 
     @can('user.children.list', [$editableUserModel])
         @include('role-partials.children-modal')

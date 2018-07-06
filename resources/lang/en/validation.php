@@ -130,4 +130,5 @@ return [
     'operator_requst_update'  => 'Wrong request update operator status',
     'unique_user_testimonial' => 'You have already left a review for this place.',
     'unique_user_complaint'   => 'You have already left a complaint for this place.',
+    'user_children_excess'    => 'You must detach Advertisers from this Chief firstly',
 ];
