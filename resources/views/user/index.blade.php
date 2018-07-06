@@ -242,9 +242,6 @@
                     if (201 === xhr.status){
                         let newStatusApproved = $user_status.val() === '1';
                         $box.removeClass('status-wait').addClass('status-' + (newStatusApproved ? '' : 'dis') + 'approved');
-                        if (!newStatusApproved) {
-                            $box.find('.b-disapproved').prop('disabled', true);
-                        }
                         $user_status.val(newStatusApproved ? '0' : '1');
                     } else {
                         $err.text('err-st: ' + xhr.status);
