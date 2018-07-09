@@ -10,7 +10,7 @@
             <h1>Operator</h1>
             <table>
                 @foreach(get_defined_vars()['__data'] as $field => $value)
-                    @if (!in_array($field, ['app', 'errors', '__env', 'authUser']))
+                    @if (!in_array($field, ['app', 'errors', '__env', 'authUser', 'variablesForFront', 'place']))
                         <tr>
                             <th>{{ $field }}:</th>
                             <td>
