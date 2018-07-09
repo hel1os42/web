@@ -105,7 +105,7 @@ class User implements \JsonSerializable
             $defaultRole = Role::ROLE_ADMIN;
         } elseif ($user->isAgent()) {
             $defaultRole = Role::ROLE_AGENT;
-        } elseif ($user->isAdvertiser() && null !== $user->getEmail()) { //add $user->isApproved() for advert
+        } elseif ($user->isAdvertiser() && null !== $user->getEmail() && null === $user->getPhone()) { //add $user->isApproved() for advert
             $defaultRole = Role::ROLE_ADVERTISER;
         } elseif ($user->isUser() && null !== $user->getPhone()) {
             $defaultRole = Role::ROLE_USER;

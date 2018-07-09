@@ -114,7 +114,6 @@ class AuthServiceProvider extends ServiceProvider
         'impersonate'             => 'UserPolicy@impersonate',
 
         'user.update'             => 'UserUpdatePolicy@update',
-        'user.update.children'    => 'UserUpdatePolicy@updateChildren',
         'user.update.parents'     => 'UserUpdatePolicy@updateParents',
         'user.update.roles'       => 'UserUpdatePolicy@updateRoles',
         'user.update.invite'      => 'UserUpdatePolicy@updateInvite',
@@ -122,6 +121,9 @@ class AuthServiceProvider extends ServiceProvider
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',
         'users.favorites.destroy' => 'User\FavoritePolicy@destroy',
+
+        'user.children.list'   => 'User\ChildPolicy@index',
+        'user.children.update' => 'User\ChildPolicy@update',
     ];
 
     /**
