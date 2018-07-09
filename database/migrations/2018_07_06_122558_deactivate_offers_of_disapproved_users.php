@@ -48,7 +48,8 @@ class DeactivateOffersOfDisapprovedUsers extends Migration
             ->join('roles', 'roles.id', 'users_roles.role_id')
             ->where('roles.name', Role::ROLE_ADVERTISER)
             ->where('approved', '1')
-            ->pluck('users.id');
+            ->get()
+            ->pluck('user_id');
     }
 
     /**
@@ -59,6 +60,7 @@ class DeactivateOffersOfDisapprovedUsers extends Migration
     {
         return DB::connection('pgsql_nau')->table('account')
             ->whereIn('owner_id', $usersIds)
+            ->get()
             ->pluck('id');
     }
 
@@ -71,6 +73,7 @@ class DeactivateOffersOfDisapprovedUsers extends Migration
         return DB::connection('pgsql_nau')->table('offer')
             ->whereIn('acc_id', $accountsIds)
             ->where('status', 'active')
+            ->get()
             ->pluck('id');
     }
 }
