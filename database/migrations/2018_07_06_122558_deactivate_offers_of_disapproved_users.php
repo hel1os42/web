@@ -27,7 +27,7 @@ class DeactivateOffersOfDisapprovedUsers extends Migration
                 $offer = Offer::query()->where('id', $offerId)->first();
                 $offer->setStatus(Offer::STATUS_DEACTIVE)->save();
             }
-        } catch (\App\Exceptions\Exception $exception) {
+        } catch (\Exception $exception) {
 
         }
     }
