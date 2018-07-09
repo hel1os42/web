@@ -124,8 +124,7 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
         }
 
         $model->leftJoin('users_parents', 'users.id', '=', 'users_parents.user_id')
-            ->where('users_parents.user_id', null)
-            ->orWhere('users_parents.parent_id', $this->availableForUserId);
+            ->where('users_parents.user_id', null);
 
         $this->model = $model;
     }
@@ -164,9 +163,6 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
             ->whereHas('roles', function(Builder $query) use ($roleName) {
                 $query->where('roles.name', $roleName);
             })
-            ->pluck('id')
-            ->reject(function($value) {
-                return $value == $this->availableForUserId;
-            });
+            ->pluck('id');
     }
 }

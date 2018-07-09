@@ -54,11 +54,6 @@ class UserUpdateRequest extends FormRequest
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'child_ids'            => 'array',
-            'child_ids.*'          => sprintf(
-                'nullable|string|regex:%s|exists:users,id',
-                \App\Helpers\Constants::UUID_REGEX
-            ),
             'approve'               => 'boolean',
             'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
             'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',

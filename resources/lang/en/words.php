@@ -23,4 +23,6 @@ return [
 
     'yes' => 'Yes',
     'no'  => 'No',
+
+    'total'                 => 'Total:',
 ];
