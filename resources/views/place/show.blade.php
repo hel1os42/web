@@ -70,11 +70,11 @@
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place logo:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}?size=desktop" alt="Place logo" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'picture']) }}?size=desktop&v={{ $updated_at }}" alt="Place logo" style="max-width: 100%;"></p></div>
     </div>
     <div class="row">
         <div class="col-sm-3"><p><strong>Place cover:</strong></p></div>
-        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}?size=desktop" alt="Place cover" style="max-width: 100%;"></p></div>
+        <div class="col-sm-9"><p><img src="{{ route('places.picture.show', [$id, 'cover']) }}?size=desktop&v={{ $updated_at }}" alt="Place cover" style="max-width: 100%;"></p></div>
     </div>
 </div>
 

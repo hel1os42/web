@@ -5,6 +5,7 @@
 @section('content')
 
 <div class="container">
+
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 
@@ -111,7 +112,7 @@
                 imageCropperRemove(this);
                 imageCropperInit(this);
             }
-        }).attr('src', "{{ $picture_url }}");
+        }).attr('src', "{{ $picture_url }}?v={{ $updated_at }}");
 
         /* map */
         mapInit({

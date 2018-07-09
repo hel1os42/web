@@ -6,6 +6,8 @@
 
     <div class="container">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
+        @include('partials.user-sorting')
+
         <table class="table-striped-nau table-users">
             <thead>
                 <tr>
@@ -13,7 +15,7 @@
                     <th>&nbsp;</th>
                     <th>Place</th>
                     <th>&nbsp;</th>
-                    <th class="text-center">Balance</th>
+                    <th class="text-center sorting balance">Balance</th>
                     <th class="text-center">Approved</th>
                     <th class="text-center">Actions</th>
                 </tr>
@@ -34,8 +36,8 @@
 
                 @if(isset($user['place']['id']))
                     <td class="user-place-info">
-                        <span class="user-place-img-wrap"><img alt="" width="32" height="32" data-src="{{ $user['place']['picture_url'] }}?size=mobile" src=""></span>
-                        <span class="user-place-img-wrap"><img alt="" width="96" height="32" data-src="{{ $user['place']['cover_url'] }}?size=mobile" src=""></span><br>
+                        <span class="user-place-img-wrap"><img alt="" width="32" height="32" data-src="{{ $user['place']['picture_url'] }}?size=mobile&v={{ $user['place']['updated_at'] }}" src=""></span>
+                        <span class="user-place-img-wrap"><img alt="" width="96" height="32" data-src="{{ $user['place']['cover_url'] }}?size=mobile&v={{ $user['place']['updated_at'] }}" src=""></span><br>
                         <a href="{{ route('places.show', $user['place']['id']) }}">{{ $user['place']['name'] }}</a>
                     </td>
                     <td>
