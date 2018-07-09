@@ -6,7 +6,6 @@
 
     <div class="container">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
-        @include('partials.user-sorting')
 
         <table class="table-striped-nau table-users">
             <thead>
@@ -15,7 +14,7 @@
                     <th>&nbsp;</th>
                     <th>Place</th>
                     <th>&nbsp;</th>
-                    <th class="text-center sorting balance">Balance</th>
+                    <th class="text-center">Balance</th>
                     <th class="text-center">Approved</th>
                     <th class="text-center">Actions</th>
                 </tr>
