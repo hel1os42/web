@@ -15,16 +15,20 @@ class DeactivateOffersOfDisapprovedUsers extends Migration
      */
     public function up()
     {
-        $usersIds    = $this->getUsersIds();
-        $accountsIds = $this->getAccountsIds($usersIds);
-        $offersIds   = $this->getActiveOffersIds($accountsIds);
+        try {
+            $usersIds = $this->getUsersIds();
+            $accountsIds = $this->getAccountsIds($usersIds);
+            $offersIds = $this->getActiveOffersIds($accountsIds);
 
-        foreach ($offersIds as $offerId) {
-            /**
-             * @var Offer $offer
-             */
-            $offer = Offer::query()->where('id', $offerId)->first();
-            $offer->setStatus(Offer::STATUS_DEACTIVE)->save();
+            foreach ($offersIds as $offerId) {
+                /**
+                 * @var Offer $offer
+                 */
+                $offer = Offer::query()->where('id', $offerId)->first();
+                $offer->setStatus(Offer::STATUS_DEACTIVE)->save();
+            }
+        } catch (\App\Exceptions\Exception $exception) {
+
         }
     }
 
