@@ -35,11 +35,13 @@ class PictureController extends AbstractPictureController
 
             $offer = $offerRepository->findWithoutGlobalScopes($offerId);
             $this->authorize('offers.picture.store', $offer);
+            $offer->touch();
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $modelNotFoundException) {
 
             $offerData = OfferData::findOrFail($offerId);
             $this->authorize('offers.picture.store.byOfferData', $offerData->owner);
+            $offerData->touch();
 
         }
 
