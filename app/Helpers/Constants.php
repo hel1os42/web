@@ -30,6 +30,7 @@ interface Constants
         self::CURRENCY_COLOMBIA,
         self::CURRENCY_EUROPE,
         self::CURRENCY_RUSSIA,
+        self::CURRENCY_BELARUS,
     ];
 
     const CURRENCY_UKRAINE     = 'UAH';
@@ -37,4 +38,5 @@ interface Constants
     const CURRENCY_COLOMBIA    = 'COP';
     const CURRENCY_EUROPE      = 'EUR';
     const CURRENCY_RUSSIA      = 'RUR';
+    const CURRENCY_BELARUS     = 'BYN';
 }
