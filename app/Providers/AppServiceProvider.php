@@ -76,7 +76,7 @@ class AppServiceProvider extends ServiceProvider
                     $placesRepository = app(PlaceRepository::class);
                     $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
 
-                    $allowedKeys               = ['id', 'name', 'email', 'roles', 'phone', 'picture_url'];
+                    $allowedKeys               = ['id', 'name', 'email', 'roles', 'phone', 'picture_url', 'approved'];
                     $authUserForFront          = array_intersect_key($authUser->toArray(), array_flip($allowedKeys));
                     $authUserForFront['roles'] = array_map(function($role) {
                         return array_get($role, 'name', '');
