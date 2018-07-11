@@ -9,8 +9,8 @@
         <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
             <h1>Operator</h1>
             <table>
-                @foreach(get_defined_vars()['__data'] as $field => $value)
-                    @if (!in_array($field, ['app', 'errors', '__env', 'authUser', 'variablesForFront', 'place']))
+                @foreach($operator as $field => $value)
+                    @if (!in_array($field, ['place']))
                         <tr>
                             <th>{{ $field }}:</th>
                             <td>
@@ -25,12 +25,12 @@
                 @endforeach
             </table>
             <div>
-                <form method="POST" action="{{ route('advert.operators.destroy', $id) }}" class="form-operator-delete">
+                <form method="POST" action="{{ route('advert.operators.destroy', $operator['id']) }}" class="form-operator-delete">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-default">Delete operator</button>
                 </form>
-                <a href="{{ route('advert.operators.edit', $id) }}" class="btn btn-default">Edit operator</a>
+                <a href="{{ route('advert.operators.edit', $operator['id']) }}" class="btn btn-default">Edit operator</a>
             </div>
         </div>
     </div>
