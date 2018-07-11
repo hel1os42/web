@@ -41,7 +41,6 @@ class PictureController extends AbstractPictureController
 
             $offerData = OfferData::findOrFail($offerId);
             $this->authorize('offers.picture.store.byOfferData', $offerData->owner);
-            $offerData->touch();
 
         }
 
