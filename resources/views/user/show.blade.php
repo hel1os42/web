@@ -213,25 +213,6 @@
         </div>
     </div>
 
-    <script type="application/javascript">
-        function buttonToChief() {
-            document.getElementById('role_chief_advertiser').checked = true;
-            document.getElementById('form_user_update').submit();
-            return false;
-        }
-
-        function buttonToAdvert(countOfChildren) {
-            if(0 === countOfChildren){
-                document.getElementById('role_user').checked = true;
-                document.getElementById('role_advertiser').checked = true;
-                document.getElementById('form_user_update').submit();
-                return false;
-            } else {
-                alert('You can not convert the Chief Advertiser into Advertiser. You must detach Advertisers from this Chief firstly');
-            }
-        }
-    </script>
-
     @can('user.children.list', [$editableUserModel])
         @include('role-partials.children-modal')
     @endcan
@@ -243,6 +224,28 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/partials/form.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/imageuploader.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('js/cropper/cropper.css') }}">
+@endpush
+
+@push('scripts')
+    <script type="application/javascript">
+        function buttonToChief() {
+            document.getElementById('role_chief_advertiser').checked = true;
+            document.getElementById('form_user_update').submit();
+            return false;
+        }
+
+        function buttonToAdvert(countOfChildren) {
+            countOfChildren = 0;
+            if(0 === countOfChildren){
+                document.getElementById('role_user').checked = true;
+                document.getElementById('role_advertiser').checked = true;
+                document.getElementById('form_user_update').submit();
+                return false;
+            } else {
+                alert('You can not convert the Chief Advertiser into Advertiser. You must detach Advertisers from this Chief firstly');
+            }
+        }
+    </script>
 @endpush
 
 @push('scripts')

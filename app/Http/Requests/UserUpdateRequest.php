@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
+use App\Repositories\UserRepository;
 
 /**
  * Class ProfileUpdateRequest
@@ -77,9 +77,11 @@ class UserUpdateRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function (Validator $validator) {
-            if(in_array(\App\Models\Role::findByName('advertiser')->getId(), $this->get('role_ids', [])) &&
-                0 !== $this->countChildrenEditableUser(request()->id)) {
-                $validator->errors()->add('error', trans('validation.user_children_excess'));
+            if(in_array(\App\Models\Role::findByName('advertiser')->getId(), $this->get('role_ids', []))) {
+                0 === $this->countChildrenEditableUser(request()->id) ?:
+                    $validator->errors()->add('error', trans('validation.user_children_excess'));
+                0 === $this->countOffersEditableUser(request()->id) ?:
+                    $validator->errors()->add('error', trans('validation.user_offer_excess'));
             }
         });
     }
@@ -93,6 +95,18 @@ class UserUpdateRequest extends FormRequest
      */
     private function countChildrenEditableUser(string $userId): int
     {
-        return User::query()->where('id', $userId)->first()->children->count();
+        return app(UserRepository::class)->getChildrenByUsers([$userId])->pluck('id')->count();
+    }
+
+    /**
+     * @param string $userId
+     *
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function countOffersEditableUser(string $userId): int
+    {
+        return app(UserRepository::class)->find($userId)->offers()->count();
     }
 } 
