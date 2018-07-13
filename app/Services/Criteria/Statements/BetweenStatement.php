@@ -18,6 +18,12 @@ class BetweenStatement extends AbstractStatement
      */
     public function apply(Builder $query) : Builder
     {
+        if ($this->isValid() === false) {
+            return $query;
+        };
+
+        $this->convertValueToArray();
+
         /** @var Builder $query */
         if (null === $this->relation) {
             $modelTableName = $query->getModel()->getTable();
@@ -25,9 +31,29 @@ class BetweenStatement extends AbstractStatement
             return $query->whereBetween($modelTableName . '.' . $this->field, $this->value, $this->searchJoin);
         }
 
-        return $query->whereHas($this->relation, function ($query) {
+
+        $callback = function ($query) {
             /** @var Builder $query */
-            $query->whereBetween($this->field, $this->value, $this->searchJoin);
-        });
+            $query->whereBetween($this->field, $this->value);
+        };
+
+        return $this->whereHasForDiffConnections($query, $callback);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return parent::isValid()
+            && preg_match('/^(\d+)\,(\d+)$/', $this->value) == true;
+    }
+
+    /**
+     * return void
+     */
+    private function convertValueToArray()
+    {
+        $this->value = explode(',', $this->value);
     }
 }

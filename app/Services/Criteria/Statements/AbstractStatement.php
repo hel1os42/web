@@ -130,4 +130,25 @@ abstract class AbstractStatement implements SearchStatement
     {
         return null !== $this->value ? true : false;
     }
+
+    /**
+     * @param Builder   $query
+     * @param \Closure  $callback
+     * @return Builder
+     */
+    public function whereHasForDiffConnections(Builder $query, \Closure $callback): Builder
+    {
+        /** @var Builder $query */
+        $relation = $query->getRelation($this->relation)->getModel();
+
+        if ($relation->getConnection()->getName() !== $query->getConnection()->getName()) {
+            $ids = $relation->where($callback)->pluck('id');
+
+            return $query->whereIn('id', $ids, $this->searchJoin);
+        }
+
+        $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
+
+        return $query->$method($this->relation, $callback);
+    }
 }

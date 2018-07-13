@@ -71,9 +71,11 @@ class RequestCriteriaEloquent implements CriteriaInterface
         $statementManager = app(StatementManager::class);
         $statementManager->init($this->criteriaData);
 
-        $this->model = $this->model->where(function ($query) use ($statementManager) {
-            $statementManager->apply($query);
-        });
+        if ($statementManager->count()) {
+            $this->model = $this->model->where(function ($query) use ($statementManager) {
+                $statementManager->apply($query);
+            });
+        }
 
         return $this;
     }
