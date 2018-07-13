@@ -80,6 +80,9 @@ class UserUpdateRequest extends FormRequest
             if(in_array(\App\Models\Role::findByName('advertiser')->getId(), $this->get('role_ids', []))) {
                 0 === $this->countChildrenEditableUser(request()->id) ?:
                     $validator->errors()->add('error', trans('validation.user_children_excess'));
+            }
+
+            if(in_array(\App\Models\Role::findByName('chief_advertiser')->getId(), $this->get('role_ids', []))) {
                 0 === $this->countOffersEditableUser(request()->id) ?:
                     $validator->errors()->add('error', trans('validation.user_offer_excess'));
             }
@@ -95,7 +98,7 @@ class UserUpdateRequest extends FormRequest
      */
     private function countChildrenEditableUser(string $userId): int
     {
-        return app(UserRepository::class)->getChildrenByUsers([$userId])->pluck('id')->count();
+        return app(UserRepository::class)->find($userId)->children()->pluck('id')->count();
     }
 
     /**
