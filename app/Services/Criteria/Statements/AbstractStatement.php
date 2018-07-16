@@ -3,6 +3,7 @@
 namespace App\Services\Criteria\Statements;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AbstractStatement
@@ -132,29 +133,34 @@ abstract class AbstractStatement implements SearchStatement
     }
 
     /**
-     * @param Builder  $query
-     * @param \Closure $callback
+     * The method allows using the Eloquent whereHas for different connections
+     * @param Builder   $query
+     * @param \Closure  $callback
      * @return Builder
      */
-    public function whereHasForDiffConnections(Builder $query, \Closure $callback): Builder
+    public function whereHas(Builder $query, \Closure $callback): Builder
     {
         /** @var Builder $query */
         $relation = $query->getRelation($this->relation)->getModel();
 
-        $ids = $relation->where($callback)->pluck('id');
+        if ($this->isDiffConnections($query, $relation)) {
+            $ids = $relation->where($callback)->pluck('id');
 
-        return $query->whereIn('id', $ids, $this->searchJoin);
+            return $query->whereIn('id', $ids, $this->searchJoin);
+        }
+
+        $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
+
+        return $query->$method($this->relation, $callback);
     }
 
     /**
      * @param Builder $query
+     * @param Model   $relation
      * @return bool
      */
-    public function isDiffConnections(Builder $query): bool
+    public function isDiffConnections(Builder $query, Model $relation): bool
     {
-        /** @var Builder $query */
-        $relation = $query->getRelation($this->relation)->getModel();
-
         return $relation->getConnection()->getName() !== $query->getConnection()->getName();
     }
 }

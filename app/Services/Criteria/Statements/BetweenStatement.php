@@ -36,13 +36,7 @@ class BetweenStatement extends AbstractStatement
             $query->whereBetween($this->field, $this->value);
         };
 
-        if ($this->isDiffConnections($query)) {
-            return $this->whereHasForDiffConnections($query, $callback);
-        }
-
-        $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
-
-        return $query->$method($this->relation, $callback);
+        return $this->whereHas($query, $callback);
     }
 
     /**
