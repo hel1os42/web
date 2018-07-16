@@ -132,8 +132,8 @@ abstract class AbstractStatement implements SearchStatement
     }
 
     /**
-     * @param Builder   $query
-     * @param \Closure  $callback
+     * @param Builder  $query
+     * @param \Closure $callback
      * @return Builder
      */
     public function whereHasForDiffConnections(Builder $query, \Closure $callback): Builder
@@ -141,14 +141,20 @@ abstract class AbstractStatement implements SearchStatement
         /** @var Builder $query */
         $relation = $query->getRelation($this->relation)->getModel();
 
-        if ($relation->getConnection()->getName() !== $query->getConnection()->getName()) {
-            $ids = $relation->where($callback)->pluck('id');
+        $ids = $relation->where($callback)->pluck('id');
 
-            return $query->whereIn('id', $ids, $this->searchJoin);
-        }
+        return $query->whereIn('id', $ids, $this->searchJoin);
+    }
 
-        $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
+    /**
+     * @param Builder $query
+     * @return bool
+     */
+    public function isDiffConnections(Builder $query): bool
+    {
+        /** @var Builder $query */
+        $relation = $query->getRelation($this->relation)->getModel();
 
-        return $query->$method($this->relation, $callback);
+        return $relation->getConnection()->getName() !== $query->getConnection()->getName();
     }
 }

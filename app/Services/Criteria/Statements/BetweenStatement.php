@@ -31,13 +31,18 @@ class BetweenStatement extends AbstractStatement
             return $query->whereBetween($modelTableName . '.' . $this->field, $this->value, $this->searchJoin);
         }
 
-
         $callback = function ($query) {
             /** @var Builder $query */
             $query->whereBetween($this->field, $this->value);
         };
 
-        return $this->whereHasForDiffConnections($query, $callback);
+        if ($this->isDiffConnections($query)) {
+            return $this->whereHasForDiffConnections($query, $callback);
+        }
+
+        $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
+
+        return $query->$method($this->relation, $callback);
     }
 
     /**
