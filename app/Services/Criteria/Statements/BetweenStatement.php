@@ -18,10 +18,6 @@ class BetweenStatement extends AbstractStatement
      */
     public function apply(Builder $query) : Builder
     {
-        if ($this->isValid() === false) {
-            return $query;
-        };
-
         $this->convertValueToArray();
 
         /** @var Builder $query */
