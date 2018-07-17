@@ -43,6 +43,8 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         'start_date'  => '<=',
         'finish_date' => '>=',
         'updated_at',
+        'offerData.referral_points_price'   => 'between',
+        'offerData.redemption_points_price' => 'between',
     ];
 
     public function __construct(

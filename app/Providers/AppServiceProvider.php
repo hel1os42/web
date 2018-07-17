@@ -73,7 +73,8 @@ class AppServiceProvider extends ServiceProvider
                     $authUser->load('accounts');
                     $view->with('authUser', $authUser->toArray());
 
-                    $placesRepository = app(PlaceRepository::class);
+                    /** @var PlaceRepository $placesRepository */
+                    $placesRepository = app(PlaceRepository::class)->skipCriteria();
                     $view->with('isPlaceCreated', $placesRepository->existsByUser($authUser));
 
                     $allowedKeys               = ['id', 'name', 'email', 'roles', 'phone', 'picture_url', 'approved'];

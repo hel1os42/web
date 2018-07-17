@@ -114,6 +114,14 @@ class StatementManagerImpl implements StatementManager
     }
 
     /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->items);
+    }
+
+    /**
      * Select correct SearchStatement
      *
      * @param string $operator
