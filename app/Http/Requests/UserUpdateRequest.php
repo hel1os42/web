@@ -110,6 +110,6 @@ class UserUpdateRequest extends FormRequest
      */
     private function countOffersEditableUser(string $userId): int
     {
-        return app(UserRepository::class)->find($userId)->offers()->count();
+        return app(UserRepository::class)->find($userId)->offers_count;
     }
 } 
