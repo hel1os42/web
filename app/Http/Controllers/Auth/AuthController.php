@@ -25,10 +25,12 @@ class AuthController extends Controller
      * @var int
      */
     public $maxAttempts = 1;
+
     /**
      * @var int
      */
-    public $decayMinutes = 1;
+    public $decayMinutes;
+
     /**
      * @var UserRepository
      */
@@ -51,6 +53,8 @@ class AuthController extends Controller
     {
         $this->userRepository = $userRepository;
         $this->jwtAuth        = $jwtAuth;
+
+        $this->decayMinutes = config('auth.throttle.ttl', 1);
 
         parent::__construct($auth);
     }
