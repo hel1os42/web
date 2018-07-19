@@ -19,10 +19,6 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
 {
     protected $availableForUserId;
 
-    protected $whereFieldsAccessible = [
-        'roles.name' => 'in',
-    ];
-
     /**
      * @var \Illuminate\Http\Request
      */
@@ -42,45 +38,11 @@ class UserRequestCriteriaEloquent extends RequestCriteriaEloquent implements Use
      */
     public function apply($model, RepositoryInterface $repository)
     {
-        $this->model      = $model;
-        $fieldsSearchable = $repository->getFieldsSearchable();
-
-        $this->criteriaData = app(CriteriaData::class)
-            ->setFieldsSearchable($fieldsSearchable)
-            ->setWhereFiltersFilterable($this->whereFieldsAccessible)
-            ->init();
-
+        parent::apply($model, $repository);
         $this->availableForUserId = $this->request->get('availableForUser');
-
-        $this->applyWhereFilter()
-             ->applySearch()
-             ->applyOrderBy()
-             ->applyFilter()
-             ->applyFilterForUser()
-             ->applyWith();
+        $this->applyFilterForUser();
 
         return $this->model;
-    }
-
-    /**
-     * @return CriteriaInterface
-     */
-    protected function applyWhereFilter(): CriteriaInterface
-    {
-        if (null === $this->criteriaData->getWhereFilters()
-            || !is_array($this->criteriaData->getWhereFiltersFilterable())
-            || 0 == count($this->criteriaData->getWhereFiltersFilterable())) {
-            return $this;
-        }
-
-        $statementManager = app(StatementManager::class);
-        $statementManager->initWhereFilters($this->criteriaData);
-
-        $this->model = $this->model->where(function ($query) use ($statementManager) {
-            $statementManager->apply($query);
-        });
-
-        return $this;
     }
 
     /**
