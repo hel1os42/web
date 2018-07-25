@@ -64,7 +64,7 @@ class EventOccurred extends AbstractJob
      */
     public function getResponseObject(): BaseResponse
     {
-        return new EventResponse();
+        return new EventResponse($this->event);
     }
 
     /**
