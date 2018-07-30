@@ -10,6 +10,7 @@ use App\Models\NauModels\User as CoreUser;
 use App\Models\User\EnrollmentTrait;
 use App\Models\User\RelationsTrait;
 use App\Models\User\RoleTrait;
+use App\Repositories\OfferRepository;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Collection;
@@ -542,5 +543,17 @@ class User extends Authenticatable implements PhoneAuthenticable
     public static function getUserAvatarPath(string $uuid)
     {
         return storage_path(sprintf('app/%1$s/%2$s.%3$s', self::PROFILE_PICTURES_PATH, $uuid, 'jpg'));
+    }
+
+    /**
+     * @return int
+     */
+    public function countHasOffers(): int
+    {
+        $account     = $this->getAccountForNau();
+        $offersCount = app(OfferRepository::class)
+            ->presenterWithoutGlobalScopes()->where('acc_id', $account->id)->count();
+
+        return $offersCount;
     }
 }
