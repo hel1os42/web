@@ -283,6 +283,16 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($results);
     }
 
+    /**
+     * @return Builder
+     */
+    public function presenterWithoutGlobalScopes(): Builder
+    {
+        $result = $this->builderWithoutGlobalScopes();
+
+        return $this->parserResult($result);
+    }
+
     protected function builderWithoutGlobalScopes(): Builder
     {
         return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);
@@ -299,12 +309,5 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         $this->builderWithoutGlobalScopes();
 
         return $this;
-    }
-
-    public function presenterWithoutGlobalScopes()
-    {
-        $result = $this->builderWithoutGlobalScopes();
-
-        return $this->parserResult($result);
     }
 }
