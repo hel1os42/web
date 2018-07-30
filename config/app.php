@@ -194,6 +194,7 @@ return [
         App\Providers\CriteriaServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
+        OmniSynapse\WebHookService\WebHookServiceProvider::class,
     ],
 
     /*

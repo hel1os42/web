@@ -50,7 +50,8 @@
     ],
     "psr-4": {
       "App\\": "app/",
-      "OmniSynapse\\CoreService\\": "packages/omnisynapse/CoreService/src/"
+      "OmniSynapse\\CoreService\\": "packages/omnisynapse/CoreService/src/",
+      "OmniSynapse\\WebHookService\\": "packages/omnisynapse/WebHookService/src/"
     }
   },
   "autoload-dev": {
