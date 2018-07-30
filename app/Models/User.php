@@ -554,7 +554,7 @@ class User extends Authenticatable implements PhoneAuthenticable
     {
         $account     = $this->getAccountForNau();
         $offersCount = app(OfferRepository::class)
-            ->presenterWithoutGlobalScopes()->where('acc_id', $account->id)->count();
+            ->scopeAccount($account)->withoutGlobalScopes()->count();
 
         return $offersCount;
     }
