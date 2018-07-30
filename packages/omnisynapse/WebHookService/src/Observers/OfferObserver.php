@@ -52,9 +52,6 @@ class OfferObserver
 
         $affectedWebHooks = $user->getWebHooksByEventName(WebHookEvent::EVENT_NAME_OFFER_UPDATED);
 
-        logger()->debug('LOG count ' .  $affectedWebHooks->count());
-        logger()->debug('LOG', $affectedWebHooks->toArray());
-
         foreach ($affectedWebHooks as $webHook) {
             $event = new OfferUpdatedEvent($offer);
 

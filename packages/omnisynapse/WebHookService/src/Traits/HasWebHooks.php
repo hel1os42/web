@@ -31,9 +31,6 @@ trait HasWebHooks
     public function getWebHooksByEventName(string $eventName): Collection
     {
         return $this->webhooks->filter(function (WebHook $webHook) use ($eventName) {
-            logger($eventName);
-            logger('hook', $webHook->toArray());
-            logger('has'. (int)$webHook->hasEvent($eventName));
             return $webHook->hasEvent($eventName);
         });
     }
