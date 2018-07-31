@@ -29,6 +29,8 @@ class UserCriteria implements CriteriaInterface
      * @param                     $model
      * @param RepositoryInterface $repository
      *
+     * @SuppressWarnings("unused")
+     *
      * @return mixed
      */
     public function apply($model, RepositoryInterface $repository)

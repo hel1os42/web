@@ -11,10 +11,9 @@ use OmniSynapse\WebHookService\Models\WebHook;
 use OmniSynapse\WebHookService\Observers\ActivationCodeObserver;
 use OmniSynapse\WebHookService\Observers\OfferObserver;
 use OmniSynapse\WebHookService\Policies\WebHookPolicy;
-use OmniSynapse\WebHookService\Repositories\Contracts\WebHookEventRepository;
-use OmniSynapse\WebHookService\Repositories\Contracts\WebHookRepository;
-use OmniSynapse\WebHookService\Repositories\WebHookEventRepositoryEloquent;
-use OmniSynapse\WebHookService\Repositories\WebHookRepositoryEloquent;
+use OmniSynapse\WebHookService\{
+    Repositories
+};
 
 /**
  * Class WebHookServiceProvider
@@ -47,7 +46,15 @@ class WebHookServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(WebHookServiceContract::class, WebHookService::class);
-        $this->app->bind(WebHookRepository::class, WebHookRepositoryEloquent::class);
-        $this->app->bind(WebHookEventRepository::class, WebHookEventRepositoryEloquent::class);
+
+        $this->app->bind(
+            Repositories\Contracts\WebHookRepository::class,
+            Repositories\WebHookRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            Repositories\Contracts\WebHookEventRepository::class,
+            Repositories\WebHookEventRepositoryEloquent::class
+        );
     }
 }

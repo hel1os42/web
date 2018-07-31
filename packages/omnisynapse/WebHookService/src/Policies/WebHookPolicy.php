@@ -13,6 +13,9 @@ class WebHookPolicy
     /**
      * @param User $user
      * @param      $ability
+     *
+     * @SuppressWarnings("unused")
+     *
      * @return bool
      */
     public function before(User $user, $ability)
@@ -38,6 +41,9 @@ class WebHookPolicy
      * Determine whether the user can create webHooks.
      *
      * @param  \App\Models\User $user
+     *
+     * @SuppressWarnings("unused")
+     *
      * @return mixed
      */
     public function create(User $user)

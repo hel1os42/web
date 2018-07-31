@@ -3,7 +3,6 @@
 namespace OmniSynapse\WebHookService\Http\Controllers;
 
 use App\Http\Exceptions\UnauthorizedException;
-use App\Models\User;
 use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,14 +10,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use OmniSynapse\WebHookService\Criteria\WebHook\UserCriteria;
-use OmniSynapse\WebHookService\Http\Requests\WebHookRequest;
-use OmniSynapse\WebHookService\Models\WebHook;
-use Illuminate\Http\Request;
-use OmniSynapse\WebHookService\Presenters\WebHookPresenter;
 use OmniSynapse\WebHookService\Repositories\Contracts\WebHookEventRepository;
-use OmniSynapse\WebHookService\Repositories\Contracts\WebHookRepository;
-use OmniSynapse\WebHookService\Transformers\WebHookTransformer;
 use Prettus\Repository\Criteria\RequestCriteria;
 
 class WebHookEventController extends Controller

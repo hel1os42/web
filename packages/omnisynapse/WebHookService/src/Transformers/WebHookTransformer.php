@@ -2,12 +2,11 @@
 
 namespace OmniSynapse\WebHookService\Transformers;
 
-use App\Models\NauModels\Offer;
 use League\Fractal\TransformerAbstract;
 use OmniSynapse\WebHookService\Models\WebHook;
 
 /**
- * Class OfferTransformer
+ * Class WebHookTransformer
  * @package namespace App\Transformers;
  */
 class WebHookTransformer extends TransformerAbstract
@@ -15,7 +14,7 @@ class WebHookTransformer extends TransformerAbstract
 
     /**
      * Transform the Offer entity
-     * @param Offer $webHook
+     * @param WebHook $webHook
      *
      * @return array
      */

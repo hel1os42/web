@@ -13,16 +13,6 @@ use Psr\Log\LoggerInterface;
 class WebHookService implements WebHookServiceContract
 {
     /**
-     * @var WebHookEventRepository
-     */
-    private $webHookEventRepo;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var Client
      */
     private $client;
