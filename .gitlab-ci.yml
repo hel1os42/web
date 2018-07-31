@@ -70,7 +70,7 @@ PHPMD:
 #  script:
 #    - echo "Run the tests"
 #    - php vendor/bin/phpunit --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
-
+#
 #  artifacts:
 #    when: always
 #    paths:
