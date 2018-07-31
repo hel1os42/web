@@ -1,7 +1,6 @@
 <?php
 
-/** @var \Illuminate\Routing\Router $router */
-$router = app('router');
+$router = app()->make(\Illuminate\Contracts\Routing\Registrar::class);
 
 $router->group(['middleware' => 'auth:jwt'], function () use ($router) {
     $router->resource('/webhooks', \OmniSynapse\WebHookService\Http\Controllers\WebHookController::class, ['except' => [

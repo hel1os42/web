@@ -2,7 +2,6 @@
 
 namespace OmniSynapse\WebHookService\Http\Controllers;
 
-use App\Http\Exceptions\UnauthorizedException;
 use App\Traits\FractalToIlluminatePagination;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -40,15 +39,8 @@ class WebHookController extends Controller
 
     public function __construct(AuthManager $authManager, WebHookRepository $repository)
     {
-        $this->auth  = $authManager;
-        $this->guard = $this->auth->guard('jwt');
-
-        if (is_null($this->guard->user())) {
-            throw new UnauthorizedException();
-        }
-
-        $repository->pushCriteria(new UserCriteria($this->guard->user()));
-
+        $this->auth       = $authManager;
+        $this->guard      = $this->auth->guard('jwt');
         $this->repository = $repository;
     }
 
@@ -60,6 +52,7 @@ class WebHookController extends Controller
     public function index()
     {
         $data = $this->repository
+            ->pushCriteria(new UserCriteria($this->guard->user()))
             ->setPresenter(WebHookPresenter::class)
             ->paginate();
 
