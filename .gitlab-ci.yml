@@ -164,8 +164,8 @@ master deploy:
 
 pages:
   stage: deploy
-  dependencies:
-    - Integrational Tests
+#  dependencies:
+#    - Integrational Tests
   script:
     - mv public web_public
     - mv coverage public
