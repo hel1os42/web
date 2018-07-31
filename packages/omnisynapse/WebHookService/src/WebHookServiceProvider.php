@@ -11,13 +11,13 @@ use OmniSynapse\WebHookService\Models\WebHook;
 use OmniSynapse\WebHookService\Observers\ActivationCodeObserver;
 use OmniSynapse\WebHookService\Observers\OfferObserver;
 use OmniSynapse\WebHookService\Policies\WebHookPolicy;
-use OmniSynapse\WebHookService\{
-    Repositories
-};
+use OmniSynapse\WebHookService\Repositories;
 
 /**
  * Class WebHookServiceProvider
  * @package OmniSynapse\CoreService
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class WebHookServiceProvider extends ServiceProvider
 {
