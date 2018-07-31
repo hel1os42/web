@@ -1,12 +1,13 @@
 <?php
 
-use \Illuminate\Support\Facades\Route;
+/** @var \Illuminate\Routing\Router $router */
+$router = app('router');
 
-Route::group(['middleware' => 'auth:jwt'], function () {
-    Route::resource('/webhooks', \OmniSynapse\WebHookService\Http\Controllers\WebHookController::class, ['except' => [
+$router->group(['middleware' => 'auth:jwt'], function () use ($router) {
+    $router->resource('/webhooks', \OmniSynapse\WebHookService\Http\Controllers\WebHookController::class, ['except' => [
         'create', 'edit'
     ]]);
 
-    Route::get('/webhook_events',
+    $router->get('/webhook_events',
         \OmniSynapse\WebHookService\Http\Controllers\WebHookEventController::class . '@index');
 });
