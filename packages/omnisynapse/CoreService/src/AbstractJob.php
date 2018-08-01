@@ -146,7 +146,17 @@ abstract class AbstractJob implements ShouldQueue
     public function failed(\Exception $exception)
     {
         $failedResponse = $this->getFailedResponseObject($exception);
-        logger("Failed Job.", ['exception' => $exception]);
+
+        $logData = [
+            'exception'   => $exception,
+            'job_details' => $this->getDetails(),
+        ];
+
+        if ($exception instanceof RequestException) {
+            $logData['response'] = $exception->getRawResponse();
+        }
+
+        logger(sprintf('Failed Job %1$s.', class_basename($this)), $logData);
 
         event($failedResponse);
     }
@@ -247,5 +257,22 @@ abstract class AbstractJob implements ShouldQueue
      */
     protected function getConcreteModel($modelId)
     {
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDetails(): array
+    {
+        $requestObject = $this->getRequestObject();
+        $jsonData      = $requestObject instanceof \JsonSerializable
+            ? $requestObject->jsonSerialize()
+            : json_encode([]);
+
+        return [
+            'method' => $this->getHttpMethod(),
+            'path'   => $this->getHttpPath(),
+            'json'   => $jsonData,
+        ];
     }
 }
