@@ -43,14 +43,39 @@ class RequestCriteriaEloquent implements CriteriaInterface
 
         $this->criteriaData = app(CriteriaData::class)
             ->setFieldsSearchable($fieldsSearchable)
+            ->setWhereFiltersFilterable($fieldsSearchable)
             ->init();
 
-        $this->applySearch()
+        $this->applyWhereFilter()
+             ->applySearch()
              ->applyOrderBy()
              ->applyFilter()
              ->applyWith();
 
         return $this->model;
+    }
+
+    /**
+     * @return CriteriaInterface
+     */
+    protected function applyWhereFilter(): CriteriaInterface
+    {
+        if (null === $this->criteriaData->getWhereFilters()
+            || !is_array($this->criteriaData->getWhereFiltersFilterable())
+            || 0 == count($this->criteriaData->getWhereFiltersFilterable())) {
+            return $this;
+        }
+
+        $statementManager = app(StatementManager::class);
+        $statementManager->initWhereFilters($this->criteriaData);
+
+        if ($statementManager->count()) {
+            $this->model = $this->model->where(function ($query) use ($statementManager) {
+                $statementManager->apply($query);
+            });
+        }
+
+        return $this;
     }
 
     /**
