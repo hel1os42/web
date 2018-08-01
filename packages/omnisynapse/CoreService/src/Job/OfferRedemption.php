@@ -16,6 +16,8 @@ use OmniSynapse\CoreService\Response\OfferForRedemption as OfferForRedemptionRes
  */
 class OfferRedemption extends AbstractJob
 {
+    const GET_MODEL_ATTEMPTS = 5;
+
     /** @var null|OfferForRedemptionRequest */
     private $requestObject;
 

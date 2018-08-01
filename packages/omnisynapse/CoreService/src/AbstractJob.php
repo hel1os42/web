@@ -241,8 +241,7 @@ abstract class AbstractJob implements ShouldQueue
             $model = $this->getConcreteModel($modelId);
         } catch (ModelNotFoundException $exception) {
             if ($attempt < self::GET_MODEL_ATTEMPTS) {
-                logger()->info('attempt', [$attempt]);
-                usleep(200 * $attempt);
+                usleep(300 * $attempt);
                 return $this->getModel($modelId, ++$attempt);
             }
             throw $exception;
