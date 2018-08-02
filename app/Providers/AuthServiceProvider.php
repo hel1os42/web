@@ -184,7 +184,6 @@ class AuthServiceProvider extends ServiceProvider
             return new IdentityGuard($authManager->createUserProvider($config['provider']), app(IdentityRepository::class));
         });
 
-        /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $this->app->extend('tymon.jwt.blacklist', function ($blacklist, $app) {
             unset($blacklist);
 
