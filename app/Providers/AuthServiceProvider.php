@@ -108,17 +108,17 @@ class AuthServiceProvider extends ServiceProvider
         'transactions.create.no_fee' => 'TransactPolicy@createNoFee',
         'transaction.show'           => 'TransactPolicy@show',
 
-        'users.create'            => 'UserPolicy@create',
-        'users.list'              => 'UserPolicy@index',
-        'users.show'              => 'UserPolicy@show',
-        'users.referrals.list'    => 'UserPolicy@referrals',
-        'users.picture.store'     => 'UserPolicy@pictureStore',
-        'impersonate'             => 'UserPolicy@impersonate',
+        'users.create'         => 'UserPolicy@create',
+        'users.list'           => 'UserPolicy@index',
+        'users.show'           => 'UserPolicy@show',
+        'users.referrals.list' => 'UserPolicy@referrals',
+        'users.picture.store'  => 'UserPolicy@pictureStore',
+        'impersonate'          => 'UserPolicy@impersonate',
 
-        'user.update'             => 'UserUpdatePolicy@update',
-        'user.update.parents'     => 'UserUpdatePolicy@updateParents',
-        'user.update.roles'       => 'UserUpdatePolicy@updateRoles',
-        'user.update.invite'      => 'UserUpdatePolicy@updateInvite',
+        'user.update'         => 'UserUpdatePolicy@update',
+        'user.update.parents' => 'UserUpdatePolicy@updateParents',
+        'user.update.roles'   => 'UserUpdatePolicy@updateRoles',
+        'user.update.invite'  => 'UserUpdatePolicy@updateInvite',
 
         'users.favorites.list'    => 'User\FavoritePolicy@index',
         'users.favorites.create'  => 'User\FavoritePolicy@create',
@@ -138,7 +138,8 @@ class AuthServiceProvider extends ServiceProvider
         PlaceRepository $placeRepository,
         OperatorRepository $operatorRepository,
         Hasher $hasher
-    ) {
+    )
+    {
         $this->registerPolicies();
 
         foreach ($this->abilities as $ability => $callback) {
@@ -186,6 +187,8 @@ class AuthServiceProvider extends ServiceProvider
 
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $this->app->extend('tymon.jwt.blacklist', function ($blacklist, $app) {
+            unset($blacklist);
+
             $instance = new Blacklist($app['tymon.jwt.provider.storage']);
 
             return $instance->setRefreshTTL(config('jwt.refresh_ttl'));

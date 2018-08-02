@@ -16,7 +16,7 @@ class InvalidateJWTToken implements ShouldQueue
     /**
      * @var string
      */
-    private $id;
+    private $tokenId;
 
     /**
      * @var int
@@ -26,12 +26,12 @@ class InvalidateJWTToken implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param string $id
+     * @param string $tokenId
      * @param int    $cacheLifetime
      */
-    public function __construct(string $id, int $cacheLifetime)
+    public function __construct(string $tokenId, int $cacheLifetime)
     {
-        $this->id            = $id;
+        $this->tokenId       = $tokenId;
         $this->cacheLifetime = $cacheLifetime;
     }
 
@@ -45,6 +45,6 @@ class InvalidateJWTToken implements ShouldQueue
         /** @var StorageInterface $storage */
         $storage = app()->make(StorageInterface::class);
 
-        $storage->add($this->id, [], $this->cacheLifetime);
+        $storage->add($this->tokenId, [], $this->cacheLifetime);
     }
 }
