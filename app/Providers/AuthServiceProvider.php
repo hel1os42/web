@@ -10,6 +10,7 @@ use App\Services\Auth\Guards\IdentityGuard;
 use App\Services\Auth\Guards\JwtGuard;
 use App\Services\Auth\Guards\OperatorGuard;
 use App\Services\Auth\Guards\OtpGuard;
+use App\Services\Auth\JWTAuth\Blacklist;
 use App\Services\Auth\UsersProviders\OperatorUserProvider;
 use App\Services\Auth\UsersProviders\OtpEloquentUserProvider;
 use App\Services\Auth\UsersProviders\SocialiteUserProvider;
@@ -181,6 +182,14 @@ class AuthServiceProvider extends ServiceProvider
         /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
         $authManager->extend('identity', function ($app, string $name, array $config) use ($authManager, $operatorRepository) {
             return new IdentityGuard($authManager->createUserProvider($config['provider']), app(IdentityRepository::class));
+        });
+
+        $this->app->extend('tymon.jwt.blacklist', function ($blacklist, $app) {
+            unset($blacklist);
+
+            $instance = new Blacklist($app['tymon.jwt.provider.storage']);
+
+            return $instance->setRefreshTTL(config('jwt.refresh_ttl'));
         });
     }
 }
