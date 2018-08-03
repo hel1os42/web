@@ -2,12 +2,32 @@
 
 namespace App\Events;
 
+use App\Models\User;
+
 /**
  * Class BroughtFriend
  * @package App\Events
  */
 class BroughtFriend extends UserEvent
 {
+
+    /**
+     * @var User
+     */
+    private $referral;
+
+    /**
+     * BroughtFriend constructor.
+     * @param User $user
+     * @param User $referral
+     */
+    public function __construct(User $user, User $referral)
+    {
+        parent::__construct($user);
+
+        $this->referral = $referral;
+    }
+
     /**
      * @return string
      */
@@ -17,13 +37,10 @@ class BroughtFriend extends UserEvent
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getData(): array
+    public function getParameter(): string
     {
-        return [
-            'user_id'     => $this->user->getKey(),
-            'referrer_id' => $this->user->getReferrerId(),
-        ];
+        return $this->referral->getKey();
     }
 }

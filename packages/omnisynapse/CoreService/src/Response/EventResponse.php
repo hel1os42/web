@@ -2,26 +2,31 @@
 
 namespace OmniSynapse\CoreService\Response;
 
-use JsonSerializable;
+use App\Events\UserEvent;
 
 /**
  * Class Event
  * @package OmniSynapse\CoreService\Response
  */
-class EventResponse implements JsonSerializable
+class EventResponse extends BaseResponse
 {
     /**
-     * @var bool
+     * @static bool
      */
-    public $success;
+    protected static $hasEmptyBody = true;
 
     /**
-     * @return array
+     * @var UserEvent
      */
-    public function jsonSerialize()
+    private $event;
+
+    /**
+     * Event constructor.
+     *
+     * @param UserEvent $event
+     */
+    public function __construct(UserEvent $event)
     {
-        return [
-            'success' => $this->success,
-        ];
+        $this->event = $event;
     }
 }

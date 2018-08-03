@@ -29,7 +29,8 @@ class EventRequest implements JsonSerializable
     {
         return [
             'event_name' => $this->event->getName(),
-            'data'       => $this->event->getData(),
+            'param'      => $this->event->getParameter(),
+            'user_id'    => $this->event->getUserId(),
         ];
     }
 }
