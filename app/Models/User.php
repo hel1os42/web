@@ -6,11 +6,11 @@ use App\Exceptions\TokenException;
 use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
+use App\Models\NauModels\Offer;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\EnrollmentTrait;
 use App\Models\User\RelationsTrait;
 use App\Models\User\RoleTrait;
-use App\Repositories\OfferRepository;
 use App\Services\Auth\Contracts\PhoneAuthenticable;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Collection;
@@ -552,9 +552,8 @@ class User extends Authenticatable implements PhoneAuthenticable
      */
     public function countHasOffers(): int
     {
-        $account     = $this->getAccountForNau();
-        $offersCount = app(OfferRepository::class)
-            ->scopeAccount($account)->withoutGlobalScopes()->count();
+        $account     = $this->getAccountForNau()->id;
+        $offersCount = Offer::where('acc_id', $account)->withoutGlobalScopes()->count();
 
         return $offersCount;
     }

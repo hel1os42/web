@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Exceptions\NotFoundException;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -78,16 +80,34 @@ class UserUpdateRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function (Validator $validator) {
-            if(in_array(\App\Models\Role::findByName(Role::ROLE_ADVERTISER)->getId(), $this->get('role_ids', []))) {
+            if(in_array(Role::findByName(Role::ROLE_ADVERTISER)->getId(), $this->get('role_ids', []))) {
                 0 === $this->countChildrenEditableUser(request()->id) ?:
                     $validator->errors()->add('error', trans('validation.user_children_excess'));
             }
 
-            if(in_array(\App\Models\Role::findByName(Role::ROLE_CHIEF_ADVERTISER)->getId(), $this->get('role_ids', []))) {
+            if(in_array(Role::findByName(Role::ROLE_CHIEF_ADVERTISER)->getId(), $this->get('role_ids', []))) {
                 0 === $this->countOffersEditableUser(request()->id) ?:
                     $validator->errors()->add('error', trans('validation.user_offer_excess'));
             }
         });
+    }
+
+    /**
+     * @param string $userId
+     *
+     * @return NotFoundException
+     * @return User
+     */
+    private function checkUser(string $userId): User
+    {
+        $user = app(UserRepository::class)->find($userId);
+
+        if($user instanceof User) {
+
+            return $user;
+        }
+
+        throw new NotFoundException();
     }
 
     /**
@@ -99,7 +119,7 @@ class UserUpdateRequest extends FormRequest
      */
     private function countChildrenEditableUser(string $userId): int
     {
-        return app(UserRepository::class)->find($userId)->children()->count();
+        return $this->checkUser($userId)->children()->count();
     }
 
     /**
@@ -111,8 +131,6 @@ class UserUpdateRequest extends FormRequest
      */
     private function countOffersEditableUser(string $userId): int
     {
-        $user = app(UserRepository::class)->find($userId);
-
-        return $user->countHasOffers();
+        return $this->checkUser($userId)->countHasOffers();
     }
 } 
