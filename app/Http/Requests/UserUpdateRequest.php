@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Exceptions\NotFoundException;
 use App\Models\Role;
 use App\Models\User;
+use App\Repositories\RoleRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -45,23 +46,23 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'                 => 'string|min:2',
-            'email'                => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
+            'name'         => 'string|min:2',
+            'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
                 request()->id),
-            'phone'                => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
+            'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
                 request()->id),
-            'latitude'             => 'nullable|numeric|between:-90,90',
-            'longitude'            => 'nullable|numeric|between:-180,180',
-            'role_ids'             => 'array',
-            'role_ids.*'           => 'string|exists:roles,id',
-            'parent_ids'           => 'array',
-            'parent_ids.*'         => sprintf(
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180',
+            'role_ids'     => 'array',
+            'role_ids.*'   => 'string|exists:roles,id',
+            'parent_ids'   => 'array',
+            'parent_ids.*' => sprintf(
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'approve'               => 'boolean',
-            'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
-            'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
+            'approve'      => 'boolean',
+            'invite_code'  => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
+            'password'     => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {
@@ -80,16 +81,28 @@ class UserUpdateRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function (Validator $validator) {
-            if(in_array(Role::findByName(Role::ROLE_ADVERTISER)->getId(), $this->get('role_ids', []))) {
-                0 === $this->countChildrenEditableUser(request()->id) ?:
-                    $validator->errors()->add('error', trans('validation.user_children_excess'));
+            $user = $this->checkUser(request()->id);
+
+            if ($this->hasRole(Role::ROLE_ADVERTISER) && $user->children()->count() > 0) {
+                $validator->errors()->add('error', trans('validation.user_children_excess'));
             }
 
-            if(in_array(Role::findByName(Role::ROLE_CHIEF_ADVERTISER)->getId(), $this->get('role_ids', []))) {
-                0 === $this->countOffersEditableUser(request()->id) ?:
-                    $validator->errors()->add('error', trans('validation.user_offer_excess'));
+            if ($this->hasRole(Role::ROLE_CHIEF_ADVERTISER) && $user->countHasOffers() > 0) {
+                $validator->errors()->add('error', trans('validation.user_offer_excess'));
             }
         });
+    }
+
+    /**
+     * @param string $roleName
+     *
+     * @return bool
+     */
+    private function hasRole(string $roleName): bool
+    {
+        $role = app(RoleRepository::class)->findByField('name', $roleName)->first();
+
+        return $role instanceof Role ? in_array($role->getId(), $this->get('role_ids', [])) : false;
     }
 
     /**
@@ -102,35 +115,11 @@ class UserUpdateRequest extends FormRequest
     {
         $user = app(UserRepository::class)->find($userId);
 
-        if($user instanceof User) {
+        if ($user instanceof User) {
 
             return $user;
         }
 
         throw new NotFoundException();
     }
-
-    /**
-     * @param string $userId
-     *
-     * @return int
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function countChildrenEditableUser(string $userId): int
-    {
-        return $this->checkUser($userId)->children()->count();
-    }
-
-    /**
-     * @param string $userId
-     *
-     * @return int
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function countOffersEditableUser(string $userId): int
-    {
-        return $this->checkUser($userId)->countHasOffers();
-    }
-} 
+}
