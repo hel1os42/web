@@ -48,7 +48,7 @@ class ActivationCodeObserver
     {
         $user = $code->offer->account->owner;
 
-        $affectedWebHooks = $user->getAppropriateWebHooks(WebHookEvent::EVENT_NAME_CODE_UPDATED);
+        $affectedWebHooks = $user->getWebHooksByEventName(WebHookEvent::EVENT_NAME_CODE_UPDATED);
 
         foreach ($affectedWebHooks as $webHook) {
             $event = new ActivationCodeUpdatedEvent($code);
