@@ -65,6 +65,8 @@ class RegisterController extends AuthController
             throw new ValidationException($validator);
         }
 
+        logger()->debug(sprintf('[SMS] Phone - %1$s. URI - %2$s', $phone, request()->url()));
+
         if ($this->hasTooManyLoginAttempts(\request())) {
             return $this->sendLockoutResponse(\request());
         }
