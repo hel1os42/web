@@ -20,12 +20,15 @@ class LoginController extends AuthController
      */
     public function getLogin()
     {
-        return $this->auth->user()
-            ? \response()->redirectTo(route('statistics'))
-            : \response()->render('auth.login', [
-                'email'    => null,
-                'password' => null
-            ]);
+        if ($this->auth->user()) {
+            request()->session()->reflash();
+            return \response()->redirectTo(route('statistics'));
+        }
+
+        return \response()->render('auth.login', [
+            'email'    => null,
+            'password' => null
+        ]);
     }
 
     /**

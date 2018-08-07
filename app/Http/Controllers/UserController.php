@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\Implementation\User\ConfirmationService;
 use App\Services\PlaceService;
 use App\Services\UserService;
 use Illuminate\Auth\AuthManager;
@@ -288,5 +289,19 @@ class UserController extends Controller
         $this->authorize('user.update.roles', [$user, $roleIds]);
 
         $user->roles()->sync($roleIds, true);
+    }
+
+    /**
+     * @param string|null $uuid
+     * @return mixed
+     */
+    public function sendConfirmationLink(string $uuid = null)
+    {
+        $uuid = $this->confirmUuid($uuid);
+        $user = $this->userRepository->find($uuid);
+
+        app(ConfirmationService::class)->make($user);
+
+        return \response()->render('user.confirmation.sendlink', ['message' => trans('mails.user.confirm.send_link_msg')]);
     }
 }

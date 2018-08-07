@@ -7,6 +7,12 @@
 -->
 @endif
 
+@push('scripts')
+    <script>
+        window.nau_lang = {!! json_encode(__('js_messages')) !!};
+    </script>
+@endpush
+
 <script src="{{ asset('js/jquery-3.1.1.min.js') }}" type="text/javascript"></script>
 
 <script src="{{ asset('js/bootstrap.min.js') }}" type="text/javascript"></script>

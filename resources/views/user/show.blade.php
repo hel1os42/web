@@ -81,6 +81,24 @@
                                 </div>
                             </div>
 
+                            @if (false)
+                            <div class="row">
+                                <div class="col-sm-3 p-5">
+                                    {{ __('users.fields.confirmed') }}
+                                </div>
+                                <div class="col-sm-9 p-5">
+                                    {{ $confirmed ? __('words.yes') : __('words.no') }}
+                                    <img class="loading" src="{{ asset('img/loading.gif') }}" alt="wait..." style="width: 25px;display:none;">
+                                    @if (!$confirmed && $email)
+                                        <a href="{{ route('user.confirmation.sendLink', [$id]) }}" onclick="email_confirm(event)">
+                                            <i class="fa fa-share" aria-hidden="true"></i>
+                                            {{ __('mails.user.confirm.send_link_btn') }}
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+
                             @include('role-partials.selector', ['partialRoute' => 'user.show'])
 
                         </div>
@@ -327,6 +345,30 @@
                     }
                 });
             });
+        }
+
+        function email_confirm(e)
+        {
+            e.preventDefault();
+            let parent_block = e.target.parentNode;
+            let preloader = parent_block.querySelector('.loading');
+            let xhr = new XMLHttpRequest();
+
+            let callback = function(data) {
+                messages('add', 'success', data.message, parent_block);
+            };
+
+            xhr.open( "GET", e.target.href, true );
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.onreadystatechange = function() {
+                preloader.style.display = 'none';
+                ajax_callback(xhr, callback, parent_block);
+            };
+            xhr.send();
+
+            e.target.remove();
+            preloader.style.display = 'block';
         }
 
     </script>
