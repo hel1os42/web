@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Lab404\Impersonate\Models\Impersonate;
+use OmniSynapse\WebHookService\Traits\HasWebHooks;
 
 /**
  * Class User
@@ -55,7 +56,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids, EnrollmentTrait;
+    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids, EnrollmentTrait, HasWebHooks;
 
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
 

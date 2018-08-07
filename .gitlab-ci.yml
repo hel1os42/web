@@ -69,7 +69,7 @@ PHPMD:
 #    - mkdir coverage
 #  script:
 #    - echo "Run the tests"
-#    - php vendor/bin/phpunit --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
+#    - php vendor/bin/phpunit  --bootstrap=tests/bootstrap.php --colors --coverage-html=./coverage --report-useless-tests --testdox-html=./testdox.html --whitelist=app --coverage-text
 #
 #  artifacts:
 #    when: always
