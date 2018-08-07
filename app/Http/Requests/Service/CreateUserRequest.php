@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Service;
 
+use App\Helpers\Constants;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,11 +27,12 @@ class CreateUserRequest extends FormRequest
         $min = $now->copy()->subMinutes(2);
 
         return [
-            'email'     => 'required|email|unique:users,email',
-            'phone'     => 'required|regex:/\+[0-9]{10,15}/|unique:users,phone',
-            'balance'   => 'required|numeric',
-            'timestamp' => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
-            'signature' => sprintf('required|string')
+            'email'       => 'required|email|unique:users,email',
+            'phone'       => 'required|regex:/\+[0-9]{10,15}/|unique:users,phone',
+            'balance'     => 'required|numeric',
+            'timestamp'   => sprintf('required|integer|min:%d|max:%d', $min->timestamp, $now->timestamp),
+            'signature'   => sprintf('required|string'),
+            'eth_address' => sprintf('nullable|string|regex:%1$s|unique:users,eth_address', Constants::ETH_ADDRESS_REGEX),
         ];
     }
 }
