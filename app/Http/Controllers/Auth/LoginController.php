@@ -56,7 +56,15 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
-        logger()->debug(sprintf('[SMS] Phone - %1$s. URI - %2$s', $user->phone, request()->url()));
+        $key      = $this->throttleKey(request());
+        $attempts = $this->limiter()->attempts($key);
+
+        logger()->debug(
+            sprintf(
+                '[SMS] Phone - %1$s. URI - %2$s. Key - %3$s. Attempts - %4$d',
+                $phone, request()->url(), $key, $attempts
+            )
+        );
 
         if ($this->hasTooManyLoginAttempts(\request())) {
             return $this->sendLockoutResponse(\request());
