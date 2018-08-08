@@ -84,6 +84,17 @@ class AuthController extends Controller
     }
 
     /**
+     * Get the throttle key for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function throttleKey(Request $request)
+    {
+        return mb_strtolower($request->route()->parameter('phone_number').'|'.$request->ip());
+    }
+
+    /**
      * @return string
      */
     public function username()
