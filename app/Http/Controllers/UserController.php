@@ -292,15 +292,17 @@ class UserController extends Controller
     }
 
     /**
+     * @param ConfirmationService $confirmationService
      * @param string|null $uuid
      * @return mixed
+     * @throws \Prettus\Repository\Contracts\ValidatorException
      */
-    public function sendConfirmationLink(string $uuid = null)
+    public function sendConfirmationLink(ConfirmationService $confirmationService, string $uuid = null)
     {
         $uuid = $this->confirmUuid($uuid);
         $user = $this->userRepository->find($uuid);
 
-        app(ConfirmationService::class)->make($user);
+        $confirmationService->make($user);
 
         return \response()->render('user.confirmation.sendlink', ['message' => trans('mails.user.confirm.send_link_msg')]);
     }

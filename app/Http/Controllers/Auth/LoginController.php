@@ -26,8 +26,10 @@ class LoginController extends AuthController
         }
 
         return \response()->render('auth.login', [
-            'email'    => null,
-            'password' => null
+            'fields' => [
+                'email'    => null,
+                'password' => null,
+            ],
         ]);
     }
 
@@ -39,9 +41,11 @@ class LoginController extends AuthController
         return $this->auth->user()
             ? \response()->redirectTo(route('home'))
             : \response()->render('auth.loginOperator', [
-                'alias' => null,
-                'login' => null,
-                'pin'   => null,
+                'fields' => [
+                    'alias' => null,
+                    'login' => null,
+                    'pin'   => null,
+                ],
             ]);
     }
 

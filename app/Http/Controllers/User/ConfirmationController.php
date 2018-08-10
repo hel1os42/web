@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Services\User\ConfirmationService;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Response;
 
 /**
@@ -13,13 +14,22 @@ use Illuminate\Http\Response;
  */
 class ConfirmationController extends Controller
 {
+    protected $confirmationService;
+
+    public function __construct(ConfirmationService $confirmationService, AuthManager $authManager)
+    {
+        $this->confirmationService = $confirmationService;
+
+        parent::__construct($authManager);
+    }
+
     /**
      * @param string $token
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function index($token)
     {
-        if (false === app(ConfirmationService::class)->confirm($token)) {
+        if (false === $this->confirmationService->confirm($token)) {
             return \response()->error(Response::HTTP_NOT_FOUND);
         }
 

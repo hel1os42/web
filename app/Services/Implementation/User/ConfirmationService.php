@@ -18,15 +18,18 @@ use Illuminate\Support\Facades\Mail;
  */
 class ConfirmationService implements ConfirmationServiceInterface
 {
-    protected $repository;
+    protected $confirmationRepository;
+    protected $userRepository;
 
     /**
      * ConfirmationService constructor.
-     * @param ConfirmationRepository $repository
+     * @param ConfirmationRepository $confirmationRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct(ConfirmationRepository $repository)
+    public function __construct(ConfirmationRepository $confirmationRepository, UserRepository $userRepository)
     {
-        $this->repository = $repository;
+        $this->confirmationRepository = $confirmationRepository;
+        $this->userRepository         = $userRepository;
     }
 
     /**
@@ -50,15 +53,15 @@ class ConfirmationService implements ConfirmationServiceInterface
      */
     public function confirm(string $token): bool
     {
-        $confirmation = $this->repository->findByField('token', $token, ['id', 'user_id'])->first();
+        $confirmation = $this->confirmationRepository->findByField('token', $token, ['id', 'user_id'])->first();
 
         if (null === $confirmation) {
             return false;
         }
 
-        app(UserRepository::class)->update(['confirmed' => 1], $confirmation->user_id);
+        $this->userRepository->update(['confirmed' => 1], $confirmation->user_id);
 
-        return $this->repository->delete($confirmation->id);
+        return $this->confirmationRepository->delete($confirmation->id);
     }
 
     /**
@@ -66,7 +69,7 @@ class ConfirmationService implements ConfirmationServiceInterface
      */
     public function disapprove(User $user)
     {
-        app(UserRepository::class)->update(['confirmed' => 0], $user->id);
+        $this->userRepository->update(['confirmed' => 0], $user->id);
     }
 
     /**
@@ -87,7 +90,7 @@ class ConfirmationService implements ConfirmationServiceInterface
      */
     private function saveToken(User $user, $token)
     {
-        return $this->repository->updateOrCreate(['user_id' => $user->id], [
+        return $this->confirmationRepository->updateOrCreate(['user_id' => $user->id], [
             'user_id'    => $user->id,
             'token'      => $token,
             'created_at' => Carbon::now(),
