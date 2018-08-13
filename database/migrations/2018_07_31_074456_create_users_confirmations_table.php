@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -14,20 +13,24 @@ class CreateUsersConfirmationsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('users_confirmations');
+
         Schema::create('users_confirmations', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('user_id');
-            $table->string('token')->unique();
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->string('token', 50)->unique();
+            $table->timestamp('created_at');
         });
 
         Schema::table('users_confirmations', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users');
         });
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('confirmed')->default(false);
-        });
+        if (false === Schema::hasColumn('users', 'confirmed')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('confirmed')->default(false);
+            });
+        }
     }
 
     /**
