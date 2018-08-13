@@ -5,7 +5,6 @@ return [
         'approved'        => 'Approved',
         'children'        => 'Children',
         'contacts'        => 'Contacts',
-        'confirmed'       => 'Email confirmed',
         'email'           => 'Email',
         'name'            => 'Name',
         'parents'         => 'Parents',

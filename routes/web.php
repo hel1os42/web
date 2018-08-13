@@ -13,8 +13,6 @@ $router->group(['middleware' => 'investor', 'prefix' => 'service'], function () 
  * register
  */
 $router->post('users', 'UserController@store')->name('register');
-// user confirmation
-$router->get('user/confirmation/{token}', 'User\ConfirmationController@index')->name('userConfirmation');
 
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
@@ -183,7 +181,6 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
                 'destroy' => 'users.favorite.places.destroy',
             ]
         ]);
-        $router->get('confirmation/send_link', 'UserController@sendConfirmationLink')->name('user.confirmation.sendLink');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
