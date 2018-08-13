@@ -14,10 +14,7 @@ class CreateUsersConfirmationsTable extends Migration
      */
     public function up()
     {
-        Schema::create(/**
-         * @param Blueprint $table
-         */
-            'users_confirmations', function (Blueprint $table) {
+        Schema::create('users_confirmations', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('user_id');
             $table->string('token')->unique();
