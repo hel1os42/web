@@ -20,12 +20,17 @@ class LoginController extends AuthController
      */
     public function getLogin()
     {
-        return $this->auth->user()
-            ? \response()->redirectTo(route('statistics'))
-            : \response()->render('auth.login', [
+        if ($this->auth->user()) {
+            request()->session()->reflash();
+            return \response()->redirectTo(route('statistics'));
+        }
+
+        return \response()->render('auth.login', [
+            'fields' => [
                 'email'    => null,
-                'password' => null
-            ]);
+                'password' => null,
+            ],
+        ]);
     }
 
     /**
@@ -36,9 +41,11 @@ class LoginController extends AuthController
         return $this->auth->user()
             ? \response()->redirectTo(route('home'))
             : \response()->render('auth.loginOperator', [
-                'alias' => null,
-                'login' => null,
-                'pin'   => null,
+                'fields' => [
+                    'alias' => null,
+                    'login' => null,
+                    'pin'   => null,
+                ],
             ]);
     }
 
