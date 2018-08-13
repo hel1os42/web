@@ -114,4 +114,23 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
         return $this;
     }
+
+    /**
+     * @param int      $count
+     * @param \Closure $callback
+     * @return bool
+     */
+    public function chunk(int $count, \Closure $callback): bool
+    {
+        return $this->model->chunk($count, $callback);
+    }
+
+    /**
+     * @param string $columns
+     * @return int
+     */
+    public function count($columns = '*'): int
+    {
+        return $this->model->count($columns = '*');
+    }
 }
