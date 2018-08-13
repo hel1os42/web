@@ -51,6 +51,8 @@ use Lab404\Impersonate\Models\Impersonate;
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany children
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class User extends Authenticatable implements PhoneAuthenticable
 {
