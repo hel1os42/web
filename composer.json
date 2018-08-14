@@ -28,6 +28,7 @@
     "netresearch/jsonmapper": "^1.2",
     "pda/pheanstalk": "^3.1",
     "prettus/l5-repository": "^2.6",
+    "rap2hpoutre/laravel-log-viewer": "^0.19.1",
     "socialiteproviders/instagram": "^3.0",
     "socialiteproviders/twitter": "^3.0",
     "socialiteproviders/vkontakte": "^3.2",
