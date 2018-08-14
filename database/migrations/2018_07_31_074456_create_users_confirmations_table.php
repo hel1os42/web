@@ -19,7 +19,7 @@ class CreateUsersConfirmationsTable extends Migration
         Schema::create('users_confirmations', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('user_id');
-            $table->string('token', 50)->unique();
+            $table->string('token', 64)->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
 
