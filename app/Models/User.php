@@ -91,6 +91,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'invite_code'       => 'string',
             'referral_points'   => 'integer',
             'redemption_points' => 'integer',
+            'confirmed'         => 'boolean',
         ];
 
         $this->fillable = [
@@ -102,6 +103,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'longitude',
             'approved',
             'invite_code',
+            'confirmed',
         ];
 
         $this->hidden = [
