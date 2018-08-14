@@ -265,5 +265,5 @@ return [
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
     ],
 
-    'access_token' => 'wG2UkoIuruNyw9NiHUHw',
+    'access_token' => env('ACCESS_TOKEN', '?'),
 ];
