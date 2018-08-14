@@ -14,11 +14,12 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         'auth/login',
+        'users',
     ];
 
     public function handle($request, Closure $next)
     {
-        if (auth('jwt')->check() || !$request->hasCookie(config('session.cookie')) && $request->wantsJson()) {
+        if (auth('jwt')->check() || !$request->hasSession() && $request->wantsJson()) {
             return $next($request);
         }
 
