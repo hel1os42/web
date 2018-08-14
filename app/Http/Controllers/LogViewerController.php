@@ -20,6 +20,10 @@ class LogViewerController extends BaseLogViewerController
             abort(404);
         }
 
+        if (false === auth()->check() || false === auth()->user()->isAdmin()) {
+            abort(404);
+        }
+
         return parent::index();
     }
 }
