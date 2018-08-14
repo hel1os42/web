@@ -195,6 +195,7 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
         OmniSynapse\WebHookService\WebHookServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ],
 
     /*
@@ -263,4 +264,6 @@ return [
         ],
         'redemption_id' => '20160127-1111-33bb-8cc8-019f29ec11b6',
     ],
+
+    'access_token' => env('ACCESS_TOKEN', '?'),
 ];

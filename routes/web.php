@@ -337,3 +337,5 @@ $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where(
 ])->name('places.picture.show');
 $router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
     '[a-z0-9-]+')->name('categories.picture.show');
+
+$router->get('logs', 'LogViewerController@index');
