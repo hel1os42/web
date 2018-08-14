@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Constants;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
@@ -57,6 +58,12 @@ class UserUpdateRequest extends FormRequest
             'approve'               => 'boolean',
             'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
             'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
+            'eth_address'           => [
+                'nullable',
+                'string',
+                sprintf('regex:%1$s', Constants::ETH_ADDRESS_REGEX),
+                sprintf('unique:users,eth_address,$1%s', request()->id),
+            ],
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {

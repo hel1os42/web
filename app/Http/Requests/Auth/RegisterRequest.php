@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Helpers\Constants;
 use App\Helpers\FormRequest as FormRequestHelper;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
@@ -47,7 +48,13 @@ class RegisterRequest extends FormRequest
             'phone'            => 'required_without:email|nullable|regex:/\+[0-9]{10,15}/',
             'email'            => 'required_without:phone|nullable|email|max:255',
             'password'         => 'required_with:email|nullable|min:6|max:255',
-            'password_confirm' => 'required_with:email|nullable|same:password'
+            'password_confirm' => 'required_with:email|nullable|same:password',
+            'eth_address'      => [
+                'nullable',
+                'string',
+                sprintf('regex:%1$s', Constants::ETH_ADDRESS_REGEX),
+                'unique:users,eth_address',
+            ],
         ];
 
         if ($this->getRegistrator() === null) {

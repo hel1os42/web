@@ -52,6 +52,8 @@ use OmniSynapse\WebHookService\Traits\HasWebHooks;
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany parents
  * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany children
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class User extends Authenticatable implements PhoneAuthenticable
 {
@@ -76,6 +78,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'updated_at'        => null,
             'referrer_id'       => null,
             'invite_code'       => null,
+            'eth_address'       => null,
             'approved'          => false,
             'referral_points'   => 0,
             'redemption_points' => 0,
@@ -91,6 +94,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'invite_code'       => 'string',
             'referral_points'   => 'integer',
             'redemption_points' => 'integer',
+            'eth_address'       => 'string',
             'confirmed'         => 'boolean',
         ];
 
@@ -103,6 +107,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'longitude',
             'approved',
             'invite_code',
+            'eth_address',
             'confirmed',
         ];
 
@@ -110,7 +115,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'coreUser',
             'password',
             'remember_token',
-            'referrer_id'
+            'referrer_id',
         ];
 
         $this->appends = [
@@ -141,6 +146,14 @@ class User extends Authenticatable implements PhoneAuthenticable
         }
 
         return $array;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEthAddress(): string
+    {
+        return (string)$this->eth_address;
     }
 
     /**
