@@ -20,12 +20,17 @@ class LoginController extends AuthController
      */
     public function getLogin()
     {
-        return $this->auth->user()
-            ? \response()->redirectTo(route('statistics'))
-            : \response()->render('auth.login', [
+        if ($this->auth->user()) {
+            request()->session()->reflash();
+            return \response()->redirectTo(route('statistics'));
+        }
+
+        return \response()->render('auth.login', [
+            'fields' => [
                 'email'    => null,
-                'password' => null
-            ]);
+                'password' => null,
+            ],
+        ]);
     }
 
     /**
@@ -36,9 +41,11 @@ class LoginController extends AuthController
         return $this->auth->user()
             ? \response()->redirectTo(route('home'))
             : \response()->render('auth.loginOperator', [
-                'alias' => null,
-                'login' => null,
-                'pin'   => null,
+                'fields' => [
+                    'alias' => null,
+                    'login' => null,
+                    'pin'   => null,
+                ],
             ]);
     }
 
@@ -55,6 +62,16 @@ class LoginController extends AuthController
         if (null === $user) {
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
+
+        $key      = $this->throttleKey(request());
+        $attempts = $this->limiter()->attempts($key);
+
+        logger()->debug(
+            sprintf(
+                '[SMS] Phone - %1$s. URI - %2$s. Key - %3$s. Attempts - %4$d',
+                $phone, request()->url(), $key, $attempts
+            )
+        );
 
         if ($this->hasTooManyLoginAttempts(\request())) {
             return $this->sendLockoutResponse(\request());

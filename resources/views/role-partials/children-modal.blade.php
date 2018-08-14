@@ -104,8 +104,5 @@
 @endpush
 
 @push('scripts')
-    <script>
-        window.nau_lang = {!! json_encode(__('js_messages')) !!};
-    </script>
     <script src="{{ asset('js/children-modal.js') }}"></script>
 @endpush

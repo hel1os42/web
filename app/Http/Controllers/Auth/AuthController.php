@@ -75,12 +75,28 @@ class AuthController extends Controller
             return \response()->error($statusCode, trans('auth.failed'));
         }
 
-        $errors = ['email' => trans('auth.failed'),
-            'alias' => trans('auth.failed')];
+        if ($request->has('email')) {
+            $errors = ['email' => trans('auth.failed')];
+        }
+
+        if ($request->has('alias')) {
+            $errors = ['alias' => trans('auth.failed')];
+        }
 
         return redirect()->back()
             ->withInput($request->only('email', 'remember'))
             ->withErrors($errors);
+    }
+
+    /**
+     * Get the throttle key for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function throttleKey(Request $request)
+    {
+        return mb_strtolower($request->route()->parameter('phone_number').'|'.$request->ip());
     }
 
     /**

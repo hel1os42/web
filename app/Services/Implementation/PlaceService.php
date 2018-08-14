@@ -32,7 +32,7 @@ class PlaceService implements PlaceServiceImpl
     {
         if ($place->hasActiveOffers()) {
             $offers = new Offer();
-            $offers = $offers->byOwner($place->user);
+            $offers = $offers->byOwner($place->user)->get();
             /**
              * @var Offer $offer
              */
