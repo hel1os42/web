@@ -4,6 +4,7 @@ namespace app\Observers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Services\User\ConfirmationService;
 
 class UserObserver
 {
@@ -22,5 +23,26 @@ class UserObserver
         if ($user->referrer instanceof User) {
             $user->referrer->enrollReferralPoints();
         }
+
+        $this->confirmEmail($user);
+    }
+
+    public function updated(User $user)
+    {
+        if ($user->isDirty('email')) {
+            app(ConfirmationService::class)->disapprove($user);
+
+            $this->confirmEmail($user);
+        }
+    }
+
+    private function confirmEmail(User $user)
+    {
+        // turn on later
+        return $user;
+
+        //if (null !== $user->email) {
+        //    app(ConfirmationService::class)->make($user);
+        //}
     }
 }

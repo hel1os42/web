@@ -592,15 +592,15 @@ tr.offer-status-expired > td {
     font-size: 100%;
 }
 
-.messages .error {
+.messages .error, .row .error {
     color: #C4183C
 }
-.messages .warning {
+.messages .warning, .row .warning {
     color: #FFB400
 }
-.messages .info {
+.messages .info, .row .info {
     color: #00B8D8
 }
-.messages .success {
+.messages .success, .row .success {
     color: #17C671
 }
