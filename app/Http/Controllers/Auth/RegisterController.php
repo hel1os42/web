@@ -86,7 +86,7 @@ class RegisterController extends AuthController
             $message = sprintf('[SMS][Register][Error] %1$s. Phone: %2$s', $exception->getMessage(), $phone);
             logger()->warning($message);
 
-            return $response->error(Response::HTTP_BAD_REQUEST, $exception->getMessage());
+            return $response->error(Response::HTTP_FORBIDDEN, $exception->getMessage());
         }
 
         $this->incrementLoginAttempts(\request());
