@@ -31,6 +31,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         'place.name'        => 'like',
         'place.description' => 'like',
         'roles.name'        => 'in',
+        'accounts.address'  => '=',
         'updated_at'        => '=',
     ];
 
@@ -46,6 +47,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
     /**
      * Boot up the repository, pushing criteria
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function boot()
     {
@@ -62,6 +64,12 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $this->findByField('invite_code', $inviteCode)->first();
     }
 
+    /**
+     * @param array $attributes
+     * @return User
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
     public function create(array $attributes): User
     {
         if (!is_null($this->validator)) {
