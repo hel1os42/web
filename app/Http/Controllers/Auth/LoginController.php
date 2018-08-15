@@ -91,7 +91,7 @@ class LoginController extends AuthController
             $message = sprintf('[SMS][Login][Error] %1$s. Phone: %2$s', $exception->getMessage(), $user->phone);
             logger()->critical($message);
 
-            return \response()->error(Response::HTTP_BAD_REQUEST, $exception->getMessage());
+            return \response()->error(Response::HTTP_FORBIDDEN, $exception->getMessage());
         }
 
         $this->incrementLoginAttempts(\request());
