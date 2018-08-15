@@ -62,7 +62,11 @@ class RedemptionController extends Controller
 
         $this->authorize('offers.redemption', $offer);
 
-        $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
+        $activationCode = $this->user()->activationCodes()->with('offer.account.owner')->orderBy('created_at', 'desc')->first();
+
+        if ($activationCode === null || Carbon::now()->subMinute(15) > $activationCode->created_at) {
+            $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
+        };
 
         return \response()->render('redemption.code', $activationCode->toArray());
     }
