@@ -125,6 +125,7 @@
                                 <td>{{ $offer['reserved'] }}</td>
                                 <td class="offer-status">
                                     <span class="offer-status-text offer-status-text-color-{{ $offer['status'] }}">{{ $offer['status'] }}</span>
+                                    <span class="offer-status-text-no-approval">user not approved</span>
                                     <span class="offer-status-text-no-image">no image</span>
                                     <span class="offer-status-text-no-nau">no NAU</span>
                                     <span class="offer-status-text-expired">expired</span>
@@ -243,6 +244,8 @@
     <script src="{{ asset('js/leaflet/leaflet.nau.js') }}"></script>
     <script src="{{ asset('js/partials/offer-more-show.js') }}"></script>
     <script>
+
+        let user_approved = nau.auth_user.approved;
 
         /* dataTable */
         dataTableCreate('#table_your_offers');
@@ -462,7 +465,8 @@
                 let expired = btn.classList.contains('expired');
                 tr.classList[(offerDeactive && reserved > nau) ? 'add' : 'remove']('offer-status-no-nau');
                 tr.classList[expired ? 'add' : 'remove']('offer-status-expired');
-                btn.disabled = expired || reserved > nau || noImage;
+                tr.classList[user_approved === false ? 'add' : 'remove']('offer-status-no-approval');
+                btn.disabled = expired || reserved > nau || noImage || user_approved === false;
             });
         }
 

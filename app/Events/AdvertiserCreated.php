@@ -17,12 +17,10 @@ class AdvertiserCreated extends UserEvent
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getData(): array
+    public function getParameter(): string
     {
-        return [
-            'user_id' => $this->user->getKey(),
-        ];
+        return '';
     }
 }

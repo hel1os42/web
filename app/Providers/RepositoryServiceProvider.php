@@ -47,6 +47,8 @@ class RepositoryServiceProvider extends ServiceProvider
             Implementation\OfferLinkRepositoryEloquent::class);
         $this->app->bind(Repositories\User\FavoriteOfferRepository::class,
             Implementation\User\FavoriteOfferRepositoryEloquent::class);
+        $this->app->bind(Repositories\User\ConfirmationRepository::class,
+            Implementation\User\ConfirmationRepositoryEloquent::class);
         $this->app->bind(Repositories\TestimonialRepository::class,
             Implementation\TestimonialRepositoryEloquent::class);
         $this->app->bind(Repositories\IdentityProviderRepository::class,
@@ -58,6 +60,8 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(Services\UserService::class,
             Services\Implementation\UserService::class);
+        $this->app->bind(Services\User\ConfirmationService::class,
+            Services\Implementation\User\ConfirmationService::class);
         $this->app->bind(Services\OfferRedemption\Access\Moderator::class,
             Services\OfferRedemption\Access\Implementation\Moderator::class);
 

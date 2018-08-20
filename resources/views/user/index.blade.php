@@ -6,6 +6,7 @@
 
     <div class="container">
         @include('role-partials.selector', ['partialRoute' => 'user.index-head'])
+
         <table class="table-striped-nau table-users">
             <thead>
                 <tr>
@@ -34,8 +35,8 @@
 
                 @if(isset($user['place']['id']))
                     <td class="user-place-info">
-                        <span class="user-place-img-wrap"><img alt="" width="32" height="32" data-src="{{ $user['place']['picture_url'] }}?size=mobile" src=""></span>
-                        <span class="user-place-img-wrap"><img alt="" width="96" height="32" data-src="{{ $user['place']['cover_url'] }}?size=mobile" src=""></span><br>
+                        <span class="user-place-img-wrap"><img alt="" width="32" height="32" data-src="{{ $user['place']['picture_url'] }}?size=mobile&v={{ $user['place']['updated_at'] }}" src=""></span>
+                        <span class="user-place-img-wrap"><img alt="" width="96" height="32" data-src="{{ $user['place']['cover_url'] }}?size=mobile&v={{ $user['place']['updated_at'] }}" src=""></span><br>
                         <a href="{{ route('places.show', $user['place']['id']) }}">{{ $user['place']['name'] }}</a>
                     </td>
                     <td>
@@ -177,6 +178,7 @@
                 searchResult['phone'] = searchFieldsInput.value;
                 searchResult['place.name'] = searchFieldsInput.value;
                 searchResult['place.description'] = searchFieldsInput.value;
+                searchResult['accounts.address'] = searchFieldsInput.value;
                 searchJoin = 'or';
             }
             if ( roleSelect && roleSelect.value !== '' ) {
@@ -242,9 +244,6 @@
                     if (201 === xhr.status){
                         let newStatusApproved = $user_status.val() === '1';
                         $box.removeClass('status-wait').addClass('status-' + (newStatusApproved ? '' : 'dis') + 'approved');
-                        if (!newStatusApproved) {
-                            $box.find('.b-disapproved').prop('disabled', true);
-                        }
                         $user_status.val(newStatusApproved ? '0' : '1');
                     } else {
                         $err.text('err-st: ' + xhr.status);
@@ -289,6 +288,8 @@
             if (searchByPlaceName) searchFields = searchByPlaceName[1];
             let searchByPlaceDescr = search.find(function(e){ return e[0] === 'place.description' });
             if (searchByPlaceDescr) searchFields = searchByPlaceDescr[1];
+            let searchByWallet = search.find(function(e){ return e[0] === 'accounts.address' });
+            if (searchByWallet) searchFields = searchByWallet[1];
 
             if (searchFieldsInput) searchFieldsInput.value = searchFields;
         }

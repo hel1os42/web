@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Lab404\Impersonate\Models\Impersonate;
+use OmniSynapse\WebHookService\Traits\HasWebHooks;
 
 /**
  * Class User
@@ -58,7 +59,7 @@ use Lab404\Impersonate\Models\Impersonate;
 class User extends Authenticatable implements PhoneAuthenticable
 {
 
-    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids, EnrollmentTrait;
+    use Notifiable, RelationsTrait, RoleTrait, Impersonate, Uuids, EnrollmentTrait, HasWebHooks;
 
     const PROFILE_PICTURES_PATH = 'images/profile/pictures';
 
@@ -78,6 +79,7 @@ class User extends Authenticatable implements PhoneAuthenticable
             'updated_at'        => null,
             'referrer_id'       => null,
             'invite_code'       => null,
+            'eth_address'       => null,
             'approved'          => false,
             'referral_points'   => 0,
             'redemption_points' => 0,
@@ -93,6 +95,8 @@ class User extends Authenticatable implements PhoneAuthenticable
             'invite_code'       => 'string',
             'referral_points'   => 'integer',
             'redemption_points' => 'integer',
+            'eth_address'       => 'string',
+            'confirmed'         => 'boolean',
         ];
 
         $this->fillable = [
@@ -104,13 +108,15 @@ class User extends Authenticatable implements PhoneAuthenticable
             'longitude',
             'approved',
             'invite_code',
+            'eth_address',
+            'confirmed',
         ];
 
         $this->hidden = [
             'coreUser',
             'password',
             'remember_token',
-            'referrer_id'
+            'referrer_id',
         ];
 
         $this->appends = [
@@ -141,6 +147,14 @@ class User extends Authenticatable implements PhoneAuthenticable
         }
 
         return $array;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEthAddress(): string
+    {
+        return (string)$this->eth_address;
     }
 
     /**

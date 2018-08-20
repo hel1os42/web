@@ -2,10 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Exceptions\NotFoundException;
-use App\Models\Role;
-use App\Models\User;
-use App\Repositories\RoleRepository;
+use App\Helpers\Constants;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -60,9 +57,15 @@ class UserUpdateRequest extends FormRequest
                 'string|regex:%s|exists:users,id',
                 \App\Helpers\Constants::UUID_REGEX
             ),
-            'approve'      => 'boolean',
-            'invite_code'  => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
-            'password'     => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
+            'approve'               => 'boolean',
+            'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
+            'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
+            'eth_address'           => [
+                'nullable',
+                'string',
+                sprintf('regex:%1$s', Constants::ETH_ADDRESS_REGEX),
+                sprintf('unique:users,eth_address,$1%s', request()->id),
+            ],
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {

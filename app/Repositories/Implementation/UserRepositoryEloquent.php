@@ -30,6 +30,8 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         'email'             => 'like',
         'place.name'        => 'like',
         'place.description' => 'like',
+        'roles.name'        => 'in',
+        'accounts.address'  => '=',
         'updated_at'        => '=',
     ];
 
@@ -45,6 +47,7 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
 
     /**
      * Boot up the repository, pushing criteria
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
      */
     public function boot()
     {
@@ -61,6 +64,12 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
         return $this->findByField('invite_code', $inviteCode)->first();
     }
 
+    /**
+     * @param array $attributes
+     * @return User
+     * @throws \Prettus\Repository\Exceptions\RepositoryException
+     * @throws \Prettus\Validator\Exceptions\ValidatorException
+     */
     public function create(array $attributes): User
     {
         if (!is_null($this->validator)) {
@@ -112,5 +121,24 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
             ->whereIn('users_parents.parent_id', $childrenIds);
 
         return $this;
+    }
+
+    /**
+     * @param int      $count
+     * @param \Closure $callback
+     * @return bool
+     */
+    public function chunk(int $count, \Closure $callback): bool
+    {
+        return $this->model->chunk($count, $callback);
+    }
+
+    /**
+     * @param string $columns
+     * @return int
+     */
+    public function count($columns = '*'): int
+    {
+        return $this->model->count($columns = '*');
     }
 }

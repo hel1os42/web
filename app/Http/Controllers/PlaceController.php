@@ -7,11 +7,13 @@ use App\Http\Requests\Place\CreateUpdateRequest;
 use App\Http\Requests\PlaceFilterRequest;
 use App\Repositories\OfferRepository;
 use App\Repositories\PlaceRepository;
+use App\Repositories\RedemptionRepository;
 use App\Repositories\UserRepository;
 use App\Services\PlaceService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Place;
 
 /**
  * Class PlaceController
@@ -116,6 +118,24 @@ class PlaceController extends Controller
         $offers->data = $offerRepository->parserResult($offers);
 
         return \response()->render('user.offer.index', $offers);
+    }
+
+    /**
+     * @param string               $uuid
+     * @param PlaceRepository      $placesRepository
+     * @param RedemptionRepository $redemptionRepository
+     *
+     * @return Response
+     */
+    public function showPlaceRedemptions(Place $place,
+        RedemptionRepository $redemptionRepository
+    ): Response
+    {
+        $this->authorize('places.redemptions.list', $place);
+        $offersId    = $place->offers()->pluck('id')->toArray();
+        $redemptions = $redemptionRepository->findForOffers($offersId);
+
+        return \response()->render('place.redemptions', ['data' => $redemptions]);
     }
 
     /**

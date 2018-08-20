@@ -18,6 +18,8 @@ interface Constants
      */
     const UUID_REGEX = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/';
 
+    const ETH_ADDRESS_REGEX = '/^0x[a-fA-F0-9]{40}$/';
+
     const DATE_FORMAT = 'Y-m-d H:i:s.uO';
 
     const TIME_FORMAT = 'H:i:s.uO';
@@ -30,6 +32,7 @@ interface Constants
         self::CURRENCY_COLOMBIA,
         self::CURRENCY_EUROPE,
         self::CURRENCY_RUSSIA,
+        self::CURRENCY_BELARUS,
     ];
 
     const CURRENCY_UKRAINE     = 'UAH';
@@ -37,4 +40,5 @@ interface Constants
     const CURRENCY_COLOMBIA    = 'COP';
     const CURRENCY_EUROPE      = 'EUR';
     const CURRENCY_RUSSIA      = 'RUR';
+    const CURRENCY_BELARUS     = 'BYN';
 }

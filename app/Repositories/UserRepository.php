@@ -22,6 +22,7 @@ interface UserRepository extends RepositoryInterface
     public function model(): string;
 
     public function findByPhone(string $phone): ?User;
+
     public function findByInvite(string $inviteCode): ?User;
 
     /**
@@ -36,4 +37,17 @@ interface UserRepository extends RepositoryInterface
      * @return UserRepository
      */
     public function getChildrenByUsers($childrenIds): UserRepository;
+
+    /**
+     * @param int      $count
+     * @param \Closure $callback
+     * @return bool
+     */
+    public function chunk(int $count, \Closure $callback): bool;
+
+    /**
+     * @param string $columns
+     * @return int
+     */
+    public function count($columns = '*'): int;
 }

@@ -13,6 +13,8 @@ $router->group(['middleware' => 'investor', 'prefix' => 'service'], function () 
  * register
  */
 $router->post('users', 'UserController@store')->name('register');
+// user confirmation
+$router->get('user/confirmation/{token}', 'User\ConfirmationController@index')->name('userConfirmation');
 
 // Unauthorized users
 $router->group(['middleware' => 'guest:jwt,web'], function () use ($router) {
@@ -181,6 +183,7 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
                 'destroy' => 'users.favorite.places.destroy',
             ]
         ]);
+        $router->get('confirmation/send_link', 'UserController@sendConfirmationLink')->name('user.confirmation.sendLink');
     });
 
     $router->resource('advert/offers', 'Advert\OfferController', [
@@ -271,6 +274,8 @@ $router->group(['middleware' => 'auth:jwt,web'], function () use ($router) {
            ->name('places.offers.show');
     $router->post('places/{uuid}/picture', 'Place\PictureController@storePicture')->name('places.picture.store');
     $router->post('places/{uuid}/cover', 'Place\PictureController@storeCover')->name('places.cover.store');
+    $router->get('places/{place}/redemptions', 'PlaceController@showPlaceRedemptions')
+        ->name('places.list.redemptions');
 
 
     $router->resource('places', 'PlaceController', [
@@ -332,3 +337,5 @@ $router->get('places/{uuid}/{type}.jpg', 'Place\PictureController@show')->where(
 ])->name('places.picture.show');
 $router->get('categories/{categoryId}/picture.svg', 'Category\PictureController@show')->where('categoryId',
     '[a-z0-9-]+')->name('categories.picture.show');
+
+$router->get('logs', 'LogViewerController@index');

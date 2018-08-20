@@ -89,7 +89,7 @@ class OperatorController extends Controller
         $newOperator = $newOperator->fresh()->toArray();
 
         return \response()->render('advert.operator.show',
-            $newOperator,
+            ['operator' => $newOperator],
             Response::HTTP_CREATED,
             route('advert.operators.show', $newOperator['id']));
     }
@@ -113,9 +113,8 @@ class OperatorController extends Controller
         }
 
         $this->authorize('operators.show', $operator);
-        $operator = $operator->toArray();
 
-        return \response()->render('advert.operator.show', $operator);
+        return \response()->render('advert.operator.show', ['operator' => $operator->toArray()]);
     }
 
     /**
@@ -185,7 +184,7 @@ class OperatorController extends Controller
 
         return 'PATCH' === $request->method() ?
             \redirect()->back() :
-            \response()->render('advert.operator.show', $operator, Response::HTTP_CREATED,
+            \response()->render('advert.operator.show', ['operator' => $operator], Response::HTTP_CREATED,
                 route('advert.operators.show', $operator));
     }
 }

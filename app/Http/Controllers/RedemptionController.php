@@ -35,6 +35,18 @@ class RedemptionController extends Controller
     }
 
     /**
+     * Method index redirect to redemptions for User
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function index()
+    {
+        $placeUuid = $this->user()->place->id;
+
+        return \response()->redirectTo(route('places.list.redemptions', $placeUuid));
+    }
+
+    /**
      * @param string $offerId
      *
      * @return Response
@@ -42,7 +54,9 @@ class RedemptionController extends Controller
      */
     public function getActivationCode(string $offerId): Response
     {
-        $this->validateOffer($offerId);
+        if (!$this->offerRepository->validateOffer($offerId)) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $offer = $this->offerRepository->find($offerId);
 
@@ -61,7 +75,11 @@ class RedemptionController extends Controller
      */
     public function createFromOffer(string $offerId): Response
     {
-        $offer = $this->validateOfferAndGetOwn($offerId);
+        $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $this->authorize('offers.redemption', $offer);
 
@@ -130,7 +148,11 @@ class RedemptionController extends Controller
      */
     public function redemption(RedemptionRequest $request, string $offerId, OffersService $offersService): Response
     {
-        $offer = $this->validateOfferAndGetOwn($offerId);
+        $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $this->authorize('offers.redemption.confirm', $offer);
 
@@ -183,42 +205,16 @@ class RedemptionController extends Controller
      */
     public function showFromOffer(string $offerId, string $rid): Response
     {
-        $offer = $this->validateOfferAndGetOwn($offerId);
+        $offer = $this->offerRepository->validateOfferAndGetOwn($offerId);
+
+        if (null === $offer) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
+        }
 
         $redemption = $offer->redemptions()->findOrFail($rid);
 
         $this->authorize('offers.redemption.show', $redemption);
 
         return \response()->render('redemption.show', $redemption->toArray());
-    }
-
-    /**
-     * @param string $offerId
-     */
-    private function validateOffer(string $offerId): void
-    {
-        $validator = $this->getValidationFactory()
-                          ->make(['offerId' => $offerId],
-                              [
-                                  'offerId' => sprintf('string|regex:%s|exists:pgsql_nau.offer,id',
-                                      Constants::UUID_REGEX)
-                              ]);
-
-        if ($validator->fails()) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, trans('errors.offer_not_found'));
-        }
-    }
-
-    private function validateOfferAndGetOwn(string $offerId): Offer
-    {
-        $this->validateOffer($offerId);
-
-        $offer = $this->offerRepository->find($offerId);
-
-        if (!$offer->isOwner($this->user())) {
-            throw new HttpException(Response::HTTP_FORBIDDEN);
-        }
-
-        return $offer;
     }
 }

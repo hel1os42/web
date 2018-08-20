@@ -273,7 +273,7 @@
             console.log('Logo changed');
             $logo_image_box.find('.image').attr('data-cropratio', '1').attr('data-circle', 'true');
         });
-        $logo_image_box.find('.image').attr('src', "{{ $picture_url }}").on('load', function(){
+        $logo_image_box.find('.image').attr('src', "{{ $picture_url }}?v={{ $updated_at }}").on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);
@@ -285,7 +285,7 @@
             console.log('Cover changed');
             $cover_image_box.find('.image').attr('data-cropratio', '3');
         });
-        $cover_image_box.find('.image').attr('src', "{{ $cover_url }}").on('load', function(){
+        $cover_image_box.find('.image').attr('src', "{{ $cover_url }}?v={{ $updated_at }}").on('load', function(){
             $(this).parents('.img-hide').removeClass('img-hide');
             if (this.dataset.cropratio) {
                 imageCropperRemove(this);

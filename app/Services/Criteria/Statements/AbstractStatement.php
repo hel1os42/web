@@ -3,6 +3,9 @@
 namespace App\Services\Criteria\Statements;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Class AbstractStatement
@@ -129,5 +132,57 @@ abstract class AbstractStatement implements SearchStatement
     public function isValid(): bool
     {
         return null !== $this->value ? true : false;
+    }
+
+    /**
+     * The method allows using the Eloquent whereHas for different connections
+     * @param Builder   $query
+     * @param \Closure  $callback
+     * @return Builder
+     */
+    public function whereHas(Builder $query, \Closure $callback): Builder
+    {
+        /** @var Builder $query */
+        $relation      = $query->getRelation($this->relation);
+        $relationModel = $relation->getModel();
+
+        // similar connections
+        if (false === $this->isDiffConnections($query, $relationModel)) {
+            $method = 'or' === $this->searchJoin ? 'orWhereHas' : 'whereHas';
+
+            return $query->$method($this->relation, $callback);
+        }
+
+        // different connections
+        if (false !== $foreignKey = $this->getForeignKeyName($relation)) {
+            $ids = $relationModel->where($callback)->pluck($foreignKey);
+
+            return $query->whereIn('id', $ids, $this->searchJoin);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param Builder $query
+     * @param Model   $relation
+     * @return bool
+     */
+    public function isDiffConnections(Builder $query, Model $relationModel): bool
+    {
+        return $relationModel->getConnection()->getName() !== $query->getConnection()->getName();
+    }
+
+    /**
+     * @param Relation $relation
+     * @return bool|string
+     */
+    protected function getForeignKeyName(Relation $relation): ?string
+    {
+        if ($relation instanceof HasOneOrMany) {
+            return $relation->getForeignKeyName();
+        }
+
+        return false;
     }
 }

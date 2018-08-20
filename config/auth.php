@@ -124,4 +124,7 @@ return [
         ],
     ],
 
+    'throttle' => [
+        'ttl' => env('AUTH_THROTTLE_TTL', 0.5),
+    ]
 ];

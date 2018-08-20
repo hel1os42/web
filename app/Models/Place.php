@@ -201,6 +201,14 @@ class Place extends Model
     /**
      * @return string
      */
+    public function getUpdatedAt(): string
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @return string
+     */
     public function getTimezoneOffsetAttribute(): string
     {
         $utcTimezone = new \DateTimeZone('UTC');

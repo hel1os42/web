@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Operator;
+use App\Services\Auth\Otp\Exceptions\OtpException;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -13,6 +14,12 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
+/**
+ * Class LoginController
+ * @package App\Http\Controllers\Auth
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class LoginController extends AuthController
 {
     /**
@@ -20,12 +27,17 @@ class LoginController extends AuthController
      */
     public function getLogin()
     {
-        return $this->auth->user()
-            ? \response()->redirectTo(route('statistics'))
-            : \response()->render('auth.login', [
+        if ($this->auth->user()) {
+            request()->session()->reflash();
+            return \response()->redirectTo(route('statistics'));
+        }
+
+        return \response()->render('auth.login', [
+            'fields' => [
                 'email'    => null,
-                'password' => null
-            ]);
+                'password' => null,
+            ],
+        ]);
     }
 
     /**
@@ -36,9 +48,11 @@ class LoginController extends AuthController
         return $this->auth->user()
             ? \response()->redirectTo(route('home'))
             : \response()->render('auth.loginOperator', [
-                'alias' => null,
-                'login' => null,
-                'pin'   => null,
+                'fields' => [
+                    'alias' => null,
+                    'login' => null,
+                    'pin'   => null,
+                ],
             ]);
     }
 
@@ -56,12 +70,29 @@ class LoginController extends AuthController
             return \response()->error(Response::HTTP_NOT_FOUND, 'User with phone ' . $phone . ' not found.');
         }
 
+        $key      = $this->throttleKey(request());
+        $attempts = $this->limiter()->attempts($key);
+
+        logger()->debug(
+            sprintf(
+                '[SMS] Phone - %1$s. URI - %2$s. Key - %3$s. Attempts - %4$d',
+                $phone, request()->url(), $key, $attempts
+            )
+        );
+
         if ($this->hasTooManyLoginAttempts(\request())) {
             return $this->sendLockoutResponse(\request());
         }
 
-        /** @var OtpAuth $otpAuth */
-        $otpAuth->generateCode($user->phone);
+        try {
+            /** @var OtpAuth $otpAuth */
+            $otpAuth->generateCode($user->phone);
+        } catch (OtpException $exception) {
+            $message = sprintf('[SMS][Login][Error] %1$s. Phone: %2$s', $exception->getMessage(), $user->phone);
+            logger()->critical($message);
+
+            return \response()->error(Response::HTTP_FORBIDDEN, $exception->getMessage());
+        }
 
         $this->incrementLoginAttempts(\request());
 

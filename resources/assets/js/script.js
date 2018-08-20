@@ -260,3 +260,39 @@ function messages(action, type, text, element) {
             break;
     }
 }
+
+// message_block value : null | HTML DOM Element
+function ajax_callback(xhr, callback, message_block) {
+    let message;
+
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+        switch (xhr.status) {
+            case 200 : callback( JSON.parse(xhr.response) );
+                break;
+            case 401 : UnAuthorized();
+                break;
+            case 500 :
+            default  : {
+                try {
+                    let responseObj = JSON.parse(xhr.response);
+                    if (responseObj.error && responseObj.message)
+                        message = 'Error: ' + responseObj.message;
+                } catch (e) {
+                    message = nau_lang.an_error;
+                }
+
+                if (message_block) {
+                    messages('add', 'error', message, message_block);
+                } else {
+                    message_block = document.createElement('div');
+                    message_block.classList.add('alert');
+                    message_block.classList.add('alert-danger');
+                    message_block.innerText = message;
+
+                    let parent = document.querySelector('#mainwrapper > main');
+                    parent.insertBefore(message_block, parent.children[0]);
+                }
+            }
+        }
+    }
+}
