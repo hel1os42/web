@@ -7,6 +7,7 @@ use App\Models\OfferData;
 use App\Services\OfferReservation;
 use App\Services\WeekDaysService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 /**
  * Class OfferRequest
@@ -57,7 +58,7 @@ class OfferRequest extends FormRequest
 
         return [
             'label'                  => 'required|string|min:3|max:40',
-            'description'            => 'required|string|max:200',
+            'description'            => 'required|string',
             'reward'                 => 'required|numeric|min:1',
             'start_date'             => 'required|date|date_format:' . Constants::DATE_FORMAT,
             'finish_date'            => 'nullable|date|date_format:' . Constants::DATE_FORMAT,
@@ -114,5 +115,21 @@ class OfferRequest extends FormRequest
             'referral_points_price'   => 'nullable|integer|min:0',
             'redemption_points_price' => 'nullable|integer|min:0'
         ];
+    }
+
+    /**
+     * @param  Validator  $validator
+     *
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function (Validator $validator) {
+            $description = str_replace("\r\n", "\n", request()->get('description'));
+
+            if (strlen($description) > 200) {
+                $validator->errors()->add('error', trans('validation.description_max_size'));
+            }
+        });
     }
 } 
