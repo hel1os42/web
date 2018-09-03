@@ -127,7 +127,7 @@ class OfferRequest extends FormRequest
         $validator->after(function (Validator $validator) {
             $description = str_replace("\r\n", "\n", request()->get('description'));
 
-            if (strlen($description) > 200) {
+            if (mb_strlen($description) > 200) {
                 $validator->errors()->add('error', trans('validation.description_max_size'));
             }
         });
