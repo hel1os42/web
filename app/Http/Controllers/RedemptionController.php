@@ -25,6 +25,8 @@ class RedemptionController extends Controller
 {
     private $offerRepository;
 
+    const LIFETIME_ACTIVATION_CODE = 15;
+
     public function __construct(
         OfferRepository $offerRepository,
         AuthManager $auth
@@ -62,9 +64,13 @@ class RedemptionController extends Controller
 
         $this->authorize('offers.redemption', $offer);
 
-        $activationCode = $this->user()->activationCodes()->with('offer.account.owner')->orderBy('created_at', 'desc')->first();
+        $activationCode = $this->user()->activationCodes()
+            ->where('offer_id', $offerId)
+            ->where('created_at', '>', Carbon::now()->subMinute(self::LIFETIME_ACTIVATION_CODE))
+            ->with('offer.account.owner')
+            ->orderBy('created_at', 'desc')->first();
 
-        if ($activationCode === null || Carbon::now()->subMinute(15) > $activationCode->created_at) {
+        if ($activationCode === null || $activationCode->redemption_id !== null) {
             $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
         };
 
