@@ -123,7 +123,7 @@ trait OtpHttpTrait
                     $responseContent
                 );
 
-                $this->otpError($loggerMessage,null, false);
+                $this->otpError($loggerMessage, null, false);
 
                 return true;
             }
