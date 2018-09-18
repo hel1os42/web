@@ -16,10 +16,6 @@ class LogViewerController extends BaseLogViewerController
      */
     public function index()
     {
-        if (config('app.access_token') !== $this->request->get('access_token')) {
-            abort(404);
-        }
-
         if (false === auth()->check() || false === auth()->user()->isAdmin()) {
             abort(404);
         }
