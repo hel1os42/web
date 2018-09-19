@@ -14,12 +14,20 @@ use App\Models\NauModels\Redemption;
 use App\Repositories\OfferRepository;
 use App\Repositories\RedemptionRepository;
 use App\Services\OffersService;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Models\ActivationCode;
 
+/**
+ * Class RedemptionController
+ *
+ * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RedemptionController extends Controller
 {
     private $offerRepository;
@@ -63,7 +71,7 @@ class RedemptionController extends Controller
 
         $activationCode = $this->user()->activationCodes()
             ->where('offer_id', $offerId)
-            ->where('created_at', '>', \Carbon\Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE))
+            ->where('created_at', '>', Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE))
             ->with('offer.account.owner')
             ->orderBy('created_at', 'desc')->first();
 
