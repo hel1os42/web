@@ -42,6 +42,8 @@ class PictureController extends AbstractPictureController
             ? route('users.picture.show', [$userUuid])
             : route('users.show', [$userUuid]);
 
+        $editableUser->touch();
+
         return $this->storeImageFor($request, $editableUser->getId(), $redirect);
     }
 

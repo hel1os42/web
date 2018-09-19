@@ -70,6 +70,7 @@ class PictureController extends AbstractPictureController
         ]);
 
         $imageService->savePlacePicture($place);
+        $place->touch();
 
         $location = route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]);
 
@@ -113,6 +114,8 @@ class PictureController extends AbstractPictureController
         if (!$this->user()->isAgent() && !$this->user()->isAdmin()) {
             $this->placeService->disapprove($place, true);
         }
+
+        $place->touch();
 
         return $this->storeImageFor($request, $place->getId(),
             route('places.picture.show', ['uuid' => $place->getId(), 'type' => $this->type]));
