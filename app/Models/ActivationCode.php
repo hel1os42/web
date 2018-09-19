@@ -31,6 +31,8 @@ use Illuminate\Support\Collection;
  */
 class ActivationCode extends Model
 {
+    const LIFETIME_ACTIVATION_CODE = 15;
+
     /**
      * @param array $attributes
      *

@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Constants;
 use App\Http\Requests\RedemptionRequest;
 use App\Models\NauModels\Offer;
 use App\Models\NauModels\Redemption;
@@ -20,12 +19,11 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Models\ActivationCode;
 
 class RedemptionController extends Controller
 {
     private $offerRepository;
-
-    const LIFETIME_ACTIVATION_CODE = 15;
 
     public function __construct(
         OfferRepository $offerRepository,
@@ -66,7 +64,7 @@ class RedemptionController extends Controller
 
         $activationCode = $this->user()->activationCodes()
             ->where('offer_id', $offerId)
-            ->where('created_at', '>', Carbon::now()->subMinute(self::LIFETIME_ACTIVATION_CODE))
+            ->where('created_at', '>', Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE))
             ->with('offer.account.owner')
             ->orderBy('created_at', 'desc')->first();
 
