@@ -127,9 +127,10 @@ return [
     'otp'                     => 'Wrong OTP code.',
     'enough_for'              => 'Not enough money',
     'can_redeem'              => 'Incorrect activation code',
-    'operator_requst_update'  => 'Wrong request update operator status',
+    'operator_request_update' => 'Wrong request update operator status',
     'unique_user_testimonial' => 'You have already left a review for this place.',
     'unique_user_complaint'   => 'You have already left a complaint for this place.',
+    'description_max_size'    => 'Description length exceeded',
     'user_children_excess'    => 'You must detach Advertisers from this Chief firstly',
     'user_offer_excess'       => 'You must destroy Offers from this Advertiser firstly',
 ];

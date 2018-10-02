@@ -108,12 +108,22 @@ trait OtpHttpTrait
             }
 
             if ($this->isServerError($response) || $this->isConnectError($exception)) {
-                $this->otpError(sprintf('Retry to send otp. Uri:%s Retry:%d Last error message:%s',
+                $errorMessage = $exception instanceof \Exception
+                    ? $exception->getMessage()
+                    : '';
+
+                $responseContent = $response instanceof Psr7Response
+                    ? $response->getBody()->getContents()
+                    : '';
+
+                $loggerMessage = sprintf('Retry to send otp. Uri:%s Retry:%d Last error message:%s. Last Response: %s',
                     $request->getUri(),
                     $retries,
-                    $exception->getMessage()),
-                    null, false
+                    $errorMessage,
+                    $responseContent
                 );
+
+                $this->otpError($loggerMessage, null, false);
 
                 return true;
             }

@@ -89,6 +89,10 @@ class AppServiceProvider extends ServiceProvider
                         'lang'=> __('js'),
                     ]);
                 }
+
+                if (false === $view->offsetExists('variablesForFront')) {
+                    $view->with('variablesForFront', []);
+                }
             }
         );
 
