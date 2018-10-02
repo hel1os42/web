@@ -3,10 +3,14 @@
 namespace App\Http\Requests;
 
 use App\Helpers\Constants;
+use App\Http\Exceptions\NotFoundException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
 use App\Repositories\UserRepository;
+use App\Models\User;
+use App\Models\Role;
+use App\Repositories\RoleRepository;
 
 /**
  * Class ProfileUpdateRequest
