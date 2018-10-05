@@ -1,9 +1,9 @@
 <div>
     @if($editableUserModel->isAdvertiser())
-        <input class="btn-nau pull-left" name="button_to_chief" value="evolve to chief" type="button" onclick="buttonToChief({{$editableUserModel->countHasOffers()}})">
+        <input class="btn-nau pull-left" name="button_to_chief" value="Make a Chief" type="button" onclick="buttonToChief({{$editableUserModel->countHasOffers()}})">
         <input hidden type="checkbox" id="role_chief_advertiser" name="role_ids[]" value="{{\App\Models\Role::findByName(\App\Models\Role::ROLE_CHIEF_ADVERTISER)->getId()}}">
     @elseif($editableUserModel->isChiefAdvertiser())
-        <input class="btn-nau pull-left" name="button_to_advert" value="degrade to advert" type="button" onclick="buttonToAdvert({{count($children)}})">
+        <input class="btn-nau pull-left" name="button_to_advert" value="Make an Advertiser" type="button" onclick="buttonToAdvert({{count($children)}})">
         <input hidden type="checkbox" id="role_user" name="role_ids[]" value="{{\App\Models\Role::findByName(\App\Models\Role::ROLE_USER)->getId()}}">
         <input hidden type="checkbox" id="role_advertiser" name="role_ids[]" value="{{\App\Models\Role::findByName(\App\Models\Role::ROLE_ADVERTISER)->getId()}}">
     @endif
@@ -18,7 +18,7 @@
                 return false;
             }
             else{
-                alert('You can not convert the Advertiser into Chief Advertiser. You must destroy Offers from this Advertiser firstly');
+                alert('You can not convert the Advertiser into Chief Advertiser. You must remove Offers from this Advertiser firstly');
             }
         }
 
