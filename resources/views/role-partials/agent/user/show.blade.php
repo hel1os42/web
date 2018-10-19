@@ -43,6 +43,7 @@
             <span class="span-disapproved">{{ __('words.no') }}</span>
             <span class="span-wait">...</span>
 
+            @if(auth()->user()->id !== $id)
             <form action="{{ route('users.update', $id) }}" method="POST">
                 {{ csrf_field() }}
                 {{ method_field('PATCH') }}
@@ -51,6 +52,7 @@
                 <button type="submit" class="btn btn-xs b-disapproved">{{ __('buttons.approve') }}</button>
                 <span class="waiting-response"><img src="{{ asset('img/loading.gif') }}" alt="wait..."></span>
             </form>
+            @endif
         </div>
     </div>
 </div>
