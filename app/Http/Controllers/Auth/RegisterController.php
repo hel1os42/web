@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Helpers\FormRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\Auth\Otp\Exceptions\OtpException;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Routing\ResponseFactory;
@@ -79,7 +80,14 @@ class RegisterController extends AuthController
             return $this->sendLockoutResponse(\request());
         }
 
-        $otpAuth->generateCode($phone);
+        try {
+            $otpAuth->generateCode($phone);
+        } catch (OtpException $exception) {
+            $message = sprintf('[SMS][Register][Error] %1$s. Phone: %2$s', $exception->getMessage(), $phone);
+            logger()->warning($message);
+
+            return $response->error(Response::HTTP_FORBIDDEN, $exception->getMessage());
+        }
 
         $this->incrementLoginAttempts(\request());
 

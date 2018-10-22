@@ -3,6 +3,7 @@
 namespace App\Services\Auth\Otp;
 
 use App\Jobs\ProcessSendOtpRequest;
+use App\Services\Auth\Otp\Exceptions\UnsupportedCountryException;
 use GuzzleHttp\Client;
 
 /**
@@ -19,6 +20,13 @@ abstract class BaseOtpAuth
      * @var Client
      */
     protected $client;
+
+    /**
+     * @var array
+     */
+    public $blacklistCodes = [
+        '+44', // United Kingdom
+    ];
 
     /**
      * BaseOtpAuth constructor.
@@ -40,6 +48,9 @@ abstract class BaseOtpAuth
         if ($this->specialNumberCheck($phoneNumber)) {
             return;
         }
+
+        $this->validatePhoneNumber($phoneNumber);
+
         $this->codeGenerate($phoneNumber);
     }
 
@@ -79,5 +90,17 @@ abstract class BaseOtpAuth
         }
 
         return false;
+    }
+
+    /**
+     * @param string $phoneNumber
+     */
+    protected function validatePhoneNumber(string $phoneNumber)
+    {
+        foreach ($this->blacklistCodes as $code) {
+            if (starts_with($phoneNumber, $code)) {
+                throw new UnsupportedCountryException(trans('errors.sms.unsupported_number'));
+            }
+        }
     }
 }

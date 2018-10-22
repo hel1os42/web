@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Operator;
+use App\Services\Auth\Otp\Exceptions\OtpException;
 use App\Services\Auth\Otp\OtpAuth;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -13,6 +14,12 @@ use Illuminate\Database\QueryException;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
+/**
+ * Class LoginController
+ * @package App\Http\Controllers\Auth
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class LoginController extends AuthController
 {
     /**
@@ -77,8 +84,15 @@ class LoginController extends AuthController
             return $this->sendLockoutResponse(\request());
         }
 
-        /** @var OtpAuth $otpAuth */
-        $otpAuth->generateCode($user->phone);
+        try {
+            /** @var OtpAuth $otpAuth */
+            $otpAuth->generateCode($user->phone);
+        } catch (OtpException $exception) {
+            $message = sprintf('[SMS][Login][Error] %1$s. Phone: %2$s', $exception->getMessage(), $user->phone);
+            logger()->critical($message);
+
+            return \response()->error(Response::HTTP_FORBIDDEN, $exception->getMessage());
+        }
 
         $this->incrementLoginAttempts(\request());
 

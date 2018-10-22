@@ -37,7 +37,7 @@ class TagController extends Controller
     {
         $this->authorize('tags.list');
 
-        return \response()->render('tag.index', ['data' => $this->tagRepository->all()->toArray()]);
+        return \response()->render('tag.index', ['data' => $this->tagRepository->orderBy('name')->all()->toArray()]);
     }
 
     /**

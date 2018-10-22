@@ -178,6 +178,7 @@
                 searchResult['phone'] = searchFieldsInput.value;
                 searchResult['place.name'] = searchFieldsInput.value;
                 searchResult['place.description'] = searchFieldsInput.value;
+                searchResult['accounts.address'] = searchFieldsInput.value;
                 searchJoin = 'or';
             }
             if ( roleSelect && roleSelect.value !== '' ) {
@@ -287,6 +288,8 @@
             if (searchByPlaceName) searchFields = searchByPlaceName[1];
             let searchByPlaceDescr = search.find(function(e){ return e[0] === 'place.description' });
             if (searchByPlaceDescr) searchFields = searchByPlaceDescr[1];
+            let searchByWallet = search.find(function(e){ return e[0] === 'accounts.address' });
+            if (searchByWallet) searchFields = searchByWallet[1];
 
             if (searchFieldsInput) searchFieldsInput.value = searchFields;
         }
