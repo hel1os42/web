@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mobix
- * Date: 07.08.2017
- * Time: 17:33
- */
 
 namespace App\Http\Controllers;
 
