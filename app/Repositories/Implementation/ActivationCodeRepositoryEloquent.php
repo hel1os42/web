@@ -49,7 +49,7 @@ class ActivationCodeRepositoryEloquent extends BaseRepository implements Activat
     {
         $this->applyCriteria();
         $this->applyScope();
-        $model = $this->model->byCode($code)->byOffer($offer)->whereNull('redemption_id')->first();
+        $model = $this->model->byCodeAndRelevance($code)->byOffer($offer)->whereNull('redemption_id')->first();
         $this->resetModel();
 
         return $this->parserResult($model);
