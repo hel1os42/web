@@ -26,7 +26,6 @@ use Illuminate\Support\Collection;
  * @property Redemption redemption
  *
  * @method static static|ActivationCode[]|Collection|Builder byCode(string $code)
- * @method static static|ActivationCode[]|Collection|Builder byCodeAndRelevance(string $code)
  * @method static static|ActivationCode[]|Collection|Builder byOwner(User $owner)
  * @method static static|ActivationCode[]|Collection|Builder byOffer(Offer $offer)
  */
@@ -136,20 +135,6 @@ class ActivationCode extends Model
 
     /**
      * @param Builder $builder
-     * @param string  $code
-     *
-     * @return Builder
-     * @throws BadActivationCodeException
-     * @throws \InvalidArgumentException
-     */
-    public function scopeByCodeAndRelevance(Builder $builder, string $code): Builder
-    {
-        return $builder->where('id', $this->getIdByCode($code))
-            ->where('created_at', '>', Carbon::now()->subMinute($this->LIFETIME_ACTIVATION_CODE));
-    }
-
-    /**
-     * @param Builder $builder
      * @param User    $owner
      *
      * @return Builder
@@ -186,5 +171,15 @@ class ActivationCode extends Model
     public function getOfferAttribute()
     {
         return $this->getRelationValue('offer');
+    }
+
+    /**
+     * @param Void
+     *
+     * @return bool
+     */
+    public function validity(): bool
+    {
+        return $this->created_at > Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE);
     }
 }

@@ -97,7 +97,7 @@ class NauOffersService implements OffersService
     public function redeemByActivationCode(ActivationCode $activationCode)
     {
         $offer = $activationCode->offer;
-        if (null === $offer) {
+        if (null === $offer || !$activationCode->validity()) {
             throw new BadActivationCodeException($offer, $activationCode->code);
         }
 
