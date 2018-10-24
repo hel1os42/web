@@ -131,8 +131,7 @@ class ActivationCode extends Model
      */
     public function scopeByCode(Builder $builder, string $code): Builder
     {
-        return $builder->where('id', $this->getIdByCode($code))
-            ->where('created_at', '>', Carbon::now()->subMinute($this->LIFETIME_ACTIVATION_CODE));
+        return $builder->where('id', $this->getIdByCode($code));
     }
 
     /**
