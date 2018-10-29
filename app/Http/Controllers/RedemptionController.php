@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mobix
- * Date: 07.08.2017
- * Time: 17:33
- */
 
 namespace App\Http\Controllers;
 
@@ -20,7 +14,15 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Models\ActivationCode;
 
+/**
+ * Class RedemptionController
+ *
+ * @package App\Http\Controllers
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RedemptionController extends Controller
 {
     private $offerRepository;
@@ -62,7 +64,15 @@ class RedemptionController extends Controller
 
         $this->authorize('offers.redemption', $offer);
 
-        $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
+        $activationCode = $this->user()->activationCodes()
+            ->where('offer_id', $offerId)
+            ->where('created_at', '>', Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE))
+            ->with('offer.account.owner')
+            ->orderBy('created_at', 'desc')->first();
+
+        if ($activationCode === null || $activationCode->redemption_id !== null) {
+            $activationCode = $this->user()->activationCodes()->create(['offer_id' => $offer->id]);
+        };
 
         return \response()->render('redemption.code', $activationCode->toArray());
     }

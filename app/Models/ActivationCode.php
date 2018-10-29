@@ -31,6 +31,8 @@ use Illuminate\Support\Collection;
  */
 class ActivationCode extends Model
 {
+    const LIFETIME_ACTIVATION_CODE = 15;
+
     /**
      * @param array $attributes
      *
@@ -169,5 +171,15 @@ class ActivationCode extends Model
     public function getOfferAttribute()
     {
         return $this->getRelationValue('offer');
+    }
+
+    /**
+     * @param Void
+     *
+     * @return bool
+     */
+    public function validity(): bool
+    {
+        return $this->created_at > Carbon::now()->subMinute(ActivationCode::LIFETIME_ACTIVATION_CODE);
     }
 }
