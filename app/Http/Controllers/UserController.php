@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Models\Role;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\Implementation\User\ConfirmationService;
@@ -128,6 +129,8 @@ class UserController extends Controller
         $uuid = $this->confirmUuid($uuid);
 
         $editableUser = $this->userRepository->find($uuid);
+
+        $this->detachParentChief($editableUser);
 
         $userData = $request->isMethod('put')
             ? $request->all()
@@ -277,6 +280,25 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    /**
+     * @param User $editableUser
+     *
+     * @return Void
+     */
+    private function detachParentChief(User $editableUser)
+    {
+        $parents = ($editableUser->parents()->with('roles:name')->get());
+
+        foreach ($parents as $parent) {
+            foreach ($parent->roles as $role) {
+                if (Role::ROLE_CHIEF_ADVERTISER === $role->name) {
+                    $parent->pivot->delete();
+                    continue;
+                }
+            }
+        }
     }
 
     /**

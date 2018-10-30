@@ -104,7 +104,7 @@
 
                         </div>
                         <div role="tabpanel" class="tab-pane" id="edit">
-                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded">
+                            <form action="{{ route('users.update', $id) }}" method="POST" enctype="application/x-www-form-urlencoded" id="form_user_update">
                                 {{ csrf_field() }}
                                 {{ method_field('PUT') }}
 

@@ -289,6 +289,14 @@ class OfferRepositoryEloquent extends BaseRepository implements OfferRepository
         return $this->parserResult($results);
     }
 
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->model->count();
+    }
+
     protected function builderWithoutGlobalScopes(): Builder
     {
         return $this->model->withoutGlobalScopes([Offer::statusActiveScope(), Offer::dateActualScope()]);

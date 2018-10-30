@@ -6,6 +6,7 @@ use App\Exceptions\TokenException;
 use App\Helpers\Attributes;
 use App\Models\Contracts\Currency;
 use App\Models\NauModels\Account;
+use App\Models\NauModels\Offer;
 use App\Models\NauModels\User as CoreUser;
 use App\Models\User\EnrollmentTrait;
 use App\Models\User\RelationsTrait;
@@ -558,5 +559,16 @@ class User extends Authenticatable implements PhoneAuthenticable
     public static function getUserAvatarPath(string $uuid)
     {
         return storage_path(sprintf('app/%1$s/%2$s.%3$s', self::PROFILE_PICTURES_PATH, $uuid, 'jpg'));
+    }
+
+    /**
+     * @return int
+     */
+    public function countHasOffers(): int
+    {
+        $account     = $this->getAccountForNau()->id;
+        $offersCount = Offer::where('acc_id', $account)->withoutGlobalScopes()->count();
+
+        return $offersCount;
     }
 }
