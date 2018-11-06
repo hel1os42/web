@@ -29,6 +29,7 @@ use App\Repositories\RoleRepository;
  */
 class UserUpdateRequest extends FormRequest
 {
+    protected $userId;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -46,12 +47,14 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $this->userId = request()->path() === 'profile' ? auth()->user()->id : request()->id;
+
         $rules = [
             'name'         => 'string|min:2',
             'email'        => sprintf('required_without:phone|nullable|email|max:255|unique:users,email,%s',
-                request()->id),
+                $this->userId),
             'phone'        => sprintf('required_without:email|nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s',
-                request()->id),
+                $this->userId),
             'latitude'     => 'nullable|numeric|between:-90,90',
             'longitude'    => 'nullable|numeric|between:-180,180',
             'role_ids'     => 'array',
@@ -62,19 +65,19 @@ class UserUpdateRequest extends FormRequest
                 \App\Helpers\Constants::UUID_REGEX
             ),
             'approve'               => 'boolean',
-            'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', request()->id),
+            'invite_code'           => sprintf('nullable|alpha_dash|unique:users,invite_code,%s', $this->userId),
             'password'              => 'nullable|string|confirmed|min:6|required_with:password_confirmation',
             'eth_address'           => [
                 'nullable',
                 'string',
                 sprintf('regex:%1$s', Constants::ETH_ADDRESS_REGEX),
-                sprintf('unique:users,eth_address,$1%s', request()->id),
+                sprintf('unique:users,eth_address,$1%s', $this->userId),
             ],
         ];
 
         if ($this->isMethod(Request::METHOD_PATCH)) {
-            $rules['email'] = sprintf('nullable|email|max:255|unique:users,email,%s', request()->id);
-            $rules['phone'] = sprintf('nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s', request()->id);
+            $rules['email'] = sprintf('nullable|email|max:255|unique:users,email,%s', $this->userId);
+            $rules['phone'] = sprintf('nullable|regex:/\+[0-9]{10,15}/|unique:users,phone,%s', $this->userId);
         }
 
         return $rules;
@@ -88,7 +91,7 @@ class UserUpdateRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function (Validator $validator) {
-            $user = $this->checkUser(request()->id);
+            $user = $this->checkUser();
 
             if ($this->hasRole(Role::ROLE_ADVERTISER) && $user->children()->count() > 0) {
                 $validator->errors()->add('error', trans('validation.user_children_excess'));
@@ -113,14 +116,14 @@ class UserUpdateRequest extends FormRequest
     }
 
     /**
-     * @param string $userId
+     * @param void
      *
-     * @return NotFoundException
+     * @throws NotFoundException
      * @return User
      */
-    private function checkUser(string $userId): User
+    private function checkUser(): User
     {
-        $user = app(UserRepository::class)->find($userId);
+        $user = app(UserRepository::class)->find($this->userId);
 
         if ($user instanceof User) {
 
